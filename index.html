@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <title>Project Cataclysm Wiki</title>
+    
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta name="keywords" content="Project Cataclysm вики. Project Cataclysm Википедия. Project Cataclysm карта. Аномалии Project Cataclysm. Мутанты Project Cataclysm. Project Cataclysm таблица артефактов. Project cataclysm артефакты.">
+    <meta name="description" content="Project Cataclysm Wiki (Beta) - база знаний игры Project Cataclysm. Здесь вы найдёте интерактивную карту проекта и таблицу артефактов с их свойствами и ценами.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="main.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="index.html">
+                <img src="images/logo.svg" alt="Logo">
+            </a>
+        </div>
+        <nav class="header__nav">
+            <a href="Map/index.html" class="header__button header__button--primary">
+                Интерактивная карта
+            </a>
+            <a href="Table/table.html" class="header__button header__button--primary">
+                Таблица артефактов
+            </a>
+            <span class="header__button header__button--disabled">Квесты</span>
+            <span class="header__button header__button--disabled">Снаряжение</span>
+        </nav>
+    </header>
+
+    <main>
+        <section class="container">
+            <div class="cards">
+                <a href="Map/index.html" class="card">
+                    <div class="card__image-wrapper">
+                        <img src="images/map.png" alt="Карта" class="card__image">
+                    </div>
+                    <div class="card__title">Интерактивная карта</div>
+                </a>
+
+                <a href="Table/table.html" class="card">
+                    <div class="card__image-wrapper">
+                        <img src="images/tablet.png" alt="Таблица" class="card__image">
+                    </div>
+                    <div class="card__title">Таблица артефактов</div>
+                </a>
+
+                <div class="card card--disabled">
+                    <div class="card__image-wrapper">
+                        <img src="images/quests.png" alt="Квесты" class="card__image">
+                        <span class="card__coming-soon">Coming soon</span>
+                    </div>
+                    <div class="card__title">Квесты</div>
+                </div>
+
+                <div class="card card--disabled">
+                    <div class="card__image-wrapper">
+                        <img src="images/gear.png" alt="Снаряжение" class="card__image">
+                        <span class="card__coming-soon">Coming soon</span>
+                    </div>
+                    <div class="card__title">Снаряжение</div>
+                </div>
+
+                <div class="card card--disabled">
+                    <div class="card__image-wrapper">
+                        <img src="images/tier-list.png" alt="Тир листы" class="card__image">
+                        <span class="card__coming-soon">Coming soon</span>
+                    </div>
+                    <div class="card__title">Тир листы</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="hero">
+            <div class="hero__content">
+                <p class="hero__description">
+                    Project Cataclysm Wiki (Beta) - база знаний игры Project Cataclysm. 
+                    Здесь вы найдёте интерактивную карту проекта и таблицу артефактов с их свойствами и ценами.
+                    В будущем будет добавлен раздел с квестами и их подробным прохождением, 
+                    а также список всего снаряжения в игре.
+                </p>
+                
+                <div class="hero__updates">
+                    <h2 class="hero__h1">Последние обновления</h2>
+                    <div class="hero__update-content">
+                        <span class="hero__date">22 июля 2024 г.</span>
+                        <ul>
+                            <li>Обновлён дизайн основной страницы сайта.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
