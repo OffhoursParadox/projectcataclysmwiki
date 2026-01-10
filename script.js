@@ -1,11 +1,31 @@
-function redirectToMap() {
-    // Здесь добавьте код для перехода на страницу с интерактивной картой
-    window.location.href = 'Map/index.html';
+const burger = document.getElementById('burger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (burger && mobileMenu) {
+    burger.addEventListener('click', () => {
+        burger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+    });
 }
 
-function redirectToWiki() {
-    // Здесь добавьте код для перехода на страницу с википедией
-    window.location.href = 'Table/table.html';
-}
+const header = document.querySelector('.header');
 
-// Добавьте дополнительные функции и обработчики событий по необходимости
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        header.style.background = 'rgba(10, 10, 11, 0.95)';
+    } else {
+        header.style.background = 'rgba(10, 10, 11, 0.8)';
+    }
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    });
+});
