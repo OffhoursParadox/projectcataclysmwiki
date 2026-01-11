@@ -7,9 +7,13 @@
 const state = {
     selectedArmor: null,
     selectedContainer: null,
-    artifacts: [], // Массив выбранных артефактов
-    currentSlotIndex: null // Индекс слота для добавления артефакта
+    artifacts: [],
+    currentSlotIndex: null
 };
+
+// ============== ИНВЕРТИРОВАННЫЕ СТАТЫ ==============
+// Статы, для которых отрицательные значения = хорошо (зелёный цвет)
+const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
 
 // ============== DOM ЭЛЕМЕНТЫ ==============
 const elements = {
@@ -21,6 +25,8 @@ const elements = {
     artifactCounter: document.getElementById('artifactCounter'),
     radiationWarning: document.getElementById('radiationWarning'),
     radiationValue: document.getElementById('radiationValue'),
+    coldWarning: document.getElementById('coldWarning'),
+    coldValue: document.getElementById('coldValue'),
     resetBtn: document.getElementById('resetBtn'),
     modal: document.getElementById('artifactModal'),
     modalClose: document.getElementById('modalClose'),
@@ -40,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initArmorSelect() {
-    // Заполняем селект брони
     ARMORS.forEach(armor => {
         const option = document.createElement('option');
         option.value = armor.id;
@@ -50,23 +55,13 @@ function initArmorSelect() {
 }
 
 function initEventListeners() {
-    // Выбор брони
     elements.armorSelect.addEventListener('change', handleArmorChange);
-    
-    // Выбор контейнера
     elements.containerSelect.addEventListener('change', handleContainerChange);
-    
-    // Сброс сборки
     elements.resetBtn.addEventListener('click', resetBuild);
-    
-    // Модальное окно
     elements.modalClose.addEventListener('click', closeModal);
     elements.modal.querySelector('.modal__backdrop').addEventListener('click', closeModal);
-    
-    // Поиск артефактов
     elements.artifactSearch.addEventListener('input', filterArtifacts);
     
-    // Фильтры категорий
     elements.filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             elements.filterBtns.forEach(b => b.classList.remove('filter-btn--active'));
@@ -75,7 +70,6 @@ function initEventListeners() {
         });
     });
     
-    // Бургер меню
     if (elements.burger && elements.mobileMenu) {
         elements.burger.addEventListener('click', () => {
             elements.burger.classList.toggle('active');
@@ -83,7 +77,6 @@ function initEventListeners() {
         });
     }
     
-    // Закрытие модального окна по Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.modal.classList.contains('active')) {
             closeModal();
@@ -95,14 +88,12 @@ function initScrollEffects() {
     const header = document.querySelector('.header');
     
     window.addEventListener('scroll', () => {
-        // Эффект хедера
         if (window.scrollY > 50) {
             header.style.background = 'rgba(10, 10, 11, 0.98)';
         } else {
             header.style.background = 'rgba(10, 10, 11, 0.9)';
         }
         
-        // Кнопка "наверх"
         if (window.scrollY > 500) {
             elements.scrollTop.classList.add('visible');
         } else {
@@ -198,14 +189,12 @@ function renderArmorInfo() {
         .map(([key, value]) => {
             const name = STAT_NAMES[key] || key;
             const unit = STAT_UNITS[key] || '';
-            const isPositive = value >= 0;
-            const displayValue = isPositive ? `+${value}${unit}` : `${value}${unit}`;
-            const valueClass = isPositive ? 'stat-value--positive' : 'stat-value--negative';
+            const { displayValue, colorClass } = formatStatValue(key, value);
             
             return `
                 <div class="armor-details__stat">
                     <span class="armor-details__stat-name">${name}</span>
-                    <span class="armor-details__stat-value ${valueClass}">${displayValue}</span>
+                    <span class="armor-details__stat-value ${colorClass}">${displayValue}${unit}</span>
                 </div>
             `;
         })
@@ -245,32 +234,32 @@ function renderContainerInfo() {
     
     const container = state.selectedContainer;
     
-    // Статы контейнера
     const statsHtml = Object.entries(container.stats)
         .map(([key, value]) => {
             const name = STAT_NAMES[key] || key;
             const unit = STAT_UNITS[key] || '';
-            const displayValue = value >= 0 ? `+${value}${unit}` : `${value}${unit}`;
-            const valueClass = value >= 0 ? 'stat-value--positive' : 'stat-value--negative';
+            const { displayValue, colorClass } = formatStatValue(key, value);
             
             return `
                 <div class="container-details__stat">
                     <span class="container-details__stat-name">${name}</span>
-                    <span class="container-details__stat-value ${valueClass}">${displayValue}</span>
+                    <span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span>
                 </div>
             `;
         })
         .join('');
     
-    // Экранирование
     const shieldingHtml = Object.entries(container.shielding)
         .map(([key, value]) => {
             const name = STAT_NAMES[key] || key;
             const unit = STAT_UNITS[key] || '';
+            // Экранирование радиации — отрицательное значение = хорошо
+            const { displayValue, colorClass } = formatStatValue(key, value);
+            
             return `
                 <div class="container-details__stat">
                     <span class="container-details__stat-name">${name}</span>
-                    <span class="container-details__stat-value stat-value--positive">${value}${unit}</span>
+                    <span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span>
                 </div>
             `;
         })
@@ -361,16 +350,59 @@ function renderArtifactSlots() {
 }
 
 function renderArtifactList(artifacts = ARTIFACTS) {
+    if (artifacts.length === 0) {
+        elements.artifactList.innerHTML = `
+            <div class="artifact-list__empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <span>Артефакты не найдены</span>
+            </div>
+        `;
+        return;
+    }
+    
     elements.artifactList.innerHTML = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : artifact.tier;
         
+        // Генерируем список характеристик артефакта
+        const statsHtml = Object.entries(artifact.stats)
+            .slice(0, 4) // Показываем максимум 4 характеристики для компактности
+            .map(([key, value]) => {
+                const name = STAT_NAMES[key] || key;
+                const unit = STAT_UNITS[key] || '';
+                const { displayValue, colorClass } = formatStatValue(key, value);
+                
+                return `
+                    <div class="artifact-stat">
+                        <span class="artifact-stat__name">${name}</span>
+                        <span class="artifact-stat__value ${colorClass}">${displayValue}${unit}</span>
+                    </div>
+                `;
+            })
+            .join('');
+        
+        const moreStats = Object.keys(artifact.stats).length > 4 
+            ? `<div class="artifact-stat artifact-stat--more">+${Object.keys(artifact.stats).length - 4} ещё</div>` 
+            : '';
+        
         return `
             <div class="artifact-item" onclick="selectArtifact('${artifact.id}')">
-                <img src="${artifact.image}" alt="${artifact.name}" class="artifact-item__image" onerror="this.src='../images/placeholder.png'">
-                <div class="artifact-item__info">
-                    <div class="artifact-item__name">${artifact.name}</div>
-                    <span class="artifact-item__tier artifact-item__tier--${tierClass}">${tierDisplay}</span>
+                <div class="artifact-item__header">
+                    <img src="${artifact.image}" alt="${artifact.name}" class="artifact-item__image" onerror="this.src='../images/placeholder.png'">
+                    <div class="artifact-item__title">
+                        <div class="artifact-item__name">${artifact.name}</div>
+                        <div class="artifact-item__meta">
+                            <span class="artifact-item__tier artifact-item__tier--${tierClass}">${tierDisplay}</span>
+                            <span class="artifact-item__category">${artifact.categoryName}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="artifact-item__stats">
+                    ${statsHtml}
+                    ${moreStats}
                 </div>
             </div>
         `;
@@ -401,7 +433,6 @@ function updateContainerSelect() {
     
     elements.containerSelect.disabled = false;
     
-    // Сбрасываем контейнер если он больше недоступен
     if (state.selectedContainer) {
         const isAvailable = availableContainers.some(c => c.id === state.selectedContainer.id);
         if (!isAvailable) {
@@ -425,11 +456,17 @@ function openArtifactModal(slotIndex) {
     });
     renderArtifactList();
     elements.artifactSearch.focus();
+    
+    // Блокируем скролл страницы
+    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     elements.modal.classList.remove('active');
     state.currentSlotIndex = null;
+    
+    // Разблокируем скролл страницы
+    document.body.style.overflow = '';
 }
 
 function filterArtifacts() {
@@ -438,12 +475,10 @@ function filterArtifacts() {
     
     let filtered = ARTIFACTS;
     
-    // Фильтр по категории
     if (activeFilter !== 'all') {
         filtered = filtered.filter(a => a.category === activeFilter);
     }
     
-    // Фильтр по поиску
     if (searchQuery) {
         filtered = filtered.filter(a => 
             a.name.toLowerCase().includes(searchQuery) ||
@@ -479,22 +514,15 @@ function updateStats() {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
             const unit = STAT_UNITS[key] || '';
-            let displayValue;
+            const { displayValue, colorClass } = formatStatValue(key, value);
             
-            if (value === 0) {
-                displayValue = `0${unit}`;
-                element.className = 'stat-row__value';
-            } else if (value > 0) {
-                displayValue = `+${value.toFixed(2)}${unit}`.replace('.00', '');
-                element.className = 'stat-row__value stat-row__value--positive';
-            } else {
-                displayValue = `${value.toFixed(2)}${unit}`.replace('.00', '');
-                element.className = 'stat-row__value stat-row__value--negative';
-            }
-            
-            element.textContent = displayValue;
+            element.textContent = displayValue + unit;
+            element.className = 'stat-row__value ' + colorClass;
         }
     });
+    
+    // Расчёт и отображение приведённой пулестойкости
+    updateEffectiveBulletResistance(totalStats.bulletResistance);
     
     // Проверка накопления радиации
     const netRadiation = totalStats.radiation || 0;
@@ -503,6 +531,49 @@ function updateStats() {
         elements.radiationValue.textContent = `+${netRadiation.toFixed(2)} мЗв/сек`;
     } else {
         elements.radiationWarning.style.display = 'none';
+    }
+    
+    // Проверка накопления холода
+    const netCold = totalStats.cold || 0;
+    if (elements.coldWarning) {
+        if (netCold > 0) {
+            elements.coldWarning.style.display = 'flex';
+            elements.coldValue.textContent = `+${netCold.toFixed(2)}/сек`;
+        } else {
+            elements.coldWarning.style.display = 'none';
+        }
+    }
+}
+
+/**
+ * Расчёт приведённой пулестойкости
+ * Формула: bulletResistance / 6 = процент защиты
+ * Максимум 600 единиц = 100%
+ */
+function updateEffectiveBulletResistance(bulletResistance) {
+    const effectiveElement = document.getElementById('effectiveBulletResistance');
+    const percentElement = document.getElementById('bulletResistancePercent');
+    const barElement = document.getElementById('bulletResistanceBar');
+    
+    if (!effectiveElement) return;
+    
+    // Расчёт процента (максимум 100%)
+    const percent = Math.min(bulletResistance / 6, 100);
+    const clampedPercent = Math.max(0, percent);
+    
+    effectiveElement.textContent = bulletResistance;
+    percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
+    
+    // Обновляем прогресс-бар
+    barElement.style.width = `${clampedPercent}%`;
+    
+    // Цвет в зависимости от значения
+    if (clampedPercent >= 70) {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
+    } else if (clampedPercent >= 40) {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
+    } else {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
     }
 }
 
@@ -530,6 +601,7 @@ function calculateTotalStats() {
         bleeding: 0,
         radiation: 0,
         saturation: 0,
+        cold: 0,
         
         // Персонаж
         maxStamina: 0,
@@ -549,14 +621,12 @@ function calculateTotalStats() {
     
     // Добавляем статы контейнера
     if (state.selectedContainer) {
-        // Характеристики контейнера
         Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
             if (stats.hasOwnProperty(key)) {
                 stats[key] += value;
             }
         });
         
-        // Экранирование контейнера (уменьшает радиацию)
         Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
             if (stats.hasOwnProperty(key)) {
                 stats[key] += value;
@@ -576,6 +646,33 @@ function calculateTotalStats() {
     });
     
     return stats;
+}
+
+// ============== ФОРМАТИРОВАНИЕ ЗНАЧЕНИЙ ==============
+/**
+ * Форматирует значение стата с учётом инвертированных статов
+ * Для radiation, bleeding, cold: минус = хорошо (зелёный), плюс = плохо (красный)
+ */
+function formatStatValue(statKey, value) {
+    const isInverted = INVERTED_STATS.includes(statKey);
+    
+    let displayValue;
+    let colorClass = '';
+    
+    if (value === 0) {
+        displayValue = '0';
+        colorClass = '';
+    } else if (value > 0) {
+        displayValue = `+${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
+        // Для инвертированных статов положительное значение = плохо
+        colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive';
+    } else {
+        displayValue = `${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
+        // Для инвертированных статов отрицательное значение = хорошо
+        colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative';
+    }
+    
+    return { displayValue, colorClass };
 }
 
 // ============== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============
