@@ -1,9 +1,3 @@
-/**
- * Project Cataclysm Wiki - Calculator Logic
- * Логика калькулятора сборок артефактов
- */
-
-// ============== СОСТОЯНИЕ ПРИЛОЖЕНИЯ ==============
 const state = {
     selectedArmor: null,
     selectedContainer: null,
@@ -11,11 +5,8 @@ const state = {
     currentSlotIndex: null
 };
 
-// ============== ИНВЕРТИРОВАННЫЕ СТАТЫ ==============
-// Статы, для которых отрицательные значения = хорошо (зелёный цвет)
 const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
 
-// ============== DOM ЭЛЕМЕНТЫ ==============
 const elements = {
     armorSelect: document.getElementById('armorSelect'),
     armorInfo: document.getElementById('armorInfo'),
@@ -38,7 +29,6 @@ const elements = {
     scrollTop: document.getElementById('scrollTop')
 };
 
-// ============== ИНИЦИАЛИЗАЦИЯ ==============
 document.addEventListener('DOMContentLoaded', () => {
     initArmorSelect();
     initEventListeners();
@@ -78,38 +68,23 @@ function initEventListeners() {
     }
     
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.modal.classList.contains('active')) {
-            closeModal();
-        }
+        if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
     });
 }
 
 function initScrollEffects() {
     const header = document.querySelector('.header');
-    
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.background = 'rgba(10, 10, 11, 0.98)';
-        } else {
-            header.style.background = 'rgba(10, 10, 11, 0.9)';
-        }
-        
-        if (window.scrollY > 500) {
-            elements.scrollTop.classList.add('visible');
-        } else {
-            elements.scrollTop.classList.remove('visible');
-        }
+        header.style.background = window.scrollY > 50 ? 'rgba(10, 10, 11, 0.98)' : 'rgba(10, 10, 11, 0.9)';
+        elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
     });
-    
     elements.scrollTop.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
 
-// ============== ОБРАБОТЧИКИ СОБЫТИЙ ==============
 function handleArmorChange(e) {
     const armorId = e.target.value;
-    
     if (!armorId) {
         state.selectedArmor = null;
         renderArmorInfo();
@@ -117,7 +92,6 @@ function handleArmorChange(e) {
         updateStats();
         return;
     }
-    
     state.selectedArmor = ARMORS.find(a => a.id === armorId);
     renderArmorInfo();
     updateContainerSelect();
@@ -126,7 +100,6 @@ function handleArmorChange(e) {
 
 function handleContainerChange(e) {
     const containerId = e.target.value;
-    
     if (!containerId) {
         state.selectedContainer = null;
         state.artifacts = [];
@@ -135,7 +108,6 @@ function handleContainerChange(e) {
         updateStats();
         return;
     }
-    
     state.selectedContainer = CONTAINERS.find(c => c.id === containerId);
     state.artifacts = new Array(state.selectedContainer.slots).fill(null);
     renderContainerInfo();
@@ -147,11 +119,9 @@ function resetBuild() {
     state.selectedArmor = null;
     state.selectedContainer = null;
     state.artifacts = [];
-    
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
     elements.containerSelect.disabled = true;
-    
     renderArmorInfo();
     renderContainerInfo();
     renderArtifactSlots();
@@ -161,44 +131,29 @@ function resetBuild() {
 function resetContainer() {
     state.selectedContainer = null;
     state.artifacts = [];
-    
     elements.containerSelect.value = '';
     elements.containerSelect.disabled = true;
     elements.containerSelect.innerHTML = '<option value="">Сначала выберите броню...</option>';
-    
     renderContainerInfo();
     renderArtifactSlots();
 }
 
-// ============== РЕНДЕРИНГ ==============
 function renderArmorInfo() {
     if (!state.selectedArmor) {
         elements.armorInfo.innerHTML = `
             <div class="armor-info__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 <span>Выберите броню для просмотра характеристик</span>
-            </div>
-        `;
+            </div>`;
         return;
     }
-    
     const armor = state.selectedArmor;
-    const statsHtml = Object.entries(armor.stats)
-        .map(([key, value]) => {
-            const name = STAT_NAMES[key] || key;
-            const unit = STAT_UNITS[key] || '';
-            const { displayValue, colorClass } = formatStatValue(key, value);
-            
-            return `
-                <div class="armor-details__stat">
-                    <span class="armor-details__stat-name">${name}</span>
-                    <span class="armor-details__stat-value ${colorClass}">${displayValue}${unit}</span>
-                </div>
-            `;
-        })
-        .join('');
+    const statsHtml = Object.entries(armor.stats).map(([key, value]) => {
+        const name = STAT_NAMES[key] || key;
+        const unit = STAT_UNITS[key] || '';
+        const { displayValue, colorClass } = formatStatValue(key, value);
+        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${name}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+    }).join('');
     
     elements.armorInfo.innerHTML = `
         <div class="armor-details">
@@ -207,63 +162,36 @@ function renderArmorInfo() {
                 <span class="armor-details__rarity rarity--${armor.rarity}">${armor.rarityName}</span>
             </div>
             <div class="armor-details__type">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 ${armor.type}
             </div>
-            <div class="armor-details__stats">
-                ${statsHtml}
-            </div>
-        </div>
-    `;
+            <div class="armor-details__stats">${statsHtml}</div>
+        </div>`;
 }
 
 function renderContainerInfo() {
     if (!state.selectedContainer) {
         elements.containerInfo.innerHTML = `
             <div class="container-info__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
                 <span>${state.selectedArmor ? 'Выберите контейнер' : 'Контейнер будет доступен после выбора брони'}</span>
-            </div>
-        `;
+            </div>`;
         return;
     }
-    
     const container = state.selectedContainer;
+    const statsHtml = Object.entries(container.stats).map(([key, value]) => {
+        const name = STAT_NAMES[key] || key;
+        const unit = STAT_UNITS[key] || '';
+        const { displayValue, colorClass } = formatStatValue(key, value);
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${name}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+    }).join('');
     
-    const statsHtml = Object.entries(container.stats)
-        .map(([key, value]) => {
-            const name = STAT_NAMES[key] || key;
-            const unit = STAT_UNITS[key] || '';
-            const { displayValue, colorClass } = formatStatValue(key, value);
-            
-            return `
-                <div class="container-details__stat">
-                    <span class="container-details__stat-name">${name}</span>
-                    <span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span>
-                </div>
-            `;
-        })
-        .join('');
-    
-    const shieldingHtml = Object.entries(container.shielding)
-        .map(([key, value]) => {
-            const name = STAT_NAMES[key] || key;
-            const unit = STAT_UNITS[key] || '';
-            // Экранирование радиации — отрицательное значение = хорошо
-            const { displayValue, colorClass } = formatStatValue(key, value);
-            
-            return `
-                <div class="container-details__stat">
-                    <span class="container-details__stat-name">${name}</span>
-                    <span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span>
-                </div>
-            `;
-        })
-        .join('') || '<span class="container-details__stat-name">Нет экранирования</span>';
+    const shieldingHtml = Object.entries(container.shielding).map(([key, value]) => {
+        const name = STAT_NAMES[key] || key;
+        const unit = STAT_UNITS[key] || '';
+        const { displayValue, colorClass } = formatStatValue(key, value);
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${name}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+    }).join('') || '<span class="container-details__stat-name">Нет экранирования</span>';
     
     elements.containerInfo.innerHTML = `
         <div class="container-details">
@@ -272,40 +200,27 @@ function renderContainerInfo() {
                 <span class="container-details__rarity rarity--${container.rarity}">${container.rarityName}</span>
             </div>
             <div class="container-details__type">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
                 ${container.typeName} • ${container.slots} слот${getSlotWord(container.slots)}
             </div>
-            ${Object.keys(container.stats).length > 0 ? `
-                <div class="container-details__stats">
-                    ${statsHtml}
-                </div>
-            ` : ''}
+            ${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}
             <div class="container-details__shielding">
                 <div class="container-details__shielding-title">Экранирование:</div>
                 ${shieldingHtml}
             </div>
-        </div>
-    `;
+        </div>`;
 }
 
 function renderArtifactSlots() {
     if (!state.selectedContainer) {
         elements.artifactSlots.innerHTML = `
             <div class="artifact-slots__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 8v8"/>
-                    <path d="M8 12h8"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                 <span>Выберите контейнер для добавления артефактов</span>
-            </div>
-        `;
+            </div>`;
         elements.artifactCounter.textContent = '0/0';
         return;
     }
-    
     const filledSlots = state.artifacts.filter(a => a !== null).length;
     elements.artifactCounter.textContent = `${filledSlots}/${state.selectedContainer.slots}`;
     
@@ -313,37 +228,23 @@ function renderArtifactSlots() {
         if (artifact) {
             return `
                 <div class="artifact-slot" data-index="${index}">
-                    <div class="artifact-slot__icon">
-                        <img src="${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'">
-                    </div>
+                    <div class="artifact-slot__icon"><img src="${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div>
                     <div class="artifact-slot__info">
                         <div class="artifact-slot__name">${artifact.name}</div>
                         <div class="artifact-slot__category">${artifact.categoryName} • Tier ${artifact.tier}</div>
                     </div>
                     <button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="Удалить артефакт">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 6L6 18"/>
-                            <path d="M6 6l12 12"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
                     </button>
-                </div>
-            `;
-        } else {
-            return `
-                <div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})">
-                    <div class="artifact-slot__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 8v8"/>
-                            <path d="M8 12h8"/>
-                        </svg>
-                    </div>
-                    <div class="artifact-slot__info">
-                        <span class="artifact-slot__empty-text">Нажмите, чтобы добавить артефакт</span>
-                    </div>
-                </div>
-            `;
+                </div>`;
         }
+        return `
+            <div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})">
+                <div class="artifact-slot__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                </div>
+                <div class="artifact-slot__info"><span class="artifact-slot__empty-text">Нажмите, чтобы добавить артефакт</span></div>
+            </div>`;
     }).join('');
     
     elements.artifactSlots.innerHTML = `<div class="artifact-slots__grid">${slotsHtml}</div>`;
@@ -353,40 +254,22 @@ function renderArtifactList(artifacts = ARTIFACTS) {
     if (artifacts.length === 0) {
         elements.artifactList.innerHTML = `
             <div class="artifact-list__empty">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                 <span>Артефакты не найдены</span>
-            </div>
-        `;
+            </div>`;
         return;
     }
     
     elements.artifactList.innerHTML = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : artifact.tier;
-        
-        // Генерируем список характеристик артефакта
-        const statsHtml = Object.entries(artifact.stats)
-            .slice(0, 4) // Показываем максимум 4 характеристики для компактности
-            .map(([key, value]) => {
-                const name = STAT_NAMES[key] || key;
-                const unit = STAT_UNITS[key] || '';
-                const { displayValue, colorClass } = formatStatValue(key, value);
-                
-                return `
-                    <div class="artifact-stat">
-                        <span class="artifact-stat__name">${name}</span>
-                        <span class="artifact-stat__value ${colorClass}">${displayValue}${unit}</span>
-                    </div>
-                `;
-            })
-            .join('');
-        
-        const moreStats = Object.keys(artifact.stats).length > 4 
-            ? `<div class="artifact-stat artifact-stat--more">+${Object.keys(artifact.stats).length - 4} ещё</div>` 
-            : '';
+        const statsHtml = Object.entries(artifact.stats).slice(0, 4).map(([key, value]) => {
+            const name = STAT_NAMES[key] || key;
+            const unit = STAT_UNITS[key] || '';
+            const { displayValue, colorClass } = formatStatValue(key, value);
+            return `<div class="artifact-stat"><span class="artifact-stat__name">${name}</span><span class="artifact-stat__value ${colorClass}">${displayValue}${unit}</span></div>`;
+        }).join('');
+        const moreStats = Object.keys(artifact.stats).length > 4 ? `<div class="artifact-stat artifact-stat--more">+${Object.keys(artifact.stats).length - 4} ещё</div>` : '';
         
         return `
             <div class="artifact-item" onclick="selectArtifact('${artifact.id}')">
@@ -400,22 +283,13 @@ function renderArtifactList(artifacts = ARTIFACTS) {
                         </div>
                     </div>
                 </div>
-                <div class="artifact-item__stats">
-                    ${statsHtml}
-                    ${moreStats}
-                </div>
-            </div>
-        `;
+                <div class="artifact-item__stats">${statsHtml}${moreStats}</div>
+            </div>`;
     }).join('');
 }
 
-// ============== КОНТЕЙНЕРЫ ==============
 function updateContainerSelect() {
-    if (!state.selectedArmor) {
-        resetContainer();
-        return;
-    }
-    
+    if (!state.selectedArmor) { resetContainer(); return; }
     const armor = state.selectedArmor;
     const availableContainers = CONTAINERS.filter(container => {
         if (armor.containerTypes.includes('all')) return true;
@@ -423,14 +297,12 @@ function updateContainerSelect() {
     });
     
     elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
-    
     availableContainers.forEach(container => {
         const option = document.createElement('option');
         option.value = container.id;
         option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
         elements.containerSelect.appendChild(option);
     });
-    
     elements.containerSelect.disabled = false;
     
     if (state.selectedContainer) {
@@ -446,7 +318,6 @@ function updateContainerSelect() {
     }
 }
 
-// ============== МОДАЛЬНОЕ ОКНО ==============
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
@@ -456,36 +327,21 @@ function openArtifactModal(slotIndex) {
     });
     renderArtifactList();
     elements.artifactSearch.focus();
-    
-    // Блокируем скролл страницы
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     elements.modal.classList.remove('active');
     state.currentSlotIndex = null;
-    
-    // Разблокируем скролл страницы
     document.body.style.overflow = '';
 }
 
 function filterArtifacts() {
     const searchQuery = elements.artifactSearch.value.toLowerCase().trim();
     const activeFilter = document.querySelector('.filter-btn--active').dataset.category;
-    
     let filtered = ARTIFACTS;
-    
-    if (activeFilter !== 'all') {
-        filtered = filtered.filter(a => a.category === activeFilter);
-    }
-    
-    if (searchQuery) {
-        filtered = filtered.filter(a => 
-            a.name.toLowerCase().includes(searchQuery) ||
-            a.nameEn.toLowerCase().includes(searchQuery)
-        );
-    }
-    
+    if (activeFilter !== 'all') filtered = filtered.filter(a => a.category === activeFilter);
+    if (searchQuery) filtered = filtered.filter(a => a.name.toLowerCase().includes(searchQuery) || a.nameEn.toLowerCase().includes(searchQuery));
     renderArtifactList(filtered);
 }
 
@@ -505,26 +361,19 @@ function removeArtifact(index) {
     updateStats();
 }
 
-// ============== РАСЧЁТ ХАРАКТЕРИСТИК ==============
 function updateStats() {
     const totalStats = calculateTotalStats();
-    
-    // Обновляем все значения
     Object.entries(totalStats).forEach(([key, value]) => {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
             const unit = STAT_UNITS[key] || '';
             const { displayValue, colorClass } = formatStatValue(key, value);
-            
             element.textContent = displayValue + unit;
             element.className = 'stat-row__value ' + colorClass;
         }
     });
-    
-    // Расчёт и отображение приведённой пулестойкости
     updateEffectiveBulletResistance(totalStats.bulletResistance);
     
-    // Проверка накопления радиации
     const netRadiation = totalStats.radiation || 0;
     if (netRadiation > 0) {
         elements.radiationWarning.style.display = 'flex';
@@ -533,7 +382,6 @@ function updateStats() {
         elements.radiationWarning.style.display = 'none';
     }
     
-    // Проверка накопления холода
     const netCold = totalStats.cold || 0;
     if (elements.coldWarning) {
         if (netCold > 0) {
@@ -545,144 +393,77 @@ function updateStats() {
     }
 }
 
-/**
- * Расчёт приведённой пулестойкости
- * Формула: bulletResistance / 6 = процент защиты
- * Максимум 600 единиц = 100%
- */
 function updateEffectiveBulletResistance(bulletResistance) {
     const effectiveElement = document.getElementById('effectiveBulletResistance');
     const percentElement = document.getElementById('bulletResistancePercent');
     const barElement = document.getElementById('bulletResistanceBar');
-    
     if (!effectiveElement) return;
     
-    // Расчёт процента (максимум 100%)
     const percent = Math.min(bulletResistance / 6, 100);
     const clampedPercent = Math.max(0, percent);
-    
     effectiveElement.textContent = bulletResistance;
     percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
-    
-    // Обновляем прогресс-бар
     barElement.style.width = `${clampedPercent}%`;
     
-    // Цвет в зависимости от значения
-    if (clampedPercent >= 70) {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
-    } else if (clampedPercent >= 40) {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
-    } else {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
-    }
+    if (clampedPercent >= 70) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
+    else if (clampedPercent >= 40) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
+    else barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
 }
 
 function calculateTotalStats() {
     const stats = {
-        // Защиты
-        radiationProtection: 0,
-        bioProtection: 0,
-        thermalProtection: 0,
-        psiProtection: 0,
-        frostProtection: 0,
-        
-        // Сопротивления
-        heatResistance: 0,
-        chemResistance: 0,
-        electroResistance: 0,
-        
-        // Броня
-        impactResistance: 0,
-        tearProtection: 0,
-        bulletResistance: 0,
-        
-        // Эффекты
-        regeneration: 0,
-        bleeding: 0,
-        radiation: 0,
-        saturation: 0,
-        cold: 0,
-        
-        // Персонаж
-        maxStamina: 0,
-        staminaRegen: 0,
-        moveSpeed: 0,
-        maxWeight: 0
+        radiationProtection: 0, bioProtection: 0, thermalProtection: 0, psiProtection: 0, frostProtection: 0,
+        heatResistance: 0, chemResistance: 0, electroResistance: 0,
+        impactResistance: 0, tearProtection: 0, bulletResistance: 0,
+        regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
+        maxStamina: 0, staminaRegen: 0, moveSpeed: 0, maxWeight: 0
     };
     
-    // Добавляем статы брони
     if (state.selectedArmor) {
         Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) {
-                stats[key] += value;
-            }
+            if (stats.hasOwnProperty(key)) stats[key] += value;
         });
     }
-    
-    // Добавляем статы контейнера
     if (state.selectedContainer) {
         Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) {
-                stats[key] += value;
-            }
+            if (stats.hasOwnProperty(key)) stats[key] += value;
         });
-        
         Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) {
-                stats[key] += value;
-            }
+            if (stats.hasOwnProperty(key)) stats[key] += value;
         });
     }
-    
-    // Добавляем статы артефактов
     state.artifacts.forEach(artifact => {
         if (artifact) {
             Object.entries(artifact.stats).forEach(([key, value]) => {
-                if (stats.hasOwnProperty(key)) {
-                    stats[key] += value;
-                }
+                if (stats.hasOwnProperty(key)) stats[key] += value;
             });
         }
     });
-    
     return stats;
 }
 
-// ============== ФОРМАТИРОВАНИЕ ЗНАЧЕНИЙ ==============
-/**
- * Форматирует значение стата с учётом инвертированных статов
- * Для radiation, bleeding, cold: минус = хорошо (зелёный), плюс = плохо (красный)
- */
 function formatStatValue(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
-    
-    let displayValue;
-    let colorClass = '';
+    let displayValue, colorClass = '';
     
     if (value === 0) {
         displayValue = '0';
-        colorClass = '';
     } else if (value > 0) {
         displayValue = `+${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
-        // Для инвертированных статов положительное значение = плохо
         colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive';
     } else {
         displayValue = `${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
-        // Для инвертированных статов отрицательное значение = хорошо
         colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative';
     }
-    
     return { displayValue, colorClass };
 }
 
-// ============== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============
 function getSlotWord(count) {
     if (count === 1) return '';
     if (count >= 2 && count <= 4) return 'а';
     return 'ов';
 }
 
-// Экспорт для использования в onclick
 window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
 window.removeArtifact = removeArtifact;
