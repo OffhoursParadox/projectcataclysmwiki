@@ -11,10 +11,8 @@
     <link rel="stylesheet" href="table.css">
 </head>
 <body>
-    <!-- Фоновый слой -->
     <div class="bg-overlay"></div>
 
-    <!-- Шапка -->
     <header class="header">
         <div class="header__container">
             <a href="../index.html" class="header__logo">
@@ -23,36 +21,27 @@
             <nav class="header__nav">
                 <a href="../index.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                     Главная
                 </a>
                 <a href="../Map/index.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>
-                        <path d="M8 2v16"/>
-                        <path d="M16 6v16"/>
+                        <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
                     </svg>
                     Карта
                 </a>
                 <a href="table.html" class="nav-link nav-link--current">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <circle cx="12" cy="12" r="3"/>
+                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                     Артефакты
                 </a>
             </nav>
-            <button class="header__burger" id="burger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <button class="header__burger" id="burger"><span></span><span></span><span></span></button>
         </div>
     </header>
 
-    <!-- Мобильное меню -->
     <div class="mobile-menu" id="mobileMenu">
         <nav class="mobile-menu__nav">
             <a href="../index.html" class="mobile-menu__link">Главная</a>
@@ -62,7 +51,6 @@
     </div>
 
     <main>
-        <!-- Заголовок страницы -->
         <section class="page-hero">
             <div class="container">
                 <h1 class="page-hero__title">Артефакты</h1>
@@ -70,51 +58,28 @@
             </div>
         </section>
 
-        <!-- Навигация по категориям -->
         <nav class="categories-nav">
             <div class="container">
                 <div class="categories-nav__list">
-                    <a href="#gravity" class="category-btn category-btn--gravity">
-                        <span class="category-btn__icon">◆</span>
-                        Гравитационные
-                    </a>
-                    <a href="#chemical" class="category-btn category-btn--chemical">
-                        <span class="category-btn__icon">◆</span>
-                        Химические
-                    </a>
-                    <a href="#electric" class="category-btn category-btn--electric">
-                        <span class="category-btn__icon">◆</span>
-                        Электрические
-                    </a>
-                    <a href="#thermal" class="category-btn category-btn--thermal">
-                        <span class="category-btn__icon">◆</span>
-                        Термические
-                    </a>
-                    <a href="#unique" class="category-btn category-btn--unique">
-                        <span class="category-btn__icon">★</span>
-                        Уникальные
-                    </a>
-                    <a href="#frost" class="category-btn category-btn--frost">
-                        <span class="category-btn__icon">❄</span>
-                        Морозные
-                    </a>
+                    <a href="#gravity" class="category-btn category-btn--gravity"><span class="category-btn__icon">◆</span>Гравитационные</a>
+                    <a href="#chemical" class="category-btn category-btn--chemical"><span class="category-btn__icon">◆</span>Химические</a>
+                    <a href="#electric" class="category-btn category-btn--electric"><span class="category-btn__icon">◆</span>Электрические</a>
+                    <a href="#thermal" class="category-btn category-btn--thermal"><span class="category-btn__icon">◆</span>Термические</a>
+                    <a href="#unique" class="category-btn category-btn--unique"><span class="category-btn__icon">★</span>Уникальные</a>
+                    <a href="#frost" class="category-btn category-btn--frost"><span class="category-btn__icon">❄</span>Морозные</a>
                 </div>
             </div>
         </nav>
 
-        <!-- Таблицы артефактов -->
         <section class="artifacts-section">
             <div class="container">
-                
-                <!-- ГРАВИТАЦИОННЫЕ АРТЕФАКТЫ -->
+
+                <!-- ГРАВИТАЦИОННЫЕ -->
                 <div class="artifact-category" id="gravity">
                     <div class="category-header category-header--gravity">
                         <div class="category-header__icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 2a10 10 0 0 0 0 20"/>
-                                <path d="M12 2a10 10 0 0 1 0 20"/>
-                                <path d="M2 12h20"/>
+                                <circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/>
                             </svg>
                         </div>
                         <h2 class="category-header__title">Гравитационные артефакты</h2>
@@ -132,335 +97,185 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Кровь камня -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/BS.png" alt="Кровь камня" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Кровь камня</span>
-                                            <span class="artifact-name__en">Blood stone</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +1.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -0.25/сек</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/BS.png" alt="Кровь камня" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Кровь камня</span><span class="artifact-name__en">Blood stone</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +1.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -0.25/сек</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">3 200 ₽</span></td>
                                 </tr>
-                                <!-- Выверт -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Vivert.png" alt="Выверт" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Выверт</span>
-                                            <span class="artifact-name__en">Vyvert</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от разрывов: 20</span>
-                                            <span class="property property--positive">Макс. вес: +6.00 кг</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Vivert.png" alt="Выверт" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Выверт</span><span class="artifact-name__en">Vyvert</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от разрывов: 20</span>
+                                        <span class="property property--positive">Макс. вес: +6.00 кг</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">5 000 ₽</span></td>
                                 </tr>
-                                <!-- Медуза -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Medusa.png" alt="Медуза" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Медуза</span>
-                                            <span class="artifact-name__en">Medusa</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от радиации: 20</span>
-                                            <span class="property property--positive">Макс. вес: +4.00 кг</span>
-                                            <span class="property property--positive">Радиация: -2.00 мЗв/сек</span>
-                                            <span class="property property--negative">Пулестойкость: -3</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Medusa.png" alt="Медуза" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Медуза</span><span class="artifact-name__en">Medusa</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от радиации: 20</span>
+                                        <span class="property property--positive">Макс. вес: +4.00 кг</span>
+                                        <span class="property property--positive">Радиация: -2.00 мЗв/сек</span>
+                                        <span class="property property--negative">Пулестойкость: -3</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">12 000 ₽</span></td>
                                 </tr>
-                                <!-- Каменный цветок -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/SF.png" alt="Каменный цветок" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Каменный цветок</span>
-                                            <span class="artifact-name__en">Cristall flower</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от пси-излучения: 20</span>
-                                            <span class="property property--positive">Макс. вес: +6.00 кг</span>
-                                            <span class="property property--positive">Пулестойкость: 8</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/SF.png" alt="Каменный цветок" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Каменный цветок</span><span class="artifact-name__en">Cristall flower</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от пси-излучения: 20</span>
+                                        <span class="property property--positive">Макс. вес: +6.00 кг</span>
+                                        <span class="property property--positive">Пулестойкость: 8</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">12 500 ₽</span></td>
                                 </tr>
-                                <!-- Ломоть мяса -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/LM.png" alt="Ломоть мяса" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Ломоть мяса</span>
-                                            <span class="artifact-name__en">Mincer meat</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +2.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -0.75/сек</span>
-                                            <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/LM.png" alt="Ломоть мяса" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Ломоть мяса</span><span class="artifact-name__en">Mincer meat</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +2.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -0.75/сек</span>
+                                        <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">13 500 ₽</span></td>
                                 </tr>
-                                <!-- Грави -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Gravy.png" alt="Грави" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Грави</span>
-                                            <span class="artifact-name__en">Gravy</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от разрывов: 30</span>
-                                            <span class="property property--positive">Макс. вес: +12.00 кг</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Gravy.png" alt="Грави" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Грави</span><span class="artifact-name__en">Gravy</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от разрывов: 30</span>
+                                        <span class="property property--positive">Макс. вес: +12.00 кг</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">21 000 ₽</span></td>
                                 </tr>
-                                <!-- Ночная звезда -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/NS.png" alt="Ночная звезда" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Ночная звезда</span>
-                                            <span class="artifact-name__en">Night star</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Пулестойкость: 21</span>
-                                            <span class="property property--negative">Максимальная выносливость: -2.00%</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/NS.png" alt="Ночная звезда" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Ночная звезда</span><span class="artifact-name__en">Night star</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Пулестойкость: 21</span>
+                                        <span class="property property--negative">Максимальная выносливость: -2.00%</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">26 100 ₽</span></td>
                                 </tr>
-                                <!-- Ртутный шар -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/RB.png" alt="Ртутный шар" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Ртутный шар</span>
-                                            <span class="artifact-name__en">Mercury ball</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Гашение удара: 20</span>
-                                            <span class="property property--positive">Защита от радиации: 20</span>
-                                            <span class="property property--positive">Защита от разрывов: 15</span>
-                                            <span class="property property--positive">Насыщение: +1.00%/сек</span>
-                                            <span class="property property--negative">Макс. вес: -6.00 кг</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/RB.png" alt="Ртутный шар" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Ртутный шар</span><span class="artifact-name__en">Mercury ball</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Гашение удара: 20</span>
+                                        <span class="property property--positive">Защита от радиации: 20</span>
+                                        <span class="property property--positive">Защита от разрывов: 15</span>
+                                        <span class="property property--positive">Насыщение: +1.00%/сек</span>
+                                        <span class="property property--negative">Макс. вес: -6.00 кг</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">30 000 ₽</span></td>
                                 </tr>
-                                <!-- Золотая рыбка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/GF.png" alt="Золотая рыбка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Золотая рыбка</span>
-                                            <span class="artifact-name__en">Gold fish</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от разрыва: 60</span>
-                                            <span class="property property--positive">Макс. вес: +15.00 кг</span>
-                                            <span class="property property--negative">Максимальная выносливость: -5.00%</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/GF.png" alt="Золотая рыбка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Золотая рыбка</span><span class="artifact-name__en">Gold fish</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от разрыва: 60</span>
+                                        <span class="property property--positive">Макс. вес: +15.00 кг</span>
+                                        <span class="property property--negative">Максимальная выносливость: -5.00%</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">31 000 ₽</span></td>
                                 </tr>
-                                <!-- Пружина -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Pruzh.png" alt="Пружина" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Пружина</span>
-                                            <span class="artifact-name__en">Spring</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Гашение удара: 60</span>
-                                            <span class="property property--positive">Макс. вес: +8.00 кг</span>
-                                            <span class="property property--negative">Защита от биозаражения: -20</span>
-                                            <span class="property property--negative">Защита от температуры: -20</span>
-                                            <span class="property property--negative">Термозащита: -20</span>
-                                            <span class="property property--negative">Химзащита: -20</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Pruzh.png" alt="Пружина" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Пружина</span><span class="artifact-name__en">Spring</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Гашение удара: 60</span>
+                                        <span class="property property--positive">Макс. вес: +8.00 кг</span>
+                                        <span class="property property--negative">Защита от биозаражения: -20</span>
+                                        <span class="property property--negative">Защита от температуры: -20</span>
+                                        <span class="property property--negative">Термозащита: -20</span>
+                                        <span class="property property--negative">Химзащита: -20</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">40 200 ₽</span></td>
                                 </tr>
-                                <!-- Золотистый грави -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/GG.png" alt="Золотистый грави" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Золотистый грави</span>
-                                            <span class="artifact-name__en">Golden gravel</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от разрывов: 40</span>
-                                            <span class="property property--positive">Макс. вес: +30.00 кг</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/GG.png" alt="Золотистый грави" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Золотистый грави</span><span class="artifact-name__en">Golden gravel</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от разрывов: 40</span>
+                                        <span class="property property--positive">Макс. вес: +30.00 кг</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">46 000 ₽</span></td>
                                 </tr>
-                                <!-- Янтарник -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Yantarnik.png" alt="Янтарник" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Янтарник</span>
-                                            <span class="artifact-name__en">Yantarnik</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Макс. вес: +18.00 кг</span>
-                                            <span class="property property--positive">Пулестойкость: 24</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Yantarnik.png" alt="Янтарник" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Янтарник</span><span class="artifact-name__en">Yantarnik</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Макс. вес: +18.00 кг</span>
+                                        <span class="property property--positive">Пулестойкость: 24</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">52 000 ₽</span></td>
                                 </tr>
-                                <!-- Душа -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Soul.png" alt="Душа" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Душа</span>
-                                            <span class="artifact-name__en">Soul</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +6.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -3.00/сек</span>
-                                            <span class="property property--negative">Макс. выносливость: -12.00%</span>
-                                            <span class="property property--negative">Насыщение: -2.25%/сек</span>
-                                            <span class="property property--negative">Пулестойкость: -10</span>
-                                            <span class="property property--negative">Радиация: +5.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Soul.png" alt="Душа" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Душа</span><span class="artifact-name__en">Soul</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +6.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -3.00/сек</span>
+                                        <span class="property property--negative">Макс. выносливость: -12.00%</span>
+                                        <span class="property property--negative">Насыщение: -2.25%/сек</span>
+                                        <span class="property property--negative">Пулестойкость: -10</span>
+                                        <span class="property property--negative">Радиация: +5.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">61 000 ₽</span></td>
                                 </tr>
-                                <!-- Тёмная медуза -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/DarkMedusa.png" alt="Тёмная медуза" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Тёмная медуза</span>
-                                            <span class="artifact-name__en">Dark medusa</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Пулестойкость: 42</span>
-                                            <span class="property property--negative">Регенерация: -0.25%/сек</span>
-                                            <span class="property property--negative">Максимальная выносливость: -10.00%</span>
-                                            <span class="property property--negative">Радиация: +5.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/DarkMedusa.png" alt="Тёмная медуза" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Тёмная медуза</span><span class="artifact-name__en">Dark medusa</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Пулестойкость: 42</span>
+                                        <span class="property property--negative">Регенерация: -0.25%/сек</span>
+                                        <span class="property property--negative">Максимальная выносливость: -10.00%</span>
+                                        <span class="property property--negative">Радиация: +5.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">78 000 ₽</span></td>
                                 </tr>
-                                <!-- Протомедуза -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/ProtoMedusa.png" alt="Протомедуза" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Протомедуза</span>
-                                            <span class="artifact-name__en">Protomedusa</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от радиации: 80</span>
-                                            <span class="property property--positive">Макс. вес: +4.00 кг</span>
-                                            <span class="property property--positive">Радиация: -8.00 мЗв/сек</span>
-                                            <span class="property property--negative">Макс. выносливость: -5.00%</span>
-                                            <span class="property property--negative">Восстановление сил: -1.00%/сек</span>
-                                            <span class="property property--negative">Пулестойкость: -18</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/ProtoMedusa.png" alt="Протомедуза" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Протомедуза</span><span class="artifact-name__en">Protomedusa</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от радиации: 80</span>
+                                        <span class="property property--positive">Макс. вес: +4.00 кг</span>
+                                        <span class="property property--positive">Радиация: -8.00 мЗв/сек</span>
+                                        <span class="property property--negative">Макс. выносливость: -5.00%</span>
+                                        <span class="property property--negative">Восстановление сил: -1.00%/сек</span>
+                                        <span class="property property--negative">Пулестойкость: -18</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">80 200 ₽</span></td>
                                 </tr>
                             </tbody>
@@ -468,14 +283,12 @@
                     </div>
                 </div>
 
-                <!-- ХИМИЧЕСКИЕ АРТЕФАКТЫ -->
+                <!-- ХИМИЧЕСКИЕ -->
                 <div class="artifact-category" id="chemical">
                     <div class="category-header category-header--chemical">
                         <div class="category-header__icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/>
-                                <path d="M8.5 2h7"/>
-                                <path d="M7 16h10"/>
+                                <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/>
                             </svg>
                         </div>
                         <h2 class="category-header__title">Химические артефакты</h2>
@@ -493,269 +306,149 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Слизь -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Slime.png" alt="Слизь" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Слизь</span>
-                                            <span class="artifact-name__en">Slime</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от биозаражения: 10</span>
-                                            <span class="property property--positive">Кровотечение: -1.50/сек</span>
-                                            <span class="property property--positive">Насыщение: +0.45%/сек</span>
-                                            <span class="property property--positive">Химзащита: 10</span>
-                                            <span class="property property--negative">Восст. здоровья: -0.30%/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Slime.png" alt="Слизь" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Слизь</span><span class="artifact-name__en">Slime</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от биозаражения: 10</span>
+                                        <span class="property property--positive">Кровотечение: -1.50/сек</span>
+                                        <span class="property property--positive">Насыщение: +0.45%/сек</span>
+                                        <span class="property property--positive">Химзащита: 10</span>
+                                        <span class="property property--negative">Восст. здоровья: -0.30%/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">4 000 ₽</span></td>
                                 </tr>
-                                <!-- Колючка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Thorn.png" alt="Колючка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Колючка</span>
-                                            <span class="artifact-name__en">Rusty thorn</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от биозаражения: 15</span>
-                                            <span class="property property--positive">Защита от радиации: 30</span>
-                                            <span class="property property--positive">Радиация: -3.00 мЗв/сек</span>
-                                            <span class="property property--positive">Химзащита: 15</span>
-                                            <span class="property property--negative">Кровотечение: +1.50/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Thorn.png" alt="Колючка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Колючка</span><span class="artifact-name__en">Rusty thorn</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от биозаражения: 15</span>
+                                        <span class="property property--positive">Защита от радиации: 30</span>
+                                        <span class="property property--positive">Радиация: -3.00 мЗв/сек</span>
+                                        <span class="property property--positive">Химзащита: 15</span>
+                                        <span class="property property--negative">Кровотечение: +1.50/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">10 300 ₽</span></td>
                                 </tr>
-                                <!-- Слизняк -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Slug.png" alt="Слизняк" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Слизняк</span>
-                                            <span class="artifact-name__en">Slug</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Кровотечение: -2.00/сек</span>
-                                            <span class="property property--positive">Насыщение: +1.25%/сек</span>
-                                            <span class="property property--negative">Регенерация: -1.00%/сек</span>
-                                            <span class="property property--negative">Макс. вес: -3.00 кг</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Slug.png" alt="Слизняк" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Слизняк</span><span class="artifact-name__en">Slug</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Кровотечение: -2.00/сек</span>
+                                        <span class="property property--positive">Насыщение: +1.25%/сек</span>
+                                        <span class="property property--negative">Регенерация: -1.00%/сек</span>
+                                        <span class="property property--negative">Макс. вес: -3.00 кг</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">11 800 ₽</span></td>
                                 </tr>
-                                <!-- Желчь камня -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/BileStone.png" alt="Желчь камня" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Желчь камня</span>
-                                            <span class="artifact-name__en">Bile stone</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Макс. вес: +5.00 кг</span>
-                                            <span class="property property--negative">Максимальная выносливость: -2.00%</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/BileStone.png" alt="Желчь камня" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Желчь камня</span><span class="artifact-name__en">Bile stone</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Макс. вес: +5.00 кг</span>
+                                        <span class="property property--negative">Максимальная выносливость: -2.00%</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">21 000 ₽</span></td>
                                 </tr>
-                                <!-- Болотный гнилец -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/SR.png" alt="Болотный гнилец" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Болотный гнилец</span>
-                                            <span class="artifact-name__en">Mica</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от биозаражения: 20</span>
-                                            <span class="property property--positive">Насыщение: +2.35%/сек</span>
-                                            <span class="property property--positive">Химзащита: 40</span>
-                                            <span class="property property--negative">Регенерация: -1.75%/сек</span>
-                                            <span class="property property--negative">Макс. вес: -5.00 кг</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/SR.png" alt="Болотный гнилец" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Болотный гнилец</span><span class="artifact-name__en">Mica</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от биозаражения: 20</span>
+                                        <span class="property property--positive">Насыщение: +2.35%/сек</span>
+                                        <span class="property property--positive">Химзащита: 40</span>
+                                        <span class="property property--negative">Регенерация: -1.75%/сек</span>
+                                        <span class="property property--negative">Макс. вес: -5.00 кг</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">22 000 ₽</span></td>
                                 </tr>
-                                <!-- Кристальная колючка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/CT.png" alt="Кристальная колючка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Кристальная колючка</span>
-                                            <span class="artifact-name__en">Crystal thorn</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от радиации: 40</span>
-                                            <span class="property property--positive">Радиация: -4.00 мЗв/сек</span>
-                                            <span class="property property--negative">Защита от биозаражения: -15</span>
-                                            <span class="property property--negative">Кровотечение: +2.00/сек</span>
-                                            <span class="property property--negative">Химзащита: -9</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/CT.png" alt="Кристальная колючка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Кристальная колючка</span><span class="artifact-name__en">Crystal thorn</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от радиации: 40</span>
+                                        <span class="property property--positive">Радиация: -4.00 мЗв/сек</span>
+                                        <span class="property property--negative">Защита от биозаражения: -15</span>
+                                        <span class="property property--negative">Кровотечение: +2.00/сек</span>
+                                        <span class="property property--negative">Химзащита: -9</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">31 000 ₽</span></td>
                                 </tr>
-                                <!-- Светляк -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Svetlak.png" alt="Светляк" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Светляк</span>
-                                            <span class="artifact-name__en">Firefly</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +5.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -2.00/сек</span>
-                                            <span class="property property--negative">Макс. выносливость: -8.00%</span>
-                                            <span class="property property--negative">Насыщение: -1.75%/сек</span>
-                                            <span class="property property--negative">Радиация: +4.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Svetlak.png" alt="Светляк" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Светляк</span><span class="artifact-name__en">Firefly</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +5.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -2.00/сек</span>
+                                        <span class="property property--negative">Макс. выносливость: -8.00%</span>
+                                        <span class="property property--negative">Насыщение: -1.75%/сек</span>
+                                        <span class="property property--negative">Радиация: +4.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">42 000 ₽</span></td>
                                 </tr>
-                                <!-- Слюда -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Sluda.png" alt="Слюда" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Слюда</span>
-                                            <span class="artifact-name__en">Mica</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от биозаражения: 60</span>
-                                            <span class="property property--positive">Макс. вес: +6.50 кг</span>
-                                            <span class="property property--positive">Максимальная выносливость: +35.00%</span>
-                                            <span class="property property--negative">Химзащита: -20</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Sluda.png" alt="Слюда" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Слюда</span><span class="artifact-name__en">Mica</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от биозаражения: 60</span>
+                                        <span class="property property--positive">Макс. вес: +6.50 кг</span>
+                                        <span class="property property--positive">Максимальная выносливость: +35.00%</span>
+                                        <span class="property property--negative">Химзащита: -20</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">45 000 ₽</span></td>
                                 </tr>
-                                <!-- Плёнка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Plenka.png" alt="Плёнка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Плёнка</span>
-                                            <span class="artifact-name__en">Dummy pellicle</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от биозаражения: 20</span>
-                                            <span class="property property--positive">Насыщение: +2.50%/сек</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Plenka.png" alt="Плёнка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Плёнка</span><span class="artifact-name__en">Dummy pellicle</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от биозаражения: 20</span>
+                                        <span class="property property--positive">Насыщение: +2.50%/сек</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">47 000 ₽</span></td>
                                 </tr>
-                                <!-- Морской ёж -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/SH.png" alt="Морской ёж" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Морской ёж</span>
-                                            <span class="artifact-name__en">Rusty sea urchin</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от радиации: 50</span>
-                                            <span class="property property--positive">Радиация: -5.00 мЗв/сек</span>
-                                            <span class="property property--negative">Кровотечение: +3.00/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/SH.png" alt="Морской ёж" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Морской ёж</span><span class="artifact-name__en">Rusty sea urchin</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от радиации: 50</span>
+                                        <span class="property property--positive">Радиация: -5.00 мЗв/сек</span>
+                                        <span class="property property--negative">Кровотечение: +3.00/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">59 000 ₽</span></td>
                                 </tr>
-                                <!-- Колобок -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Kolobok.png" alt="Колобок" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Колобок</span>
-                                            <span class="artifact-name__en">Fuzz kolobok</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +2.50%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -3.00/сек</span>
-                                            <span class="property property--negative">Макс. выносливость: -5.00%</span>
-                                            <span class="property property--negative">Пулестойкость: -8</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Kolobok.png" alt="Колобок" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Колобок</span><span class="artifact-name__en">Fuzz kolobok</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +2.50%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -3.00/сек</span>
+                                        <span class="property property--negative">Макс. выносливость: -5.00%</span>
+                                        <span class="property property--negative">Пулестойкость: -8</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">78 000 ₽</span></td>
                                 </tr>
-                                <!-- Пузырь -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Bio/Puzir.png" alt="Пузырь" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Пузырь</span>
-                                            <span class="artifact-name__en">Baloon</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от радиации: 60</span>
-                                            <span class="property property--positive">Радиация: -6.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Bio/Puzir.png" alt="Пузырь" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Пузырь</span><span class="artifact-name__en">Baloon</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от радиации: 60</span>
+                                        <span class="property property--positive">Радиация: -6.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">86 000 ₽</span></td>
                                 </tr>
                             </tbody>
@@ -763,13 +456,11 @@
                     </div>
                 </div>
 
-                <!-- ЭЛЕКТРИЧЕСКИЕ АРТЕФАКТЫ -->
+                <!-- ЭЛЕКТРИЧЕСКИЕ -->
                 <div class="artifact-category" id="electric">
                     <div class="category-header category-header--electric">
                         <div class="category-header__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                         </div>
                         <h2 class="category-header__title">Электрические артефакты</h2>
                         <span class="category-header__count">10 артефактов</span>
@@ -786,217 +477,117 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Бенгальский огонь -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/BF.png" alt="Бенгальский огонь" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Бенгальский огонь</span>
-                                            <span class="artifact-name__en">Sparkler</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +0.50%/сек</span>
-                                            <span class="property property--positive">Электрозащита: 10</span>
-                                            <span class="property property--negative">Радиация: +0.50 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/BF.png" alt="Бенгальский огонь" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Бенгальский огонь</span><span class="artifact-name__en">Sparkler</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +0.50%/сек</span>
+                                        <span class="property property--positive">Электрозащита: 10</span>
+                                        <span class="property property--negative">Радиация: +0.50 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">6 000 ₽</span></td>
                                 </tr>
-                                <!-- Вспышка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Vspishka.png" alt="Вспышка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Вспышка</span>
-                                            <span class="artifact-name__en">Electra flash</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +1.00%/сек</span>
-                                            <span class="property property--positive">Электрозащита: 15</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Vspishka.png" alt="Вспышка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Вспышка</span><span class="artifact-name__en">Electra flash</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +1.00%/сек</span>
+                                        <span class="property property--positive">Электрозащита: 15</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">12 000 ₽</span></td>
                                 </tr>
-                                <!-- Батарейка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Battery.png" alt="Батарейка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Батарейка</span>
-                                            <span class="artifact-name__en">Battery</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +1.50%/сек</span>
-                                            <span class="property property--positive">Скорость передвижения: +2.00%</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Battery.png" alt="Батарейка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Батарейка</span><span class="artifact-name__en">Battery</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +1.50%/сек</span>
+                                        <span class="property property--positive">Скорость передвижения: +2.00%</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">15 000 ₽</span></td>
                                 </tr>
-                                <!-- Лунный свет -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Moonlight.png" alt="Лунный свет" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Лунный свет</span>
-                                            <span class="artifact-name__en">Moonlight</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от пси-излучения: 45</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                            <span class="property property--negative">Электрозащита: -20</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Moonlight.png" alt="Лунный свет" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Лунный свет</span><span class="artifact-name__en">Moonlight</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от пси-излучения: 45</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                        <span class="property property--negative">Электрозащита: -20</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">22 000 ₽</span></td>
                                 </tr>
-                                <!-- Небесный камень -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/SS.png" alt="Небесный камень" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Небесный камень</span>
-                                            <span class="artifact-name__en">Heavenly Stone</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +2.25%/сек</span>
-                                            <span class="property property--positive">Электрозащита: 25</span>
-                                            <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/SS.png" alt="Небесный камень" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Небесный камень</span><span class="artifact-name__en">Heavenly Stone</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +2.25%/сек</span>
+                                        <span class="property property--positive">Электрозащита: 25</span>
+                                        <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">22 000 ₽</span></td>
                                 </tr>
-                                <!-- Медиум -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Medium.png" alt="Медиум" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Медиум</span>
-                                            <span class="artifact-name__en">Medium</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от пси-излучения: 60</span>
-                                            <span class="property property--negative">Электрозащита: -35</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Medium.png" alt="Медиум" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Медиум</span><span class="artifact-name__en">Medium</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от пси-излучения: 60</span>
+                                        <span class="property property--negative">Электрозащита: -35</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">23 000 ₽</span></td>
                                 </tr>
-                                <!-- Электрослюда -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Electrosluda.png" alt="Электрослюда" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Электрослюда</span>
-                                            <span class="artifact-name__en">Electrosluda</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Максимальная выносливость: +15.00%</span>
-                                            <span class="property property--positive">Электрозащита: 20</span>
-                                            <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Electrosluda.png" alt="Электрослюда" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Электрослюда</span><span class="artifact-name__en">Electrosluda</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Максимальная выносливость: +15.00%</span>
+                                        <span class="property property--positive">Электрозащита: 20</span>
+                                        <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">27 000 ₽</span></td>
                                 </tr>
-                                <!-- Пустышка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Pustishka.png" alt="Пустышка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Пустышка</span>
-                                            <span class="artifact-name__en">Dummy dummy</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +5.25%/сек</span>
-                                            <span class="property property--positive">Пулестойкость: 8</span>
-                                            <span class="property property--negative">Максимальная выносливость: -30.00%</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Pustishka.png" alt="Пустышка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Пустышка</span><span class="artifact-name__en">Dummy dummy</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +5.25%/сек</span>
+                                        <span class="property property--positive">Пулестойкость: 8</span>
+                                        <span class="property property--negative">Максимальная выносливость: -30.00%</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">35 000 ₽</span></td>
                                 </tr>
-                                <!-- Галоген -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Galogen.png" alt="Галоген" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Галоген</span>
-                                            <span class="artifact-name__en">Halogen</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от пси-излучения: 120</span>
-                                            <span class="property property--positive">Максимальная выносливость: +10.00%</span>
-                                            <span class="property property--positive">Скорость передвижения: +5.00%</span>
-                                            <span class="property property--negative">Восст. здоровья: -1.00%/сек</span>
-                                            <span class="property property--negative">Кровотечение: +3.00/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Galogen.png" alt="Галоген" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Галоген</span><span class="artifact-name__en">Halogen</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от пси-излучения: 120</span>
+                                        <span class="property property--positive">Максимальная выносливость: +10.00%</span>
+                                        <span class="property property--positive">Скорость передвижения: +5.00%</span>
+                                        <span class="property property--negative">Восст. здоровья: -1.00%/сек</span>
+                                        <span class="property property--negative">Кровотечение: +3.00/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">61 000 ₽</span></td>
                                 </tr>
-                                <!-- Снежинка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Electro/Snowy.png" alt="Снежинка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Снежинка</span>
-                                            <span class="artifact-name__en">Ice</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Максимальная выносливость: +20.00%</span>
-                                            <span class="property property--positive">Скорость передвижения: +4.00%</span>
-                                            <span class="property property--negative">Восстановление сил: -2.00%/сек</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Electro/Snowy.png" alt="Снежинка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Снежинка</span><span class="artifact-name__en">Ice</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Максимальная выносливость: +20.00%</span>
+                                        <span class="property property--positive">Скорость передвижения: +4.00%</span>
+                                        <span class="property property--negative">Восстановление сил: -2.00%/сек</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">78 000 ₽</span></td>
                                 </tr>
                             </tbody>
@@ -1004,14 +595,11 @@
                     </div>
                 </div>
 
-                <!-- ТЕРМИЧЕСКИЕ АРТЕФАКТЫ -->
+                <!-- ТЕРМИЧЕСКИЕ -->
                 <div class="artifact-category" id="thermal">
                     <div class="category-header category-header--thermal">
                         <div class="category-header__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2v10l3 3"/>
-                                <circle cx="12" cy="14" r="8"/>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10l3 3"/><circle cx="12" cy="14" r="8"/></svg>
                         </div>
                         <h2 class="category-header__title">Термические артефакты</h2>
                         <span class="category-header__count">8 артефактов</span>
@@ -1028,180 +616,100 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Капля -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/Kaplya.png" alt="Капля" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Капля</span>
-                                            <span class="artifact-name__en">Droplets</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Макс. вес: +2.00 кг</span>
-                                            <span class="property property--positive">Радиация: -0.50 мЗв/сек</span>
-                                            <span class="property property--positive">Термозащита: 10</span>
-                                            <span class="property property--negative">Восстановление сил: -0.25%/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/Kaplya.png" alt="Капля" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Капля</span><span class="artifact-name__en">Droplets</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Макс. вес: +2.00 кг</span>
+                                        <span class="property property--positive">Радиация: -0.50 мЗв/сек</span>
+                                        <span class="property property--positive">Термозащита: 10</span>
+                                        <span class="property property--negative">Восстановление сил: -0.25%/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">3 500 ₽</span></td>
                                 </tr>
-                                <!-- Кристалл -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/Crystall.png" alt="Кристалл" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Кристалл</span>
-                                            <span class="artifact-name__en">Cristall</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 20</span>
-                                            <span class="property property--positive">Радиация: -1.00 мЗв/сек</span>
-                                            <span class="property property--positive">Термозащита: 15</span>
-                                            <span class="property property--negative">Восстановление сил: -0.75%/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/Crystall.png" alt="Кристалл" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Кристалл</span><span class="artifact-name__en">Cristall</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 20</span>
+                                        <span class="property property--positive">Радиация: -1.00 мЗв/сек</span>
+                                        <span class="property property--positive">Термозащита: 15</span>
+                                        <span class="property property--negative">Восстановление сил: -0.75%/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">4 800 ₽</span></td>
                                 </tr>
-                                <!-- Огненный шар -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/FB.png" alt="Огненный шар" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Огненный шар</span>
-                                            <span class="artifact-name__en">Fire ball</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 20</span>
-                                            <span class="property property--positive">Защита от температуры: 20</span>
-                                            <span class="property property--positive">Радиация: -1.50 мЗв/сек</span>
-                                            <span class="property property--negative">Восстановление сил: -1.25%/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/FB.png" alt="Огненный шар" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Огненный шар</span><span class="artifact-name__en">Fire ball</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 20</span>
+                                        <span class="property property--positive">Защита от температуры: 20</span>
+                                        <span class="property property--positive">Радиация: -1.50 мЗв/сек</span>
+                                        <span class="property property--negative">Восстановление сил: -1.25%/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">6 800 ₽</span></td>
                                 </tr>
-                                <!-- Мамины бусы -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/MothersB00bs.png" alt="Мамины бусы" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Мамины бусы</span>
-                                            <span class="artifact-name__en">Dummy Glassbeads</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Кровотечение: -5.00/сек</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                            <span class="property property--negative">Термозащита: -10</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/MothersB00bs.png" alt="Мамины бусы" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Мамины бусы</span><span class="artifact-name__en">Dummy Glassbeads</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Кровотечение: -5.00/сек</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                        <span class="property property--negative">Термозащита: -10</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">13 600 ₽</span></td>
                                 </tr>
-                                <!-- Глаз -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/Eye.png" alt="Глаз" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Глаз</span>
-                                            <span class="artifact-name__en">Eye</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от температуры: 30</span>
-                                            <span class="property property--positive">Кровотечение: -10.00/сек</span>
-                                            <span class="property property--positive">Термозащита: 20</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/Eye.png" alt="Глаз" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Глаз</span><span class="artifact-name__en">Eye</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от температуры: 30</span>
+                                        <span class="property property--positive">Кровотечение: -10.00/сек</span>
+                                        <span class="property property--positive">Термозащита: 20</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">19 350 ₽</span></td>
                                 </tr>
-                                <!-- Пламя -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/Flame.png" alt="Пламя" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Пламя</span>
-                                            <span class="artifact-name__en">Flame</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 40</span>
-                                            <span class="property property--positive">Защита от температуры: 80</span>
-                                            <span class="property property--positive">Кровотечение: -15.00/сек</span>
-                                            <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/Flame.png" alt="Пламя" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Пламя</span><span class="artifact-name__en">Flame</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 40</span>
+                                        <span class="property property--positive">Защита от температуры: 80</span>
+                                        <span class="property property--positive">Кровотечение: -15.00/сек</span>
+                                        <span class="property property--negative">Радиация: +3.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">32 000 ₽</span></td>
                                 </tr>
-                                <!-- Огненная петля -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/FP.png" alt="Огненная петля" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Огненная петля</span>
-                                            <span class="artifact-name__en">Fire Loop</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +4.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -2.00/сек</span>
-                                            <span class="property property--negative">Макс. выносливость: -5.00%</span>
-                                            <span class="property property--negative">Насыщение: -1.25%/сек</span>
-                                            <span class="property property--negative">Радиация: +3.25 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/FP.png" alt="Огненная петля" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Огненная петля</span><span class="artifact-name__en">Fire Loop</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +4.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -2.00/сек</span>
+                                        <span class="property property--negative">Макс. выносливость: -5.00%</span>
+                                        <span class="property property--negative">Насыщение: -1.25%/сек</span>
+                                        <span class="property property--negative">Радиация: +3.25 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">36 000 ₽</span></td>
                                 </tr>
-                                <!-- Глаз дракона -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Termo/DE.png" alt="Глаз дракона" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Глаз дракона</span>
-                                            <span class="artifact-name__en">Fire Loop</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +3.00%/сек</span>
-                                            <span class="property property--positive">Защита от обморожения: 40</span>
-                                            <span class="property property--positive">Максимальный вес: +22.00 кг</span>
-                                            <span class="property property--negative">Регенерация: -0.75%/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Termo/DE.png" alt="Глаз дракона" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Глаз дракона</span><span class="artifact-name__en">Fire Loop</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +3.00%/сек</span>
+                                        <span class="property property--positive">Защита от обморожения: 40</span>
+                                        <span class="property property--positive">Максимальный вес: +22.00 кг</span>
+                                        <span class="property property--negative">Регенерация: -0.75%/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price">44 000 ₽</span></td>
                                 </tr>
                             </tbody>
@@ -1209,13 +717,11 @@
                     </div>
                 </div>
 
-                <!-- УНИКАЛЬНЫЕ АРТЕФАКТЫ -->
+                <!-- УНИКАЛЬНЫЕ -->
                 <div class="artifact-category" id="unique">
                     <div class="category-header category-header--unique">
                         <div class="category-header__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         </div>
                         <h2 class="category-header__title">Уникальные артефакты</h2>
                         <span class="category-header__count">2 артефакта</span>
@@ -1232,48 +738,28 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Генератор -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--unique">★</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Quest/Generator.webp" alt="Генератор" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Генератор</span>
-                                            <span class="artifact-name__en">Generator</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Макс. выносливость: +10.00%</span>
-                                            <span class="property property--positive">Восст. сил: +2.50%/сек</span>
-                                            <span class="property property--positive">Скорость передвижения: +3.00%</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Quest/Generator.webp" alt="Генератор" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Генератор</span><span class="artifact-name__en">Generator</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Макс. выносливость: +10.00%</span>
+                                        <span class="property property--positive">Восст. сил: +2.50%/сек</span>
+                                        <span class="property property--positive">Скорость передвижения: +3.00%</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Нельзя продать</span></td>
                                 </tr>
-                                <!-- Медальон -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--unique">★</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Quest/Medalion.png" alt="Медальон" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Медальон</span>
-                                            <span class="artifact-name__en">Medalion</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Регенерация: +3.00%/сек</span>
-                                            <span class="property property--positive">Кровотечение: -2.00/сек</span>
-                                            <span class="property property--negative">Максимальная выносливость: -5.00%</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Quest/Medalion.png" alt="Медальон" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Медальон</span><span class="artifact-name__en">Medalion</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Регенерация: +3.00%/сек</span>
+                                        <span class="property property--positive">Кровотечение: -2.00/сек</span>
+                                        <span class="property property--negative">Максимальная выносливость: -5.00%</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Нельзя продать</span></td>
                                 </tr>
                             </tbody>
@@ -1281,17 +767,11 @@
                     </div>
                 </div>
 
-                <!-- МОРОЗНЫЕ АРТЕФАКТЫ (ИВЕНТ) -->
+                <!-- МОРОЗНЫЕ -->
                 <div class="artifact-category" id="frost">
                     <div class="category-header category-header--frost">
                         <div class="category-header__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2v20"/>
-                                <path d="M2 12h20"/>
-                                <path d="M4.93 4.93l14.14 14.14"/>
-                                <path d="M19.07 4.93L4.93 19.07"/>
-                                <circle cx="12" cy="12" r="4"/>
-                            </svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="M2 12h20"/><path d="M4.93 4.93l14.14 14.14"/><path d="M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
                         </div>
                         <h2 class="category-header__title">Морозные артефакты</h2>
                         <span class="category-header__count">7 артефактов</span>
@@ -1309,178 +789,108 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Прото-снежинка -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/ProtoSnow.jpg" alt="Прото-снежинка" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Прото-снежинка</span>
-                                            <span class="artifact-name__en">Proto-snowflake</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 50</span>
-                                            <span class="property property--positive">Защита от разрывов: 30</span>
-                                            <span class="property property--positive">Холод: -20.00/сек</span>
-                                            <span class="property property--negative">Гашение удара: -20</span>
-                                            <span class="property property--negative">Насыщение: -0.05%/сек</span>
-                                            <span class="property property--negative">Скорость передвижения: -1.00%</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/ProtoSnow.jpg" alt="Прото-снежинка" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Прото-снежинка</span><span class="artifact-name__en">Proto-snowflake</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 50</span>
+                                        <span class="property property--positive">Защита от разрывов: 30</span>
+                                        <span class="property property--positive">Холод: -20.00/сек</span>
+                                        <span class="property property--negative">Гашение удара: -20</span>
+                                        <span class="property property--negative">Насыщение: -0.05%/сек</span>
+                                        <span class="property property--negative">Скорость передвижения: -1.00%</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Обморожник -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/Frostbite.jpg" alt="Обморожник" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Обморожник</span>
-                                            <span class="artifact-name__en">Frostbiter</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Насыщение: +1.00%/сек</span>
-                                            <span class="property property--positive">Термозащита: 20</span>
-                                            <span class="property property--positive">Химзащита: 20</span>
-                                            <span class="property property--negative">Защита от обморожения: -35</span>
-                                            <span class="property property--negative">Пулестойкость: -12</span>
-                                            <span class="property property--negative">Холод: +10.00/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/Frostbite.jpg" alt="Обморожник" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Обморожник</span><span class="artifact-name__en">Frostbiter</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Насыщение: +1.00%/сек</span>
+                                        <span class="property property--positive">Термозащита: 20</span>
+                                        <span class="property property--positive">Химзащита: 20</span>
+                                        <span class="property property--negative">Защита от обморожения: -35</span>
+                                        <span class="property property--negative">Пулестойкость: -12</span>
+                                        <span class="property property--negative">Холод: +10.00/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Ледяной кристалл -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--1">1</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/IceCrystal.jpg" alt="Ледяной кристалл" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Ледяной кристалл</span>
-                                            <span class="artifact-name__en">Ice Crystal</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 40</span>
-                                            <span class="property property--positive">Холод: -15.00/сек</span>
-                                            <span class="property property--negative">Радиация: +0.50 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/IceCrystal.jpg" alt="Ледяной кристалл" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Ледяной кристалл</span><span class="artifact-name__en">Ice Crystal</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 40</span>
+                                        <span class="property property--positive">Холод: -15.00/сек</span>
+                                        <span class="property property--negative">Радиация: +0.50 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Полярная звезда -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/PolarStar.png" alt="Полярная звезда" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Полярная звезда</span>
-                                            <span class="artifact-name__en">Polar Star</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +1.00%/сек</span>
-                                            <span class="property property--positive">Защита от обморожения: 100</span>
-                                            <span class="property property--positive">Максимальная выносливость: +10.00%</span>
-                                            <span class="property property--positive">Холод: -35.00/сек</span>
-                                            <span class="property property--negative">Защита от пси-излучения: -100</span>
-                                            <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/PolarStar.png" alt="Полярная звезда" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Полярная звезда</span><span class="artifact-name__en">Polar Star</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +1.00%/сек</span>
+                                        <span class="property property--positive">Защита от обморожения: 100</span>
+                                        <span class="property property--positive">Максимальная выносливость: +10.00%</span>
+                                        <span class="property property--positive">Холод: -35.00/сек</span>
+                                        <span class="property property--negative">Защита от пси-излучения: -100</span>
+                                        <span class="property property--negative">Радиация: +1.00 мЗв/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Пурпурная слеза -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--2">2</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/PurpleTear.png" alt="Пурпурная слеза" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Пурпурная слеза</span>
-                                            <span class="artifact-name__en">Purple Tear</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +3.00%/сек</span>
-                                            <span class="property property--positive">Защита от температуры: 30</span>
-                                            <span class="property property--positive">Кровотечение: -4.00/сек</span>
-                                            <span class="property property--positive">Максимальная выносливость: +30.00%</span>
-                                            <span class="property property--positive">Скорость передвижения: +5.00%</span>
-                                            <span class="property property--positive">Термозащита: 20</span>
-                                            <span class="property property--negative">Защита от обморожения: -50</span>
-                                            <span class="property property--negative">Насыщение: -0.25%/сек</span>
-                                            <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
-                                            <span class="property property--negative">Холод: +30.00/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/PurpleTear.png" alt="Пурпурная слеза" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Пурпурная слеза</span><span class="artifact-name__en">Purple Tear</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +3.00%/сек</span>
+                                        <span class="property property--positive">Защита от температуры: 30</span>
+                                        <span class="property property--positive">Кровотечение: -4.00/сек</span>
+                                        <span class="property property--positive">Максимальная выносливость: +30.00%</span>
+                                        <span class="property property--positive">Скорость передвижения: +5.00%</span>
+                                        <span class="property property--positive">Термозащита: 20</span>
+                                        <span class="property property--negative">Защита от обморожения: -50</span>
+                                        <span class="property property--negative">Насыщение: -0.25%/сек</span>
+                                        <span class="property property--negative">Радиация: +2.00 мЗв/сек</span>
+                                        <span class="property property--negative">Холод: +30.00/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Ледоцвет -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/IceFlower.png" alt="Ледоцвет" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Ледоцвет</span>
-                                            <span class="artifact-name__en">Ice Flower</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Защита от обморожения: 200</span>
-                                            <span class="property property--positive">Холод: -60.00/сек</span>
-                                            <span class="property property--negative">Защита от температуры: -30</span>
-                                            <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
-                                            <span class="property property--negative">Термозащита: -40</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/IceFlower.png" alt="Ледоцвет" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Ледоцвет</span><span class="artifact-name__en">Ice Flower</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Защита от обморожения: 200</span>
+                                        <span class="property property--positive">Холод: -60.00/сек</span>
+                                        <span class="property property--negative">Защита от температуры: -30</span>
+                                        <span class="property property--negative">Радиация: +1.50 мЗв/сек</span>
+                                        <span class="property property--negative">Термозащита: -40</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
-                                <!-- Тессеракт -->
                                 <tr>
                                     <td class="tier-cell"><span class="tier-badge tier-badge--3">3</span></td>
-                                    <td class="artifact-image-cell">
-                                        <img src="Artifacts/Frost/Tesseract.png" alt="Тессеракт" class="artifact-image">
-                                    </td>
-                                    <td>
-                                        <div class="artifact-name">
-                                            <span class="artifact-name__ru">Тессеракт</span>
-                                            <span class="artifact-name__en">Tesseract</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="properties-list">
-                                            <span class="property property--positive">Восстановление сил: +2.00%/сек</span>
-                                            <span class="property property--positive">Максимальный вес: +16.00 кг</span>
-                                            <span class="property property--positive">Максимальная выносливость: +20.00%</span>
-                                            <span class="property property--positive">Пулестойкость: 32</span>
-                                            <span class="property property--positive">Регенерация: +4.00%/сек</span>
-                                            <span class="property property--positive">Скорость передвижения: +4.00%</span>
-                                            <span class="property property--negative">Гашение удара: -50</span>
-                                            <span class="property property--negative">Защита от обморожения: -100</span>
-                                            <span class="property property--negative">Защита от разрывов: -50</span>
-                                            <span class="property property--negative">Насыщение: -0.75%/сек</span>
-                                            <span class="property property--negative">Радиация: +4.00 мЗв/сек</span>
-                                            <span class="property property--negative">Холод: +30.00/сек</span>
-                                        </div>
-                                    </td>
+                                    <td class="artifact-image-cell"><img src="Artifacts/Frost/Tesseract.png" alt="Тессеракт" class="artifact-image"></td>
+                                    <td><div class="artifact-name"><span class="artifact-name__ru">Тессеракт</span><span class="artifact-name__en">Tesseract</span></div></td>
+                                    <td><div class="properties-list">
+                                        <span class="property property--positive">Восстановление сил: +2.00%/сек</span>
+                                        <span class="property property--positive">Максимальный вес: +16.00 кг</span>
+                                        <span class="property property--positive">Максимальная выносливость: +20.00%</span>
+                                        <span class="property property--positive">Пулестойкость: 32</span>
+                                        <span class="property property--positive">Регенерация: +4.00%/сек</span>
+                                        <span class="property property--positive">Скорость передвижения: +4.00%</span>
+                                        <span class="property property--negative">Гашение удара: -50</span>
+                                        <span class="property property--negative">Защита от обморожения: -100</span>
+                                        <span class="property property--negative">Защита от разрывов: -50</span>
+                                        <span class="property property--negative">Насыщение: -0.75%/сек</span>
+                                        <span class="property property--negative">Радиация: +4.00 мЗв/сек</span>
+                                        <span class="property property--negative">Холод: +30.00/сек</span>
+                                    </div></td>
                                     <td class="price-cell"><span class="price price--none">Ивент</span></td>
                                 </tr>
                             </tbody>
@@ -1498,9 +908,7 @@
                 <p class="footer__copy">© 2026 Project Cataclysm Wiki. Неофициальный фан-сайт.</p>
                 <div class="footer__links">
                     <a href="#" class="footer__social" title="Discord">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
                     </a>
                 </div>
             </div>
@@ -1508,9 +916,7 @@
     </footer>
 
     <button class="scroll-top" id="scrollTop">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 15l-6-6-6 6"/>
-        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
     </button>
 
     <script src="table.js"></script>
