@@ -21,17 +21,23 @@
                 <span class="header__logo-text">CATACLYSM<span class="header__logo-accent">WIKI</span></span>
             </a>
             <nav class="header__nav">
-                <a href="Map/index.html" class="nav-link nav-link--active">
+                <span class="nav-link nav-link--disabled">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
                     </svg>
                     Карта
-                </a>
+                </span>
                 <a href="Table/table.html" class="nav-link nav-link--active">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/>
                     </svg>
                     Артефакты
+                </a>
+                <a href="Calculator/calculator.html" class="nav-link nav-link--active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>
+                    </svg>
+                    Калькулятор
                 </a>
                 <span class="nav-link nav-link--disabled">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -39,25 +45,17 @@
                     </svg>
                     Квесты
                 </span>
-                <span class="nav-link nav-link--disabled">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/>
-                    </svg>
-                    Снаряжение
-                </span>
             </nav>
-            <button class="header__burger" id="burger">
-                <span></span><span></span><span></span>
-            </button>
+            <button class="header__burger" id="burger"><span></span><span></span><span></span></button>
         </div>
     </header>
 
     <div class="mobile-menu" id="mobileMenu">
         <nav class="mobile-menu__nav">
-            <a href="Map/index.html" class="mobile-menu__link">Интерактивная карта</a>
+            <span class="mobile-menu__link mobile-menu__link--disabled">Интерактивная карта</span>
             <a href="Table/table.html" class="mobile-menu__link">Таблица артефактов</a>
+            <a href="Calculator/calculator.html" class="mobile-menu__link">Калькулятор сборок</a>
             <span class="mobile-menu__link mobile-menu__link--disabled">Квесты</span>
-            <span class="mobile-menu__link mobile-menu__link--disabled">Снаряжение</span>
         </nav>
     </div>
 
@@ -68,17 +66,17 @@
                 <p class="hero__subtitle">WIKI</p>
                 <p class="hero__description">Неофициальная база знаний по игре Project Cataclysm. Интерактивная карта, таблицы артефактов и многое другое.</p>
                 <div class="hero__actions">
-                    <a href="Map/index.html" class="btn btn--primary">
-                        <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>
-                        </svg>
-                        Открыть карту
-                    </a>
-                    <a href="Table/table.html" class="btn btn--secondary">
+                    <a href="Table/table.html" class="btn btn--primary">
                         <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                         </svg>
                         Артефакты
+                    </a>
+                    <a href="Calculator/calculator.html" class="btn btn--secondary">
+                        <svg class="btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/>
+                        </svg>
+                        Калькулятор
                     </a>
                 </div>
             </div>
@@ -92,30 +90,41 @@
             <div class="container">
                 <h2 class="section-title"><span class="section-title__icon">◆</span>Разделы базы знаний</h2>
                 <div class="cards-grid">
-                    <a href="Map/index.html" class="card">
-                        <div class="card__glow"></div>
+                    <div class="card card--disabled">
                         <div class="card__image"><img src="images/map.png" alt="Карта"></div>
                         <div class="card__content">
                             <h3 class="card__title">Интерактивная карта</h3>
                             <p class="card__desc">Детальная карта всех локаций с отметками аномалий, тайников и точек интереса</p>
-                            <span class="card__link">Перейти
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                            </span>
                         </div>
-                        <div class="card__status card__status--active">Доступно</div>
-                    </a>
+                        <div class="card__status card__status--soon">На доработке</div>
+                    </div>
+
                     <a href="Table/table.html" class="card">
                         <div class="card__glow"></div>
                         <div class="card__image"><img src="images/tablet.jpg" alt="Таблица"></div>
                         <div class="card__content">
                             <h3 class="card__title">Таблица артефактов</h3>
-                            <p class="card__desc">Полный список артефактов с характеристиками и ценами</p>
+                            <p class="card__desc">Полный список артефактов с характеристиками, ценами и способами получения</p>
                             <span class="card__link">Перейти
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                             </span>
                         </div>
                         <div class="card__status card__status--active">Доступно</div>
                     </a>
+
+                    <a href="Calculator/calculator.html" class="card">
+                        <div class="card__glow"></div>
+                        <div class="card__image"><img src="images/calculator.jpg" alt="Калькулятор"></div>
+                        <div class="card__content">
+                            <h3 class="card__title">Калькулятор сборок</h3>
+                            <p class="card__desc">Собери оптимальный билд с учётом брони, контейнера и артефактов</p>
+                            <span class="card__link">Перейти
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </span>
+                        </div>
+                        <div class="card__status card__status--active">Доступно</div>
+                    </a>
+
                     <div class="card card--disabled">
                         <div class="card__image"><img src="images/quests.png" alt="Квесты"></div>
                         <div class="card__content">
@@ -124,19 +133,12 @@
                         </div>
                         <div class="card__status card__status--soon">В разработке</div>
                     </div>
+
                     <div class="card card--disabled">
                         <div class="card__image"><img src="images/gear.png" alt="Снаряжение"></div>
                         <div class="card__content">
                             <h3 class="card__title">Снаряжение</h3>
                             <p class="card__desc">Каталог оружия, брони и снаряжения с характеристиками</p>
-                        </div>
-                        <div class="card__status card__status--soon">В разработке</div>
-                    </div>
-                    <div class="card card--disabled">
-                        <div class="card__image"><img src="images/tier-list.png" alt="Тир листы"></div>
-                        <div class="card__content">
-                            <h3 class="card__title">Тир листы</h3>
-                            <p class="card__desc">Рейтинги и сравнение снаряжения, артефактов и билдов</p>
                         </div>
                         <div class="card__status card__status--soon">В разработке</div>
                     </div>
@@ -171,9 +173,9 @@
                         <div class="update-item">
                             <span class="update-item__date">11 января 2026</span>
                             <ul class="update-item__list">
+                                <li>Добавлен калькулятор сборок артефактов</li>
                                 <li>Обновлён дизайн основной страницы сайта</li>
                                 <li>Обновлён дизайн таблицы артефактов</li>
-                                <li>Обновлена информация о характеристиках артефактов в таблице</li>
                             </ul>
                         </div>
                     </div>
@@ -188,9 +190,7 @@
                 <p class="footer__copy">© 2026 Project Cataclysm Wiki. Неофициальный фан-сайт.</p>
                 <div class="footer__links">
                     <a href="#" class="footer__social" title="Discord">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-                        </svg>
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
                     </a>
                 </div>
             </div>
