@@ -1,6 +1,7 @@
-// Burger menu toggle
 const burger = document.getElementById('burger');
 const mobileMenu = document.getElementById('mobileMenu');
+const header = document.querySelector('.header');
+const scrollTopBtn = document.getElementById('scrollTop');
 
 if (burger && mobileMenu) {
     burger.addEventListener('click', () => {
@@ -9,48 +10,24 @@ if (burger && mobileMenu) {
     });
 }
 
-// Header scroll effect
-const header = document.querySelector('.header');
-
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        header.style.background = 'rgba(10, 10, 11, 0.98)';
-    } else {
-        header.style.background = 'rgba(10, 10, 11, 0.9)';
-    }
-});
-
-// Scroll to top button
-const scrollTopBtn = document.getElementById('scrollTop');
-
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-        scrollTopBtn.classList.add('visible');
-    } else {
-        scrollTopBtn.classList.remove('visible');
-    }
+    header.style.background = window.scrollY > 50 
+        ? 'rgba(10, 10, 11, 0.98)' 
+        : 'rgba(10, 10, 11, 0.9)';
+    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
 });
 
 scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Smooth scroll for category navigation
 document.querySelectorAll('.category-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.preventDefault();
-        const targetId = btn.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-            const headerHeight = 140; // header + categories nav height
-            const targetPosition = targetElement.offsetTop - headerHeight;
-            
+        const target = document.querySelector(btn.getAttribute('href'));
+        if (target) {
             window.scrollTo({
-                top: targetPosition,
+                top: target.offsetTop - 140,
                 behavior: 'smooth'
             });
         }
