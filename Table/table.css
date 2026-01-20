@@ -392,6 +392,15 @@ body {
 .scroll-top:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(196,163,90,0.3); }
 .scroll-top svg { width: 24px; height: 24px; }
 
+.nav-link--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.mobile-menu__link--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 @media (max-width: 1024px) {
     .header__nav { display: none; }
     .header__burger { display: flex; }
