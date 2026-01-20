@@ -1,8 +1,3 @@
-/**
- * Project Cataclysm Wiki - Calculator Data
- * Данные о броне, контейнерах и артефактах
- */
-
 // ============== КОНТЕЙНЕРЫ ==============
 const CONTAINERS = [
     {
@@ -130,7 +125,7 @@ const ARMORS = [
         rarity: 'collection',
         rarityName: 'Коллекционное',
         type: 'Комбинированные',
-        containerTypes: ['all'], // Любые контейнеры
+        containerTypes: ['all'],
         stats: {
             radiationProtection: 300,
             bioProtection: 300,
@@ -144,124 +139,16 @@ const ARMORS = [
             bulletResistance: 204,
             maxWeight: 32.00
         }
-    },
-    {
-        id: 'sunrise',
-        name: 'Комбинезон «Sunrise»',
-        rarity: 'uncommon',
-        rarityName: 'Необычное',
-        type: 'Лёгкие',
-        containerTypes: ['compact', 'standard'],
-        stats: {
-            radiationProtection: 150,
-            bioProtection: 120,
-            thermalProtection: 100,
-            psiProtection: 80,
-            heatResistance: 80,
-            chemResistance: 70,
-            electroResistance: 60,
-            impactResistance: 40,
-            tearProtection: 45,
-            bulletResistance: 60,
-            maxWeight: 18.00
-        }
-    },
-    {
-        id: 'stalker_suit',
-        name: 'Комбинезон «Сталкер»',
-        rarity: 'common',
-        rarityName: 'Распространённое',
-        type: 'Лёгкие',
-        containerTypes: ['compact', 'standard'],
-        stats: {
-            radiationProtection: 100,
-            bioProtection: 80,
-            thermalProtection: 60,
-            psiProtection: 40,
-            heatResistance: 50,
-            chemResistance: 40,
-            electroResistance: 30,
-            impactResistance: 25,
-            tearProtection: 30,
-            bulletResistance: 35,
-            maxWeight: 12.00
-        }
-    },
-    {
-        id: 'skat_9',
-        name: 'Бронекостюм «СКАТ-9»',
-        rarity: 'rare',
-        rarityName: 'Раритетное',
-        type: 'Тяжёлые',
-        containerTypes: ['all'],
-        stats: {
-            radiationProtection: 400,
-            bioProtection: 350,
-            thermalProtection: 300,
-            psiProtection: 250,
-            heatResistance: 180,
-            chemResistance: 170,
-            electroResistance: 160,
-            impactResistance: 150,
-            tearProtection: 160,
-            bulletResistance: 280,
-            maxWeight: 45.00,
-            maxStamina: -10.00,
-            moveSpeed: -5.00
-        }
-    },
-    {
-        id: 'seva',
-        name: 'Научный костюм «СЕВА»',
-        rarity: 'collection',
-        rarityName: 'Коллекционное',
-        type: 'Научные',
-        containerTypes: ['compact', 'standard', 'spacious'],
-        stats: {
-            radiationProtection: 500,
-            bioProtection: 450,
-            thermalProtection: 350,
-            psiProtection: 400,
-            heatResistance: 200,
-            chemResistance: 220,
-            electroResistance: 180,
-            impactResistance: 80,
-            tearProtection: 90,
-            bulletResistance: 120,
-            maxWeight: 25.00
-        }
-    },
-    {
-        id: 'exoskeleton',
-        name: 'Экзоскелет',
-        rarity: 'unique',
-        rarityName: 'Уникальное',
-        type: 'Экзоскелеты',
-        containerTypes: ['all'],
-        stats: {
-            radiationProtection: 350,
-            bioProtection: 300,
-            thermalProtection: 250,
-            psiProtection: 200,
-            heatResistance: 150,
-            chemResistance: 140,
-            electroResistance: 130,
-            impactResistance: 200,
-            tearProtection: 220,
-            bulletResistance: 350,
-            maxWeight: 80.00,
-            maxStamina: -15.00
-        }
     }
 ];
 
 // ============== АРТЕФАКТЫ ==============
 const ARTIFACTS = [
-    // ===== ГРАВИТАЦИОННЫЕ =====
+    // ===== ГРАВИТАЦИОННЫЕ (15 артефактов) =====
     {
         id: 'blood_stone',
         name: 'Кровь камня',
-        nameEn: 'Blood Stone',
+        nameEn: 'Blood stone',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 1,
@@ -304,7 +191,7 @@ const ARTIFACTS = [
     {
         id: 'stone_flower',
         name: 'Каменный цветок',
-        nameEn: 'Crystal Flower',
+        nameEn: 'Cristall flower',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 1,
@@ -319,7 +206,7 @@ const ARTIFACTS = [
     {
         id: 'meat_chunk',
         name: 'Ломоть мяса',
-        nameEn: 'Meat Chunk',
+        nameEn: 'Mincer meat',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 2,
@@ -333,7 +220,7 @@ const ARTIFACTS = [
     {
         id: 'gravi',
         name: 'Грави',
-        nameEn: 'Gravi',
+        nameEn: 'Gravy',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 2,
@@ -347,7 +234,7 @@ const ARTIFACTS = [
     {
         id: 'night_star',
         name: 'Ночная звезда',
-        nameEn: 'Night Star',
+        nameEn: 'Night star',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 2,
@@ -361,7 +248,7 @@ const ARTIFACTS = [
     {
         id: 'mercury_ball',
         name: 'Ртутный шар',
-        nameEn: 'Mercury Ball',
+        nameEn: 'Mercury ball',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 2,
@@ -378,7 +265,7 @@ const ARTIFACTS = [
     {
         id: 'gold_fish',
         name: 'Золотая рыбка',
-        nameEn: 'Gold Fish',
+        nameEn: 'Gold fish',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 3,
@@ -410,7 +297,7 @@ const ARTIFACTS = [
     {
         id: 'golden_gravi',
         name: 'Золотистый грави',
-        nameEn: 'Golden Gravi',
+        nameEn: 'Golden gravel',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 3,
@@ -455,7 +342,7 @@ const ARTIFACTS = [
     {
         id: 'dark_medusa',
         name: 'Тёмная медуза',
-        nameEn: 'Dark Medusa',
+        nameEn: 'Dark medusa',
         category: 'gravity',
         categoryName: 'Гравитационные',
         tier: 3,
@@ -485,7 +372,7 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== ХИМИЧЕСКИЕ =====
+    // ===== ХИМИЧЕСКИЕ (12 артефактов) =====
     {
         id: 'slime',
         name: 'Слизь',
@@ -505,7 +392,7 @@ const ARTIFACTS = [
     {
         id: 'thorn',
         name: 'Колючка',
-        nameEn: 'Rusty Thorn',
+        nameEn: 'Rusty thorn',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 1,
@@ -536,7 +423,7 @@ const ARTIFACTS = [
     {
         id: 'bile_stone',
         name: 'Желчь камня',
-        nameEn: 'Bile Stone',
+        nameEn: 'Bile stone',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 2,
@@ -550,7 +437,7 @@ const ARTIFACTS = [
     {
         id: 'swamp_rot',
         name: 'Болотный гнилец',
-        nameEn: 'Swamp Rot',
+        nameEn: 'Mica',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 2,
@@ -566,7 +453,7 @@ const ARTIFACTS = [
     {
         id: 'crystal_thorn',
         name: 'Кристальная колючка',
-        nameEn: 'Crystal Thorn',
+        nameEn: 'Crystal thorn',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 2,
@@ -613,7 +500,7 @@ const ARTIFACTS = [
     {
         id: 'pellicle',
         name: 'Плёнка',
-        nameEn: 'Pellicle',
+        nameEn: 'Dummy pellicle',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 3,
@@ -627,7 +514,7 @@ const ARTIFACTS = [
     {
         id: 'sea_urchin',
         name: 'Морской ёж',
-        nameEn: 'Sea Urchin',
+        nameEn: 'Rusty sea urchin',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 3,
@@ -641,7 +528,7 @@ const ARTIFACTS = [
     {
         id: 'kolobok',
         name: 'Колобок',
-        nameEn: 'Kolobok',
+        nameEn: 'Fuzz kolobok',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 3,
@@ -657,7 +544,7 @@ const ARTIFACTS = [
     {
         id: 'bubble',
         name: 'Пузырь',
-        nameEn: 'Bubble',
+        nameEn: 'Baloon',
         category: 'chemical',
         categoryName: 'Химические',
         tier: 3,
@@ -668,7 +555,7 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== ЭЛЕКТРИЧЕСКИЕ =====
+    // ===== ЭЛЕКТРИЧЕСКИЕ (10 артефактов) =====
     {
         id: 'sparkler',
         name: 'Бенгальский огонь',
@@ -686,7 +573,7 @@ const ARTIFACTS = [
     {
         id: 'flash',
         name: 'Вспышка',
-        nameEn: 'Flash',
+        nameEn: 'Electra flash',
         category: 'electric',
         categoryName: 'Электрические',
         tier: 1,
@@ -728,7 +615,7 @@ const ARTIFACTS = [
     {
         id: 'sky_stone',
         name: 'Небесный камень',
-        nameEn: 'Sky Stone',
+        nameEn: 'Heavenly Stone',
         category: 'electric',
         categoryName: 'Электрические',
         tier: 2,
@@ -755,7 +642,7 @@ const ARTIFACTS = [
     {
         id: 'electro_mica',
         name: 'Электрослюда',
-        nameEn: 'Electro Mica',
+        nameEn: 'Electrosluda',
         category: 'electric',
         categoryName: 'Электрические',
         tier: 2,
@@ -769,7 +656,7 @@ const ARTIFACTS = [
     {
         id: 'dummy',
         name: 'Пустышка',
-        nameEn: 'Dummy',
+        nameEn: 'Dummy dummy',
         category: 'electric',
         categoryName: 'Электрические',
         tier: 3,
@@ -800,7 +687,7 @@ const ARTIFACTS = [
     {
         id: 'snowflake',
         name: 'Снежинка',
-        nameEn: 'Snowflake',
+        nameEn: 'Ice',
         category: 'electric',
         categoryName: 'Электрические',
         tier: 3,
@@ -813,11 +700,11 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== ТЕРМИЧЕСКИЕ =====
+    // ===== ТЕРМИЧЕСКИЕ (8 артефактов) =====
     {
         id: 'droplet',
         name: 'Капля',
-        nameEn: 'Droplet',
+        nameEn: 'Droplets',
         category: 'thermal',
         categoryName: 'Термические',
         tier: 1,
@@ -832,7 +719,7 @@ const ARTIFACTS = [
     {
         id: 'crystal',
         name: 'Кристалл',
-        nameEn: 'Crystal',
+        nameEn: 'Cristall',
         category: 'thermal',
         categoryName: 'Термические',
         tier: 1,
@@ -847,7 +734,7 @@ const ARTIFACTS = [
     {
         id: 'fireball',
         name: 'Огненный шар',
-        nameEn: 'Fireball',
+        nameEn: 'Fire ball',
         category: 'thermal',
         categoryName: 'Термические',
         tier: 1,
@@ -862,7 +749,7 @@ const ARTIFACTS = [
     {
         id: 'mothers_beads',
         name: 'Мамины бусы',
-        nameEn: "Mother's Beads",
+        nameEn: 'Dummy Glassbeads',
         category: 'thermal',
         categoryName: 'Термические',
         tier: 2,
@@ -935,7 +822,7 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== УНИКАЛЬНЫЕ =====
+    // ===== УНИКАЛЬНЫЕ (2 артефакта) =====
     {
         id: 'generator',
         name: 'Генератор',
@@ -954,7 +841,7 @@ const ARTIFACTS = [
     {
         id: 'medallion',
         name: 'Медальон',
-        nameEn: 'Medallion',
+        nameEn: 'Medalion',
         category: 'unique',
         categoryName: 'Уникальные',
         tier: 'unique',
@@ -967,11 +854,11 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== МОРОЗНЫЕ (ИВЕНТ) =====
+    // ===== МОРОЗНЫЕ / ИВЕНТ (7 артефактов) =====
     {
         id: 'proto_snowflake',
         name: 'Прото-снежинка',
-        nameEn: 'Proto Snowflake',
+        nameEn: 'Proto-snowflake',
         category: 'frost',
         categoryName: 'Морозные',
         tier: 1,
@@ -1023,7 +910,7 @@ const ARTIFACTS = [
         category: 'frost',
         categoryName: 'Морозные',
         tier: 2,
-        image: '../Table/Artifacts/Frost/PolarStar.png',
+        image: '../Table/Artifacts/Frost/PolarStar.jpg',
         stats: {
             staminaRegen: 1.00,
             frostProtection: 100,
@@ -1040,7 +927,7 @@ const ARTIFACTS = [
         category: 'frost',
         categoryName: 'Морозные',
         tier: 2,
-        image: '../Table/Artifacts/Frost/PurpleTear.png',
+        image: '../Table/Artifacts/Frost/PurpleTear.jpg',
         stats: {
             staminaRegen: 3.00,
             thermalProtection: 30,
@@ -1061,9 +948,10 @@ const ARTIFACTS = [
         category: 'frost',
         categoryName: 'Морозные',
         tier: 3,
-        image: '../Table/Artifacts/Frost/IceFlower.png',
+        image: '../Table/Artifacts/Frost/IceFlower.jpg',
         stats: {
             frostProtection: 200,
+            bleeding: -3.00,
             cold: -60.00,
             thermalProtection: -30,
             radiation: 1.50,
@@ -1077,9 +965,10 @@ const ARTIFACTS = [
         category: 'frost',
         categoryName: 'Морозные',
         tier: 3,
-        image: '../Table/Artifacts/Frost/Tesseract.png',
+        image: '../Table/Artifacts/Frost/Tesseract.jpg',
         stats: {
             staminaRegen: 2.00,
+            bleeding: -2.00,
             maxWeight: 16.00,
             maxStamina: 20.00,
             bulletResistance: 32,
