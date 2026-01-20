@@ -25,17 +25,23 @@
                     </svg>
                     Главная
                 </a>
-                <a href="../Map/index.html" class="nav-link">
+                <span class="nav-link nav-link--disabled">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
                     </svg>
                     Карта
-                </a>
+                </span>
                 <a href="table.html" class="nav-link nav-link--current">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                     Артефакты
+                </a>
+                <a href="../Calculator/calculator.html" class="nav-link">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>
+                    </svg>
+                    Калькулятор
                 </a>
             </nav>
             <button class="header__burger" id="burger"><span></span><span></span><span></span></button>
@@ -45,8 +51,9 @@
     <div class="mobile-menu" id="mobileMenu">
         <nav class="mobile-menu__nav">
             <a href="../index.html" class="mobile-menu__link">Главная</a>
-            <a href="../Map/index.html" class="mobile-menu__link">Интерактивная карта</a>
+            <span class="mobile-menu__link mobile-menu__link--disabled">Интерактивная карта</span>
             <a href="table.html" class="mobile-menu__link mobile-menu__link--current">Таблица артефактов</a>
+            <a href="../Calculator/calculator.html" class="mobile-menu__link">Калькулятор сборок</a>
         </nav>
     </div>
 
