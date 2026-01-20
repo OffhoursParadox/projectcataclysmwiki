@@ -24,6 +24,8 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
 .nav-icon{width:18px;height:18px}
 .nav-link:hover{background:rgba(255,255,255,0.05);color:var(--color-text)}
 .nav-link--current{background:rgba(196,163,90,0.15);color:var(--color-accent)}
+.nav-link--disabled{opacity:0.4;cursor:not-allowed}
+.mobile-menu__link--disabled{opacity:0.4;cursor:not-allowed}
 .header__burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:10px}
 .header__burger span{display:block;width:24px;height:2px;background:var(--color-text);transition:var(--transition)}
 .header__burger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
