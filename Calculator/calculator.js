@@ -2,10 +2,24 @@ const state = {
     selectedArmor: null,
     selectedContainer: null,
     artifacts: [],
-    currentSlotIndex: null
+    currentSlotIndex: null,
+    previousStats: null // Для отслеживания изменений
 };
 
-const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
+// Инвертированные статы (больше = хуже)
+const INVERTED_STATS = ['radiation', 'bleeding', 'cold', 'saturation'];
+
+// Приоритетные статы для верхней панели
+const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
+
+// Настройки предупреждений
+const WARNING_STATS = {
+    radiation: { threshold: 0, color: 'radiation', title: 'Накопление радиации', unit: 'мЗв/сек' },
+    cold: { threshold: 0, color: 'cold', title: 'Накопление холода', unit: '/сек' },
+    bleeding: { threshold: 0, color: 'bleeding', title: 'Накопление кровотечения', unit: '/сек' },
+    regeneration: { threshold: 0, color: 'regeneration', title: 'Потеря здоровья', unit: '%/сек', inverted: true },
+    saturation: { threshold: 0, color: 'saturation', title: 'Накопление голода', unit: '%/сек', inverted: true }
+};
 
 const elements = {
     armorSelect: document.getElementById('armorSelect'),
@@ -14,10 +28,6 @@ const elements = {
     containerInfo: document.getElementById('containerInfo'),
     artifactSlots: document.getElementById('artifactSlots'),
     artifactCounter: document.getElementById('artifactCounter'),
-    radiationWarning: document.getElementById('radiationWarning'),
-    radiationValue: document.getElementById('radiationValue'),
-    coldWarning: document.getElementById('coldWarning'),
-    coldValue: document.getElementById('coldValue'),
     resetBtn: document.getElementById('resetBtn'),
     modal: document.getElementById('artifactModal'),
     modalClose: document.getElementById('modalClose'),
@@ -26,13 +36,17 @@ const elements = {
     filterBtns: document.querySelectorAll('.filter-btn'),
     burger: document.getElementById('burger'),
     mobileMenu: document.getElementById('mobileMenu'),
-    scrollTop: document.getElementById('scrollTop')
+    scrollTop: document.getElementById('scrollTop'),
+    warningsContainer: document.getElementById('warningsContainer'),
+    priorityStats: document.getElementById('priorityStats')
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     initArmorSelect();
+    initContainerSelect();
     initEventListeners();
     initScrollEffects();
+    updateStats(); // Инициализация начальных значений
 });
 
 function initArmorSelect() {
@@ -42,6 +56,17 @@ function initArmorSelect() {
         option.textContent = armor.name;
         elements.armorSelect.appendChild(option);
     });
+}
+
+function initContainerSelect() {
+    elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
+    CONTAINERS.forEach(container => {
+        const option = document.createElement('option');
+        option.value = container.id;
+        option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+        elements.containerSelect.appendChild(option);
+    });
+    elements.containerSelect.disabled = false;
 }
 
 function initEventListeners() {
@@ -85,21 +110,23 @@ function initScrollEffects() {
 
 function handleArmorChange(e) {
     const armorId = e.target.value;
+    state.previousStats = calculateTotalStats(); // Сохраняем предыдущие статы
+    
     if (!armorId) {
         state.selectedArmor = null;
         renderArmorInfo();
-        resetContainer();
         updateStats();
         return;
     }
     state.selectedArmor = ARMORS.find(a => a.id === armorId);
     renderArmorInfo();
-    updateContainerSelect();
     updateStats();
 }
 
 function handleContainerChange(e) {
     const containerId = e.target.value;
+    state.previousStats = calculateTotalStats(); // Сохраняем предыдущие статы
+    
     if (!containerId) {
         state.selectedContainer = null;
         state.artifacts = [];
@@ -116,26 +143,16 @@ function handleContainerChange(e) {
 }
 
 function resetBuild() {
+    state.previousStats = null;
     state.selectedArmor = null;
     state.selectedContainer = null;
     state.artifacts = [];
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
-    elements.containerSelect.disabled = true;
     renderArmorInfo();
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
-}
-
-function resetContainer() {
-    state.selectedContainer = null;
-    state.artifacts = [];
-    elements.containerSelect.value = '';
-    elements.containerSelect.disabled = true;
-    elements.containerSelect.innerHTML = '<option value="">Сначала выберите броню...</option>';
-    renderContainerInfo();
-    renderArtifactSlots();
 }
 
 function renderArmorInfo() {
@@ -174,7 +191,7 @@ function renderContainerInfo() {
         elements.containerInfo.innerHTML = `
             <div class="container-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                <span>${state.selectedArmor ? 'Выберите контейнер' : 'Контейнер будет доступен после выбора брони'}</span>
+                <span>Выберите контейнер для добавления артефактов</span>
             </div>`;
         return;
     }
@@ -288,36 +305,6 @@ function renderArtifactList(artifacts = ARTIFACTS) {
     }).join('');
 }
 
-function updateContainerSelect() {
-    if (!state.selectedArmor) { resetContainer(); return; }
-    const armor = state.selectedArmor;
-    const availableContainers = CONTAINERS.filter(container => {
-        if (armor.containerTypes.includes('all')) return true;
-        return armor.containerTypes.includes(container.type);
-    });
-    
-    elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
-    availableContainers.forEach(container => {
-        const option = document.createElement('option');
-        option.value = container.id;
-        option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
-        elements.containerSelect.appendChild(option);
-    });
-    elements.containerSelect.disabled = false;
-    
-    if (state.selectedContainer) {
-        const isAvailable = availableContainers.some(c => c.id === state.selectedContainer.id);
-        if (!isAvailable) {
-            state.selectedContainer = null;
-            state.artifacts = [];
-            elements.containerSelect.value = '';
-            renderContainerInfo();
-            renderArtifactSlots();
-            updateStats();
-        }
-    }
-}
-
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
@@ -348,6 +335,7 @@ function filterArtifacts() {
 function selectArtifact(artifactId) {
     const artifact = ARTIFACTS.find(a => a.id === artifactId);
     if (artifact && state.currentSlotIndex !== null) {
+        state.previousStats = calculateTotalStats(); // Сохраняем статы ДО добавления
         state.artifacts[state.currentSlotIndex] = artifact;
         renderArtifactSlots();
         updateStats();
@@ -356,43 +344,276 @@ function selectArtifact(artifactId) {
 }
 
 function removeArtifact(index) {
+    state.previousStats = calculateTotalStats(); // Сохраняем статы ДО удаления
     state.artifacts[index] = null;
     renderArtifactSlots();
     updateStats();
 }
 
+// Главная функция обновления статов
 function updateStats() {
     const totalStats = calculateTotalStats();
+    const baseStats = calculateBaseStats();
+    
+    // Обновляем приоритетные показатели
+    updatePriorityStats(totalStats, state.previousStats);
+    
+    // Обновляем все остальные статы
     Object.entries(totalStats).forEach(([key, value]) => {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
             const unit = STAT_UNITS[key] || '';
-            const { displayValue, colorClass } = formatStatValue(key, value);
+            const prevValue = state.previousStats ? state.previousStats[key] : value;
+            const { displayValue, colorClass } = formatStatValueWithChange(key, value, prevValue);
             element.textContent = displayValue + unit;
             element.className = 'stat-row__value ' + colorClass;
         }
     });
+    
     updateEffectiveBulletResistance(totalStats.bulletResistance);
+    updateWarnings(totalStats);
     
-    const netRadiation = totalStats.radiation || 0;
-    if (netRadiation > 0) {
-        elements.radiationWarning.style.display = 'flex';
-        elements.radiationValue.textContent = `+${netRadiation.toFixed(2)} мЗв/сек`;
-    } else {
-        elements.radiationWarning.style.display = 'none';
-    }
-    
-    const netCold = totalStats.cold || 0;
-    if (elements.coldWarning) {
-        if (netCold > 0) {
-            elements.coldWarning.style.display = 'flex';
-            elements.coldValue.textContent = `+${netCold.toFixed(2)}/сек`;
-        } else {
-            elements.coldWarning.style.display = 'none';
-        }
-    }
+    // Сохраняем текущие статы для следующего сравнения
+    state.previousStats = totalStats;
 }
 
+// Обновление приоритетных показателей
+function updatePriorityStats(currentStats, previousStats) {
+    PRIORITY_STATS.forEach(statKey => {
+        const element = document.querySelector(`[data-priority-stat="${statKey}"]`);
+        const cardElement = element?.closest('.priority-stat');
+        
+        if (!element || !cardElement) return;
+        
+        const value = currentStats[statKey] || 0;
+        const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
+        const unit = STAT_UNITS[statKey] || '';
+        
+        // Форматируем значение
+        const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
+        
+        element.textContent = displayValue + unit;
+        element.className = 'priority-stat__value';
+        if (colorClass) {
+            element.classList.add(colorClass);
+        }
+        
+        // Обновляем стиль карточки
+        cardElement.classList.remove('priority-stat--danger', 'priority-stat--good');
+        if (isDangerous) {
+            cardElement.classList.add('priority-stat--danger');
+        } else if (isGood) {
+            cardElement.classList.add('priority-stat--good');
+        }
+    });
+}
+
+// Форматирование значений приоритетных статов
+function formatPriorityStatValue(statKey, value, prevValue) {
+    const isInverted = INVERTED_STATS.includes(statKey);
+    const diff = value - prevValue;
+    
+    let displayValue = '';
+    let colorClass = '';
+    let isDangerous = false;
+    let isGood = false;
+    
+    // Формируем отображаемое значение
+    if (value === 0) {
+        displayValue = '0';
+    } else if (value > 0) {
+        displayValue = `+${formatNumber(value)}`;
+    } else {
+        displayValue = formatNumber(value);
+    }
+    
+    // Определяем цвет и состояние на основе значения и изменения
+    if (isInverted) {
+        // Для инвертированных: положительное значение = плохо, отрицательное = хорошо
+        if (value > 0) {
+            isDangerous = true;
+            colorClass = 'priority-stat__value--negative';
+        } else if (value < 0) {
+            isGood = true;
+            colorClass = 'priority-stat__value--positive';
+        }
+    } else {
+        // Для обычных (regeneration): положительное = хорошо, отрицательное = плохо
+        if (value > 0) {
+            isGood = true;
+            colorClass = 'priority-stat__value--positive';
+        } else if (value < 0) {
+            isDangerous = true;
+            colorClass = 'priority-stat__value--negative';
+        }
+    }
+    
+    return { displayValue, colorClass, isDangerous, isGood };
+}
+
+// Форматирование значений с учётом изменения
+function formatStatValueWithChange(statKey, currentValue, previousValue) {
+    const isInverted = INVERTED_STATS.includes(statKey);
+    const diff = currentValue - previousValue;
+    
+    let displayValue = '';
+    let colorClass = '';
+    
+    // Формируем отображаемое значение
+    if (currentValue === 0) {
+        displayValue = '0';
+    } else if (currentValue > 0) {
+        displayValue = `+${formatNumber(currentValue)}`;
+    } else {
+                displayValue = formatNumber(currentValue);
+    }
+    
+    // Определяем цвет на основе изменения
+    if (diff !== 0) {
+        // Было изменение - подсвечиваем
+        if (isInverted) {
+            // Для инвертированных: увеличение = плохо (красный), уменьшение = хорошо (зелёный)
+            colorClass = diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
+        } else {
+            // Для обычных: увеличение = хорошо (зелёный), уменьшение = плохо (красный)
+            colorClass = diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
+        }
+    } else {
+        // Изменения не было - определяем цвет по текущему значению
+        if (currentValue !== 0) {
+            if (isInverted) {
+                colorClass = currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
+            } else {
+                colorClass = currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
+            }
+        }
+    }
+    
+    return { displayValue, colorClass };
+}
+
+// Форматирование числа (убираем лишние нули)
+function formatNumber(value) {
+    return value.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
+}
+
+// Расчёт базовых статов (броня + контейнер, без артефактов)
+function calculateBaseStats() {
+    const stats = createEmptyStats();
+    
+    if (state.selectedArmor) {
+        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+    }
+    
+    if (state.selectedContainer) {
+        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+    }
+    
+    return stats;
+}
+
+// Расчёт всех статов (броня + контейнер + артефакты)
+function calculateTotalStats() {
+    const stats = createEmptyStats();
+    
+    if (state.selectedArmor) {
+        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+    }
+    
+    if (state.selectedContainer) {
+        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+    }
+    
+    state.artifacts.forEach(artifact => {
+        if (artifact) {
+            Object.entries(artifact.stats).forEach(([key, value]) => {
+                if (stats.hasOwnProperty(key)) stats[key] += value;
+            });
+        }
+    });
+    
+    return stats;
+}
+
+// Создание пустого объекта статов
+function createEmptyStats() {
+    return {
+        radiationProtection: 0, bioProtection: 0, thermalProtection: 0,
+        psiProtection: 0, frostProtection: 0,
+        heatResistance: 0, chemResistance: 0, electroResistance: 0,
+        impactResistance: 0, tearProtection: 0, bulletResistance: 0,
+        regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
+        maxStamina: 0, staminaRegen: 0, moveSpeed: 0, maxWeight: 0
+    };
+}
+
+// Обновление предупреждений
+function updateWarnings(totalStats) {
+    const warningsHtml = [];
+    
+    Object.entries(WARNING_STATS).forEach(([statKey, config]) => {
+        let value = totalStats[statKey] || 0;
+        let isDangerous = false;
+        
+        if (config.inverted) {
+            isDangerous = value < config.threshold;
+            value = Math.abs(value);
+        } else {
+            isDangerous = value > config.threshold;
+        }
+        
+        if (isDangerous) {
+            const iconSvg = getWarningIcon(statKey);
+            warningsHtml.push(`
+                <div class="warning-item warning-item--${config.color}">
+                    <div class="warning-item__icon">${iconSvg}</div>
+                    <div class="warning-item__content">
+                        <span class="warning-item__title">Внимание: ${config.title}!</span>
+                        <span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${config.unit}</span>
+                    </div>
+                </div>
+            `);
+        }
+    });
+    
+    let warningsContainer = document.getElementById('warningsContainer');
+    if (!warningsContainer) {
+        const bulletResistance = document.querySelector('.bullet-resistance');
+        warningsContainer = document.createElement('div');
+        warningsContainer.id = 'warningsContainer';
+        bulletResistance.parentNode.insertBefore(warningsContainer, bulletResistance.nextSibling);
+    }
+    
+    warningsContainer.innerHTML = warningsHtml.join('');
+}
+
+// Иконки для предупреждений
+function getWarningIcon(statKey) {
+    const icons = {
+        radiation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+        cold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><path d="M12 2l4 4M12 2l-4 4"/><path d="M12 22l4-4M12 22l-4-4"/><path d="M2 12l4 4M2 12l4-4"/><path d="M22 12l-4 4M22 12l-4-4"/></svg>',
+        bleeding: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+        regeneration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+        saturation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'
+    };
+    return icons[statKey] || icons.radiation;
+}
+
+// Обновление пулестойкости
 function updateEffectiveBulletResistance(bulletResistance) {
     const effectiveElement = document.getElementById('effectiveBulletResistance');
     const percentElement = document.getElementById('bulletResistancePercent');
@@ -405,43 +626,16 @@ function updateEffectiveBulletResistance(bulletResistance) {
     percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
     barElement.style.width = `${clampedPercent}%`;
     
-    if (clampedPercent >= 70) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
-    else if (clampedPercent >= 40) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
-    else barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
+    if (clampedPercent >= 70) {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
+    } else if (clampedPercent >= 40) {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
+    } else {
+        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
+    }
 }
 
-function calculateTotalStats() {
-    const stats = {
-        radiationProtection: 0, bioProtection: 0, thermalProtection: 0, psiProtection: 0, frostProtection: 0,
-        heatResistance: 0, chemResistance: 0, electroResistance: 0,
-        impactResistance: 0, tearProtection: 0, bulletResistance: 0,
-        regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
-        maxStamina: 0, staminaRegen: 0, moveSpeed: 0, maxWeight: 0
-    };
-    
-    if (state.selectedArmor) {
-        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-    }
-    if (state.selectedContainer) {
-        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-    }
-    state.artifacts.forEach(artifact => {
-        if (artifact) {
-            Object.entries(artifact.stats).forEach(([key, value]) => {
-                if (stats.hasOwnProperty(key)) stats[key] += value;
-            });
-        }
-    });
-    return stats;
-}
-
+// Базовое форматирование статов (для брони/контейнера)
 function formatStatValue(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
     let displayValue, colorClass = '';
@@ -449,21 +643,23 @@ function formatStatValue(statKey, value) {
     if (value === 0) {
         displayValue = '0';
     } else if (value > 0) {
-        displayValue = `+${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
+        displayValue = `+${formatNumber(value)}`;
         colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive';
     } else {
-        displayValue = `${value.toFixed(2)}`.replace('.00', '').replace(/(\.\d)0$/, '$1');
+        displayValue = formatNumber(value);
         colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative';
     }
     return { displayValue, colorClass };
 }
 
+// Склонение слова "слот"
 function getSlotWord(count) {
     if (count === 1) return '';
     if (count >= 2 && count <= 4) return 'а';
     return 'ов';
 }
 
+// Экспорт функций в глобальную область
 window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
 window.removeArtifact = removeArtifact;
