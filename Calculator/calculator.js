@@ -7,7 +7,7 @@ const state = {
 };
 
 // Инвертированные статы (больше = хуже)
-const INVERTED_STATS = ['radiation', 'bleeding', 'cold', 'saturation'];
+const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
 
 // Приоритетные статы для верхней панели
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
