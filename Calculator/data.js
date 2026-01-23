@@ -138,6 +138,59 @@ const ARMORS = [
             tearProtection: 124,
             bulletResistance: 204,
             maxWeight: 32.00
+        },
+        // Заточка недоступна или данные неизвестны
+        enhancement: null
+    },
+    {
+        id: 'yggdrasil',
+        name: 'Экзоскелет «Иггдрасиль»',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        type: 'Комбинированные',
+        containerTypes: ['standard', 'spacious', 'compact'], // Исключая bulky
+        stats: {
+            radiationProtection: 300,
+            bioProtection: 300,
+            thermalProtection: 160,
+            frostProtection: 200,
+            psiProtection: 200,
+            heatResistance: 104,
+            chemResistance: 96,
+            electroResistance: 84,
+            impactResistance: 142,
+            tearProtection: 214,
+            bulletResistance: 318,
+            bleeding: -2.00,
+            maxStamina: 10.00,
+            regeneration: 1.00,
+            moveSpeed: -3.00,
+            maxWeight: 50.00
+        },
+        enhancement: {
+            maxLevel: 15,
+            // Бонусы по уровням заточки (индекс = уровень)
+            // Level 0 = базовые статы, Level 1+ = добавочные бонусы
+            bonuses: {
+                bulletResistance: [
+                    0,      // +0 (уровень 0 - база)
+                    0.9,    // +0.9 (уровень 1)
+                    1.8,    // +1.8 (уровень 2)
+                    2.7,    // +2.7 (уровень 3)
+                    3.59,   // +3.59 (уровень 4)
+                    6.29,   // +6.29 (уровень 5)
+                    7.79,   // +7.79 (уровень 6)
+                    8.98,   // +8.98 (уровень 7)
+                    10.48,  // +10.48 (уровень 8)
+                    11.98,  // +11.98 (уровень 9)
+                    15.87,  // +15.87 (уровень 10)
+                    17.97,  // +17.97 (уровень 11)
+                    19.77,  // +19.77 (уровень 12)
+                    21.87,  // +21.87 (уровень 13)
+                    23.97,  // +23.97 (уровень 14) - экстраполяция
+                    26.07   // +26.07 (уровень 15) - экстраполяция
+                ]
+            }
         }
     }
 ];
