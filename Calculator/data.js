@@ -822,7 +822,7 @@ const ARTIFACTS = [
         }
     },
 
-    // ===== УНИКАЛЬНЫЕ (2 артефакта) =====
+    // ===== УНИКАЛЬНЫЕ (5 артефактов) =====
     {
         id: 'generator',
         name: 'Генератор',
@@ -851,6 +851,48 @@ const ARTIFACTS = [
             bleeding: -2.00,
             maxStamina: -5.00,
             radiation: 2.00
+        }
+    },
+    {
+        id: 'goblet_bio',
+        name: 'Бокал (био)',
+        nameEn: 'Goblet (bio)',
+        category: 'unique',
+        categoryName: 'Уникальные',
+        tier: 2,
+        image: '../Table/Artifacts/Quest/Bokal_Bio.jpg',
+        stats: {
+            saturation: 1.00,
+            radiation: -1.50,
+            bulletResistance: -6
+        }
+    },
+    {
+        id: 'goblet_gravity',
+        name: 'Бокал (грави)',
+        nameEn: 'Goblet (gravity)',
+        category: 'unique',
+        categoryName: 'Уникальные',
+        tier: 2,
+        image: '../Table/Artifacts/Quest/Bokal_Gravity.jpg',
+        stats: {
+            tearProtection: 12,
+            bulletResistance: 12,
+            radiation: 1.00
+        }
+    },
+    {
+        id: 'goblet_thermal',
+        name: 'Бокал (терма)',
+        nameEn: 'Goblet (thermal)',
+        category: 'unique',
+        categoryName: 'Уникальные',
+        tier: 2,
+        image: '../Table/Artifacts/Quest/Bokal_Thermal.jpg',
+        stats: {
+            bleeding: -1.00,
+            regeneration: 1.50,
+            radiation: 1.00
         }
     },
 
