@@ -61,6 +61,8 @@
             <div class="container">
                 <div class="calculator__layout">
                     <div class="calculator__equipment">
+                        
+                        <!-- ========== КАРТОЧКА БРОНИ ========== -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon">
@@ -73,6 +75,32 @@
                                     <select id="armorSelect" class="custom-select"><option value="">Выберите броню...</option></select>
                                     <div class="select-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
                                 </div>
+                                
+                                <!-- БЛОК ЗАТОЧКИ БРОНИ -->
+                                <div class="enhancement-block" id="enhancementBlock" style="display: none;">
+                                    <div class="enhancement-block__header">
+                                        <div class="enhancement-block__icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                            </svg>
+                                        </div>
+                                        <span class="enhancement-block__title">Уровень заточки</span>
+                                        <span class="enhancement-block__value" id="enhancementValue">0</span>
+                                    </div>
+                                    <div class="enhancement-block__slider-container">
+                                        <input type="range" id="enhancementSlider" class="enhancement-slider" min="0" max="15" value="0">
+                                        <div class="enhancement-block__marks">
+                                            <span>0</span>
+                                            <span>5</span>
+                                            <span>10</span>
+                                            <span>15</span>
+                                        </div>
+                                    </div>
+                                    <div class="enhancement-block__bonus" id="enhancementBonus">
+                                        <!-- Бонусы от заточки будут здесь -->
+                                    </div>
+                                </div>
+                                
                                 <div class="armor-info" id="armorInfo">
                                     <div class="armor-info__placeholder">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -82,6 +110,7 @@
                             </div>
                         </div>
 
+                        <!-- ========== КАРТОЧКА КОНТЕЙНЕРА ========== -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--container">
@@ -91,7 +120,7 @@
                             </div>
                             <div class="equipment-card__content">
                                 <div class="select-wrapper">
-                                    <select id="containerSelect" class="custom-select" disabled><option value="">Сначала выберите броню...</option></select>
+                                    <select id="containerSelect" class="custom-select"><option value="">Выберите контейнер...</option></select>
                                     <div class="select-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
                                 </div>
                                 <div class="container-info" id="containerInfo">
@@ -103,6 +132,7 @@
                             </div>
                         </div>
 
+                        <!-- ========== КАРТОЧКА АРТЕФАКТОВ ========== -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--artifacts">
@@ -122,6 +152,7 @@
                         </div>
                     </div>
 
+                    <!-- ========== РЕЗУЛЬТАТЫ ========== -->
                     <div class="calculator__results">
                         <div class="results-card">
                             <div class="results-card__header">
@@ -203,7 +234,7 @@
                                 <div class="bullet-resistance__bar">
                                     <div class="bullet-resistance__bar-fill bullet-resistance__bar-fill--low" id="bulletResistanceBar" style="width:0%"></div>
                                 </div>
-                                <div class="bullet-resistance__hint">Процент снижения урона от пуль. Бронебойность патрона вычитается из этого значения как целое число.</div>
+                                <div class="bullet-resistance__hint">Процент снижения урона от пуль (формула с убывающей отдачей). Бронебойность патрона снижает эффективную пулестойкость.</div>
                             </div>
 
                             <div class="stats-groups">
@@ -265,6 +296,7 @@
         </section>
     </main>
 
+    <!-- ========== МОДАЛЬНОЕ ОКНО ВЫБОРА АРТЕФАКТА ========== -->
     <div class="modal" id="artifactModal">
         <div class="modal__backdrop"></div>
         <div class="modal__content">
@@ -274,10 +306,14 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
                 </button>
             </div>
+            
+            <!-- Поиск -->
             <div class="modal__search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                 <input type="text" id="artifactSearch" placeholder="Поиск артефакта...">
             </div>
+            
+            <!-- Фильтры по категориям -->
             <div class="modal__filters">
                 <button class="filter-btn filter-btn--active" data-category="all">Все</button>
                 <button class="filter-btn" data-category="gravity">Гравитационные</button>
@@ -287,10 +323,123 @@
                 <button class="filter-btn" data-category="unique">Уникальные</button>
                 <button class="filter-btn" data-category="frost">Морозные</button>
             </div>
+            
+            <!-- НОВЫЙ БЛОК: Фильтры по статам -->
+            <div class="modal__stat-filters">
+                <div class="stat-filters">
+                    <!-- Фильтр по бонусам -->
+                    <div class="stat-filter-group">
+                        <label class="stat-filter-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                            Бонус:
+                        </label>
+                        <select id="bonusStatFilter" class="stat-filter-select">
+                            <option value="">Любой</option>
+                            <optgroup label="Защита">
+                                <option value="bulletResistance:positive">+ Пулестойкость</option>
+                                <option value="tearProtection:positive">+ Защита от разрывов</option>
+                                <option value="impactResistance:positive">+ Гашение удара</option>
+                                <option value="radiationProtection:positive">+ Защита от радиации</option>
+                                <option value="bioProtection:positive">+ Биозащита</option>
+                                <option value="thermalProtection:positive">+ Термозащита (защита)</option>
+                                <option value="psiProtection:positive">+ Пси-защита</option>
+                                <option value="frostProtection:positive">+ Морозозащита</option>
+                            </optgroup>
+                            <optgroup label="Сопротивления">
+                                <option value="heatResistance:positive">+ Термосопротивление</option>
+                                <option value="chemResistance:positive">+ Химсопротивление</option>
+                                <option value="electroResistance:positive">+ Электросопротивление</option>
+                            </optgroup>
+                            <optgroup label="Эффекты">
+                                <option value="regeneration:positive">+ Регенерация</option>
+                                <option value="bleeding:negative">− Кровотечение (лечит)</option>
+                                <option value="radiation:negative">− Радиация (очищает)</option>
+                                <option value="saturation:positive">+ Насыщение (сытость)</option>
+                                <option value="cold:negative">− Холод (согревает)</option>
+                            </optgroup>
+                            <optgroup label="Персонаж">
+                                <option value="maxWeight:positive">+ Макс. вес</option>
+                                <option value="maxStamina:positive">+ Макс. выносливость</option>
+                                <option value="staminaRegen:positive">+ Восст. выносливости</option>
+                                <option value="moveSpeed:positive">+ Скорость</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <!-- Фильтр по штрафам -->
+                    <div class="stat-filter-group">
+                        <label class="stat-filter-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>
+                            Штраф:
+                        </label>
+                        <select id="penaltyStatFilter" class="stat-filter-select">
+                            <option value="">Любой</option>
+                            <optgroup label="Негативные эффекты">
+                                <option value="radiation:positive">+ Радиация (облучает)</option>
+                                <option value="bleeding:positive">+ Кровотечение (усиливает)</option>
+                                <option value="cold:positive">+ Холод (замораживает)</option>
+                                <option value="regeneration:negative">− Регенерация (отнимает HP)</option>
+                                <option value="saturation:negative">− Насыщение (голод)</option>
+                            </optgroup>
+                            <optgroup label="Штрафы к защите">
+                                <option value="bulletResistance:negative">− Пулестойкость</option>
+                                <option value="tearProtection:negative">− Защита от разрывов</option>
+                                <option value="impactResistance:negative">− Гашение удара</option>
+                                <option value="frostProtection:negative">− Морозозащита</option>
+                            </optgroup>
+                            <optgroup label="Штрафы к персонажу">
+                                <option value="maxStamina:negative">− Макс. выносливость</option>
+                                <option value="staminaRegen:negative">− Восст. выносливости</option>
+                                <option value="moveSpeed:negative">− Скорость</option>
+                                <option value="maxWeight:negative">− Макс. вес</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <!-- Кнопка сброса фильтров -->
+                    <button class="stat-filter-reset" id="resetStatFilters" title="Сбросить фильтры по статам">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    </button>
+                </div>
+                
+                <!-- Быстрые фильтры (популярные) -->
+                <div class="quick-filters">
+                    <span class="quick-filters__label">Быстрый поиск:</span>
+                    <button class="quick-filter-btn" data-quick-filter="bulletResistance:positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        Пулестойкость
+                    </button>
+                    <button class="quick-filter-btn" data-quick-filter="radiation:negative">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                        − Радиация
+                    </button>
+                    <button class="quick-filter-btn" data-quick-filter="regeneration:positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                        Регенерация
+                    </button>
+                    <button class="quick-filter-btn" data-quick-filter="maxWeight:positive">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                        + Вес
+                    </button>
+                    <button class="quick-filter-btn" data-quick-filter="bleeding:negative">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                        − Кровотечение
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Индикатор активных фильтров -->
+            <div class="active-filters" id="activeFilters" style="display: none;">
+                <span class="active-filters__label">Активные фильтры:</span>
+                <div class="active-filters__tags" id="activeFiltersTags"></div>
+            </div>
+            
+            <!-- Список артефактов -->
             <div class="modal__list" id="artifactList"></div>
         </div>
     </div>
 
+    <!-- ========== ФУТЕР ========== -->
     <footer class="footer">
         <div class="container">
             <div class="footer__content">
