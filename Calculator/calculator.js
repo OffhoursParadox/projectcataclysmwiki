@@ -3,7 +3,15 @@ const state = {
     selectedContainer: null,
     artifacts: [],
     currentSlotIndex: null,
-    previousStats: null // Для отслеживания изменений
+    previousStats: null,
+    enhancementLevel: 0,
+    // Фильтры артефактов
+    filters: {
+        category: 'all',
+        search: '',
+        bonusStat: null,    // { stat: 'bulletResistance', type: 'positive' }
+        penaltyStat: null   // { stat: 'radiation', type: 'positive' }
+    }
 };
 
 // Инвертированные статы (больше = хуже)
@@ -19,6 +27,33 @@ const WARNING_STATS = {
     bleeding: { threshold: 0, color: 'bleeding', title: 'Накопление кровотечения', unit: '/сек' },
     regeneration: { threshold: 0, color: 'regeneration', title: 'Потеря здоровья', unit: '%/сек', inverted: true },
     saturation: { threshold: 0, color: 'saturation', title: 'Накопление голода', unit: '%/сек', inverted: true }
+};
+
+// Константа для расчёта пулестойкости
+const BULLET_RESISTANCE_CONSTANT = 166.67;
+
+// Названия фильтров для отображения
+const FILTER_DISPLAY_NAMES = {
+    bulletResistance: 'Пулестойкость',
+    tearProtection: 'Защита от разрывов',
+    impactResistance: 'Гашение удара',
+    radiationProtection: 'Защита от радиации',
+    bioProtection: 'Биозащита',
+    thermalProtection: 'Термозащита',
+    psiProtection: 'Пси-защита',
+    frostProtection: 'Морозозащита',
+    heatResistance: 'Термосопротивление',
+    chemResistance: 'Химсопротивление',
+    electroResistance: 'Электросопротивление',
+    regeneration: 'Регенерация',
+    bleeding: 'Кровотечение',
+    radiation: 'Радиация',
+    saturation: 'Насыщение',
+    cold: 'Холод',
+    maxWeight: 'Макс. вес',
+    maxStamina: 'Макс. выносливость',
+    staminaRegen: 'Восст. выносливости',
+    moveSpeed: 'Скорость'
 };
 
 const elements = {
@@ -38,7 +73,18 @@ const elements = {
     mobileMenu: document.getElementById('mobileMenu'),
     scrollTop: document.getElementById('scrollTop'),
     warningsContainer: document.getElementById('warningsContainer'),
-    priorityStats: document.getElementById('priorityStats')
+    priorityStats: document.getElementById('priorityStats'),
+    enhancementBlock: document.getElementById('enhancementBlock'),
+    enhancementSlider: document.getElementById('enhancementSlider'),
+    enhancementValue: document.getElementById('enhancementValue'),
+    enhancementBonus: document.getElementById('enhancementBonus'),
+    // Новые элементы фильтрации
+    bonusStatFilter: document.getElementById('bonusStatFilter'),
+    penaltyStatFilter: document.getElementById('penaltyStatFilter'),
+    resetStatFilters: document.getElementById('resetStatFilters'),
+    activeFilters: document.getElementById('activeFilters'),
+    activeFiltersTags: document.getElementById('activeFiltersTags'),
+    quickFilterBtns: document.querySelectorAll('.quick-filter-btn')
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initContainerSelect();
     initEventListeners();
     initScrollEffects();
-    updateStats(); // Инициализация начальных значений
+    updateStats();
 });
 
 function initArmorSelect() {
@@ -75,15 +121,39 @@ function initEventListeners() {
     elements.resetBtn.addEventListener('click', resetBuild);
     elements.modalClose.addEventListener('click', closeModal);
     elements.modal.querySelector('.modal__backdrop').addEventListener('click', closeModal);
-    elements.artifactSearch.addEventListener('input', filterArtifacts);
+    elements.artifactSearch.addEventListener('input', handleSearchChange);
     
+    if (elements.enhancementSlider) {
+        elements.enhancementSlider.addEventListener('input', handleEnhancementChange);
+    }
+    
+    // Фильтры по категориям
     elements.filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             elements.filterBtns.forEach(b => b.classList.remove('filter-btn--active'));
             btn.classList.add('filter-btn--active');
-            filterArtifacts();
+            state.filters.category = btn.dataset.category;
+            applyFilters();
         });
     });
+    
+    // Фильтры по статам
+    if (elements.bonusStatFilter) {
+        elements.bonusStatFilter.addEventListener('change', handleBonusFilterChange);
+    }
+    if (elements.penaltyStatFilter) {
+        elements.penaltyStatFilter.addEventListener('change', handlePenaltyFilterChange);
+    }
+    if (elements.resetStatFilters) {
+        elements.resetStatFilters.addEventListener('click', resetAllStatFilters);
+    }
+    
+    // Быстрые фильтры
+    if (elements.quickFilterBtns) {
+        elements.quickFilterBtns.forEach(btn => {
+            btn.addEventListener('click', () => handleQuickFilter(btn));
+        });
+    }
     
     if (elements.burger && elements.mobileMenu) {
         elements.burger.addEventListener('click', () => {
@@ -95,6 +165,231 @@ function initEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
     });
+}
+
+// Обработчик изменения поиска
+function handleSearchChange(e) {
+    state.filters.search = e.target.value.toLowerCase().trim();
+    applyFilters();
+}
+
+// Обработчик изменения фильтра бонусов
+function handleBonusFilterChange(e) {
+    const value = e.target.value;
+    if (value) {
+        const [stat, type] = value.split(':');
+        state.filters.bonusStat = { stat, type };
+        e.target.classList.add('stat-filter-select--active');
+    } else {
+        state.filters.bonusStat = null;
+        e.target.classList.remove('stat-filter-select--active');
+    }
+    updateQuickFilterButtons();
+    updateActiveFiltersDisplay();
+    applyFilters();
+}
+
+// Обработчик изменения фильтра штрафов
+function handlePenaltyFilterChange(e) {
+    const value = e.target.value;
+    if (value) {
+        const [stat, type] = value.split(':');
+        state.filters.penaltyStat = { stat, type };
+        e.target.classList.add('stat-filter-select--active');
+    } else {
+        state.filters.penaltyStat = null;
+        e.target.classList.remove('stat-filter-select--active');
+    }
+    updateActiveFiltersDisplay();
+    applyFilters();
+}
+
+// Обработчик быстрых фильтров
+function handleQuickFilter(btn) {
+    const filterValue = btn.dataset.quickFilter;
+    const [stat, type] = filterValue.split(':');
+    
+    // Проверяем, активен ли уже этот фильтр
+    const isActive = btn.classList.contains('quick-filter-btn--active');
+    
+    if (isActive) {
+        // Снимаем фильтр
+        state.filters.bonusStat = null;
+        if (elements.bonusStatFilter) {
+            elements.bonusStatFilter.value = '';
+            elements.bonusStatFilter.classList.remove('stat-filter-select--active');
+        }
+        btn.classList.remove('quick-filter-btn--active');
+    } else {
+        // Устанавливаем фильтр
+        state.filters.bonusStat = { stat, type };
+        if (elements.bonusStatFilter) {
+            elements.bonusStatFilter.value = filterValue;
+            elements.bonusStatFilter.classList.add('stat-filter-select--active');
+        }
+        // Снимаем активность с других быстрых фильтров
+        elements.quickFilterBtns.forEach(b => b.classList.remove('quick-filter-btn--active'));
+        btn.classList.add('quick-filter-btn--active');
+    }
+    
+    updateActiveFiltersDisplay();
+    applyFilters();
+}
+
+// Обновление состояния кнопок быстрых фильтров
+function updateQuickFilterButtons() {
+    if (!elements.quickFilterBtns) return;
+    
+    elements.quickFilterBtns.forEach(btn => {
+        const filterValue = btn.dataset.quickFilter;
+        const [stat, type] = filterValue.split(':');
+        
+        const isActive = state.filters.bonusStat && 
+                         state.filters.bonusStat.stat === stat && 
+                         state.filters.bonusStat.type === type;
+        
+        btn.classList.toggle('quick-filter-btn--active', isActive);
+    });
+}
+
+// Сброс всех фильтров по статам
+function resetAllStatFilters() {
+    state.filters.bonusStat = null;
+    state.filters.penaltyStat = null;
+    
+    if (elements.bonusStatFilter) {
+        elements.bonusStatFilter.value = '';
+        elements.bonusStatFilter.classList.remove('stat-filter-select--active');
+    }
+    if (elements.penaltyStatFilter) {
+        elements.penaltyStatFilter.value = '';
+        elements.penaltyStatFilter.classList.remove('stat-filter-select--active');
+    }
+    
+    elements.quickFilterBtns?.forEach(btn => btn.classList.remove('quick-filter-btn--active'));
+    
+    updateActiveFiltersDisplay();
+    applyFilters();
+}
+
+// Удаление конкретного фильтра
+function removeStatFilter(filterType) {
+    if (filterType === 'bonus') {
+        state.filters.bonusStat = null;
+        if (elements.bonusStatFilter) {
+            elements.bonusStatFilter.value = '';
+            elements.bonusStatFilter.classList.remove('stat-filter-select--active');
+        }
+        elements.quickFilterBtns?.forEach(btn => btn.classList.remove('quick-filter-btn--active'));
+    } else if (filterType === 'penalty') {
+        state.filters.penaltyStat = null;
+        if (elements.penaltyStatFilter) {
+            elements.penaltyStatFilter.value = '';
+            elements.penaltyStatFilter.classList.remove('stat-filter-select--active');
+        }
+    }
+    
+    updateActiveFiltersDisplay();
+    applyFilters();
+}
+
+// Обновление отображения активных фильтров
+function updateActiveFiltersDisplay() {
+    if (!elements.activeFilters || !elements.activeFiltersTags) return;
+    
+    const tags = [];
+    
+    if (state.filters.bonusStat) {
+        const { stat, type } = state.filters.bonusStat;
+        const displayName = FILTER_DISPLAY_NAMES[stat] || stat;
+        const prefix = type === 'positive' ? '+' : '−';
+        tags.push(`
+            <span class="filter-tag filter-tag--bonus">
+                ${prefix} ${displayName}
+                <button class="filter-tag__remove" onclick="removeStatFilter('bonus')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </span>
+        `);
+    }
+    
+    if (state.filters.penaltyStat) {
+        const { stat, type } = state.filters.penaltyStat;
+        const displayName = FILTER_DISPLAY_NAMES[stat] || stat;
+        const prefix = type === 'positive' ? '+' : '−';
+        tags.push(`
+            <span class="filter-tag filter-tag--penalty">
+                ${prefix} ${displayName}
+                <button class="filter-tag__remove" onclick="removeStatFilter('penalty')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                </button>
+            </span>
+        `);
+    }
+    
+    if (tags.length > 0) {
+        elements.activeFilters.style.display = 'flex';
+        elements.activeFiltersTags.innerHTML = tags.join('');
+    } else {
+        elements.activeFilters.style.display = 'none';
+        elements.activeFiltersTags.innerHTML = '';
+    }
+}
+
+// Применение всех фильтров
+function applyFilters() {
+    let filtered = [...ARTIFACTS];
+    
+    // Фильтр по категории
+    if (state.filters.category !== 'all') {
+        filtered = filtered.filter(a => a.category === state.filters.category);
+    }
+    
+    // Фильтр по поиску
+    if (state.filters.search) {
+        filtered = filtered.filter(a => 
+            a.name.toLowerCase().includes(state.filters.search) || 
+            a.nameEn.toLowerCase().includes(state.filters.search)
+        );
+    }
+    
+    // Фильтр по бонусному стату
+    if (state.filters.bonusStat) {
+        const { stat, type } = state.filters.bonusStat;
+        filtered = filtered.filter(artifact => {
+            const value = artifact.stats[stat];
+            if (value === undefined) return false;
+            return type === 'positive' ? value > 0 : value < 0;
+        });
+    }
+    
+    // Фильтр по штрафному стату
+    if (state.filters.penaltyStat) {
+        const { stat, type } = state.filters.penaltyStat;
+        filtered = filtered.filter(artifact => {
+            const value = artifact.stats[stat];
+            if (value === undefined) return false;
+            return type === 'positive' ? value > 0 : value < 0;
+        });
+    }
+    
+    // Сортировка результатов
+    if (state.filters.bonusStat) {
+        const { stat, type } = state.filters.bonusStat;
+        filtered.sort((a, b) => {
+            const aVal = a.stats[stat] || 0;
+            const bVal = b.stats[stat] || 0;
+            // Сортируем по абсолютному значению (лучшие сверху)
+            return type === 'positive' ? bVal - aVal : aVal - bVal;
+        });
+    }
+    
+    renderArtifactList(filtered);
+}
+
+// Устаревшая функция для обратной совместимости
+function filterArtifacts() {
+    applyFilters();
 }
 
 function initScrollEffects() {
@@ -110,22 +405,167 @@ function initScrollEffects() {
 
 function handleArmorChange(e) {
     const armorId = e.target.value;
-    state.previousStats = calculateTotalStats(); // Сохраняем предыдущие статы
+    state.previousStats = calculateTotalStats();
     
     if (!armorId) {
         state.selectedArmor = null;
+        state.enhancementLevel = 0;
+        hideEnhancementBlock();
         renderArmorInfo();
+        updateContainerOptions();
         updateStats();
         return;
     }
+    
     state.selectedArmor = ARMORS.find(a => a.id === armorId);
+    state.enhancementLevel = 0;
+    
+    if (state.selectedArmor.enhancement) {
+        showEnhancementBlock();
+    } else {
+        hideEnhancementBlock();
+    }
+    
+    renderArmorInfo();
+    updateContainerOptions();
+    updateStats();
+}
+
+function updateContainerOptions() {
+    const currentContainerId = elements.containerSelect.value;
+    elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
+    
+    const availableContainers = CONTAINERS.filter(container => {
+        if (!state.selectedArmor) return true;
+        if (state.selectedArmor.containerTypes.includes('all')) return true;
+        return state.selectedArmor.containerTypes.includes(container.type);
+    });
+    
+    availableContainers.forEach(container => {
+        const option = document.createElement('option');
+        option.value = container.id;
+        option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+        elements.containerSelect.appendChild(option);
+    });
+    
+    const currentStillAvailable = availableContainers.some(c => c.id === currentContainerId);
+    if (currentStillAvailable) {
+        elements.containerSelect.value = currentContainerId;
+    } else if (state.selectedContainer) {
+        state.selectedContainer = null;
+        state.artifacts = [];
+        renderContainerInfo();
+        renderArtifactSlots();
+    }
+    
+    elements.containerSelect.disabled = false;
+}
+
+function handleEnhancementChange(e) {
+    state.previousStats = calculateTotalStats();
+    state.enhancementLevel = parseInt(e.target.value);
+    
+    updateEnhancementDisplay();
     renderArmorInfo();
     updateStats();
 }
 
+function showEnhancementBlock() {
+    if (!elements.enhancementBlock) return;
+    
+    const maxLevel = state.selectedArmor.enhancement.maxLevel;
+    elements.enhancementSlider.max = maxLevel;
+    elements.enhancementSlider.value = 0;
+    state.enhancementLevel = 0;
+    
+    elements.enhancementBlock.style.display = 'block';
+    elements.enhancementBlock.classList.add('visible');
+    
+    updateEnhancementDisplay();
+}
+
+function hideEnhancementBlock() {
+    if (!elements.enhancementBlock) return;
+    elements.enhancementBlock.style.display = 'none';
+    elements.enhancementBlock.classList.remove('visible');
+}
+
+function updateEnhancementDisplay() {
+    if (!elements.enhancementBlock || !state.selectedArmor?.enhancement) return;
+    
+    const level = state.enhancementLevel;
+    const maxLevel = state.selectedArmor.enhancement.maxLevel;
+    
+    elements.enhancementValue.textContent = level;
+    
+    const progress = (level / maxLevel) * 100;
+    elements.enhancementSlider.style.setProperty('--slider-progress', `${progress}%`);
+    
+    elements.enhancementBlock.setAttribute('data-level', level);
+    
+    elements.enhancementBlock.classList.remove('enhancement-block--high', 'enhancement-block--max');
+    if (level >= 10 && level < maxLevel) {
+        elements.enhancementBlock.classList.add('enhancement-block--high');
+    } else if (level === maxLevel) {
+        elements.enhancementBlock.classList.add('enhancement-block--max');
+    }
+    
+    renderEnhancementBonuses();
+}
+
+function renderEnhancementBonuses() {
+    if (!elements.enhancementBonus || !state.selectedArmor?.enhancement) return;
+    
+    const level = state.enhancementLevel;
+    const bonuses = state.selectedArmor.enhancement.bonuses;
+    
+    if (level === 0) {
+        elements.enhancementBonus.innerHTML = '<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">Бонусы отсутствуют</span></div>';
+        return;
+    }
+    
+    let html = '';
+    Object.entries(bonuses).forEach(([statKey, values]) => {
+        const bonusValue = values[level] || 0;
+        if (bonusValue !== 0) {
+            const statName = STAT_NAMES[statKey] || statKey;
+            const unit = STAT_UNITS[statKey] || '';
+            const displayValue = bonusValue > 0 ? `+${formatNumber(bonusValue)}` : formatNumber(bonusValue);
+            
+            html += `
+                <div class="enhancement-bonus-item">
+                    <span class="enhancement-bonus-item__name">${statName}</span>
+                    <span class="enhancement-bonus-item__value">${displayValue}${unit}</span>
+                </div>
+            `;
+        }
+    });
+    
+    elements.enhancementBonus.innerHTML = html || '<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">Бонусы отсутствуют</span></div>';
+}
+
+function getEnhancementBonuses() {
+    const bonuses = {};
+    
+    if (!state.selectedArmor?.enhancement || state.enhancementLevel === 0) {
+        return bonuses;
+    }
+    
+    const enhancementData = state.selectedArmor.enhancement.bonuses;
+    
+    Object.entries(enhancementData).forEach(([statKey, values]) => {
+        const bonusValue = values[state.enhancementLevel] || 0;
+        if (bonusValue !== 0) {
+            bonuses[statKey] = bonusValue;
+        }
+    });
+    
+    return bonuses;
+}
+
 function handleContainerChange(e) {
     const containerId = e.target.value;
-    state.previousStats = calculateTotalStats(); // Сохраняем предыдущие статы
+    state.previousStats = calculateTotalStats();
     
     if (!containerId) {
         state.selectedContainer = null;
@@ -147,8 +587,13 @@ function resetBuild() {
     state.selectedArmor = null;
     state.selectedContainer = null;
     state.artifacts = [];
+    state.enhancementLevel = 0;
+    
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
+    
+    hideEnhancementBlock();
+    updateContainerOptions();
     renderArmorInfo();
     renderContainerInfo();
     renderArtifactSlots();
@@ -164,12 +609,32 @@ function renderArmorInfo() {
             </div>`;
         return;
     }
+    
     const armor = state.selectedArmor;
-    const statsHtml = Object.entries(armor.stats).map(([key, value]) => {
+    const enhancementBonuses = getEnhancementBonuses();
+    
+    const statsHtml = Object.entries(armor.stats).map(([key, baseValue]) => {
         const name = STAT_NAMES[key] || key;
         const unit = STAT_UNITS[key] || '';
-        const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${name}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+        const enhancementBonus = enhancementBonuses[key] || 0;
+        const totalValue = baseValue + enhancementBonus;
+        
+        const { displayValue, colorClass } = formatStatValue(key, totalValue);
+        
+        let enhancementHtml = '';
+        if (enhancementBonus !== 0) {
+            const bonusStr = enhancementBonus > 0 ? `+${formatNumber(enhancementBonus)}` : formatNumber(enhancementBonus);
+            enhancementHtml = `<span class="stat-enhancement-bonus">(${bonusStr})</span>`;
+        }
+        
+        return `
+            <div class="armor-details__stat">
+                <span class="armor-details__stat-name">${name}</span>
+                <span class="armor-details__stat-value ${colorClass}">
+                    ${displayValue}${unit} ${enhancementHtml}
+                </span>
+            </div>
+        `;
     }).join('');
     
     elements.armorInfo.innerHTML = `
@@ -273,18 +738,34 @@ function renderArtifactList(artifacts = ARTIFACTS) {
             <div class="artifact-list__empty">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                 <span>Артефакты не найдены</span>
+                <span style="font-size: 12px; margin-top: 4px;">Попробуйте изменить параметры фильтрации</span>
             </div>`;
         return;
     }
     
-    elements.artifactList.innerHTML = artifacts.map(artifact => {
+    // Добавляем счётчик найденных артефактов
+    const countHtml = `<div class="artifacts-count">Найдено: <strong>${artifacts.length}</strong> артефакт${getArtifactWord(artifacts.length)}</div>`;
+    
+    const listHtml = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : artifact.tier;
+        
+        // Подсвечиваем релевантные статы
         const statsHtml = Object.entries(artifact.stats).slice(0, 4).map(([key, value]) => {
             const name = STAT_NAMES[key] || key;
             const unit = STAT_UNITS[key] || '';
             const { displayValue, colorClass } = formatStatValue(key, value);
-            return `<div class="artifact-stat"><span class="artifact-stat__name">${name}</span><span class="artifact-stat__value ${colorClass}">${displayValue}${unit}</span></div>`;
+            
+            // Проверяем, соответствует ли стат фильтру
+            let highlightClass = '';
+            if (state.filters.bonusStat && state.filters.bonusStat.stat === key) {
+                highlightClass = 'artifact-stat--highlighted';
+            }
+            if (state.filters.penaltyStat && state.filters.penaltyStat.stat === key) {
+                highlightClass = 'artifact-stat--highlighted-penalty';
+            }
+            
+            return `<div class="artifact-stat ${highlightClass}"><span class="artifact-stat__name">${name}</span><span class="artifact-stat__value ${colorClass}">${displayValue}${unit}</span></div>`;
         }).join('');
         const moreStats = Object.keys(artifact.stats).length > 4 ? `<div class="artifact-stat artifact-stat--more">+${Object.keys(artifact.stats).length - 4} ещё</div>` : '';
         
@@ -303,16 +784,49 @@ function renderArtifactList(artifacts = ARTIFACTS) {
                 <div class="artifact-item__stats">${statsHtml}${moreStats}</div>
             </div>`;
     }).join('');
+    
+    elements.artifactList.innerHTML = listHtml;
+}
+
+// Склонение слова "артефакт"
+function getArtifactWord(count) {
+    const lastTwo = count % 100;
+    const lastOne = count % 10;
+    
+    if (lastTwo >= 11 && lastTwo <= 14) return 'ов';
+    if (lastOne === 1) return '';
+    if (lastOne >= 2 && lastOne <= 4) return 'а';
+    return 'ов';
 }
 
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
+    
+    // Сбрасываем фильтры при открытии
+    state.filters.search = '';
+    state.filters.category = 'all';
+    state.filters.bonusStat = null;
+    state.filters.penaltyStat = null;
+    
     elements.artifactSearch.value = '';
     elements.filterBtns.forEach(btn => {
         btn.classList.toggle('filter-btn--active', btn.dataset.category === 'all');
     });
-    renderArtifactList();
+    
+    if (elements.bonusStatFilter) {
+        elements.bonusStatFilter.value = '';
+        elements.bonusStatFilter.classList.remove('stat-filter-select--active');
+    }
+    if (elements.penaltyStatFilter) {
+        elements.penaltyStatFilter.value = '';
+        elements.penaltyStatFilter.classList.remove('stat-filter-select--active');
+    }
+    elements.quickFilterBtns?.forEach(btn => btn.classList.remove('quick-filter-btn--active'));
+    
+    updateActiveFiltersDisplay();
+    applyFilters();
+    
     elements.artifactSearch.focus();
     document.body.style.overflow = 'hidden';
 }
@@ -323,19 +837,10 @@ function closeModal() {
     document.body.style.overflow = '';
 }
 
-function filterArtifacts() {
-    const searchQuery = elements.artifactSearch.value.toLowerCase().trim();
-    const activeFilter = document.querySelector('.filter-btn--active').dataset.category;
-    let filtered = ARTIFACTS;
-    if (activeFilter !== 'all') filtered = filtered.filter(a => a.category === activeFilter);
-    if (searchQuery) filtered = filtered.filter(a => a.name.toLowerCase().includes(searchQuery) || a.nameEn.toLowerCase().includes(searchQuery));
-    renderArtifactList(filtered);
-}
-
 function selectArtifact(artifactId) {
     const artifact = ARTIFACTS.find(a => a.id === artifactId);
     if (artifact && state.currentSlotIndex !== null) {
-        state.previousStats = calculateTotalStats(); // Сохраняем статы ДО добавления
+        state.previousStats = calculateTotalStats();
         state.artifacts[state.currentSlotIndex] = artifact;
         renderArtifactSlots();
         updateStats();
@@ -344,21 +849,18 @@ function selectArtifact(artifactId) {
 }
 
 function removeArtifact(index) {
-    state.previousStats = calculateTotalStats(); // Сохраняем статы ДО удаления
+    state.previousStats = calculateTotalStats();
     state.artifacts[index] = null;
     renderArtifactSlots();
     updateStats();
 }
 
-// Главная функция обновления статов
 function updateStats() {
     const totalStats = calculateTotalStats();
     const baseStats = calculateBaseStats();
     
-    // Обновляем приоритетные показатели
     updatePriorityStats(totalStats, state.previousStats);
     
-    // Обновляем все остальные статы
     Object.entries(totalStats).forEach(([key, value]) => {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
@@ -373,11 +875,9 @@ function updateStats() {
     updateEffectiveBulletResistance(totalStats.bulletResistance);
     updateWarnings(totalStats);
     
-    // Сохраняем текущие статы для следующего сравнения
     state.previousStats = totalStats;
 }
 
-// Обновление приоритетных показателей
 function updatePriorityStats(currentStats, previousStats) {
     PRIORITY_STATS.forEach(statKey => {
         const element = document.querySelector(`[data-priority-stat="${statKey}"]`);
@@ -389,7 +889,6 @@ function updatePriorityStats(currentStats, previousStats) {
         const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
         const unit = STAT_UNITS[statKey] || '';
         
-        // Форматируем значение
         const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
         
         element.textContent = displayValue + unit;
@@ -398,7 +897,6 @@ function updatePriorityStats(currentStats, previousStats) {
             element.classList.add(colorClass);
         }
         
-        // Обновляем стиль карточки
         cardElement.classList.remove('priority-stat--danger', 'priority-stat--good');
         if (isDangerous) {
             cardElement.classList.add('priority-stat--danger');
@@ -408,17 +906,14 @@ function updatePriorityStats(currentStats, previousStats) {
     });
 }
 
-// Форматирование значений приоритетных статов
 function formatPriorityStatValue(statKey, value, prevValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
-    const diff = value - prevValue;
     
     let displayValue = '';
     let colorClass = '';
     let isDangerous = false;
     let isGood = false;
     
-    // Формируем отображаемое значение
     if (value === 0) {
         displayValue = '0';
     } else if (value > 0) {
@@ -427,9 +922,7 @@ function formatPriorityStatValue(statKey, value, prevValue) {
         displayValue = formatNumber(value);
     }
     
-    // Определяем цвет и состояние на основе значения и изменения
     if (isInverted) {
-        // Для инвертированных: положительное значение = плохо, отрицательное = хорошо
         if (value > 0) {
             isDangerous = true;
             colorClass = 'priority-stat__value--negative';
@@ -438,7 +931,6 @@ function formatPriorityStatValue(statKey, value, prevValue) {
             colorClass = 'priority-stat__value--positive';
         }
     } else {
-        // Для обычных (regeneration): положительное = хорошо, отрицательное = плохо
         if (value > 0) {
             isGood = true;
             colorClass = 'priority-stat__value--positive';
@@ -451,7 +943,6 @@ function formatPriorityStatValue(statKey, value, prevValue) {
     return { displayValue, colorClass, isDangerous, isGood };
 }
 
-// Форматирование значений с учётом изменения
 function formatStatValueWithChange(statKey, currentValue, previousValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
     const diff = currentValue - previousValue;
@@ -459,27 +950,21 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
     let displayValue = '';
     let colorClass = '';
     
-    // Формируем отображаемое значение
     if (currentValue === 0) {
         displayValue = '0';
     } else if (currentValue > 0) {
         displayValue = `+${formatNumber(currentValue)}`;
     } else {
-                displayValue = formatNumber(currentValue);
+        displayValue = formatNumber(currentValue);
     }
     
-    // Определяем цвет на основе изменения
     if (diff !== 0) {
-        // Было изменение - подсвечиваем
         if (isInverted) {
-            // Для инвертированных: увеличение = плохо (красный), уменьшение = хорошо (зелёный)
             colorClass = diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
         } else {
-            // Для обычных: увеличение = хорошо (зелёный), уменьшение = плохо (красный)
             colorClass = diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
         }
     } else {
-        // Изменения не было - определяем цвет по текущему значению
         if (currentValue !== 0) {
             if (isInverted) {
                 colorClass = currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
@@ -492,17 +977,20 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
     return { displayValue, colorClass };
 }
 
-// Форматирование числа (убираем лишние нули)
 function formatNumber(value) {
     return value.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
 }
 
-// Расчёт базовых статов (броня + контейнер, без артефактов)
 function calculateBaseStats() {
     const stats = createEmptyStats();
     
     if (state.selectedArmor) {
         Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+        
+        const enhancementBonuses = getEnhancementBonuses();
+        Object.entries(enhancementBonuses).forEach(([key, value]) => {
             if (stats.hasOwnProperty(key)) stats[key] += value;
         });
     }
@@ -519,12 +1007,16 @@ function calculateBaseStats() {
     return stats;
 }
 
-// Расчёт всех статов (броня + контейнер + артефакты)
 function calculateTotalStats() {
     const stats = createEmptyStats();
     
     if (state.selectedArmor) {
         Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
+            if (stats.hasOwnProperty(key)) stats[key] += value;
+        });
+        
+        const enhancementBonuses = getEnhancementBonuses();
+        Object.entries(enhancementBonuses).forEach(([key, value]) => {
             if (stats.hasOwnProperty(key)) stats[key] += value;
         });
     }
@@ -549,7 +1041,6 @@ function calculateTotalStats() {
     return stats;
 }
 
-// Создание пустого объекта статов
 function createEmptyStats() {
     return {
         radiationProtection: 0, bioProtection: 0, thermalProtection: 0,
@@ -561,7 +1052,6 @@ function createEmptyStats() {
     };
 }
 
-// Обновление предупреждений
 function updateWarnings(totalStats) {
     const warningsHtml = [];
     
@@ -601,7 +1091,6 @@ function updateWarnings(totalStats) {
     warningsContainer.innerHTML = warningsHtml.join('');
 }
 
-// Иконки для предупреждений
 function getWarningIcon(statKey) {
     const icons = {
         radiation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
@@ -613,29 +1102,36 @@ function getWarningIcon(statKey) {
     return icons[statKey] || icons.radiation;
 }
 
-// Обновление пулестойкости
 function updateEffectiveBulletResistance(bulletResistance) {
     const effectiveElement = document.getElementById('effectiveBulletResistance');
     const percentElement = document.getElementById('bulletResistancePercent');
     const barElement = document.getElementById('bulletResistanceBar');
     if (!effectiveElement) return;
     
-    const percent = Math.min(bulletResistance / 6, 100);
-    const clampedPercent = Math.max(0, percent);
-    effectiveElement.textContent = bulletResistance;
-    percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
-    barElement.style.width = `${clampedPercent}%`;
+    let percent = 0;
+    if (bulletResistance > 0) {
+        percent = (bulletResistance / (bulletResistance + BULLET_RESISTANCE_CONSTANT)) * 100;
+    } else if (bulletResistance < 0) {
+        percent = (bulletResistance / (Math.abs(bulletResistance) + BULLET_RESISTANCE_CONSTANT)) * 100;
+    }
     
-    if (clampedPercent >= 70) {
+    const clampedPercent = Math.max(-100, Math.min(percent, 99.99));
+    
+    effectiveElement.textContent = formatNumber(bulletResistance);
+    percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
+    
+    const barPercent = Math.max(0, Math.min(clampedPercent, 100));
+    barElement.style.width = `${barPercent}%`;
+    
+    if (clampedPercent >= 65) {
         barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
-    } else if (clampedPercent >= 40) {
+    } else if (clampedPercent >= 45) {
         barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
     } else {
         barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
     }
 }
 
-// Базовое форматирование статов (для брони/контейнера)
 function formatStatValue(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
     let displayValue, colorClass = '';
@@ -652,7 +1148,6 @@ function formatStatValue(statKey, value) {
     return { displayValue, colorClass };
 }
 
-// Склонение слова "слот"
 function getSlotWord(count) {
     if (count === 1) return '';
     if (count >= 2 && count <= 4) return 'а';
@@ -663,3 +1158,4 @@ function getSlotWord(count) {
 window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
 window.removeArtifact = removeArtifact;
+window.removeStatFilter = removeStatFilter;
