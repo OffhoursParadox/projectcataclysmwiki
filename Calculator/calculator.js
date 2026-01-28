@@ -14,9 +14,6 @@ const state = {
     }
 };
 
-// Инвертированные статы (больше = хуже)
-const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
-
 // Приоритетные статы для верхней панели
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
 
@@ -710,10 +707,10 @@ function renderArtifactSlots() {
         if (artifact) {
             return `
                 <div class="artifact-slot" data-index="${index}">
-                    <div class="artifact-slot__icon"><img src="${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div>
+                    <div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div>
                     <div class="artifact-slot__info">
                         <div class="artifact-slot__name">${artifact.name}</div>
-                        <div class="artifact-slot__category">${artifact.categoryName} • Tier ${artifact.tier}</div>
+                        <div class="artifact-slot__category">${getCategoryName(artifact.category)} • Tier ${artifact.tier}</div>
                     </div>
                     <button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="Удалить артефакт">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
@@ -772,12 +769,12 @@ function renderArtifactList(artifacts = ARTIFACTS) {
         return `
             <div class="artifact-item" onclick="selectArtifact('${artifact.id}')">
                 <div class="artifact-item__header">
-                    <img src="${artifact.image}" alt="${artifact.name}" class="artifact-item__image" onerror="this.src='../images/placeholder.png'">
+                    <img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" class="artifact-item__image" onerror="this.src='../images/placeholder.png'">
                     <div class="artifact-item__title">
                         <div class="artifact-item__name">${artifact.name}</div>
                         <div class="artifact-item__meta">
                             <span class="artifact-item__tier artifact-item__tier--${tierClass}">${tierDisplay}</span>
-                            <span class="artifact-item__category">${artifact.categoryName}</span>
+                            <span class="artifact-item__category">${getCategoryName(artifact.category)}</span>
                         </div>
                     </div>
                 </div>
@@ -975,10 +972,6 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
     }
     
     return { displayValue, colorClass };
-}
-
-function formatNumber(value) {
-    return value.toFixed(2).replace(/\.00$/, '').replace(/(\.\d)0$/, '$1');
 }
 
 function calculateBaseStats() {
