@@ -64,51 +64,57 @@
                         
                         <!-- ========== КАРТОЧКА БРОНИ ========== -->
                         <div class="equipment-card">
-                            <div class="equipment-card__header">
-                                <div class="equipment-card__icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                </div>
-                                <h2 class="equipment-card__title">Броня</h2>
-                            </div>
-                            <div class="equipment-card__content">
-                                <div class="select-wrapper">
-                                    <select id="armorSelect" class="custom-select"><option value="">Выберите броню...</option></select>
-                                    <div class="select-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-                                </div>
-                                
-                                <!-- БЛОК ЗАТОЧКИ БРОНИ -->
-                                <div class="enhancement-block" id="enhancementBlock" style="display: none;">
-                                    <div class="enhancement-block__header">
-                                        <div class="enhancement-block__icon">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                                            </svg>
-                                        </div>
-                                        <span class="enhancement-block__title">Уровень заточки</span>
-                                        <span class="enhancement-block__value" id="enhancementValue">0</span>
-                                    </div>
-                                    <div class="enhancement-block__slider-container">
-                                        <input type="range" id="enhancementSlider" class="enhancement-slider" min="0" max="15" value="0">
-                                        <div class="enhancement-block__marks">
-                                            <span>0</span>
-                                            <span>5</span>
-                                            <span>10</span>
-                                            <span>15</span>
-                                        </div>
-                                    </div>
-                                    <div class="enhancement-block__bonus" id="enhancementBonus">
-                                        <!-- Бонусы от заточки будут здесь -->
-                                    </div>
-                                </div>
-                                
-                                <div class="armor-info" id="armorInfo">
-                                    <div class="armor-info__placeholder">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                        <span>Выберите броню для просмотра характеристик</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <div class="equipment-card__header">
+        <div class="equipment-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h2 class="equipment-card__title">Броня</h2>
+    </div>
+    <div class="equipment-card__content">
+        <!-- КАСТОМНЫЙ DROPDOWN ВМЕСТО SELECT -->
+        <div class="custom-dropdown" id="armorDropdown">
+    <button class="custom-dropdown__trigger" type="button">
+        <span class="custom-dropdown__value" data-placeholder="Выберите броню...">Выберите броню...</span>
+        <svg class="custom-dropdown__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="custom-dropdown__menu" id="armorDropdownMenu">
+        <div class="custom-dropdown__search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" placeholder="Поиск брони..." id="armorSearchInput">
+        </div>
+        
+        <!-- ЗАКРЕПЛЁННАЯ КНОПКА СБРОСА -->
+        <div class="custom-dropdown__clear-wrapper" id="armorClearWrapper" style="display: none;">
+            <button class="custom-dropdown__clear" id="armorClearBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"/><path d="M6 6l12 12"/>
+                </svg>
+                Сбросить выбор
+            </button>
+        </div>
+        
+        <div class="custom-dropdown__list" id="armorDropdownList">
+            <!-- Список брони генерируется через JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Скрытый select для совместимости -->
+<select id="armorSelect" style="display: none;"><option value="">Выберите броню...</option></select>
+        
+        <!-- БЛОК ЗАТОЧКИ БРОНИ -->
+        <div class="enhancement-block" id="enhancementBlock" style="display: none;">
+            <!-- ... остаётся без изменений ... -->
+        </div>
+        
+        <div class="armor-info" id="armorInfo">
+            <div class="armor-info__placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Выберите броню для просмотра характеристик</span>
+            </div>
+        </div>
+    </div>
+</div>
 
                         <!-- ========== КАРТОЧКА КОНТЕЙНЕРА ========== -->
                         <div class="equipment-card">
