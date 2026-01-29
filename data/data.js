@@ -248,7 +248,7 @@ const ARMORS = [
 },
 {
     id: 'chn26',
-    name: 'Бронежилет ЧН-26',
+    name: 'Бронежилет ЧН-2б',
     rarity: 'collection',
     rarityName: 'Коллекционное',
     type: 'Комбинированные',
@@ -2332,3 +2332,4 @@ function getAmmoById(ammoId) {
 function getAmmoForWeapon(weapon) {
     return AMMO_TYPES.filter(a => weapon.ammoTypes.includes(a.id));
 }
+
