@@ -155,6 +155,1041 @@ const CONTAINERS = [
 // ============== БРОНЯ ==============
 const ARMORS = [
     {
+    id: 'leather_jacket',
+    name: 'Кожаная куртка',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Лёгкие',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 20,
+        bioProtection: 20,
+        heatResistance: 14,
+        chemResistance: 14,
+        electroResistance: 14,
+        impactResistance: 12,
+        tearProtection: 16,
+        bulletResistance: 24,
+        maxWeight: 5.00
+    },
+    enhancement: null
+},
+
+// ===== НЕОБЫЧНЫЕ =====
+{
+    id: 'borey',
+    name: 'Комбинезон «Борей»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 160,
+        bioProtection: 160,
+        thermalProtection: 120,
+        frostProtection: 100,
+        heatResistance: 56,
+        chemResistance: 58,
+        electroResistance: 62,
+        impactResistance: 76,
+        tearProtection: 88,
+        bulletResistance: 108,
+        moveSpeed: 3.00,
+        maxWeight: 35.00
+    },
+    enhancement: null
+},
+{
+    id: 'tourist',
+    name: 'Комбинезон туриста',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 100,
+        bioProtection: 100,
+        thermalProtection: 100,
+        heatResistance: 42,
+        chemResistance: 46,
+        electroResistance: 34,
+        impactResistance: 74,
+        tearProtection: 86,
+        bulletResistance: 92,
+        moveSpeed: 2.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+
+// ===== КОЛЛЕКЦИОННЫЕ =====
+{
+    id: 'seva',
+    name: 'Комбинезон «Сева»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 200,
+        psiProtection: 200,
+        heatResistance: 110,
+        chemResistance: 110,
+        electroResistance: 110,
+        impactResistance: 102,
+        tearProtection: 108,
+        bulletResistance: 168,
+        maxStamina: -10.00,
+        maxWeight: 26.00
+    },
+    enhancement: null
+},
+{
+    id: 'chn26',
+    name: 'Бронежилет ЧН-26',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 100,
+        heatResistance: 60,
+        chemResistance: 74,
+        electroResistance: 62,
+        impactResistance: 84,
+        tearProtection: 90,
+        bulletResistance: 172,
+        moveSpeed: 2.00,
+        maxWeight: 22.00
+    },
+    enhancement: null
+},
+{
+    id: 'ssp99m_emerald',
+    name: 'Комбинезон ССП-99М «Изумруд»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 400,
+        thermalProtection: 300,
+        psiProtection: 200,
+        heatResistance: 140,
+        chemResistance: 1000,
+        electroResistance: 140,
+        impactResistance: 68,
+        tearProtection: 70,
+        bulletResistance: 112,
+        maxStamina: -12.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+{
+    id: 'ssp99m_topaz',
+    name: 'Комбинезон ССП-99М «Топаз»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 400,
+        psiProtection: 200,
+        heatResistance: 1000,
+        chemResistance: 140,
+        electroResistance: 140,
+        impactResistance: 68,
+        tearProtection: 70,
+        bulletResistance: 112,
+        maxStamina: -12.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+
+// ===== РАРИТЕТНЫЕ =====
+{
+    id: 'makeshift_exo',
+    name: 'Кустарный экзоскелет',
+    rarity: 'rare',
+    rarityName: 'Раритетное',
+    type: 'Комбинированные',
+    containerTypes: ['standard', 'spacious', 'compact'],
+    stats: {
+        radiationProtection: 240,
+        bioProtection: 300,
+        thermalProtection: 160,
+        psiProtection: 200,
+        heatResistance: 84,
+        chemResistance: 76,
+        electroResistance: 52,
+        impactResistance: 208,
+        tearProtection: 212,
+        bulletResistance: 292,
+        maxStamina: 5.00,
+        moveSpeed: -4.00,
+        maxWeight: 50.00
+    },
+    enhancement: null
+},
+
+// ===== УНИКАЛЬНЫЕ =====
+{
+    id: 'chn36',
+    name: 'Тяжелый бронекостюм ЧН-36',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 200,
+        psiProtection: 300,
+        heatResistance: 118,
+        chemResistance: 120,
+        electroResistance: 40,
+        impactResistance: 182,
+        tearProtection: 176,
+        bulletResistance: 302,
+        moveSpeed: 1.00,
+        maxWeight: 20.00
+    },
+    enhancement: null
+},
+    {
+    id: 'psz7b',
+    name: 'Армейский бронежилет ПСЗ-7Б',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 40,
+        bioProtection: 40,
+        heatResistance: 10,
+        chemResistance: 10,
+        electroResistance: 10,
+        impactResistance: 86,
+        tearProtection: 92,
+        bulletResistance: 112,
+        maxWeight: 12.00
+    },
+    enhancement: null
+},
+
+// ===== КОЛЛЕКЦИОННЫЕ =====
+{
+    id: 'psz9',
+    name: 'Бронекостюм «ПСЗ-9»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 160,
+        bioProtection: 100,
+        thermalProtection: 100,
+        psiProtection: 60,
+        heatResistance: 72,
+        chemResistance: 38,
+        electroResistance: 32,
+        impactResistance: 126,
+        tearProtection: 142,
+        bulletResistance: 184,
+        maxStamina: -20.00,
+        maxWeight: 20.00
+    },
+    enhancement: null
+},
+{
+    id: 'skat9m',
+    name: 'Бронекостюм «СКАТ-9М»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 160,
+        thermalProtection: 100,
+        psiProtection: 100,
+        heatResistance: 86,
+        chemResistance: 44,
+        electroResistance: 38,
+        impactResistance: 148,
+        tearProtection: 168,
+        bulletResistance: 232,
+        maxStamina: -20.00,
+        maxWeight: 24.00
+    },
+    enhancement: null
+},
+
+// ===== РАРИТЕТНЫЕ =====
+{
+    id: 'ssp99m_ruby',
+    name: 'Комбинезон ССП-99М «Рубин»',
+    rarity: 'rare',
+    rarityName: 'Раритетное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 360,
+        bioProtection: 360,
+        thermalProtection: 340,
+        psiProtection: 300,
+        heatResistance: 210,
+        chemResistance: 210,
+        electroResistance: 210,
+        impactResistance: 72,
+        tearProtection: 98,
+        bulletResistance: 178,
+        bleeding: -3.00,
+        regeneration: 2.00,
+        maxStamina: -15.00,
+        maxWeight: 40.00
+    },
+    enhancement: null
+},
+
+// ===== УНИКАЛЬНЫЕ =====
+{
+    id: 'skat10',
+    name: 'Бронекостюм «СКАТ-10»',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 200,
+        psiProtection: 200,
+        heatResistance: 110,
+        chemResistance: 110,
+        electroResistance: 110,
+        impactResistance: 204,
+        tearProtection: 232,
+        bulletResistance: 312,
+        bleeding: -0.50,
+        maxStamina: -10.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+{
+    id: 'heavy_voshod',
+    name: 'Тяжелый бронекостюм «Восход»',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 200,
+        heatResistance: 80,
+        chemResistance: 80,
+        electroResistance: 80,
+        impactResistance: 182,
+        tearProtection: 218,
+        bulletResistance: 292,
+        maxStamina: -30.00,
+        maxWeight: 20.00
+    },
+    enhancement: null
+},
+{
+    id: 'exoskeleton',
+    name: 'Экзоскелет',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['standard', 'spacious', 'compact'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 200,
+        heatResistance: 80,
+        chemResistance: 80,
+        electroResistance: 80,
+        impactResistance: 214,
+        tearProtection: 252,
+        bulletResistance: 348,
+        maxStamina: 10.00,
+        moveSpeed: -5.00,
+        maxWeight: 60.00
+    },
+    enhancement: null
+},
+
+// ===== ЛЕГЕНДАРНЫЕ =====
+{
+    id: 'commando_exo',
+    name: 'Сверхпрочный экзоскелет «Commando»',
+    rarity: 'legendary',
+    rarityName: 'Легендарное',
+    type: 'Комбинированные',
+    containerTypes: ['standard', 'spacious', 'compact'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 200,
+        psiProtection: 300,
+        heatResistance: 120,
+        chemResistance: 120,
+        electroResistance: 120,
+        impactResistance: 252,
+        tearProtection: 324,
+        bulletResistance: 362,
+        bleeding: -1.00,
+        maxStamina: 20.00,
+        maxWeight: 80.00
+    },
+    enhancement: null
+},
+    {
+    id: 'viking',
+    name: 'Бронекостюм «Викинг»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 100,
+        thermalProtection: 100,
+        psiProtection: 100,
+        heatResistance: 80,
+        chemResistance: 80,
+        electroResistance: 80,
+        impactResistance: 82,
+        tearProtection: 98,
+        bulletResistance: 156,
+        maxWeight: 24.00
+    },
+    enhancement: null
+},
+
+// ===== КОЛЛЕКЦИОННЫЕ =====
+{
+    id: 'chn3a',
+    name: 'Бронежилет ЧН-3а',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 200,
+        thermalProtection: 200,
+        psiProtection: 160,
+        heatResistance: 100,
+        chemResistance: 100,
+        electroResistance: 100,
+        impactResistance: 98,
+        tearProtection: 96,
+        bulletResistance: 208,
+        moveSpeed: 2.00,
+        maxWeight: 24.00
+    },
+    enhancement: null
+},
+{
+    id: 'ssp99m_sapphire',
+    name: 'Комбинезон ССП-99М «Сапфир»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 300,
+        psiProtection: 400,
+        heatResistance: 140,
+        chemResistance: 140,
+        electroResistance: 1000,
+        impactResistance: 68,
+        tearProtection: 70,
+        bulletResistance: 112,
+        maxStamina: -12.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+{
+    id: 'ssp99_almaz',
+    name: 'Комбинезон ССП-99 «Алмаз»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 400,
+        bioProtection: 300,
+        thermalProtection: 300,
+        psiProtection: 200,
+        heatResistance: 140,
+        chemResistance: 140,
+        electroResistance: 140,
+        impactResistance: 68,
+        tearProtection: 70,
+        bulletResistance: 112,
+        maxStamina: -12.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+
+// ===== УНИКАЛЬНЫЕ =====
+{
+    id: 'pokrov',
+    name: 'Бронекостюм «Покров»',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 300,
+        bioProtection: 300,
+        thermalProtection: 300,
+        psiProtection: 300,
+        heatResistance: 180,
+        chemResistance: 210,
+        electroResistance: 180,
+        impactResistance: 106,
+        tearProtection: 118,
+        bulletResistance: 272,
+        bleeding: -1.00,
+        maxWeight: 50.00
+    },
+    enhancement: null
+},
+{
+    id: 'shturm',
+    name: 'Тяжелый бронекостюм «Штурм»',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 240,
+        bioProtection: 240,
+        thermalProtection: 160,
+        psiProtection: 200,
+        heatResistance: 60,
+        chemResistance: 60,
+        electroResistance: 60,
+        impactResistance: 232,
+        tearProtection: 272,
+        bulletResistance: 342,
+        maxStamina: -30.00,
+        maxWeight: 30.00
+    },
+    enhancement: null
+},
+{
+    id: 'pancir',
+    name: 'Сверхтяжелый бронекостюм «Панцирь»',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['standard', 'compact'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 100,
+        heatResistance: 42,
+        chemResistance: 42,
+        electroResistance: 42,
+        impactResistance: 258,
+        tearProtection: 356,
+        bulletResistance: 512,
+        maxStamina: -10.00,
+        moveSpeed: -20.00,
+        maxWeight: 60.00
+    },
+    enhancement: null
+},
+{
+    id: 'modified_exo',
+    name: 'Модифицированный Экзоскелет',
+    rarity: 'unique',
+    rarityName: 'Уникальное',
+    type: 'Боевые',
+    containerTypes: ['standard', 'spacious', 'compact'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 200,
+        heatResistance: 100,
+        chemResistance: 100,
+        electroResistance: 100,
+        impactResistance: 242,
+        tearProtection: 312,
+        bulletResistance: 356,
+        maxStamina: 10.00,
+        maxWeight: 70.00
+    },
+    enhancement: null
+},
+    {
+    id: 'zarya',
+    name: 'Комбинезон «Заря»',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 100,
+        bioProtection: 60,
+        thermalProtection: 60,
+        heatResistance: 42,
+        chemResistance: 46,
+        electroResistance: 34,
+        impactResistance: 70,
+        tearProtection: 84,
+        bulletResistance: 72,
+        maxWeight: 10.00
+    },
+    enhancement: null
+},
+
+// ===== НЕОБЫЧНЫЕ =====
+{
+    id: 'berill5m',
+    name: 'Бронекостюм «Берилл-5М»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 100,
+        bioProtection: 100,
+        thermalProtection: 60,
+        heatResistance: 38,
+        chemResistance: 28,
+        electroResistance: 20,
+        impactResistance: 108,
+        tearProtection: 118,
+        bulletResistance: 158,
+        maxStamina: -10.00,
+        maxWeight: 12.00
+    },
+    enhancement: null
+},
+{
+    id: 'chn2a',
+    name: 'Бронежилет ЧН-2а',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 100,
+        bioProtection: 100,
+        thermalProtection: 100,
+        heatResistance: 40,
+        chemResistance: 54,
+        electroResistance: 42,
+        impactResistance: 72,
+        tearProtection: 86,
+        bulletResistance: 132,
+        moveSpeed: 2.00,
+        maxWeight: 20.00
+    },
+    enhancement: null
+},
+{
+    id: 'zarya2',
+    name: 'Комбинезон «Заря-2»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 160,
+        bioProtection: 100,
+        thermalProtection: 100,
+        heatResistance: 40,
+        chemResistance: 52,
+        electroResistance: 30,
+        impactResistance: 80,
+        tearProtection: 92,
+        bulletResistance: 104,
+        maxStamina: -5.00,
+        maxWeight: 14.00
+    },
+    enhancement: null
+},
+{
+    id: 'skitalec',
+    name: 'Комбинезон «Скиталец»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 120,
+        bioProtection: 120,
+        thermalProtection: 80,
+        heatResistance: 10,
+        chemResistance: 58,
+        electroResistance: 46,
+        impactResistance: 28,
+        tearProtection: 32,
+        bulletResistance: 62,
+        maxStamina: 10.00,
+        moveSpeed: 6.00,
+        maxWeight: 16.00
+    },
+    enhancement: null
+},
+{
+    id: 'fobos',
+    name: 'Научный комбинезон «Фобос»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 200,
+        thermalProtection: 100,
+        psiProtection: 100,
+        heatResistance: 90,
+        chemResistance: 90,
+        electroResistance: 90,
+        impactResistance: 64,
+        tearProtection: 60,
+        bulletResistance: 72,
+        maxStamina: -8.00,
+        maxWeight: 24.00
+    },
+    enhancement: null
+},
+
+// ===== КОЛЛЕКЦИОННЫЕ =====
+{
+    id: 'zarya3',
+    name: 'Комбинезон «Заря-3»',
+    rarity: 'collection',
+    rarityName: 'Коллекционное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 160,
+        thermalProtection: 140,
+        psiProtection: 100,
+        heatResistance: 80,
+        chemResistance: 80,
+        electroResistance: 80,
+        impactResistance: 90,
+        tearProtection: 102,
+        bulletResistance: 142,
+        maxStamina: -5.00,
+        maxWeight: 16.00
+    },
+    enhancement: null
+},
+    {
+    id: 'psz7',
+    name: 'Армейский бронежилет ПСЗ-7',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        heatResistance: 10,
+        chemResistance: 10,
+        electroResistance: 10,
+        impactResistance: 72,
+        tearProtection: 88,
+        bulletResistance: 92,
+        maxWeight: 12.00
+    },
+    enhancement: null
+},
+{
+    id: 'chn1',
+    name: 'Бронежилет ЧН-1',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 60,
+        thermalProtection: 40,
+        heatResistance: 32,
+        chemResistance: 30,
+        electroResistance: 28,
+        impactResistance: 52,
+        tearProtection: 66,
+        bulletResistance: 62,
+        moveSpeed: 1.00,
+        maxWeight: 14.00
+    },
+    enhancement: null
+},
+{
+    id: 'chn16',
+    name: 'Бронежилет ЧН-16',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 60,
+        thermalProtection: 60,
+        heatResistance: 44,
+        chemResistance: 44,
+        electroResistance: 32,
+        impactResistance: 64,
+        tearProtection: 76,
+        bulletResistance: 82,
+        moveSpeed: 1.00,
+        maxWeight: 16.00
+    },
+    enhancement: null
+},
+
+// ===== НЕОБЫЧНЫЕ =====
+{
+    id: 'ps5',
+    name: 'Бронекостюм ПС5',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 60,
+        bioProtection: 60,
+        thermalProtection: 40,
+        heatResistance: 34,
+        chemResistance: 26,
+        electroResistance: 16,
+        impactResistance: 92,
+        tearProtection: 104,
+        bulletResistance: 134,
+        maxStamina: -10.00,
+        maxWeight: 12.00
+    },
+    enhancement: null
+},
+{
+    id: 'veteran1',
+    name: 'Комбинезон «Ветеран-1»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Комбинированные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 120,
+        bioProtection: 100,
+        thermalProtection: 100,
+        heatResistance: 40,
+        chemResistance: 52,
+        electroResistance: 30,
+        impactResistance: 76,
+        tearProtection: 86,
+        bulletResistance: 86,
+        maxWeight: 12.00
+    },
+    enhancement: null
+},
+{
+    id: 'voshod',
+    name: 'Научный комбинезон «Восход»',
+    rarity: 'uncommon',
+    rarityName: 'Необычное',
+    type: 'Научные',
+    containerTypes: ['all'],
+    stats: {
+        radiationProtection: 200,
+        bioProtection: 100,
+        thermalProtection: 100,
+        psiProtection: 60,
+        heatResistance: 56,
+        chemResistance: 56,
+        electroResistance: 56,
+        impactResistance: 62,
+        tearProtection: 58,
+        bulletResistance: 56,
+        maxStamina: -5.00,
+        maxWeight: 20.00
+    },
+    enhancement: null
+},
+    {
+    id: 'shakal',
+    name: 'Бронекостюм «Шакал»',
+    rarity: 'common',
+    rarityName: 'Распространённое',
+    type: 'Боевые',
+    containerTypes: ['all'],
+    stats: {
+        impactResistance: 68,
+        tearProtection: 84,
+        bulletResistance: 72,
+        maxWeight: 8.00
+    },
+    enhancement: null
+},
+    {
+        id: 'anomaly_jacket',
+        name: 'Аномальная кожанка',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Лёгкие',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 20,
+            bioProtection: 20,
+            heatResistance: 14,
+            chemResistance: 18,
+            electroResistance: 14,
+            impactResistance: 12,
+            tearProtection: 16,
+            bulletResistance: 24,
+            bleeding: -0.25,
+            regeneration: 0.75,
+            moveSpeed: 2.00,
+            maxWeight: 5.00
+        },
+        enhancement: null
+    },
+    {
+        id: 'chainmail_jacket',
+        name: 'Кольчужная куртка',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Лёгкие',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 20,
+            bioProtection: 20,
+            heatResistance: 9,
+            chemResistance: 9,
+            electroResistance: 9,
+            impactResistance: 16,
+            tearProtection: 36,
+            bulletResistance: 32,
+            moveSpeed: 1.00,
+            maxWeight: 5.00
+        },
+        enhancement: null
+    },
+    {
+        id: 'otmychka',
+        name: 'Кожаная куртка «Отмычка»',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Научные',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 100,
+            bioProtection: 60,
+            thermalProtection: 20,
+            heatResistance: 20,
+            chemResistance: 20,
+            electroResistance: 20,
+            impactResistance: 12,
+            tearProtection: 16,
+            bulletResistance: 24,
+            maxStamina: -3.00,
+            maxWeight: 10.00
+        },
+        enhancement: null
+    },
+
+    // ===== КОЛЛЕКЦИОННЫЕ =====
+    {
+        id: 'bulat',
+        name: 'Бронекостюм «Булат»',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 200,
+            bioProtection: 200,
+            thermalProtection: 200,
+            psiProtection: 100,
+            heatResistance: 80,
+            chemResistance: 40,
+            electroResistance: 35,
+            impactResistance: 122,
+            tearProtection: 110,
+            bulletResistance: 252,
+            maxStamina: -10.00,
+            maxWeight: 24.00
+        },
+        enhancement: null
+    },
+    {
+        id: 'ssp99_ecolog',
+        name: 'Комбинезон ССП-99 «Эколог»',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        type: 'Научные',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 300,
+            bioProtection: 200,
+            thermalProtection: 200,
+            psiProtection: 100,
+            heatResistance: 112,
+            chemResistance: 112,
+            electroResistance: 112,
+            impactResistance: 66,
+            tearProtection: 64,
+            bulletResistance: 90,
+            maxStamina: -10.00,
+            maxWeight: 26.00
+        },
+        enhancement: null
+    },
+    {
+        id: 'pereval',
+        name: 'Комбинезон «Перевал»',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        type: 'Комбинированные',
+        containerTypes: ['standard', 'spacious', 'compact'],
+        stats: {
+            radiationProtection: 300,
+            bioProtection: 300,
+            thermalProtection: 200,
+            psiProtection: 200,
+            heatResistance: 64,
+            chemResistance: 78,
+            electroResistance: 72,
+            impactResistance: 154,
+            tearProtection: 168,
+            bulletResistance: 192,
+            maxStamina: -5.00,
+            moveSpeed: -1.00,
+            maxWeight: 40.00
+        },
+        enhancement: null
+    },
+    {
         id: 'commando',
         name: 'Бронекомбинезон «Commando»',
         rarity: 'collection',
