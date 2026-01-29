@@ -345,7 +345,7 @@ const ARMORS = [
 // ===== УНИКАЛЬНЫЕ =====
 {
     id: 'chn36',
-    name: 'Тяжелый бронекостюм ЧН-36',
+    name: 'Тяжелый бронекостюм ЧН-3б',
     rarity: 'unique',
     rarityName: 'Уникальное',
     type: 'Комбинированные',
@@ -2332,4 +2332,5 @@ function getAmmoById(ammoId) {
 function getAmmoForWeapon(weapon) {
     return AMMO_TYPES.filter(a => weapon.ammoTypes.includes(a.id));
 }
+
 
