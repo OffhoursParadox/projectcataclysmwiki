@@ -3,7 +3,7 @@
     --color-bg:#0a0a0b;--color-bg-secondary:#12121a;--color-bg-card:rgba(18,18,26,0.9);--color-bg-table:rgba(15,15,20,0.95);
     --color-text:#e8e8e8;--color-text-muted:#888899;--color-accent:#c4a35a;--color-accent-dim:#8b7a4a;
     --color-border:rgba(255,255,255,0.08);--color-positive:#4ade80;--color-negative:#f87171;
-    --color-rarity-common:#10a115;--color-rarity-uncommon:#426ce7;--color-rarity-collection:#e568b3;--color-rarity-rare:#9b1554;--color-rarity-unique:#cc1237;
+    --color-rarity-common:#10a115;--color-rarity-uncommon:#426ce7;--color-rarity-collection:#e568b3;--color-rarity-rare:#9b1554;--color-rarity-unique:#cc1237;--color-rarity-legendary: #ff8c00;
     --color-tier-1:#9ca3af;--color-tier-2:#22c55e;--color-tier-3:#f97316;--color-tier-unique:#a855f7;
     --color-gravity:#8b5cf6;--color-chemical:#10b981;--color-electric:#3b82f6;--color-thermal:#ef4444;--color-frost:#38bdf8;
     --font-main:'Roboto',sans-serif;--font-heading:'Oswald',sans-serif;--transition:0.3s ease;--container-width:1400px;--header-height:70px
@@ -48,7 +48,7 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
 .calculator__equipment{display:flex;flex-direction:column;gap:20px}
 .calculator__results{position:sticky;top:calc(var(--header-height) + 20px)}
 
-.equipment-card{background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:16px;overflow:hidden}
+.equipment-card{background:var(--color-bg-card);border:1px solid var(--color-border);border-radius:16px;overflow:visible}
 .equipment-card__header{display:flex;align-items:center;gap:14px;padding:18px 20px;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--color-border)}
 .equipment-card__icon{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(196,163,90,0.15);border-radius:12px;color:var(--color-accent)}
 .equipment-card__icon svg{width:22px;height:22px}
@@ -281,6 +281,7 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
 .rarity--collection{color:var(--color-rarity-collection);background:rgba(229,104,179,0.15)}
 .rarity--rare{color:var(--color-rarity-rare);background:rgba(155,21,84,0.15)}
 .rarity--unique{color:var(--color-rarity-unique);background:rgba(204,18,55,0.15)}
+.rarity--legendary{color:var(--color-rarity-legendary);background:rgba(255,140,0,0.15)}
 .armor-details__type,.container-details__type{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-muted);margin-bottom:12px}
 .armor-details__stats,.container-details__stats{display:flex;flex-direction:column;gap:6px}
 .armor-details__stat,.container-details__stat{display:flex;justify-content:space-between;font-size:13px}
@@ -1032,3 +1033,485 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
 
 :focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
 :focus:not(:focus-visible){outline:none}
+
+/* ===== КАСТОМНЫЙ DROPDOWN ДЛЯ ВЫБОРА БРОНИ ===== */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.custom-dropdown__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    font-family: var(--font-main);
+    font-size: 15px;
+    color: var(--color-text);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: left;
+}
+
+.custom-dropdown__trigger:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.custom-dropdown__trigger:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+
+.custom-dropdown.open .custom-dropdown__trigger {
+    border-color: var(--color-accent);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.custom-dropdown__value {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-dropdown__value[data-placeholder]:not(.has-value) {
+    color: var(--color-text-muted);
+}
+
+.custom-dropdown__arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--color-text-muted);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.custom-dropdown.open .custom-dropdown__arrow {
+    transform: rotate(180deg);
+}
+
+/* Выпадающее меню */
+.custom-dropdown__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(18, 18, 26, 0.98);
+    border: 1px solid var(--color-accent);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.custom-dropdown.open .custom-dropdown__menu {
+    max-height: 400px;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Поиск в dropdown */
+.custom-dropdown__search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.custom-dropdown__search svg {
+    width: 18px;
+    height: 18px;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+.custom-dropdown__search input {
+    flex: 1;
+    background: none;
+    border: none;
+    font-family: var(--font-main);
+    font-size: 14px;
+    color: var(--color-text);
+    outline: none;
+}
+
+.custom-dropdown__search input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* Список элементов */
+.custom-dropdown__list {
+    max-height: 340px;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.custom-dropdown__list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-dropdown__list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.custom-dropdown__list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+}
+
+.custom-dropdown__list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Группа по редкости */
+.custom-dropdown__group {
+    margin-bottom: 8px;
+}
+
+.custom-dropdown__group:last-child {
+    margin-bottom: 0;
+}
+
+.custom-dropdown__group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 4px;
+}
+
+.custom-dropdown__group-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.custom-dropdown__group--legendary .custom-dropdown__group-title { color: var(--color-rarity-legendary); }
+.custom-dropdown__group--legendary .custom-dropdown__group-title::before { background: var(--color-rarity-legendary); }
+
+.custom-dropdown__group--unique .custom-dropdown__group-title { color: var(--color-rarity-unique); }
+.custom-dropdown__group--unique .custom-dropdown__group-title::before { background: var(--color-rarity-unique); }
+
+.custom-dropdown__group--rare .custom-dropdown__group-title { color: var(--color-rarity-rare); }
+.custom-dropdown__group--rare .custom-dropdown__group-title::before { background: var(--color-rarity-rare); }
+
+.custom-dropdown__group--collection .custom-dropdown__group-title { color: var(--color-rarity-collection); }
+.custom-dropdown__group--collection .custom-dropdown__group-title::before { background: var(--color-rarity-collection); }
+
+.custom-dropdown__group--uncommon .custom-dropdown__group-title { color: var(--color-rarity-uncommon); }
+.custom-dropdown__group--uncommon .custom-dropdown__group-title::before { background: var(--color-rarity-uncommon); }
+
+.custom-dropdown__group--common .custom-dropdown__group-title { color: var(--color-rarity-common); }
+.custom-dropdown__group--common .custom-dropdown__group-title::before { background: var(--color-rarity-common); }
+
+/* ===== ЭЛЕМЕНТ СПИСКА (БРОНЯ) ===== */
+.custom-dropdown__item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    margin: 2px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: 2px solid transparent;
+}
+
+/* HOVER-ЭФФЕКТ С КОНТУРОМ И ОТСТУПОМ */
+.custom-dropdown__item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.custom-dropdown__item::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border: 2px solid transparent;
+    border-radius: 11px;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.custom-dropdown__item:hover::before {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 12px rgba(196, 163, 90, 0.25);
+}
+
+/* Подсветка по редкости */
+.custom-dropdown__item--legendary:hover::before {
+    border-color: var(--color-rarity-legendary);
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+}
+
+.custom-dropdown__item--unique:hover::before {
+    border-color: var(--color-rarity-unique);
+    box-shadow: 0 0 15px rgba(204, 18, 55, 0.3);
+}
+
+.custom-dropdown__item--rare:hover::before {
+    border-color: var(--color-rarity-rare);
+    box-shadow: 0 0 12px rgba(155, 21, 84, 0.25);
+}
+
+.custom-dropdown__item--collection:hover::before {
+    border-color: var(--color-rarity-collection);
+    box-shadow: 0 0 12px rgba(229, 104, 179, 0.25);
+}
+
+.custom-dropdown__item--uncommon:hover::before {
+    border-color: var(--color-rarity-uncommon);
+    box-shadow: 0 0 10px rgba(66, 108, 231, 0.2);
+}
+
+.custom-dropdown__item--common:hover::before {
+    border-color: var(--color-rarity-common);
+    box-shadow: 0 0 10px rgba(16, 161, 21, 0.2);
+}
+
+/* Выбранный элемент */
+.custom-dropdown__item.selected {
+    background: rgba(196, 163, 90, 0.15);
+}
+
+.custom-dropdown__item.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 12px;
+    color: var(--color-accent);
+    font-weight: bold;
+}
+
+/* Контент элемента */
+.custom-dropdown__item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.custom-dropdown__item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.custom-dropdown__item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.custom-dropdown__item-type {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.custom-dropdown__item-type svg {
+    width: 12px;
+    height: 12px;
+}
+
+.custom-dropdown__item-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+/* Бейдж редкости */
+.custom-dropdown__item-rarity {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.custom-dropdown__item--legendary .custom-dropdown__item-rarity {
+    color: var(--color-rarity-legendary);
+    background: rgba(255, 140, 0, 0.15);
+}
+
+.custom-dropdown__item--unique .custom-dropdown__item-rarity {
+    color: var(--color-rarity-unique);
+    background: rgba(204, 18, 55, 0.15);
+}
+
+.custom-dropdown__item--rare .custom-dropdown__item-rarity {
+    color: var(--color-rarity-rare);
+    background: rgba(155, 21, 84, 0.15);
+}
+
+.custom-dropdown__item--collection .custom-dropdown__item-rarity {
+    color: var(--color-rarity-collection);
+    background: rgba(229, 104, 179, 0.15);
+}
+
+.custom-dropdown__item--uncommon .custom-dropdown__item-rarity {
+    color: var(--color-rarity-uncommon);
+    background: rgba(66, 108, 231, 0.15);
+}
+
+.custom-dropdown__item--common .custom-dropdown__item-rarity {
+    color: var(--color-rarity-common);
+    background: rgba(16, 161, 21, 0.15);
+}
+
+/* Пустой результат поиска */
+.custom-dropdown__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.custom-dropdown__empty svg {
+    width: 32px;
+    height: 32px;
+    opacity: 0.5;
+}
+
+/* Сброс выбора */
+.custom-dropdown__clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    margin: 0 8px 8px;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px dashed rgba(248, 113, 113, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.custom-dropdown__clear:hover {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: rgba(248, 113, 113, 0.5);
+    color: var(--color-negative);
+}
+
+.custom-dropdown__clear svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .custom-dropdown__item {
+        padding: 12px 10px;
+    }
+    
+    .custom-dropdown__item-name {
+        font-size: 13px;
+    }
+    
+    .custom-dropdown__item-rarity {
+        display: none;
+    }
+}
+
+/* ===== ИСПРАВЛЕНИЕ OVERFLOW ДЛЯ DROPDOWN ===== */
+
+/* Убираем overflow:hidden с карточки брони, чтобы dropdown мог выходить за границы */
+.equipment-card:first-child {
+    overflow: visible;
+}
+
+/* Или более универсально - для карточки с dropdown */
+.equipment-card:has(.custom-dropdown) {
+    overflow: visible;
+}
+
+/* Фикс для скругления углов header, если нужно */
+.equipment-card__header {
+    border-radius: 16px 16px 0 0;
+}
+
+/* Увеличиваем z-index для dropdown меню, чтобы оно было поверх других карточек */
+.custom-dropdown__menu {
+    z-index: 500;
+}
+
+/* Когда dropdown открыт, карточка должна быть поверх других */
+.custom-dropdown.open {
+    z-index: 100;
+}
+
+/* ===== ЗАКРЕПЛЁННАЯ КНОПКА СБРОСА ===== */
+.custom-dropdown__clear-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 8px;
+    background: rgba(18, 18, 26, 0.98);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.custom-dropdown__clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    font-family: var(--font-main);
+    font-size: 13px;
+    color: var(--color-text-muted);
+    background: rgba(248, 113, 113, 0.1);
+    border: 1px dashed rgba(248, 113, 113, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.custom-dropdown__clear:hover {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: rgba(248, 113, 113, 0.5);
+    color: var(--color-negative);
+}
+
+.custom-dropdown__clear svg {
+    width: 16px;
+    height: 16px;
+}
