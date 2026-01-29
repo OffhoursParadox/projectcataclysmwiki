@@ -5,12 +5,11 @@ const state = {
     currentSlotIndex: null,
     previousStats: null,
     enhancementLevel: 0,
-    // Фильтры артефактов
     filters: {
         category: 'all',
         search: '',
-        bonusStat: null,    // { stat: 'bulletResistance', type: 'positive' }
-        penaltyStat: null   // { stat: 'radiation', type: 'positive' }
+        bonusStat: null,
+        penaltyStat: null
     }
 };
 
@@ -28,6 +27,18 @@ const WARNING_STATS = {
 
 // Константа для расчёта пулестойкости
 const BULLET_RESISTANCE_CONSTANT = 166.67;
+
+// Порядок редкостей (от редкой к обычной)
+const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
+
+const RARITY_NAMES = {
+    legendary: 'Легендарное',
+    unique: 'Уникальное',
+    rare: 'Раритетное',
+    collection: 'Коллекционное',
+    uncommon: 'Необычное',
+    common: 'Распространённое'
+};
 
 // Названия фильтров для отображения
 const FILTER_DISPLAY_NAMES = {
@@ -75,31 +86,256 @@ const elements = {
     enhancementSlider: document.getElementById('enhancementSlider'),
     enhancementValue: document.getElementById('enhancementValue'),
     enhancementBonus: document.getElementById('enhancementBonus'),
-    // Новые элементы фильтрации
     bonusStatFilter: document.getElementById('bonusStatFilter'),
     penaltyStatFilter: document.getElementById('penaltyStatFilter'),
     resetStatFilters: document.getElementById('resetStatFilters'),
     activeFilters: document.getElementById('activeFilters'),
     activeFiltersTags: document.getElementById('activeFiltersTags'),
-    quickFilterBtns: document.querySelectorAll('.quick-filter-btn')
+    quickFilterBtns: document.querySelectorAll('.quick-filter-btn'),
+    // Кастомный dropdown для брони
+    armorDropdown: document.getElementById('armorDropdown'),
+    armorDropdownMenu: document.getElementById('armorDropdownMenu'),
+    armorDropdownList: document.getElementById('armorDropdownList'),
+    armorSearchInput: document.getElementById('armorSearchInput'),
+    armorClearWrapper: document.getElementById('armorClearWrapper'),
+    armorClearBtn: document.getElementById('armorClearBtn')
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    initArmorSelect();
+    initArmorDropdown();
     initContainerSelect();
     initEventListeners();
     initScrollEffects();
     updateStats();
 });
 
-function initArmorSelect() {
-    ARMORS.forEach(armor => {
-        const option = document.createElement('option');
-        option.value = armor.id;
-        option.textContent = armor.name;
-        elements.armorSelect.appendChild(option);
+// ===== КАСТОМНЫЙ DROPDOWN ДЛЯ БРОНИ =====
+
+function initArmorDropdown() {
+    renderArmorDropdownList();
+    
+    // Открытие/закрытие dropdown
+    const trigger = elements.armorDropdown.querySelector('.custom-dropdown__trigger');
+    trigger.addEventListener('click', toggleArmorDropdown);
+    
+    // Поиск
+    if (elements.armorSearchInput) {
+        elements.armorSearchInput.addEventListener('input', handleArmorSearch);
+    }
+    
+    // Делегирование кликов по элементам списка (исправляет баг с Иггдрасилем)
+    elements.armorDropdownList.addEventListener('click', handleArmorListClick);
+    
+    // Кнопка сброса
+    if (elements.armorClearBtn) {
+        elements.armorClearBtn.addEventListener('click', clearArmorSelection);
+    }
+    
+    // Закрытие при клике вне
+    document.addEventListener('click', (e) => {
+        if (!elements.armorDropdown.contains(e.target)) {
+            closeArmorDropdown();
+        }
+    });
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && elements.armorDropdown.classList.contains('open')) {
+            closeArmorDropdown();
+        }
     });
 }
+
+function toggleArmorDropdown() {
+    elements.armorDropdown.classList.toggle('open');
+    if (elements.armorDropdown.classList.contains('open') && elements.armorSearchInput) {
+        elements.armorSearchInput.focus();
+    }
+}
+
+function closeArmorDropdown() {
+    elements.armorDropdown.classList.remove('open');
+}
+
+function handleArmorSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    renderArmorDropdownList(query);
+}
+
+// Обработка кликов через делегирование (надёжнее чем inline onclick)
+function handleArmorListClick(e) {
+    const item = e.target.closest('.custom-dropdown__item');
+    if (!item) return;
+    
+    const armorId = item.dataset.armorId;
+    if (armorId) {
+        selectArmorFromDropdown(armorId);
+    }
+}
+
+function renderArmorDropdownList(searchQuery = '') {
+    // Группируем броню по редкости
+    const groupedArmors = {};
+    
+    ARMORS.forEach(armor => {
+        if (searchQuery && !armor.name.toLowerCase().includes(searchQuery)) {
+            return;
+        }
+        
+        if (!groupedArmors[armor.rarity]) {
+            groupedArmors[armor.rarity] = [];
+        }
+        groupedArmors[armor.rarity].push(armor);
+    });
+    
+    // Обновляем видимость кнопки сброса
+    if (elements.armorClearWrapper) {
+        elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
+    }
+    
+    // Проверяем, есть ли результаты
+    const hasResults = Object.keys(groupedArmors).length > 0;
+    
+    if (!hasResults) {
+        elements.armorDropdownList.innerHTML = `
+            <div class="custom-dropdown__empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <span>Броня не найдена</span>
+            </div>
+        `;
+        return;
+    }
+    
+    // Генерируем HTML (без кнопки сброса - она теперь отдельно)
+    let html = '';
+    
+    // Группы по редкости
+    RARITY_ORDER.forEach(rarity => {
+        const armors = groupedArmors[rarity];
+        if (!armors || armors.length === 0) return;
+        
+        html += `
+            <div class="custom-dropdown__group custom-dropdown__group--${rarity}">
+                <div class="custom-dropdown__group-title">${RARITY_NAMES[rarity]} (${armors.length})</div>
+        `;
+        
+        armors.forEach(armor => {
+            const isSelected = state.selectedArmor && state.selectedArmor.id === armor.id;
+            const bulletRes = armor.stats.bulletResistance || 0;
+            
+            html += `
+                <div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" 
+                     data-armor-id="${armor.id}">
+                    <div class="custom-dropdown__item-info">
+                        <div class="custom-dropdown__item-name">${armor.name}</div>
+                        <div class="custom-dropdown__item-meta">
+                            <span class="custom-dropdown__item-type">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                </svg>
+                                ${armor.type}
+                            </span>
+                            ${bulletRes > 0 ? `
+                                <span class="custom-dropdown__item-stat">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    ${bulletRes}
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                    <span class="custom-dropdown__item-rarity">${armor.rarityName}</span>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    });
+    
+    elements.armorDropdownList.innerHTML = html;
+}
+
+function selectArmorFromDropdown(armorId) {
+    console.log('Selecting armor:', armorId); // Для отладки
+    
+    state.previousStats = calculateTotalStats();
+    
+    const armor = ARMORS.find(a => a.id === armorId);
+    
+    if (!armor) {
+        console.error('Armor not found:', armorId);
+        return;
+    }
+    
+    state.selectedArmor = armor;
+    state.enhancementLevel = 0;
+    
+    // Обновляем текст в trigger
+    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = armor.name;
+    valueElement.classList.add('has-value');
+    
+    // Обновляем скрытый select для совместимости
+    elements.armorSelect.value = armorId;
+    
+    // Закрываем dropdown
+    closeArmorDropdown();
+    
+    // Сбрасываем поиск
+    if (elements.armorSearchInput) {
+        elements.armorSearchInput.value = '';
+    }
+    
+    // Обновляем интерфейс
+    if (armor.enhancement) {
+        showEnhancementBlock();
+    } else {
+        hideEnhancementBlock();
+    }
+    
+    renderArmorInfo();
+    updateContainerOptions();
+    updateStats();
+    
+    // Перерендерим список (для отметки selected и показа кнопки сброса)
+    renderArmorDropdownList();
+}
+
+function clearArmorSelection() {
+    state.previousStats = calculateTotalStats();
+    state.selectedArmor = null;
+    state.enhancementLevel = 0;
+    
+    // Обновляем текст в trigger
+    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = 'Выберите броню...';
+    valueElement.classList.remove('has-value');
+    
+    // Обновляем скрытый select
+    elements.armorSelect.value = '';
+    
+    // Закрываем dropdown
+    closeArmorDropdown();
+    
+    // Сбрасываем поиск
+    if (elements.armorSearchInput) {
+        elements.armorSearchInput.value = '';
+    }
+    
+    // Обновляем интерфейс
+    hideEnhancementBlock();
+    renderArmorInfo();
+    updateContainerOptions();
+    updateStats();
+    
+    // Перерендерим список (для скрытия кнопки сброса)
+    renderArmorDropdownList();
+}
+
+// ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
 
 function initContainerSelect() {
     elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
@@ -113,7 +349,6 @@ function initContainerSelect() {
 }
 
 function initEventListeners() {
-    elements.armorSelect.addEventListener('change', handleArmorChange);
     elements.containerSelect.addEventListener('change', handleContainerChange);
     elements.resetBtn.addEventListener('click', resetBuild);
     elements.modalClose.addEventListener('click', closeModal);
@@ -164,13 +399,11 @@ function initEventListeners() {
     });
 }
 
-// Обработчик изменения поиска
 function handleSearchChange(e) {
     state.filters.search = e.target.value.toLowerCase().trim();
     applyFilters();
 }
 
-// Обработчик изменения фильтра бонусов
 function handleBonusFilterChange(e) {
     const value = e.target.value;
     if (value) {
@@ -186,7 +419,6 @@ function handleBonusFilterChange(e) {
     applyFilters();
 }
 
-// Обработчик изменения фильтра штрафов
 function handlePenaltyFilterChange(e) {
     const value = e.target.value;
     if (value) {
@@ -201,16 +433,13 @@ function handlePenaltyFilterChange(e) {
     applyFilters();
 }
 
-// Обработчик быстрых фильтров
 function handleQuickFilter(btn) {
     const filterValue = btn.dataset.quickFilter;
     const [stat, type] = filterValue.split(':');
     
-    // Проверяем, активен ли уже этот фильтр
     const isActive = btn.classList.contains('quick-filter-btn--active');
     
     if (isActive) {
-        // Снимаем фильтр
         state.filters.bonusStat = null;
         if (elements.bonusStatFilter) {
             elements.bonusStatFilter.value = '';
@@ -218,13 +447,11 @@ function handleQuickFilter(btn) {
         }
         btn.classList.remove('quick-filter-btn--active');
     } else {
-        // Устанавливаем фильтр
         state.filters.bonusStat = { stat, type };
         if (elements.bonusStatFilter) {
             elements.bonusStatFilter.value = filterValue;
             elements.bonusStatFilter.classList.add('stat-filter-select--active');
         }
-        // Снимаем активность с других быстрых фильтров
         elements.quickFilterBtns.forEach(b => b.classList.remove('quick-filter-btn--active'));
         btn.classList.add('quick-filter-btn--active');
     }
@@ -233,7 +460,6 @@ function handleQuickFilter(btn) {
     applyFilters();
 }
 
-// Обновление состояния кнопок быстрых фильтров
 function updateQuickFilterButtons() {
     if (!elements.quickFilterBtns) return;
     
@@ -249,7 +475,6 @@ function updateQuickFilterButtons() {
     });
 }
 
-// Сброс всех фильтров по статам
 function resetAllStatFilters() {
     state.filters.bonusStat = null;
     state.filters.penaltyStat = null;
@@ -269,7 +494,6 @@ function resetAllStatFilters() {
     applyFilters();
 }
 
-// Удаление конкретного фильтра
 function removeStatFilter(filterType) {
     if (filterType === 'bonus') {
         state.filters.bonusStat = null;
@@ -290,7 +514,6 @@ function removeStatFilter(filterType) {
     applyFilters();
 }
 
-// Обновление отображения активных фильтров
 function updateActiveFiltersDisplay() {
     if (!elements.activeFilters || !elements.activeFiltersTags) return;
     
@@ -333,16 +556,13 @@ function updateActiveFiltersDisplay() {
     }
 }
 
-// Применение всех фильтров
 function applyFilters() {
     let filtered = [...ARTIFACTS];
     
-    // Фильтр по категории
     if (state.filters.category !== 'all') {
         filtered = filtered.filter(a => a.category === state.filters.category);
     }
     
-    // Фильтр по поиску
     if (state.filters.search) {
         filtered = filtered.filter(a => 
             a.name.toLowerCase().includes(state.filters.search) || 
@@ -350,7 +570,6 @@ function applyFilters() {
         );
     }
     
-    // Фильтр по бонусному стату
     if (state.filters.bonusStat) {
         const { stat, type } = state.filters.bonusStat;
         filtered = filtered.filter(artifact => {
@@ -360,7 +579,6 @@ function applyFilters() {
         });
     }
     
-    // Фильтр по штрафному стату
     if (state.filters.penaltyStat) {
         const { stat, type } = state.filters.penaltyStat;
         filtered = filtered.filter(artifact => {
@@ -370,13 +588,11 @@ function applyFilters() {
         });
     }
     
-    // Сортировка результатов
     if (state.filters.bonusStat) {
         const { stat, type } = state.filters.bonusStat;
         filtered.sort((a, b) => {
             const aVal = a.stats[stat] || 0;
             const bVal = b.stats[stat] || 0;
-            // Сортируем по абсолютному значению (лучшие сверху)
             return type === 'positive' ? bVal - aVal : aVal - bVal;
         });
     }
@@ -384,7 +600,6 @@ function applyFilters() {
     renderArtifactList(filtered);
 }
 
-// Устаревшая функция для обратной совместимости
 function filterArtifacts() {
     applyFilters();
 }
@@ -398,34 +613,6 @@ function initScrollEffects() {
     elements.scrollTop.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-}
-
-function handleArmorChange(e) {
-    const armorId = e.target.value;
-    state.previousStats = calculateTotalStats();
-    
-    if (!armorId) {
-        state.selectedArmor = null;
-        state.enhancementLevel = 0;
-        hideEnhancementBlock();
-        renderArmorInfo();
-        updateContainerOptions();
-        updateStats();
-        return;
-    }
-    
-    state.selectedArmor = ARMORS.find(a => a.id === armorId);
-    state.enhancementLevel = 0;
-    
-    if (state.selectedArmor.enhancement) {
-        showEnhancementBlock();
-    } else {
-        hideEnhancementBlock();
-    }
-    
-    renderArmorInfo();
-    updateContainerOptions();
-    updateStats();
 }
 
 function updateContainerOptions() {
@@ -586,6 +773,15 @@ function resetBuild() {
     state.artifacts = [];
     state.enhancementLevel = 0;
     
+    // Сброс кастомного dropdown брони
+    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = 'Выберите броню...';
+    valueElement.classList.remove('has-value');
+    if (elements.armorSearchInput) {
+        elements.armorSearchInput.value = '';
+    }
+    renderArmorDropdownList();
+    
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
     
@@ -740,20 +936,15 @@ function renderArtifactList(artifacts = ARTIFACTS) {
         return;
     }
     
-    // Добавляем счётчик найденных артефактов
-    const countHtml = `<div class="artifacts-count">Найдено: <strong>${artifacts.length}</strong> артефакт${getArtifactWord(artifacts.length)}</div>`;
-    
     const listHtml = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : artifact.tier;
         
-        // Подсвечиваем релевантные статы
         const statsHtml = Object.entries(artifact.stats).slice(0, 4).map(([key, value]) => {
             const name = STAT_NAMES[key] || key;
             const unit = STAT_UNITS[key] || '';
             const { displayValue, colorClass } = formatStatValue(key, value);
             
-            // Проверяем, соответствует ли стат фильтру
             let highlightClass = '';
             if (state.filters.bonusStat && state.filters.bonusStat.stat === key) {
                 highlightClass = 'artifact-stat--highlighted';
@@ -785,7 +976,6 @@ function renderArtifactList(artifacts = ARTIFACTS) {
     elements.artifactList.innerHTML = listHtml;
 }
 
-// Склонение слова "артефакт"
 function getArtifactWord(count) {
     const lastTwo = count % 100;
     const lastOne = count % 10;
@@ -800,7 +990,6 @@ function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
     
-    // Сбрасываем фильтры при открытии
     state.filters.search = '';
     state.filters.category = 'all';
     state.filters.bonusStat = null;
@@ -1152,3 +1341,5 @@ window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
 window.removeArtifact = removeArtifact;
 window.removeStatFilter = removeStatFilter;
+window.selectArmorFromDropdown = selectArmorFromDropdown;
+window.clearArmorSelection = clearArmorSelection;
