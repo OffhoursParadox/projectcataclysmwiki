@@ -13,10 +13,10 @@ const state = {
     }
 };
 
-// Приоритетные статы для верхней панели
+const STORAGE_KEY = 'cataclysmCalculatorState';
+
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
 
-// Настройки предупреждений
 const WARNING_STATS = {
     radiation: { threshold: 0, color: 'radiation', title: 'Накопление радиации', unit: 'мЗв/сек' },
     cold: { threshold: 0, color: 'cold', title: 'Накопление холода', unit: '/сек' },
@@ -25,10 +25,8 @@ const WARNING_STATS = {
     saturation: { threshold: 0, color: 'saturation', title: 'Накопление голода', unit: '%/сек', inverted: true }
 };
 
-// Константа для расчёта пулестойкости
 const BULLET_RESISTANCE_CONSTANT = 166.67;
 
-// Порядок редкостей (от редкой к обычной)
 const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
 
 const RARITY_NAMES = {
@@ -40,7 +38,40 @@ const RARITY_NAMES = {
     common: 'Распространённое'
 };
 
-// Названия фильтров для отображения
+const CONTAINER_TYPE_NAMES = {
+    standard: 'Стандартный',
+    bulky: 'Громоздкий',
+    compact: 'Компактный',
+    spacious: 'Вместительный'
+};
+
+const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
+
+const CONTAINER_TYPE_ICONS = {
+    standard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>`,
+    bulky: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="7" width="20" height="10" rx="2"/>
+        <path d="M12 7v10"/>
+        <path d="M7 12h2"/>
+        <path d="M15 12h2"/>
+    </svg>`,
+    compact: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M12 8v8"/>
+        <path d="M8 12h8"/>
+        <circle cx="12" cy="12" r="3"/>
+    </svg>`,
+    spacious: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/>
+        <path d="M3.27 6.96L12 12.01l8.73-5.05"/>
+        <ellipse cx="12" cy="19" rx="9" ry="3"/>
+    </svg>`
+};
+
 const FILTER_DISPLAY_NAMES = {
     bulletResistance: 'Пулестойкость',
     tearProtection: 'Защита от разрывов',
@@ -92,53 +123,147 @@ const elements = {
     activeFilters: document.getElementById('activeFilters'),
     activeFiltersTags: document.getElementById('activeFiltersTags'),
     quickFilterBtns: document.querySelectorAll('.quick-filter-btn'),
-    // Кастомный dropdown для брони
     armorDropdown: document.getElementById('armorDropdown'),
     armorDropdownMenu: document.getElementById('armorDropdownMenu'),
     armorDropdownList: document.getElementById('armorDropdownList'),
     armorSearchInput: document.getElementById('armorSearchInput'),
     armorClearWrapper: document.getElementById('armorClearWrapper'),
-    armorClearBtn: document.getElementById('armorClearBtn')
+    armorClearBtn: document.getElementById('armorClearBtn'),
+    containerDropdown: document.getElementById('containerDropdown'),
+    containerDropdownMenu: document.getElementById('containerDropdownMenu'),
+    containerDropdownList: document.getElementById('containerDropdownList'),
+    containerSearchInput: document.getElementById('containerSearchInput'),
+    containerClearWrapper: document.getElementById('containerClearWrapper'),
+    containerClearBtn: document.getElementById('containerClearBtn')
 };
+
+// ============== ФУНКЦИИ СОХРАНЕНИЯ/ЗАГРУЗКИ ==============
+
+function saveStateToStorage() {
+    try {
+        const dataToSave = {
+            armorId: state.selectedArmor?.id || null,
+            containerId: state.selectedContainer?.id || null,
+            artifactIds: state.artifacts.map(a => a?.id || null),
+            enhancementLevel: state.enhancementLevel
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    } catch (e) {
+        console.warn('Не удалось сохранить состояние в localStorage:', e);
+    }
+}
+
+function loadStateFromStorage() {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return null;
+        return JSON.parse(saved);
+    } catch (e) {
+        console.warn('Не удалось загрузить состояние из localStorage:', e);
+        return null;
+    }
+}
+
+function restoreState() {
+    const saved = loadStateFromStorage();
+    if (!saved) return;
+    
+    // Восстанавливаем броню
+    if (saved.armorId) {
+        const armor = ARMORS.find(a => a.id === saved.armorId);
+        if (armor) {
+            state.selectedArmor = armor;
+            state.enhancementLevel = saved.enhancementLevel || 0;
+            
+            const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+            valueElement.textContent = armor.name;
+            valueElement.classList.add('has-value');
+            elements.armorSelect.value = saved.armorId;
+            
+            if (armor.enhancement) {
+                showEnhancementBlock();
+                elements.enhancementSlider.value = state.enhancementLevel;
+                updateEnhancementDisplay();
+            }
+            
+            renderArmorInfo();
+        }
+    }
+    
+    // Обновляем доступные контейнеры
+    updateContainerOptions();
+    
+    // Восстанавливаем контейнер
+    if (saved.containerId) {
+        const container = CONTAINERS.find(c => c.id === saved.containerId);
+        if (container && isContainerAvailable(container)) {
+            state.selectedContainer = container;
+            state.artifacts = new Array(container.slots).fill(null);
+            
+            const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+            valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+            valueElement.classList.add('has-value');
+            elements.containerSelect.value = saved.containerId;
+            
+            // Восстанавливаем артефакты
+            if (saved.artifactIds && Array.isArray(saved.artifactIds)) {
+                saved.artifactIds.forEach((artifactId, index) => {
+                    if (artifactId && index < container.slots) {
+                        const artifact = ARTIFACTS.find(a => a.id === artifactId);
+                        if (artifact) {
+                            state.artifacts[index] = artifact;
+                        }
+                    }
+                });
+            }
+            
+            renderContainerInfo();
+            renderArtifactSlots();
+        }
+    }
+    
+    renderArmorDropdownList();
+    renderContainerDropdownList();
+    updateStats();
+}
+
+// ============== ИНИЦИАЛИЗАЦИЯ ==============
 
 document.addEventListener('DOMContentLoaded', () => {
     initArmorDropdown();
+    initContainerDropdown();
     initContainerSelect();
     initEventListeners();
     initScrollEffects();
+    
+    // Восстанавливаем сохранённое состояние
+    restoreState();
+    
     updateStats();
 });
-
-// ===== КАСТОМНЫЙ DROPDOWN ДЛЯ БРОНИ =====
 
 function initArmorDropdown() {
     renderArmorDropdownList();
     
-    // Открытие/закрытие dropdown
     const trigger = elements.armorDropdown.querySelector('.custom-dropdown__trigger');
     trigger.addEventListener('click', toggleArmorDropdown);
     
-    // Поиск
     if (elements.armorSearchInput) {
         elements.armorSearchInput.addEventListener('input', handleArmorSearch);
     }
     
-    // Делегирование кликов по элементам списка (исправляет баг с Иггдрасилем)
     elements.armorDropdownList.addEventListener('click', handleArmorListClick);
     
-    // Кнопка сброса
     if (elements.armorClearBtn) {
         elements.armorClearBtn.addEventListener('click', clearArmorSelection);
     }
     
-    // Закрытие при клике вне
     document.addEventListener('click', (e) => {
         if (!elements.armorDropdown.contains(e.target)) {
             closeArmorDropdown();
         }
     });
     
-    // Закрытие по Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.armorDropdown.classList.contains('open')) {
             closeArmorDropdown();
@@ -162,7 +287,6 @@ function handleArmorSearch(e) {
     renderArmorDropdownList(query);
 }
 
-// Обработка кликов через делегирование (надёжнее чем inline onclick)
 function handleArmorListClick(e) {
     const item = e.target.closest('.custom-dropdown__item');
     if (!item) return;
@@ -174,7 +298,6 @@ function handleArmorListClick(e) {
 }
 
 function renderArmorDropdownList(searchQuery = '') {
-    // Группируем броню по редкости
     const groupedArmors = {};
     
     ARMORS.forEach(armor => {
@@ -255,8 +378,6 @@ function renderArmorDropdownList(searchQuery = '') {
 }
 
 function selectArmorFromDropdown(armorId) {
-    console.log('Selecting armor:', armorId); // Для отладки
-    
     state.previousStats = calculateTotalStats();
     
     const armor = ARMORS.find(a => a.id === armorId);
@@ -269,23 +390,18 @@ function selectArmorFromDropdown(armorId) {
     state.selectedArmor = armor;
     state.enhancementLevel = 0;
     
-    // Обновляем текст в trigger
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = armor.name;
     valueElement.classList.add('has-value');
     
-    // Обновляем скрытый select для совместимости
     elements.armorSelect.value = armorId;
     
-    // Закрываем dropdown
     closeArmorDropdown();
     
-    // Сбрасываем поиск
     if (elements.armorSearchInput) {
         elements.armorSearchInput.value = '';
     }
     
-    // Обновляем интерфейс
     if (armor.enhancement) {
         showEnhancementBlock();
     } else {
@@ -295,9 +411,8 @@ function selectArmorFromDropdown(armorId) {
     renderArmorInfo();
     updateContainerOptions();
     updateStats();
-    
-    // Перерендерим список (для отметки selected и показа кнопки сброса)
     renderArmorDropdownList();
+    saveStateToStorage();
 }
 
 function clearArmorSelection() {
@@ -305,33 +420,251 @@ function clearArmorSelection() {
     state.selectedArmor = null;
     state.enhancementLevel = 0;
     
-    // Обновляем текст в trigger
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = 'Выберите броню...';
     valueElement.classList.remove('has-value');
     
-    // Обновляем скрытый select
     elements.armorSelect.value = '';
     
-    // Закрываем dropdown
     closeArmorDropdown();
     
-    // Сбрасываем поиск
     if (elements.armorSearchInput) {
         elements.armorSearchInput.value = '';
     }
     
-    // Обновляем интерфейс
     hideEnhancementBlock();
     renderArmorInfo();
     updateContainerOptions();
     updateStats();
-    
-    // Перерендерим список (для скрытия кнопки сброса)
     renderArmorDropdownList();
+    saveStateToStorage();
 }
 
-// ===== ОСТАЛЬНЫЕ ФУНКЦИИ =====
+function initContainerDropdown() {
+    renderContainerDropdownList();
+    
+    const trigger = elements.containerDropdown.querySelector('.custom-dropdown__trigger');
+    trigger.addEventListener('click', toggleContainerDropdown);
+    
+    if (elements.containerSearchInput) {
+        elements.containerSearchInput.addEventListener('input', handleContainerSearch);
+    }
+    
+    elements.containerDropdownList.addEventListener('click', handleContainerListClick);
+    
+    if (elements.containerClearBtn) {
+        elements.containerClearBtn.addEventListener('click', clearContainerSelection);
+    }
+    
+    document.addEventListener('click', (e) => {
+        if (!elements.containerDropdown.contains(e.target)) {
+            closeContainerDropdown();
+        }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && elements.containerDropdown.classList.contains('open')) {
+            closeContainerDropdown();
+        }
+    });
+}
+
+function toggleContainerDropdown() {
+    elements.containerDropdown.classList.toggle('open');
+    if (elements.containerDropdown.classList.contains('open') && elements.containerSearchInput) {
+        elements.containerSearchInput.focus();
+    }
+}
+
+function closeContainerDropdown() {
+    elements.containerDropdown.classList.remove('open');
+}
+
+function handleContainerSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    renderContainerDropdownList(query);
+}
+
+function handleContainerListClick(e) {
+    const item = e.target.closest('.custom-dropdown__item');
+    if (!item || item.classList.contains('custom-dropdown__item--disabled')) return;
+    
+    const containerId = item.dataset.containerId;
+    if (containerId) {
+        selectContainerFromDropdown(containerId);
+    }
+}
+
+function getAvailableContainers() {
+    return CONTAINERS.filter(container => {
+        if (!state.selectedArmor) return true;
+        if (state.selectedArmor.containerTypes.includes('all')) return true;
+        return state.selectedArmor.containerTypes.includes(container.type);
+    });
+}
+
+function isContainerAvailable(container) {
+    if (!state.selectedArmor) return true;
+    if (state.selectedArmor.containerTypes.includes('all')) return true;
+    return state.selectedArmor.containerTypes.includes(container.type);
+}
+
+function renderContainerDropdownList(searchQuery = '') {
+    const groupedContainers = {};
+    
+    CONTAINERS.forEach(container => {
+        if (searchQuery && !container.name.toLowerCase().includes(searchQuery)) {
+            return;
+        }
+        
+        if (!groupedContainers[container.type]) {
+            groupedContainers[container.type] = [];
+        }
+        groupedContainers[container.type].push(container);
+    });
+    
+    if (elements.containerClearWrapper) {
+        elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
+    }
+    
+    const hasResults = Object.keys(groupedContainers).length > 0;
+    
+    if (!hasResults) {
+        elements.containerDropdownList.innerHTML = `
+            <div class="custom-dropdown__empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <span>Контейнер не найден</span>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    CONTAINER_TYPE_ORDER.forEach(type => {
+        const containers = groupedContainers[type];
+        if (!containers || containers.length === 0) return;
+        
+        html += `
+            <div class="custom-dropdown__group custom-dropdown__group--${type}">
+                <div class="custom-dropdown__group-title">${CONTAINER_TYPE_NAMES[type] || type} (${containers.length})</div>
+        `;
+        
+        containers.forEach(container => {
+            const isSelected = state.selectedContainer && state.selectedContainer.id === container.id;
+            const isAvailable = isContainerAvailable(container);
+            const slots = container.slots;
+            const totalShielding = Object.values(container.shielding || {}).reduce((sum, val) => sum + Math.abs(val), 0);
+            
+            html += `
+                <div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" 
+                     data-container-id="${container.id}">
+                    <div class="custom-dropdown__item-icon">
+                        ${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.backpack}
+                    </div>
+                    <div class="custom-dropdown__item-info">
+                        <div class="custom-dropdown__item-name">${container.name}</div>
+                        <div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended">
+                            <span class="custom-dropdown__item-type-badge">${container.typeName || CONTAINER_TYPE_NAMES[type]}</span>
+                            ${totalShielding > 0 ? `
+                                <span class="custom-dropdown__item-shielding">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    </svg>
+                                    Экран
+                                </span>
+                            ` : `
+                                <span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">
+                                    Без экрана
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                    <div class="custom-dropdown__item-slots">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        ${slots}
+                    </div>
+                    <span class="custom-dropdown__item-rarity">${container.rarityName || ''}</span>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+    });
+    
+    elements.containerDropdownList.innerHTML = html;
+}
+
+function selectContainerFromDropdown(containerId) {
+    state.previousStats = calculateTotalStats();
+    
+    const container = CONTAINERS.find(c => c.id === containerId);
+    
+    if (!container) {
+        console.error('Container not found:', containerId);
+        return;
+    }
+    
+    // Сохраняем текущие артефакты для переноса
+    const previousArtifacts = [...state.artifacts];
+    
+    state.selectedContainer = container;
+    
+    // Создаём новый массив нужного размера и переносим артефакты
+    state.artifacts = new Array(container.slots).fill(null);
+    
+    // Переносим артефакты по порядку (первые N артефактов)
+    for (let i = 0; i < Math.min(previousArtifacts.length, container.slots); i++) {
+        state.artifacts[i] = previousArtifacts[i];
+    }
+    
+    const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+    valueElement.classList.add('has-value');
+    
+    elements.containerSelect.value = containerId;
+    
+    closeContainerDropdown();
+    
+    if (elements.containerSearchInput) {
+        elements.containerSearchInput.value = '';
+    }
+    
+    renderContainerInfo();
+    renderArtifactSlots();
+    updateStats();
+    renderContainerDropdownList();
+    saveStateToStorage();
+}
+
+function clearContainerSelection() {
+    state.previousStats = calculateTotalStats();
+    state.selectedContainer = null;
+    state.artifacts = [];
+    
+    const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = 'Выберите контейнер...';
+    valueElement.classList.remove('has-value');
+    
+    elements.containerSelect.value = '';
+    
+    closeContainerDropdown();
+    
+    if (elements.containerSearchInput) {
+        elements.containerSearchInput.value = '';
+    }
+    
+    renderContainerInfo();
+    renderArtifactSlots();
+    updateStats();
+    renderContainerDropdownList();
+    saveStateToStorage();
+}
 
 function initContainerSelect() {
     elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
@@ -355,7 +688,6 @@ function initEventListeners() {
         elements.enhancementSlider.addEventListener('input', handleEnhancementChange);
     }
     
-    // Фильтры по категориям
     elements.filterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             elements.filterBtns.forEach(b => b.classList.remove('filter-btn--active'));
@@ -365,7 +697,6 @@ function initEventListeners() {
         });
     });
     
-    // Фильтры по статам
     if (elements.bonusStatFilter) {
         elements.bonusStatFilter.addEventListener('change', handleBonusFilterChange);
     }
@@ -376,7 +707,6 @@ function initEventListeners() {
         elements.resetStatFilters.addEventListener('click', resetAllStatFilters);
     }
     
-    // Быстрые фильтры
     if (elements.quickFilterBtns) {
         elements.quickFilterBtns.forEach(btn => {
             btn.addEventListener('click', () => handleQuickFilter(btn));
@@ -612,14 +942,11 @@ function initScrollEffects() {
 }
 
 function updateContainerOptions() {
-    const currentContainerId = elements.containerSelect.value;
+    const currentContainerId = state.selectedContainer?.id;
+    
     elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
     
-    const availableContainers = CONTAINERS.filter(container => {
-        if (!state.selectedArmor) return true;
-        if (state.selectedArmor.containerTypes.includes('all')) return true;
-        return state.selectedArmor.containerTypes.includes(container.type);
-    });
+    const availableContainers = getAvailableContainers();
     
     availableContainers.forEach(container => {
         const option = document.createElement('option');
@@ -629,14 +956,29 @@ function updateContainerOptions() {
     });
     
     const currentStillAvailable = availableContainers.some(c => c.id === currentContainerId);
-    if (currentStillAvailable) {
+    
+    if (currentStillAvailable && state.selectedContainer) {
         elements.containerSelect.value = currentContainerId;
     } else if (state.selectedContainer) {
+        // Контейнер стал недоступен - сохраняем артефакты
+        const previousArtifacts = [...state.artifacts];
+        
         state.selectedContainer = null;
         state.artifacts = [];
+        
+        // Артефакты сохраняются в памяти для возможного восстановления
+        // при выборе нового контейнера через selectContainerFromDropdown
+        
+        const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+        valueElement.textContent = 'Выберите контейнер...';
+        valueElement.classList.remove('has-value');
+        
         renderContainerInfo();
         renderArtifactSlots();
+        saveStateToStorage();
     }
+    
+    renderContainerDropdownList();
     
     elements.containerSelect.disabled = false;
 }
@@ -648,6 +990,7 @@ function handleEnhancementChange(e) {
     updateEnhancementDisplay();
     renderArmorInfo();
     updateStats();
+    saveStateToStorage();
 }
 
 function showEnhancementBlock() {
@@ -655,8 +998,7 @@ function showEnhancementBlock() {
     
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
     elements.enhancementSlider.max = maxLevel;
-    elements.enhancementSlider.value = 0;
-    state.enhancementLevel = 0;
+    elements.enhancementSlider.value = state.enhancementLevel;
     
     elements.enhancementBlock.style.display = 'block';
     elements.enhancementBlock.classList.add('visible');
@@ -753,13 +1095,25 @@ function handleContainerChange(e) {
         renderContainerInfo();
         renderArtifactSlots();
         updateStats();
+        saveStateToStorage();
         return;
     }
+    
+    // Сохраняем текущие артефакты
+    const previousArtifacts = [...state.artifacts];
+    
     state.selectedContainer = CONTAINERS.find(c => c.id === containerId);
     state.artifacts = new Array(state.selectedContainer.slots).fill(null);
+    
+    // Переносим артефакты
+    for (let i = 0; i < Math.min(previousArtifacts.length, state.selectedContainer.slots); i++) {
+        state.artifacts[i] = previousArtifacts[i];
+    }
+    
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
+    saveStateToStorage();
 }
 
 function resetBuild() {
@@ -769,14 +1123,21 @@ function resetBuild() {
     state.artifacts = [];
     state.enhancementLevel = 0;
     
-    // Сброс кастомного dropdown брони
-    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = 'Выберите броню...';
-    valueElement.classList.remove('has-value');
+    const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+    armorValueElement.textContent = 'Выберите броню...';
+    armorValueElement.classList.remove('has-value');
     if (elements.armorSearchInput) {
         elements.armorSearchInput.value = '';
     }
     renderArmorDropdownList();
+    
+    const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+    containerValueElement.textContent = 'Выберите контейнер...';
+    containerValueElement.classList.remove('has-value');
+    if (elements.containerSearchInput) {
+        elements.containerSearchInput.value = '';
+    }
+    renderContainerDropdownList();
     
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
@@ -787,6 +1148,13 @@ function resetBuild() {
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
+    
+    // Очищаем сохранённое состояние
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+        console.warn('Не удалось очистить localStorage:', e);
+    }
 }
 
 function renderArmorInfo() {
@@ -1027,6 +1395,7 @@ function selectArtifact(artifactId) {
         renderArtifactSlots();
         updateStats();
         closeModal();
+        saveStateToStorage();
     }
 }
 
@@ -1035,6 +1404,7 @@ function removeArtifact(index) {
     state.artifacts[index] = null;
     renderArtifactSlots();
     updateStats();
+    saveStateToStorage();
 }
 
 function updateStats() {
@@ -1332,10 +1702,11 @@ function getSlotWord(count) {
     return 'ов';
 }
 
-// Экспорт функций в глобальную область
 window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
 window.removeArtifact = removeArtifact;
 window.removeStatFilter = removeStatFilter;
 window.selectArmorFromDropdown = selectArmorFromDropdown;
 window.clearArmorSelection = clearArmorSelection;
+window.selectContainerFromDropdown = selectContainerFromDropdown;
+window.clearContainerSelection = clearContainerSelection;
