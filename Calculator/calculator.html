@@ -80,6 +80,7 @@
                 <div class="calculator__layout">
                     <div class="calculator__equipment">
                         
+                        <!-- Карточка брони -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon">
@@ -159,6 +160,7 @@
                             </div>
                         </div>
 
+                        <!-- Карточка контейнера -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--container">
@@ -213,6 +215,7 @@
                             </div>
                         </div>
 
+                        <!-- Карточка артефактов -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--artifacts">
@@ -239,6 +242,7 @@
                         </div>
                     </div>
 
+                    <!-- Панель результатов -->
                     <div class="calculator__results">
                         <div class="results-card">
                             <div class="results-card__header">
@@ -460,11 +464,22 @@
         </section>
     </main>
 
+    <!-- ============== НОВОЕ МОДАЛЬНОЕ ОКНО АРТЕФАКТОВ ============== -->
     <div class="modal" id="artifactModal">
         <div class="modal__backdrop"></div>
-        <div class="modal__content">
+        <div class="modal__container">
+            <!-- Шапка -->
             <div class="modal__header">
-                <h3 class="modal__title">Выберите артефакт</h3>
+                <div class="modal__header-content">
+                    <h3 class="modal__title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        Выбор артефакта
+                    </h3>
+                    <span class="modal__slot-info" id="modalSlotInfo">Слот #1</span>
+                </div>
                 <button class="modal__close" id="modalClose">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6L6 18M6 6l12 12"/>
@@ -472,148 +487,73 @@
                 </button>
             </div>
 
-            <div class="modal__search">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                </svg>
-                <input type="text" id="artifactSearch" placeholder="Поиск артефакта...">
-            </div>
-
-            <div class="modal__filters">
-                <button class="filter-btn filter-btn--active" data-category="all">Все</button>
-                <button class="filter-btn" data-category="gravity">Гравитационные</button>
-                <button class="filter-btn" data-category="chemical">Химические</button>
-                <button class="filter-btn" data-category="electric">Электрические</button>
-                <button class="filter-btn" data-category="thermal">Термические</button>
-                <button class="filter-btn" data-category="unique">Уникальные</button>
-                <button class="filter-btn" data-category="frost">Морозные</button>
-            </div>
-
-            <div class="modal__stat-filters">
-                <div class="stat-filters">
-                    <div class="stat-filter-group">
-                        <label class="stat-filter-label">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 5v14M5 12h14"/>
-                            </svg>
-                            Бонус:
-                        </label>
-                        <select id="bonusStatFilter" class="stat-filter-select">
-                            <option value="">Любой</option>
-                            <optgroup label="Защита">
-                                <option value="bulletResistance:positive">+ Пулестойкость</option>
-                                <option value="tearProtection:positive">+ Защита от разрывов</option>
-                                <option value="impactResistance:positive">+ Гашение удара</option>
-                                <option value="radiationProtection:positive">+ Защита от радиации</option>
-                                <option value="bioProtection:positive">+ Биозащита</option>
-                                <option value="thermalProtection:positive">+ Термозащита (защита)</option>
-                                <option value="psiProtection:positive">+ Пси-защита</option>
-                                <option value="frostProtection:positive">+ Морозозащита</option>
-                            </optgroup>
-                            <optgroup label="Сопротивления">
-                                <option value="heatResistance:positive">+ Термосопротивление</option>
-                                <option value="chemResistance:positive">+ Химсопротивление</option>
-                                <option value="electroResistance:positive">+ Электросопротивление</option>
-                            </optgroup>
-                            <optgroup label="Эффекты">
-                                <option value="regeneration:positive">+ Регенерация</option>
-                                <option value="bleeding:negative">− Кровотечение (лечит)</option>
-                                <option value="radiation:negative">− Радиация (очищает)</option>
-                                <option value="saturation:positive">+ Насыщение (сытость)</option>
-                                <option value="cold:negative">− Холод (согревает)</option>
-                            </optgroup>
-                            <optgroup label="Персонаж">
-                                <option value="maxWeight:positive">+ Макс. вес</option>
-                                <option value="maxStamina:positive">+ Макс. выносливость</option>
-                                <option value="staminaRegen:positive">+ Восст. выносливости</option>
-                                <option value="moveSpeed:positive">+ Скорость</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <div class="stat-filter-group">
-                        <label class="stat-filter-label">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14"/>
-                            </svg>
-                            Штраф:
-                        </label>
-                        <select id="penaltyStatFilter" class="stat-filter-select">
-                            <option value="">Любой</option>
-                            <optgroup label="Негативные эффекты">
-                                <option value="radiation:positive">+ Радиация (облучает)</option>
-                                <option value="bleeding:positive">+ Кровотечение (усиливает)</option>
-                                <option value="cold:positive">+ Холод (замораживает)</option>
-                                <option value="regeneration:negative">− Регенерация (отнимает HP)</option>
-                                <option value="saturation:negative">− Насыщение (голод)</option>
-                            </optgroup>
-                            <optgroup label="Штрафы к защите">
-                                <option value="bulletResistance:negative">− Пулестойкость</option>
-                                <option value="tearProtection:negative">− Защита от разрывов</option>
-                                <option value="impactResistance:negative">− Гашение удара</option>
-                                <option value="frostProtection:negative">− Морозозащита</option>
-                            </optgroup>
-                            <optgroup label="Штрафы к персонажу">
-                                <option value="maxStamina:negative">− Макс. выносливость</option>
-                                <option value="staminaRegen:negative">− Восст. выносливости</option>
-                                <option value="moveSpeed:negative">− Скорость</option>
-                                <option value="maxWeight:negative">− Макс. вес</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <button class="stat-filter-reset" id="resetStatFilters" title="Сбросить фильтры по статам">
+            <!-- Панель инструментов -->
+            <div class="modal__toolbar">
+                <!-- Поиск -->
+                <div class="modal__search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="artifactSearch" placeholder="Название артефакта...">
+                    <button class="modal__search-clear" id="searchClear" style="display: none;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                            <path d="M3 3v5h5"/>
+                            <path d="M18 6L6 18M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
 
-                <div class="quick-filters">
-                    <span class="quick-filters__label">Быстрый поиск:</span>
-                    <button class="quick-filter-btn" data-quick-filter="bulletResistance:positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        Пулестойкость
+                <!-- Категории как табы -->
+                <div class="modal__categories" id="categoryTabs">
+                    <button class="category-tab category-tab--active" data-category="all">
+                        <span class="category-tab__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                            </svg>
+                        </span>
+                        <span class="category-tab__label">Все</span>
                     </button>
-                    <button class="quick-filter-btn" data-quick-filter="radiation:negative">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        − Радиация
+                    <button class="category-tab" data-category="gravity">
+                        <span class="category-tab__dot" style="background: #8b5cf6"></span>
+                        <span class="category-tab__label">Грави</span>
                     </button>
-                    <button class="quick-filter-btn" data-quick-filter="regeneration:positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                        </svg>
-                        Регенерация
+                    <button class="category-tab" data-category="chemical">
+                        <span class="category-tab__dot" style="background: #10b981"></span>
+                        <span class="category-tab__label">Хим</span>
                     </button>
-                    <button class="quick-filter-btn" data-quick-filter="maxWeight:positive">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                        </svg>
-                        + Вес
+                    <button class="category-tab" data-category="electric">
+                        <span class="category-tab__dot" style="background: #3b82f6"></span>
+                        <span class="category-tab__label">Электро</span>
                     </button>
-                    <button class="quick-filter-btn" data-quick-filter="bleeding:negative">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                        </svg>
-                        − Кровотечение
+                    <button class="category-tab" data-category="thermal">
+                        <span class="category-tab__dot" style="background: #ef4444"></span>
+                        <span class="category-tab__label">Терм</span>
+                    </button>
+                    <button class="category-tab" data-category="unique">
+                        <span class="category-tab__dot" style="background: #a855f7"></span>
+                        <span class="category-tab__label">Уник</span>
+                    </button>
+                    <button class="category-tab" data-category="frost">
+                        <span class="category-tab__dot" style="background: #38bdf8"></span>
+                        <span class="category-tab__label">Мороз</span>
                     </button>
                 </div>
             </div>
 
-            <div class="active-filters" id="activeFilters" style="display: none;">
-                <span class="active-filters__label">Активные фильтры:</span>
-                <div class="active-filters__tags" id="activeFiltersTags"></div>
+            <!-- Информация о количестве -->
+            <div class="modal__results-info" id="resultsInfo">
+                <span class="results-count">Найдено: <strong id="artifactCount">57</strong> артефактов</span>
             </div>
 
-            <div class="modal__list" id="artifactList"></div>
+            <!-- Список артефактов -->
+            <div class="modal__body">
+                <div class="artifacts-grid" id="artifactList">
+                    <!-- Артефакты рендерятся через JS -->
+                </div>
+            </div>
         </div>
     </div>
 
