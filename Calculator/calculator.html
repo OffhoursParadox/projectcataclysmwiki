@@ -49,11 +49,16 @@
                     </svg>
                     Калькулятор
                 </span>
+                <a href="../DPS/dps.html" class="nav-link nav-link--active">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    DPS
+                </a>
             </nav>
             <button class="header__burger" id="burger">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
     </header>
@@ -64,6 +69,7 @@
             <span class="mobile-menu__link mobile-menu__link--disabled">Интерактивная карта</span>
             <a href="../Table/table.html" class="mobile-menu__link">Таблица артефактов</a>
             <span class="mobile-menu__link mobile-menu__link--current">Калькулятор сборок</span>
+            <a href="../DPS/dps.html" class="mobile-menu__link">Калькулятор DPS</a>
         </nav>
     </div>
 
@@ -79,8 +85,6 @@
             <div class="container">
                 <div class="calculator__layout">
                     <div class="calculator__equipment">
-                        
-                        <!-- Карточка брони -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon">
@@ -101,12 +105,11 @@
                                     <div class="custom-dropdown__menu" id="armorDropdownMenu">
                                         <div class="custom-dropdown__search">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="11" cy="11" r="8"/>
-                                                <path d="M21 21l-4.35-4.35"/>
+                                                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                                             </svg>
                                             <input type="text" placeholder="Поиск брони..." id="armorSearchInput">
                                         </div>
-                                        <div class="custom-dropdown__clear-wrapper" id="armorClearWrapper" style="display: none;">
+                                        <div class="custom-dropdown__clear-wrapper" id="armorClearWrapper" style="display:none;">
                                             <button class="custom-dropdown__clear" id="armorClearBtn" type="button">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <path d="M18 6L6 18M6 6l12 12"/>
@@ -117,12 +120,10 @@
                                         <div class="custom-dropdown__list" id="armorDropdownList"></div>
                                     </div>
                                 </div>
-
-                                <select id="armorSelect" style="display: none;">
+                                <select id="armorSelect" style="display:none;">
                                     <option value="">Выберите броню...</option>
                                 </select>
-
-                                <div class="enhancement-block" id="enhancementBlock" style="display: none;">
+                                <div class="enhancement-block" id="enhancementBlock" style="display:none;">
                                     <div class="enhancement-block__header">
                                         <div class="enhancement-block__icon">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -136,10 +137,7 @@
                                     <div class="enhancement-block__slider-container">
                                         <input type="range" class="enhancement-slider" id="enhancementSlider" min="0" max="15" value="0" step="1">
                                         <div class="enhancement-block__marks">
-                                            <span>0</span>
-                                            <span>5</span>
-                                            <span>10</span>
-                                            <span>15</span>
+                                            <span>0</span><span>5</span><span>10</span><span>15</span>
                                         </div>
                                     </div>
                                     <div class="enhancement-block__bonus" id="enhancementBonus">
@@ -148,7 +146,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="armor-info" id="armorInfo">
                                     <div class="armor-info__placeholder">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -160,7 +157,6 @@
                             </div>
                         </div>
 
-                        <!-- Карточка контейнера -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--container">
@@ -183,12 +179,11 @@
                                     <div class="custom-dropdown__menu" id="containerDropdownMenu">
                                         <div class="custom-dropdown__search">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="11" cy="11" r="8"/>
-                                                <path d="M21 21l-4.35-4.35"/>
+                                                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                                             </svg>
                                             <input type="text" placeholder="Поиск контейнера..." id="containerSearchInput">
                                         </div>
-                                        <div class="custom-dropdown__clear-wrapper" id="containerClearWrapper" style="display: none;">
+                                        <div class="custom-dropdown__clear-wrapper" id="containerClearWrapper" style="display:none;">
                                             <button class="custom-dropdown__clear" id="containerClearBtn" type="button">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                     <path d="M18 6L6 18M6 6l12 12"/>
@@ -199,11 +194,9 @@
                                         <div class="custom-dropdown__list" id="containerDropdownList"></div>
                                     </div>
                                 </div>
-
-                                <select id="containerSelect" style="display: none;">
+                                <select id="containerSelect" style="display:none;">
                                     <option value="">Выберите контейнер...</option>
                                 </select>
-
                                 <div class="container-info" id="containerInfo">
                                     <div class="container-info__placeholder">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -215,13 +208,11 @@
                             </div>
                         </div>
 
-                        <!-- Карточка артефактов -->
                         <div class="equipment-card">
                             <div class="equipment-card__header">
                                 <div class="equipment-card__icon equipment-card__icon--artifacts">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <circle cx="12" cy="12" r="3"/>
+                                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                                         <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/>
                                     </svg>
                                 </div>
@@ -232,8 +223,7 @@
                                 <div class="artifact-slots" id="artifactSlots">
                                     <div class="artifact-slots__placeholder">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <path d="M12 8v8M8 12h8"/>
+                                            <circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/>
                                         </svg>
                                         <span>Выберите контейнер для добавления артефактов</span>
                                     </div>
@@ -242,7 +232,6 @@
                         </div>
                     </div>
 
-                    <!-- Панель результатов -->
                     <div class="calculator__results">
                         <div class="results-card">
                             <div class="results-card__header">
@@ -254,7 +243,6 @@
                                     </svg>
                                 </button>
                             </div>
-
                             <div class="priority-stats" id="priorityStats">
                                 <div class="priority-stats__header">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -288,8 +276,7 @@
                                     <div class="priority-stat priority-stat--radiation">
                                         <div class="priority-stat__icon">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <circle cx="12" cy="12" r="10"/>
-                                                <circle cx="12" cy="12" r="3"/>
+                                                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                                             </svg>
                                         </div>
                                         <div class="priority-stat__info">
@@ -301,9 +288,7 @@
                                         <div class="priority-stat__icon">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                                                <line x1="6" y1="1" x2="6" y2="4"/>
-                                                <line x1="10" y1="1" x2="10" y2="4"/>
-                                                <line x1="14" y1="1" x2="14" y2="4"/>
+                                                <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
                                             </svg>
                                         </div>
                                         <div class="priority-stat__info">
@@ -326,16 +311,12 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div id="warningsContainer"></div>
-
                             <div class="bullet-resistance">
                                 <div class="bullet-resistance__header">
                                     <span class="bullet-resistance__title">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <circle cx="12" cy="12" r="6"/>
-                                            <circle cx="12" cy="12" r="2"/>
+                                            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
                                         </svg>
                                         Приведённая пулестойкость
                                     </span>
@@ -349,7 +330,6 @@
                                 </div>
                                 <div class="bullet-resistance__hint">Процент снижения урона от пуль (формула с убывающей отдачей). Бронебойность патрона снижает эффективную пулестойкость.</div>
                             </div>
-
                             <div class="stats-groups">
                                 <div class="stats-group">
                                     <h3 class="stats-group__title">
@@ -359,29 +339,13 @@
                                         Защиты
                                     </h3>
                                     <div class="stats-list">
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от радиации</span>
-                                            <span class="stat-row__value" data-stat="radiationProtection">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от биозаражения</span>
-                                            <span class="stat-row__value" data-stat="bioProtection">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от температуры</span>
-                                            <span class="stat-row__value" data-stat="thermalProtection">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от пси-излучения</span>
-                                            <span class="stat-row__value" data-stat="psiProtection">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от обморожения</span>
-                                            <span class="stat-row__value" data-stat="frostProtection">0</span>
-                                        </div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от радиации</span><span class="stat-row__value" data-stat="radiationProtection">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от биозаражения</span><span class="stat-row__value" data-stat="bioProtection">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от температуры</span><span class="stat-row__value" data-stat="thermalProtection">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от пси-излучения</span><span class="stat-row__value" data-stat="psiProtection">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от обморожения</span><span class="stat-row__value" data-stat="frostProtection">0</span></div>
                                     </div>
                                 </div>
-
                                 <div class="stats-group">
                                     <h3 class="stats-group__title">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -390,70 +354,36 @@
                                         Сопротивления
                                     </h3>
                                     <div class="stats-list">
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Термозащита</span>
-                                            <span class="stat-row__value" data-stat="heatResistance">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Химзащита</span>
-                                            <span class="stat-row__value" data-stat="chemResistance">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Электрозащита</span>
-                                            <span class="stat-row__value" data-stat="electroResistance">0</span>
-                                        </div>
+                                        <div class="stat-row"><span class="stat-row__name">Термозащита</span><span class="stat-row__value" data-stat="heatResistance">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Химзащита</span><span class="stat-row__value" data-stat="chemResistance">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Электрозащита</span><span class="stat-row__value" data-stat="electroResistance">0</span></div>
                                     </div>
                                 </div>
-
                                 <div class="stats-group">
                                     <h3 class="stats-group__title">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                            <path d="M3 9h18M9 21V9"/>
+                                            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
                                         </svg>
                                         Броня
                                     </h3>
                                     <div class="stats-list">
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Гашение удара</span>
-                                            <span class="stat-row__value" data-stat="impactResistance">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Защита от разрывов</span>
-                                            <span class="stat-row__value" data-stat="tearProtection">0</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Пулестойкость</span>
-                                            <span class="stat-row__value" data-stat="bulletResistance">0</span>
-                                        </div>
+                                        <div class="stat-row"><span class="stat-row__name">Гашение удара</span><span class="stat-row__value" data-stat="impactResistance">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Защита от разрывов</span><span class="stat-row__value" data-stat="tearProtection">0</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Пулестойкость</span><span class="stat-row__value" data-stat="bulletResistance">0</span></div>
                                     </div>
                                 </div>
-
                                 <div class="stats-group">
                                     <h3 class="stats-group__title">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                            <circle cx="12" cy="7" r="4"/>
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                                         </svg>
                                         Персонаж
                                     </h3>
                                     <div class="stats-list">
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Макс. выносливость</span>
-                                            <span class="stat-row__value" data-stat="maxStamina">0%</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Восстановление сил</span>
-                                            <span class="stat-row__value" data-stat="staminaRegen">0%/сек</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Скорость передвижения</span>
-                                            <span class="stat-row__value" data-stat="moveSpeed">0%</span>
-                                        </div>
-                                        <div class="stat-row">
-                                            <span class="stat-row__name">Макс. вес</span>
-                                            <span class="stat-row__value" data-stat="maxWeight">0 кг</span>
-                                        </div>
+                                        <div class="stat-row"><span class="stat-row__name">Макс. выносливость</span><span class="stat-row__value" data-stat="maxStamina">0%</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Восстановление сил</span><span class="stat-row__value" data-stat="staminaRegen">0%/сек</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Скорость передвижения</span><span class="stat-row__value" data-stat="moveSpeed">0%</span></div>
+                                        <div class="stat-row"><span class="stat-row__name">Макс. вес</span><span class="stat-row__value" data-stat="maxWeight">0 кг</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -464,17 +394,14 @@
         </section>
     </main>
 
-    <!-- ============== НОВОЕ МОДАЛЬНОЕ ОКНО АРТЕФАКТОВ ============== -->
     <div class="modal" id="artifactModal">
         <div class="modal__backdrop"></div>
         <div class="modal__container">
-            <!-- Шапка -->
             <div class="modal__header">
                 <div class="modal__header-content">
                     <h3 class="modal__title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="3"/>
+                            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                         </svg>
                         Выбор артефакта
                     </h3>
@@ -486,73 +413,41 @@
                     </svg>
                 </button>
             </div>
-
-            <!-- Панель инструментов -->
             <div class="modal__toolbar">
-                <!-- Поиск -->
                 <div class="modal__search-box">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="M21 21l-4.35-4.35"/>
+                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                     </svg>
                     <input type="text" id="artifactSearch" placeholder="Название артефакта...">
-                    <button class="modal__search-clear" id="searchClear" style="display: none;">
+                    <button class="modal__search-clear" id="searchClear" style="display:none;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 6L6 18M6 6l12 12"/>
                         </svg>
                     </button>
                 </div>
-
-                <!-- Категории как табы -->
                 <div class="modal__categories" id="categoryTabs">
                     <button class="category-tab category-tab--active" data-category="all">
                         <span class="category-tab__icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="7" height="7"/>
-                                <rect x="14" y="3" width="7" height="7"/>
-                                <rect x="3" y="14" width="7" height="7"/>
-                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
                             </svg>
                         </span>
                         <span class="category-tab__label">Все</span>
                     </button>
-                    <button class="category-tab" data-category="gravity">
-                        <span class="category-tab__dot" style="background: #8b5cf6"></span>
-                        <span class="category-tab__label">Грави</span>
-                    </button>
-                    <button class="category-tab" data-category="chemical">
-                        <span class="category-tab__dot" style="background: #10b981"></span>
-                        <span class="category-tab__label">Хим</span>
-                    </button>
-                    <button class="category-tab" data-category="electric">
-                        <span class="category-tab__dot" style="background: #3b82f6"></span>
-                        <span class="category-tab__label">Электро</span>
-                    </button>
-                    <button class="category-tab" data-category="thermal">
-                        <span class="category-tab__dot" style="background: #ef4444"></span>
-                        <span class="category-tab__label">Терм</span>
-                    </button>
-                    <button class="category-tab" data-category="unique">
-                        <span class="category-tab__dot" style="background: #a855f7"></span>
-                        <span class="category-tab__label">Уник</span>
-                    </button>
-                    <button class="category-tab" data-category="frost">
-                        <span class="category-tab__dot" style="background: #38bdf8"></span>
-                        <span class="category-tab__label">Мороз</span>
-                    </button>
+                    <button class="category-tab" data-category="gravity"><span class="category-tab__dot" style="background:#b8860b"></span><span class="category-tab__label">Грави</span></button>
+                    <button class="category-tab" data-category="chemical"><span class="category-tab__dot" style="background:#10b981"></span><span class="category-tab__label">Хим</span></button>
+                    <button class="category-tab" data-category="electric"><span class="category-tab__dot" style="background:#3b82f6"></span><span class="category-tab__label">Электро</span></button>
+                    <button class="category-tab" data-category="thermal"><span class="category-tab__dot" style="background:#ef4444"></span><span class="category-tab__label">Терм</span></button>
+                    <button class="category-tab" data-category="unique"><span class="category-tab__dot" style="background:#a855f7"></span><span class="category-tab__label">Уник</span></button>
+                    <button class="category-tab" data-category="frost"><span class="category-tab__dot" style="background:#38bdf8"></span><span class="category-tab__label">Мороз</span></button>
                 </div>
             </div>
-
-            <!-- Информация о количестве -->
             <div class="modal__results-info" id="resultsInfo">
                 <span class="results-count">Найдено: <strong id="artifactCount">57</strong> артефактов</span>
             </div>
-
-            <!-- Список артефактов -->
             <div class="modal__body">
-                <div class="artifacts-grid" id="artifactList">
-                    <!-- Артефакты рендерятся через JS -->
-                </div>
+                <div class="artifacts-grid" id="artifactList"></div>
             </div>
         </div>
     </div>
@@ -562,7 +457,7 @@
             <div class="footer__content">
                 <p class="footer__copy">© 2026 Project Cataclysm Wiki. Неофициальный фан-сайт.</p>
                 <div class="footer__links">
-                    <a href="#" class="footer__social" title="Discord">
+                    <a href="https://discord.gg/sHmRM3rRNM" class="footer__social" title="Discord">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
                         </svg>
