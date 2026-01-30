@@ -188,12 +188,10 @@ function renderArmorDropdownList(searchQuery = '') {
         groupedArmors[armor.rarity].push(armor);
     });
     
-    // Обновляем видимость кнопки сброса
     if (elements.armorClearWrapper) {
         elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
     }
     
-    // Проверяем, есть ли результаты
     const hasResults = Object.keys(groupedArmors).length > 0;
     
     if (!hasResults) {
@@ -208,10 +206,8 @@ function renderArmorDropdownList(searchQuery = '') {
         return;
     }
     
-    // Генерируем HTML (без кнопки сброса - она теперь отдельно)
     let html = '';
     
-    // Группы по редкости
     RARITY_ORDER.forEach(rarity => {
         const armors = groupedArmors[rarity];
         if (!armors || armors.length === 0) return;
