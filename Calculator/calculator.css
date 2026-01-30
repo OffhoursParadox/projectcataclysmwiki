@@ -258,8 +258,6 @@ body{
     overflow:visible
 }
 
-.equipment-card:has(.custom-dropdown){overflow:visible}
-
 .equipment-card__header{
     display:flex;
     align-items:center;
@@ -855,7 +853,11 @@ body{
     color:var(--color-accent)
 }
 
-.bullet-resistance__title svg{width:20px;height:20px}
+.bullet-resistance__title svg{
+    width:20px;
+    height:20px;
+    flex-shrink:0
+}
 
 .bullet-resistance__values{
     display:flex;
@@ -866,13 +868,16 @@ body{
 .bullet-resistance__main{
     font-size:28px;
     font-weight:700;
-    color:var(--color-text)
+    color:var(--color-text);
+    min-width:50px;
+    text-align:right
 }
 
 .bullet-resistance__percent{
     font-size:16px;
     font-weight:500;
-    color:var(--color-accent)
+    color:var(--color-accent);
+    min-width:75px
 }
 
 .bullet-resistance__bar{
@@ -1720,7 +1725,8 @@ body{
 .custom-dropdown__list{
     max-height:340px;
     overflow-y:auto;
-    padding:8px
+    padding:8px;
+    padding-bottom:20px
 }
 
 .custom-dropdown__list::-webkit-scrollbar{width:6px}
@@ -1729,7 +1735,15 @@ body{
 .custom-dropdown__list::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.25)}
 
 .custom-dropdown__group{margin-bottom:8px}
-.custom-dropdown__group:last-child{margin-bottom:0}
+
+.custom-dropdown__group:last-child{
+    margin-bottom:0;
+    padding-bottom:12px
+}
+
+.custom-dropdown__group:last-child .custom-dropdown__item:last-child{
+    margin-bottom:12px
+}
 
 .custom-dropdown__group-title{
     display:flex;
@@ -1808,14 +1822,6 @@ body{
 
 .custom-dropdown__item.selected{background:rgba(196,163,90,0.15)}
 
-.custom-dropdown__item.selected::after{
-    content:'✓';
-    position:absolute;
-    right:12px;
-    color:var(--color-accent);
-    font-weight:bold
-}
-
 .custom-dropdown__item-info{flex:1;min-width:0}
 
 .custom-dropdown__item-name{
@@ -1880,6 +1886,107 @@ body{
 }
 
 .custom-dropdown__empty svg{width:32px;height:32px;opacity:0.5}
+
+.custom-dropdown--container .custom-dropdown__trigger:focus{border-color:var(--color-electric)}
+.custom-dropdown--container.open .custom-dropdown__trigger{border-color:var(--color-electric)}
+.custom-dropdown--container.open .custom-dropdown__menu{border-color:var(--color-electric)}
+
+.custom-dropdown__group--standard .custom-dropdown__group-title{color:var(--color-electric)}
+.custom-dropdown__group--standard .custom-dropdown__group-title::before{background:var(--color-electric)}
+.custom-dropdown__group--bulky .custom-dropdown__group-title{color:var(--color-chemical)}
+.custom-dropdown__group--bulky .custom-dropdown__group-title::before{background:var(--color-chemical)}
+.custom-dropdown__group--compact .custom-dropdown__group-title{color:var(--color-gravity)}
+.custom-dropdown__group--compact .custom-dropdown__group-title::before{background:var(--color-gravity)}
+.custom-dropdown__group--spacious .custom-dropdown__group-title{color:var(--color-thermal)}
+.custom-dropdown__group--spacious .custom-dropdown__group-title::before{background:var(--color-thermal)}
+
+.custom-dropdown__item--standard:hover::before{border-color:var(--color-electric);box-shadow:0 0 12px rgba(59,130,246,0.25)}
+.custom-dropdown__item--bulky:hover::before{border-color:var(--color-chemical);box-shadow:0 0 12px rgba(16,185,129,0.25)}
+.custom-dropdown__item--compact:hover::before{border-color:var(--color-gravity);box-shadow:0 0 12px rgba(139,92,246,0.25)}
+.custom-dropdown__item--spacious:hover::before{border-color:var(--color-thermal);box-shadow:0 0 12px rgba(239,68,68,0.25)}
+
+.custom-dropdown__item-slots{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-size:12px;
+    font-weight:600;
+    color:var(--color-accent);
+    background:rgba(196,163,90,0.15);
+    padding:3px 8px;
+    border-radius:6px;
+    flex-shrink:0
+}
+
+.custom-dropdown__item-slots svg{width:14px;height:14px}
+
+.custom-dropdown__item-shielding{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    color:var(--color-positive)
+}
+
+.custom-dropdown__item-shielding svg{width:12px;height:12px}
+.custom-dropdown__item-shielding--none{color:var(--color-text-muted)}
+
+.custom-dropdown__item-type-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    font-size:10px;
+    font-weight:500;
+    padding:2px 6px;
+    border-radius:4px;
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+    flex-shrink:0
+}
+
+.custom-dropdown__item--standard .custom-dropdown__item-type-badge{color:var(--color-electric);background:rgba(59,130,246,0.15)}
+.custom-dropdown__item--bulky .custom-dropdown__item-type-badge{color:var(--color-chemical);background:rgba(16,185,129,0.15)}
+.custom-dropdown__item--compact .custom-dropdown__item-type-badge{color:var(--color-gravity);background:rgba(139,92,246,0.15)}
+.custom-dropdown__item--spacious .custom-dropdown__item-type-badge{color:var(--color-thermal);background:rgba(239,68,68,0.15)}
+
+.custom-dropdown__item-icon{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,0.05);
+    border-radius:8px;
+    flex-shrink:0
+}
+
+.custom-dropdown__item-icon svg{width:22px;height:22px;color:var(--color-text-muted)}
+
+.custom-dropdown__item--standard .custom-dropdown__item-icon{background:rgba(59,130,246,0.1)}
+.custom-dropdown__item--standard .custom-dropdown__item-icon svg{color:var(--color-electric)}
+.custom-dropdown__item--bulky .custom-dropdown__item-icon{background:rgba(16,185,129,0.1)}
+.custom-dropdown__item--bulky .custom-dropdown__item-icon svg{color:var(--color-chemical)}
+.custom-dropdown__item--compact .custom-dropdown__item-icon{background:rgba(139,92,246,0.1)}
+.custom-dropdown__item--compact .custom-dropdown__item-icon svg{color:var(--color-gravity)}
+.custom-dropdown__item--spacious .custom-dropdown__item-icon{background:rgba(239,68,68,0.1)}
+.custom-dropdown__item--spacious .custom-dropdown__item-icon svg{color:var(--color-thermal)}
+
+.custom-dropdown__item--with-icon{gap:12px}
+.custom-dropdown__item--with-icon .custom-dropdown__item-info{flex:1;min-width:0}
+
+.custom-dropdown__item-meta--extended{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px 10px;
+    margin-top:4px
+}
+
+.custom-dropdown__item--disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+    pointer-events:none
+}
 
 @media(max-width:1200px){
     .calculator__layout{grid-template-columns:1fr}
