@@ -11,12 +11,14 @@ const state = {
         positiveEffect: '',
         negativeEffect: ''
     },
-    filtersExpanded: false // Состояние развёрнутости фильтров
+    filtersExpanded: false
 };
 
 const STORAGE_KEY = 'cataclysmCalculatorState';
-
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
+const BULLET_RESISTANCE_CONSTANT = 166.67;
+const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
+const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
 
 const WARNING_STATS = {
     radiation: { threshold: 0, color: 'radiation', title: 'Накопление радиации', unit: 'мЗв/сек' },
@@ -25,10 +27,6 @@ const WARNING_STATS = {
     regeneration: { threshold: 0, color: 'regeneration', title: 'Потеря здоровья', unit: '%/сек', inverted: true },
     saturation: { threshold: 0, color: 'saturation', title: 'Накопление голода', unit: '%/сек', inverted: true }
 };
-
-const BULLET_RESISTANCE_CONSTANT = 166.67;
-
-const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
 
 const RARITY_NAMES = {
     legendary: 'Легендарное',
@@ -46,34 +44,12 @@ const CONTAINER_TYPE_NAMES = {
     spacious: 'Вместительный'
 };
 
-const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
-
 const CONTAINER_TYPE_ICONS = {
-    standard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-        <line x1="12" y1="22.08" x2="12" y2="12"/>
-    </svg>`,
-    bulky: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="2" y="7" width="20" height="10" rx="2"/>
-        <path d="M12 7v10"/>
-        <path d="M7 12h2"/>
-        <path d="M15 12h2"/>
-    </svg>`,
-    compact: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <path d="M12 8v8"/>
-        <path d="M8 12h8"/>
-        <circle cx="12" cy="12" r="3"/>
-    </svg>`,
-    spacious: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/>
-        <path d="M3.27 6.96L12 12.01l8.73-5.05"/>
-        <ellipse cx="12" cy="19" rx="9" ry="3"/>
-    </svg>`
+    standard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+    bulky: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="2"/><path d="M12 7v10"/><path d="M7 12h2"/><path d="M15 12h2"/></svg>`,
+    compact: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/><circle cx="12" cy="12" r="3"/></svg>`,
+    spacious: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><ellipse cx="12" cy="19" rx="9" ry="3"/></svg>`
 };
-
-// ============== ЭЛЕМЕНТЫ DOM ==============
 
 const elements = {
     armorSelect: document.getElementById('armorSelect'),
@@ -114,8 +90,6 @@ const elements = {
     containerClearBtn: document.getElementById('containerClearBtn')
 };
 
-// ============== ФУНКЦИИ СОХРАНЕНИЯ/ЗАГРУЗКИ ==============
-
 function saveStateToStorage() {
     try {
         const dataToSave = {
@@ -126,17 +100,16 @@ function saveStateToStorage() {
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (e) {
-        console.warn('Не удалось сохранить состояние в localStorage:', e);
+        console.warn('Не удалось сохранить состояние:', e);
     }
 }
 
 function loadStateFromStorage() {
     try {
         const saved = localStorage.getItem(STORAGE_KEY);
-        if (!saved) return null;
-        return JSON.parse(saved);
+        return saved ? JSON.parse(saved) : null;
     } catch (e) {
-        console.warn('Не удалось загрузить состояние из localStorage:', e);
+        console.warn('Не удалось загрузить состояние:', e);
         return null;
     }
 }
@@ -150,18 +123,15 @@ function restoreState() {
         if (armor) {
             state.selectedArmor = armor;
             state.enhancementLevel = saved.enhancementLevel || 0;
-            
             const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
             valueElement.textContent = armor.name;
             valueElement.classList.add('has-value');
             elements.armorSelect.value = saved.armorId;
-            
             if (armor.enhancement) {
                 showEnhancementBlock();
                 elements.enhancementSlider.value = state.enhancementLevel;
                 updateEnhancementDisplay();
             }
-            
             renderArmorInfo();
         }
     }
@@ -173,23 +143,18 @@ function restoreState() {
         if (container && isContainerAvailable(container)) {
             state.selectedContainer = container;
             state.artifacts = new Array(container.slots).fill(null);
-            
             const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
             valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
             valueElement.classList.add('has-value');
             elements.containerSelect.value = saved.containerId;
-            
             if (saved.artifactIds && Array.isArray(saved.artifactIds)) {
                 saved.artifactIds.forEach((artifactId, index) => {
                     if (artifactId && index < container.slots) {
                         const artifact = ARTIFACTS.find(a => a.id === artifactId);
-                        if (artifact) {
-                            state.artifacts[index] = artifact;
-                        }
+                        if (artifact) state.artifacts[index] = artifact;
                     }
                 });
             }
-            
             renderContainerInfo();
             renderArtifactSlots();
         }
@@ -200,8 +165,6 @@ function restoreState() {
     updateStats();
 }
 
-// ============== ИНИЦИАЛИЗАЦИЯ ==============
-
 document.addEventListener('DOMContentLoaded', () => {
     injectStatFilterStyles();
     initArmorDropdown();
@@ -209,392 +172,103 @@ document.addEventListener('DOMContentLoaded', () => {
     initContainerSelect();
     initEventListeners();
     initScrollEffects();
-    
     restoreState();
-    
     updateStats();
 });
 
-// ============== СТИЛИ ДЛЯ ФИЛЬТРОВ СВОЙСТВ (КОМПАКТНЫЕ) ==============
-
 function injectStatFilterStyles() {
     if (document.getElementById('stat-filter-styles')) return;
-    
     const style = document.createElement('style');
     style.id = 'stat-filter-styles';
     style.textContent = `
-        /* ===== Сворачиваемая панель фильтров ===== */
-        .filters-toggle {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 10px;
-            color: var(--color-text-muted);
-            font-family: var(--font-main);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 0;
-        }
-        .filters-toggle:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(255,255,255,0.15);
-        }
-        .filters-toggle.active {
-            background: rgba(196,163,90,0.1);
-            border-color: rgba(196,163,90,0.3);
-            color: var(--color-accent);
-        }
-        .filters-toggle__left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .filters-toggle__icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .filters-toggle__icon svg {
-            width: 16px;
-            height: 16px;
-        }
-        .filters-toggle__text {
-            font-weight: 500;
-        }
-        .filters-toggle__badge {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 6px;
-            background: var(--color-accent);
-            color: #000;
-            font-size: 11px;
-            font-weight: 700;
-            border-radius: 10px;
-        }
-        .filters-toggle__badge.visible {
-            display: flex;
-        }
-        .filters-toggle__arrow {
-            display: flex;
-            align-items: center;
-            transition: transform 0.2s ease;
-        }
-        .filters-toggle__arrow svg {
-            width: 18px;
-            height: 18px;
-        }
-        .filters-toggle.active .filters-toggle__arrow {
-            transform: rotate(180deg);
-        }
-
-        /* ===== Панель фильтров ===== */
-        .stat-filters-wrapper {
-            overflow: hidden;
-            transition: max-height 0.3s ease, opacity 0.2s ease;
-        }
-        .stat-filters-wrapper.collapsed {
-            max-height: 0 !important;
-            opacity: 0;
-        }
-        
-        .stat-filters {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            padding-top: 12px;
-        }
-        .stat-filter {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            min-width: 180px;
-        }
-        .stat-filter__label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--color-text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .stat-filter__label svg {
-            width: 14px;
-            height: 14px;
-        }
-        .stat-filter--positive .stat-filter__label {
-            color: #4ade80;
-        }
-        .stat-filter--negative .stat-filter__label {
-            color: #f87171;
-        }
-        .stat-filter__select {
-            padding: 10px 32px 10px 12px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: var(--color-text);
-            font-family: var(--font-main);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888899' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-        }
-        .stat-filter__select:hover {
-            border-color: rgba(255,255,255,0.2);
-            background-color: rgba(0,0,0,0.5);
-        }
-        .stat-filter__select:focus {
-            outline: none;
-            border-color: var(--color-accent);
-        }
-        .stat-filter--positive .stat-filter__select:focus {
-            border-color: #4ade80;
-        }
-        .stat-filter--negative .stat-filter__select:focus {
-            border-color: #f87171;
-        }
-        .stat-filter__select option {
-            background: #1a1a24;
-            color: var(--color-text);
-            padding: 8px;
-        }
-        .stat-filters__reset {
-            display: flex;
-            align-items: flex-end;
-            padding-bottom: 2px;
-        }
-        .stat-filters__reset-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 14px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: var(--color-text-muted);
-            font-family: var(--font-main);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-        .stat-filters__reset-btn:hover {
-            background: rgba(248,113,113,0.1);
-            border-color: rgba(248,113,113,0.3);
-            color: #f87171;
-        }
-        .stat-filters__reset-btn svg {
-            width: 14px;
-            height: 14px;
-        }
-        .stat-filters__reset-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        .stat-filters__reset-btn:disabled:hover {
-            background: rgba(255,255,255,0.05);
-            border-color: rgba(255,255,255,0.1);
-            color: var(--color-text-muted);
-        }
-
-        /* ===== Компактные стили для мобильных ===== */
-        @media (max-width: 768px) {
-            /* Показываем кнопку разворачивания */
-            .filters-toggle {
-                display: flex;
-            }
-            
-            /* Компактный тулбар */
-            .modal__toolbar {
-                padding: 10px 14px;
-                gap: 10px;
-            }
-            
-            /* Компактный поиск */
-            .modal__search-box {
-                padding: 0 12px;
-            }
-            .modal__search-box input {
-                padding: 10px 8px;
-                font-size: 14px;
-            }
-            
-            /* Компактные категории */
-            .modal__categories {
-                gap: 4px;
-                padding-bottom: 2px;
-            }
-            .category-tab {
-                padding: 6px 10px;
-                font-size: 12px;
-                border-radius: 8px;
-            }
-            .category-tab__label {
-                font-size: 11px;
-            }
-            .category-tab__dot {
-                width: 8px;
-                height: 8px;
-            }
-            .category-tab__icon svg {
-                width: 14px;
-                height: 14px;
-            }
-            
-            /* Компактный результат */
-            .modal__results-info {
-                padding: 8px 14px;
-            }
-            .results-count {
-                font-size: 12px;
-            }
-            
-            /* Компактные фильтры */
-            .stat-filters {
-                flex-direction: column;
-                gap: 10px;
-                padding-top: 10px;
-            }
-            .stat-filter {
-                min-width: 100%;
-                gap: 4px;
-            }
-            .stat-filter__label {
-                font-size: 10px;
-            }
-            .stat-filter__select {
-                padding: 8px 28px 8px 10px;
-                font-size: 12px;
-            }
-            .stat-filters__reset {
-                width: 100%;
-            }
-            .stat-filters__reset-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 8px 12px;
-                font-size: 11px;
-            }
-            
-            /* Компактный шапка */
-            .modal__header {
-                padding: 12px 14px;
-            }
-            .modal__title {
-                font-size: 16px;
-            }
-            .modal__close {
-                width: 36px;
-                height: 36px;
-            }
-            
-            /* Больше места для списка */
-            .modal__body {
-                padding: 12px;
-            }
-            .artifacts-grid {
-                gap: 10px;
-            }
-            .artifact-card {
-                padding: 12px;
-            }
-            .artifact-card__image-wrapper {
-                width: 52px;
-                height: 52px;
-            }
-            .artifact-card__image {
-                width: 40px;
-                height: 40px;
-            }
-            .artifact-card__name {
-                font-size: 14px;
-            }
-            .artifact-card__tier {
-                height: 20px;
-                min-width: 24px;
-                font-size: 11px;
-            }
-            .artifact-stat-row {
-                font-size: 12px;
-                padding: 2px 0;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .modal__toolbar {
-                padding: 8px 12px;
-                gap: 8px;
-            }
-            .modal__search-box input {
-                padding: 8px 6px;
-                font-size: 13px;
-            }
-            .category-tab {
-                padding: 5px 8px;
-            }
-            .category-tab__label {
-                display: none;
-            }
-            .category-tab__dot,
-            .category-tab__icon {
-                margin: 0;
-            }
-            .category-tab[data-category="all"] .category-tab__label {
-                display: inline;
-            }
-            .modal__body {
-                padding: 10px;
-            }
-            .artifact-card__top {
-                gap: 10px;
-            }
-            .artifact-card__image-wrapper {
-                width: 48px;
-                height: 48px;
-            }
-            .artifact-card__image {
-                width: 36px;
-                height: 36px;
-            }
-        }
-    `;
+.filters-toggle{display:none;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--color-text-muted);font-family:var(--font-main);font-size:13px;cursor:pointer;transition:all 0.2s ease;margin-bottom:0}
+.filters-toggle:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15)}
+.filters-toggle.active{background:rgba(196,163,90,0.1);border-color:rgba(196,163,90,0.3);color:var(--color-accent)}
+.filters-toggle__left{display:flex;align-items:center;gap:8px}
+.filters-toggle__icon{display:flex;align-items:center;justify-content:center}
+.filters-toggle__icon svg{width:16px;height:16px}
+.filters-toggle__text{font-weight:500}
+.filters-toggle__badge{display:none;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;background:var(--color-accent);color:#000;font-size:11px;font-weight:700;border-radius:10px}
+.filters-toggle__badge.visible{display:flex}
+.filters-toggle__arrow{display:flex;align-items:center;transition:transform 0.2s ease}
+.filters-toggle__arrow svg{width:18px;height:18px}
+.filters-toggle.active .filters-toggle__arrow{transform:rotate(180deg)}
+.stat-filters-wrapper{overflow:hidden;transition:max-height 0.3s ease,opacity 0.2s ease}
+.stat-filters-wrapper.collapsed{max-height:0!important;opacity:0}
+.stat-filters{display:flex;gap:12px;flex-wrap:wrap;padding-top:12px}
+.stat-filter{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
+.stat-filter__label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.stat-filter__label svg{width:14px;height:14px}
+.stat-filter--positive .stat-filter__label{color:#4ade80}
+.stat-filter--negative .stat-filter__label{color:#f87171}
+.stat-filter__select{padding:10px 32px 10px 12px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--color-text);font-family:var(--font-main);font-size:13px;cursor:pointer;transition:all 0.2s ease;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888899' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.stat-filter__select:hover{border-color:rgba(255,255,255,0.2);background-color:rgba(0,0,0,0.5)}
+.stat-filter__select:focus{outline:none;border-color:var(--color-accent)}
+.stat-filter--positive .stat-filter__select:focus{border-color:#4ade80}
+.stat-filter--negative .stat-filter__select:focus{border-color:#f87171}
+.stat-filter__select option{background:#1a1a24;color:var(--color-text);padding:8px}
+.stat-filters__reset{display:flex;align-items:flex-end;padding-bottom:2px}
+.stat-filters__reset-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--color-text-muted);font-family:var(--font-main);font-size:12px;cursor:pointer;transition:all 0.2s ease;white-space:nowrap}
+.stat-filters__reset-btn:hover{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:#f87171}
+.stat-filters__reset-btn svg{width:14px;height:14px}
+.stat-filters__reset-btn:disabled{opacity:0.3;cursor:not-allowed}
+.stat-filters__reset-btn:disabled:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:var(--color-text-muted)}
+@media(max-width:768px){
+.filters-toggle{display:flex}
+.modal__toolbar{padding:10px 14px;gap:10px}
+.modal__search-box{padding:0 12px}
+.modal__search-box input{padding:10px 8px;font-size:14px}
+.modal__categories{gap:4px;padding-bottom:2px}
+.category-tab{padding:6px 10px;font-size:12px;border-radius:8px}
+.category-tab__label{font-size:11px}
+.category-tab__dot{width:8px;height:8px}
+.category-tab__icon svg{width:14px;height:14px}
+.modal__results-info{padding:8px 14px}
+.results-count{font-size:12px}
+.stat-filters{flex-direction:column;gap:10px;padding-top:10px}
+.stat-filter{min-width:100%;gap:4px}
+.stat-filter__label{font-size:10px}
+.stat-filter__select{padding:8px 28px 8px 10px;font-size:12px}
+.stat-filters__reset{width:100%}
+.stat-filters__reset-btn{width:100%;justify-content:center;padding:8px 12px;font-size:11px}
+.modal__header{padding:12px 14px}
+.modal__title{font-size:16px}
+.modal__close{width:36px;height:36px}
+.modal__body{padding:12px}
+.artifacts-grid{gap:10px}
+.artifact-card{padding:12px}
+.artifact-card__image-wrapper{width:52px;height:52px}
+.artifact-card__image{width:40px;height:40px}
+.artifact-card__name{font-size:14px}
+.artifact-card__tier{height:20px;min-width:24px;font-size:11px}
+.artifact-stat-row{font-size:12px;padding:2px 0}
+}
+@media(max-width:480px){
+.modal__toolbar{padding:8px 12px;gap:8px}
+.modal__search-box input{padding:8px 6px;font-size:13px}
+.category-tab{padding:5px 8px}
+.category-tab__label{display:none}
+.category-tab__dot,.category-tab__icon{margin:0}
+.category-tab[data-category="all"] .category-tab__label{display:inline}
+.modal__body{padding:10px}
+.artifact-card__top{gap:10px}
+.artifact-card__image-wrapper{width:48px;height:48px}
+.artifact-card__image{width:36px;height:36px}
+}`;
     document.head.appendChild(style);
 }
 
-// ============== СОЗДАНИЕ ФИЛЬТРОВ СВОЙСТВ ==============
-
 function createStatFilters() {
     const toolbar = document.querySelector('.modal__toolbar');
-    if (!toolbar) return;
+    if (!toolbar || document.getElementById('statFiltersContainer')) return;
     
-    if (document.getElementById('statFiltersContainer')) return;
-    
-    // Собираем все уникальные характеристики из артефактов с подсчётом
     const positiveStats = new Map();
     const negativeStats = new Map();
     
     ARTIFACTS.forEach(artifact => {
         Object.entries(artifact.stats).forEach(([statKey, value]) => {
-            if (isPositiveEffect(statKey, value)) {
-                positiveStats.set(statKey, (positiveStats.get(statKey) || 0) + 1);
-            }
-            if (isNegativeEffect(statKey, value)) {
-                negativeStats.set(statKey, (negativeStats.get(statKey) || 0) + 1);
-            }
+            if (isPositiveEffect(statKey, value)) positiveStats.set(statKey, (positiveStats.get(statKey) || 0) + 1);
+            if (isNegativeEffect(statKey, value)) negativeStats.set(statKey, (negativeStats.get(statKey) || 0) + 1);
         });
     });
     
@@ -604,135 +278,66 @@ function createStatFilters() {
     const createOptions = (statsMap) => {
         let options = '<option value="">Любой</option>';
         statsMap.forEach(([statKey, count]) => {
-            const name = STAT_NAMES[statKey] || statKey;
-            options += `<option value="${statKey}">${name} (${count})</option>`;
+            options += `<option value="${statKey}">${STAT_NAMES[statKey] || statKey} (${count})</option>`;
         });
         return options;
     };
     
-    // Кнопка разворачивания (для мобильных)
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'filtersToggle';
     toggleBtn.className = 'filters-toggle';
     toggleBtn.type = 'button';
-    toggleBtn.innerHTML = `
-        <div class="filters-toggle__left">
-            <span class="filters-toggle__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-                </svg>
-            </span>
-            <span class="filters-toggle__text">Фильтры по свойствам</span>
-            <span class="filters-toggle__badge" id="filtersBadge">0</span>
-        </div>
-        <span class="filters-toggle__arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 9l6 6 6-6"/>
-            </svg>
-        </span>
-    `;
+    toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filters-toggle__text">Фильтры по свойствам</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
     
-    // Контейнер-обёртка для сворачивания
     const wrapper = document.createElement('div');
     wrapper.id = 'statFiltersWrapper';
     wrapper.className = 'stat-filters-wrapper collapsed';
     
-    // Сами фильтры
     const container = document.createElement('div');
     container.id = 'statFiltersContainer';
     container.className = 'stat-filters';
-    
-    container.innerHTML = `
-        <div class="stat-filter stat-filter--positive">
-            <label class="stat-filter__label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                Положительный
-            </label>
-            <select class="stat-filter__select" id="positiveEffectFilter">
-                ${createOptions(sortedPositive)}
-            </select>
-        </div>
-        <div class="stat-filter stat-filter--negative">
-            <label class="stat-filter__label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14"/>
-                </svg>
-                Отрицательный
-            </label>
-            <select class="stat-filter__select" id="negativeEffectFilter">
-                ${createOptions(sortedNegative)}
-            </select>
-        </div>
-        <div class="stat-filters__reset">
-            <button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                    <path d="M3 3v5h5"/>
-                </svg>
-                Сбросить всё
-            </button>
-        </div>
-    `;
+    container.innerHTML = `<div class="stat-filter stat-filter--positive"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Положительный</label><select class="stat-filter__select" id="positiveEffectFilter">${createOptions(sortedPositive)}</select></div><div class="stat-filter stat-filter--negative"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>Отрицательный</label><select class="stat-filter__select" id="negativeEffectFilter">${createOptions(sortedNegative)}</select></div><div class="stat-filters__reset"><button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Сбросить всё</button></div>`;
     
     wrapper.appendChild(container);
     toolbar.appendChild(toggleBtn);
     toolbar.appendChild(wrapper);
     
-    // Обработчики
     toggleBtn.addEventListener('click', toggleFiltersPanel);
     
-    const positiveSelect = document.getElementById('positiveEffectFilter');
-    const negativeSelect = document.getElementById('negativeEffectFilter');
-    const resetBtn = document.getElementById('resetFiltersBtn');
-    
-    positiveSelect.addEventListener('change', (e) => {
+    document.getElementById('positiveEffectFilter').addEventListener('change', (e) => {
         state.filters.positiveEffect = e.target.value;
         updateFiltersBadge();
         updateResetButtonState();
         applyFilters();
     });
     
-    negativeSelect.addEventListener('change', (e) => {
+    document.getElementById('negativeEffectFilter').addEventListener('change', (e) => {
         state.filters.negativeEffect = e.target.value;
         updateFiltersBadge();
         updateResetButtonState();
         applyFilters();
     });
     
-    resetBtn.addEventListener('click', () => {
-        resetAllFilters();
-    });
+    document.getElementById('resetFiltersBtn').addEventListener('click', resetAllFilters);
 }
 
 function toggleFiltersPanel() {
     const toggle = document.getElementById('filtersToggle');
     const wrapper = document.getElementById('statFiltersWrapper');
-    
     if (!toggle || !wrapper) return;
     
     state.filtersExpanded = !state.filtersExpanded;
-    
     toggle.classList.toggle('active', state.filtersExpanded);
     wrapper.classList.toggle('collapsed', !state.filtersExpanded);
-    
-    if (state.filtersExpanded) {
-        // Устанавливаем max-height для анимации
-        wrapper.style.maxHeight = wrapper.scrollHeight + 'px';
-    } else {
-        wrapper.style.maxHeight = '0';
-    }
+    wrapper.style.maxHeight = state.filtersExpanded ? wrapper.scrollHeight + 'px' : '0';
 }
 
 function updateFiltersBadge() {
     const badge = document.getElementById('filtersBadge');
     if (!badge) return;
-    
     let count = 0;
     if (state.filters.positiveEffect) count++;
     if (state.filters.negativeEffect) count++;
-    
     badge.textContent = count;
     badge.classList.toggle('visible', count > 0);
 }
@@ -740,13 +345,7 @@ function updateFiltersBadge() {
 function updateResetButtonState() {
     const resetBtn = document.getElementById('resetFiltersBtn');
     if (!resetBtn) return;
-    
-    const hasActiveFilters = 
-        state.filters.search !== '' ||
-        state.filters.category !== 'all' ||
-        state.filters.positiveEffect !== '' ||
-        state.filters.negativeEffect !== '';
-    
+    const hasActiveFilters = state.filters.search !== '' || state.filters.category !== 'all' || state.filters.positiveEffect !== '' || state.filters.negativeEffect !== '';
     resetBtn.disabled = !hasActiveFilters;
 }
 
@@ -757,13 +356,8 @@ function resetAllFilters() {
     state.filters.negativeEffect = '';
     
     elements.artifactSearch.value = '';
-    if (elements.searchClear) {
-        elements.searchClear.style.display = 'none';
-    }
-    
-    elements.categoryTabs.forEach(tab => {
-        tab.classList.toggle('category-tab--active', tab.dataset.category === 'all');
-    });
+    if (elements.searchClear) elements.searchClear.style.display = 'none';
+    elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
     
     const positiveSelect = document.getElementById('positiveEffectFilter');
     const negativeSelect = document.getElementById('negativeEffectFilter');
@@ -775,172 +369,74 @@ function resetAllFilters() {
     applyFilters();
 }
 
-// ============== ФУНКЦИИ ОПРЕДЕЛЕНИЯ ТИПА ЭФФЕКТА ==============
-
 function isPositiveEffect(statKey, value) {
     if (value === 0) return false;
-    const isInverted = INVERTED_STATS.includes(statKey);
-    if (isInverted) {
-        return value < 0;
-    }
-    return value > 0;
+    return INVERTED_STATS.includes(statKey) ? value < 0 : value > 0;
 }
 
 function isNegativeEffect(statKey, value) {
     if (value === 0) return false;
-    const isInverted = INVERTED_STATS.includes(statKey);
-    if (isInverted) {
-        return value > 0;
-    }
-    return value < 0;
+    return INVERTED_STATS.includes(statKey) ? value > 0 : value < 0;
 }
-
-// ============== ARMOR DROPDOWN ==============
 
 function initArmorDropdown() {
     renderArmorDropdownList();
-    
-    const trigger = elements.armorDropdown.querySelector('.custom-dropdown__trigger');
-    trigger.addEventListener('click', toggleArmorDropdown);
-    
-    if (elements.armorSearchInput) {
-        elements.armorSearchInput.addEventListener('input', handleArmorSearch);
-    }
-    
+    elements.armorDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleArmorDropdown);
+    if (elements.armorSearchInput) elements.armorSearchInput.addEventListener('input', handleArmorSearch);
     elements.armorDropdownList.addEventListener('click', handleArmorListClick);
-    
-    if (elements.armorClearBtn) {
-        elements.armorClearBtn.addEventListener('click', clearArmorSelection);
-    }
-    
-    document.addEventListener('click', (e) => {
-        if (!elements.armorDropdown.contains(e.target)) {
-            closeArmorDropdown();
-        }
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.armorDropdown.classList.contains('open')) {
-            closeArmorDropdown();
-        }
-    });
+    if (elements.armorClearBtn) elements.armorClearBtn.addEventListener('click', clearArmorSelection);
+    document.addEventListener('click', (e) => { if (!elements.armorDropdown.contains(e.target)) closeArmorDropdown(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && elements.armorDropdown.classList.contains('open')) closeArmorDropdown(); });
 }
 
 function toggleArmorDropdown() {
     elements.armorDropdown.classList.toggle('open');
-    if (elements.armorDropdown.classList.contains('open') && elements.armorSearchInput) {
-        elements.armorSearchInput.focus();
-    }
+    if (elements.armorDropdown.classList.contains('open') && elements.armorSearchInput) elements.armorSearchInput.focus();
 }
 
-function closeArmorDropdown() {
-    elements.armorDropdown.classList.remove('open');
-}
+function closeArmorDropdown() { elements.armorDropdown.classList.remove('open'); }
 
-function handleArmorSearch(e) {
-    const query = e.target.value.toLowerCase().trim();
-    renderArmorDropdownList(query);
-}
+function handleArmorSearch(e) { renderArmorDropdownList(e.target.value.toLowerCase().trim()); }
 
 function handleArmorListClick(e) {
     const item = e.target.closest('.custom-dropdown__item');
-    if (!item) return;
-    
-    const armorId = item.dataset.armorId;
-    if (armorId) {
-        selectArmorFromDropdown(armorId);
-    }
+    if (item?.dataset.armorId) selectArmorFromDropdown(item.dataset.armorId);
 }
 
 function renderArmorDropdownList(searchQuery = '') {
     const groupedArmors = {};
-    
     ARMORS.forEach(armor => {
-        if (searchQuery && !armor.name.toLowerCase().includes(searchQuery)) {
-            return;
-        }
-        
-        if (!groupedArmors[armor.rarity]) {
-            groupedArmors[armor.rarity] = [];
-        }
+        if (searchQuery && !armor.name.toLowerCase().includes(searchQuery)) return;
+        if (!groupedArmors[armor.rarity]) groupedArmors[armor.rarity] = [];
         groupedArmors[armor.rarity].push(armor);
     });
     
-    if (elements.armorClearWrapper) {
-        elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
-    }
+    if (elements.armorClearWrapper) elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
     
-    const hasResults = Object.keys(groupedArmors).length > 0;
-    
-    if (!hasResults) {
-        elements.armorDropdownList.innerHTML = `
-            <div class="custom-dropdown__empty">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                </svg>
-                <span>Броня не найдена</span>
-            </div>
-        `;
+    if (Object.keys(groupedArmors).length === 0) {
+        elements.armorDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>Броня не найдена</span></div>`;
         return;
     }
     
     let html = '';
-    
     RARITY_ORDER.forEach(rarity => {
         const armors = groupedArmors[rarity];
-        if (!armors || armors.length === 0) return;
-        
-        html += `
-            <div class="custom-dropdown__group custom-dropdown__group--${rarity}">
-                <div class="custom-dropdown__group-title">${RARITY_NAMES[rarity]} (${armors.length})</div>
-        `;
-        
+        if (!armors?.length) return;
+        html += `<div class="custom-dropdown__group custom-dropdown__group--${rarity}"><div class="custom-dropdown__group-title">${RARITY_NAMES[rarity]} (${armors.length})</div>`;
         armors.forEach(armor => {
-            const isSelected = state.selectedArmor && state.selectedArmor.id === armor.id;
+            const isSelected = state.selectedArmor?.id === armor.id;
             const bulletRes = armor.stats.bulletResistance || 0;
-            
-            html += `
-                <div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" 
-                     data-armor-id="${armor.id}">
-                    <div class="custom-dropdown__item-info">
-                        <div class="custom-dropdown__item-name">${armor.name}</div>
-                        <div class="custom-dropdown__item-meta">
-                            <span class="custom-dropdown__item-type">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                </svg>
-                                ${armor.type}
-                            </span>
-                            ${bulletRes > 0 ? `
-                                <span class="custom-dropdown__item-stat">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
-                                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                    ${bulletRes}
-                                </span>
-                            ` : ''}
-                        </div>
-                    </div>
-                    <span class="custom-dropdown__item-rarity">${armor.rarityName}</span>
-                </div>
-            `;
+            html += `<div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${armor.name}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${armor.type}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${armor.rarityName}</span></div>`;
         });
-        
         html += '</div>';
     });
-    
     elements.armorDropdownList.innerHTML = html;
 }
 
 function selectArmorFromDropdown(armorId) {
     state.previousStats = calculateTotalStats();
-    
     const armor = ARMORS.find(a => a.id === armorId);
-    
-    if (!armor) {
-        console.error('Armor not found:', armorId);
-        return;
-    }
+    if (!armor) return;
     
     state.selectedArmor = armor;
     state.enhancementLevel = 0;
@@ -948,21 +444,12 @@ function selectArmorFromDropdown(armorId) {
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = armor.name;
     valueElement.classList.add('has-value');
-    
     elements.armorSelect.value = armorId;
     
     closeArmorDropdown();
+    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
     
-    if (elements.armorSearchInput) {
-        elements.armorSearchInput.value = '';
-    }
-    
-    if (armor.enhancement) {
-        showEnhancementBlock();
-    } else {
-        hideEnhancementBlock();
-    }
-    
+    armor.enhancement ? showEnhancementBlock() : hideEnhancementBlock();
     renderArmorInfo();
     updateContainerOptions();
     updateStats();
@@ -978,14 +465,10 @@ function clearArmorSelection() {
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = 'Выберите броню...';
     valueElement.classList.remove('has-value');
-    
     elements.armorSelect.value = '';
     
     closeArmorDropdown();
-    
-    if (elements.armorSearchInput) {
-        elements.armorSearchInput.value = '';
-    }
+    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
     
     hideEnhancementBlock();
     renderArmorInfo();
@@ -995,60 +478,29 @@ function clearArmorSelection() {
     saveStateToStorage();
 }
 
-// ============== CONTAINER DROPDOWN ==============
-
 function initContainerDropdown() {
     renderContainerDropdownList();
-    
-    const trigger = elements.containerDropdown.querySelector('.custom-dropdown__trigger');
-    trigger.addEventListener('click', toggleContainerDropdown);
-    
-    if (elements.containerSearchInput) {
-        elements.containerSearchInput.addEventListener('input', handleContainerSearch);
-    }
-    
+    elements.containerDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleContainerDropdown);
+    if (elements.containerSearchInput) elements.containerSearchInput.addEventListener('input', handleContainerSearch);
     elements.containerDropdownList.addEventListener('click', handleContainerListClick);
-    
-    if (elements.containerClearBtn) {
-        elements.containerClearBtn.addEventListener('click', clearContainerSelection);
-    }
-    
-    document.addEventListener('click', (e) => {
-        if (!elements.containerDropdown.contains(e.target)) {
-            closeContainerDropdown();
-        }
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.containerDropdown.classList.contains('open')) {
-            closeContainerDropdown();
-        }
-    });
+    if (elements.containerClearBtn) elements.containerClearBtn.addEventListener('click', clearContainerSelection);
+    document.addEventListener('click', (e) => { if (!elements.containerDropdown.contains(e.target)) closeContainerDropdown(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && elements.containerDropdown.classList.contains('open')) closeContainerDropdown(); });
 }
 
 function toggleContainerDropdown() {
     elements.containerDropdown.classList.toggle('open');
-    if (elements.containerDropdown.classList.contains('open') && elements.containerSearchInput) {
-        elements.containerSearchInput.focus();
-    }
+    if (elements.containerDropdown.classList.contains('open') && elements.containerSearchInput) elements.containerSearchInput.focus();
 }
 
-function closeContainerDropdown() {
-    elements.containerDropdown.classList.remove('open');
-}
+function closeContainerDropdown() { elements.containerDropdown.classList.remove('open'); }
 
-function handleContainerSearch(e) {
-    const query = e.target.value.toLowerCase().trim();
-    renderContainerDropdownList(query);
-}
+function handleContainerSearch(e) { renderContainerDropdownList(e.target.value.toLowerCase().trim()); }
 
 function handleContainerListClick(e) {
     const item = e.target.closest('.custom-dropdown__item');
-    if (!item || item.classList.contains('custom-dropdown__item--disabled')) return;
-    
-    const containerId = item.dataset.containerId;
-    if (containerId) {
-        selectContainerFromDropdown(containerId);
+    if (item && !item.classList.contains('custom-dropdown__item--disabled') && item.dataset.containerId) {
+        selectContainerFromDropdown(item.dataset.containerId);
     }
 }
 
@@ -1068,111 +520,43 @@ function isContainerAvailable(container) {
 
 function renderContainerDropdownList(searchQuery = '') {
     const groupedContainers = {};
-    
     CONTAINERS.forEach(container => {
-        if (searchQuery && !container.name.toLowerCase().includes(searchQuery)) {
-            return;
-        }
-        
-        if (!groupedContainers[container.type]) {
-            groupedContainers[container.type] = [];
-        }
+        if (searchQuery && !container.name.toLowerCase().includes(searchQuery)) return;
+        if (!groupedContainers[container.type]) groupedContainers[container.type] = [];
         groupedContainers[container.type].push(container);
     });
     
-    if (elements.containerClearWrapper) {
-        elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
-    }
+    if (elements.containerClearWrapper) elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
     
-    const hasResults = Object.keys(groupedContainers).length > 0;
-    
-    if (!hasResults) {
-        elements.containerDropdownList.innerHTML = `
-            <div class="custom-dropdown__empty">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                </svg>
-                <span>Контейнер не найден</span>
-            </div>
-        `;
+    if (Object.keys(groupedContainers).length === 0) {
+        elements.containerDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>Контейнер не найден</span></div>`;
         return;
     }
     
     let html = '';
-    
     CONTAINER_TYPE_ORDER.forEach(type => {
         const containers = groupedContainers[type];
-        if (!containers || containers.length === 0) return;
-        
-        html += `
-            <div class="custom-dropdown__group custom-dropdown__group--${type}">
-                <div class="custom-dropdown__group-title">${CONTAINER_TYPE_NAMES[type] || type} (${containers.length})</div>
-        `;
-        
+        if (!containers?.length) return;
+        html += `<div class="custom-dropdown__group custom-dropdown__group--${type}"><div class="custom-dropdown__group-title">${CONTAINER_TYPE_NAMES[type] || type} (${containers.length})</div>`;
         containers.forEach(container => {
-            const isSelected = state.selectedContainer && state.selectedContainer.id === container.id;
+            const isSelected = state.selectedContainer?.id === container.id;
             const isAvailable = isContainerAvailable(container);
-            const slots = container.slots;
             const totalShielding = Object.values(container.shielding || {}).reduce((sum, val) => sum + Math.abs(val), 0);
-            
-            html += `
-                <div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" 
-                     data-container-id="${container.id}">
-                    <div class="custom-dropdown__item-icon">
-                        ${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.standard}
-                    </div>
-                    <div class="custom-dropdown__item-info">
-                        <div class="custom-dropdown__item-name">${container.name}</div>
-                        <div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended">
-                            <span class="custom-dropdown__item-type-badge">${container.typeName || CONTAINER_TYPE_NAMES[type]}</span>
-                            ${totalShielding > 0 ? `
-                                <span class="custom-dropdown__item-shielding">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                    </svg>
-                                    Экран
-                                </span>
-                            ` : `
-                                <span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">
-                                    Без экрана
-                                </span>
-                            `}
-                        </div>
-                    </div>
-                    <div class="custom-dropdown__item-slots">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        ${slots}
-                    </div>
-                    <span class="custom-dropdown__item-rarity">${container.rarityName || ''}</span>
-                </div>
-            `;
+            html += `<div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" data-container-id="${container.id}"><div class="custom-dropdown__item-icon">${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.standard}</div><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${container.name}</div><div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended"><span class="custom-dropdown__item-type-badge">${container.typeName || CONTAINER_TYPE_NAMES[type]}</span>${totalShielding > 0 ? `<span class="custom-dropdown__item-shielding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Экран</span>` : `<span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">Без экрана</span>`}</div></div><div class="custom-dropdown__item-slots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${container.slots}</div><span class="custom-dropdown__item-rarity">${container.rarityName || ''}</span></div>`;
         });
-        
         html += '</div>';
     });
-    
     elements.containerDropdownList.innerHTML = html;
 }
 
 function selectContainerFromDropdown(containerId) {
     state.previousStats = calculateTotalStats();
-    
     const container = CONTAINERS.find(c => c.id === containerId);
-    
-    if (!container) {
-        console.error('Container not found:', containerId);
-        return;
-    }
+    if (!container) return;
     
     const previousArtifacts = [...state.artifacts];
-    
     state.selectedContainer = container;
-    
     state.artifacts = new Array(container.slots).fill(null);
-    
     for (let i = 0; i < Math.min(previousArtifacts.length, container.slots); i++) {
         state.artifacts[i] = previousArtifacts[i];
     }
@@ -1180,14 +564,10 @@ function selectContainerFromDropdown(containerId) {
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
     valueElement.classList.add('has-value');
-    
     elements.containerSelect.value = containerId;
     
     closeContainerDropdown();
-    
-    if (elements.containerSearchInput) {
-        elements.containerSearchInput.value = '';
-    }
+    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
     
     renderContainerInfo();
     renderArtifactSlots();
@@ -1204,14 +584,10 @@ function clearContainerSelection() {
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = 'Выберите контейнер...';
     valueElement.classList.remove('has-value');
-    
     elements.containerSelect.value = '';
     
     closeContainerDropdown();
-    
-    if (elements.containerSearchInput) {
-        elements.containerSearchInput.value = '';
-    }
+    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
     
     renderContainerInfo();
     renderArtifactSlots();
@@ -1231,8 +607,6 @@ function initContainerSelect() {
     elements.containerSelect.disabled = false;
 }
 
-// ============== ОБРАБОТЧИКИ СОБЫТИЙ ==============
-
 function initEventListeners() {
     elements.containerSelect.addEventListener('change', handleContainerChange);
     elements.resetBtn.addEventListener('click', resetBuild);
@@ -1242,14 +616,8 @@ function initEventListeners() {
     
     if (elements.enhancementSlider) {
         elements.enhancementSlider.addEventListener('input', handleEnhancementChange);
-        
-        elements.enhancementSlider.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-        
-        elements.enhancementSlider.addEventListener('touchmove', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
+        elements.enhancementSlider.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+        elements.enhancementSlider.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
     }
     
     elements.categoryTabs.forEach(tab => {
@@ -1281,19 +649,13 @@ function initEventListeners() {
     }
     
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.modal.classList.contains('active')) {
-            closeModal();
-        }
+        if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
     });
 }
 
 function handleSearchChange(e) {
     state.filters.search = e.target.value.trim();
-    
-    if (elements.searchClear) {
-        elements.searchClear.style.display = state.filters.search ? 'flex' : 'none';
-    }
-    
+    if (elements.searchClear) elements.searchClear.style.display = state.filters.search ? 'flex' : 'none';
     updateResetButtonState();
     applyFilters();
 }
@@ -1301,21 +663,16 @@ function handleSearchChange(e) {
 function applyFilters() {
     let filtered = [...ARTIFACTS];
     
-    if (state.filters.category !== 'all') {
-        filtered = filtered.filter(a => a.category === state.filters.category);
-    }
+    if (state.filters.category !== 'all') filtered = filtered.filter(a => a.category === state.filters.category);
     
     if (state.filters.search) {
         const searchLower = state.filters.search.toLowerCase();
         filtered = filtered.filter(a => {
             if (a.name.toLowerCase().includes(searchLower)) return true;
             if (a.nameEn.toLowerCase().includes(searchLower)) return true;
-            
             for (const statKey of Object.keys(a.stats)) {
                 const statName = STAT_NAMES[statKey];
-                if (statName && statName.toLowerCase().includes(searchLower)) {
-                    return true;
-                }
+                if (statName && statName.toLowerCase().includes(searchLower)) return true;
             }
             return false;
         });
@@ -1324,16 +681,14 @@ function applyFilters() {
     if (state.filters.positiveEffect) {
         filtered = filtered.filter(a => {
             const value = a.stats[state.filters.positiveEffect];
-            if (value === undefined) return false;
-            return isPositiveEffect(state.filters.positiveEffect, value);
+            return value !== undefined && isPositiveEffect(state.filters.positiveEffect, value);
         });
     }
     
     if (state.filters.negativeEffect) {
         filtered = filtered.filter(a => {
             const value = a.stats[state.filters.negativeEffect];
-            if (value === undefined) return false;
-            return isNegativeEffect(state.filters.negativeEffect, value);
+            return value !== undefined && isNegativeEffect(state.filters.negativeEffect, value);
         });
     }
     
@@ -1346,16 +701,12 @@ function initScrollEffects() {
         header.style.background = window.scrollY > 50 ? 'rgba(10, 10, 11, 0.98)' : 'rgba(10, 10, 11, 0.9)';
         elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
     });
-    elements.scrollTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    elements.scrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 }
 
 function updateContainerOptions() {
     const currentContainerId = state.selectedContainer?.id;
-    
     elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
-    
     const availableContainers = getAvailableContainers();
     
     availableContainers.forEach(container => {
@@ -1366,33 +717,26 @@ function updateContainerOptions() {
     });
     
     const currentStillAvailable = availableContainers.some(c => c.id === currentContainerId);
-    
     if (currentStillAvailable && state.selectedContainer) {
         elements.containerSelect.value = currentContainerId;
     } else if (state.selectedContainer) {
         state.selectedContainer = null;
         state.artifacts = [];
-        
         const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
         valueElement.textContent = 'Выберите контейнер...';
         valueElement.classList.remove('has-value');
-        
         renderContainerInfo();
         renderArtifactSlots();
         saveStateToStorage();
     }
     
     renderContainerDropdownList();
-    
     elements.containerSelect.disabled = false;
 }
-
-// ============== ЗАТОЧКА ==============
 
 function handleEnhancementChange(e) {
     state.previousStats = calculateTotalStats();
     state.enhancementLevel = parseInt(e.target.value);
-    
     updateEnhancementDisplay();
     renderArmorInfo();
     updateStats();
@@ -1401,14 +745,11 @@ function handleEnhancementChange(e) {
 
 function showEnhancementBlock() {
     if (!elements.enhancementBlock) return;
-    
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
     elements.enhancementSlider.max = maxLevel;
     elements.enhancementSlider.value = state.enhancementLevel;
-    
     elements.enhancementBlock.style.display = 'block';
     elements.enhancementBlock.classList.add('visible');
-    
     updateEnhancementDisplay();
 }
 
@@ -1420,30 +761,22 @@ function hideEnhancementBlock() {
 
 function updateEnhancementDisplay() {
     if (!elements.enhancementBlock || !state.selectedArmor?.enhancement) return;
-    
     const level = state.enhancementLevel;
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
     
     elements.enhancementValue.textContent = level;
-    
-    const progress = (level / maxLevel) * 100;
-    elements.enhancementSlider.style.setProperty('--slider-progress', `${progress}%`);
-    
+    elements.enhancementSlider.style.setProperty('--slider-progress', `${(level / maxLevel) * 100}%`);
     elements.enhancementBlock.setAttribute('data-level', level);
     
     elements.enhancementBlock.classList.remove('enhancement-block--high', 'enhancement-block--max');
-    if (level >= 10 && level < maxLevel) {
-        elements.enhancementBlock.classList.add('enhancement-block--high');
-    } else if (level === maxLevel) {
-        elements.enhancementBlock.classList.add('enhancement-block--max');
-    }
+    if (level >= 10 && level < maxLevel) elements.enhancementBlock.classList.add('enhancement-block--high');
+    else if (level === maxLevel) elements.enhancementBlock.classList.add('enhancement-block--max');
     
     renderEnhancementBonuses();
 }
 
 function renderEnhancementBonuses() {
     if (!elements.enhancementBonus || !state.selectedArmor?.enhancement) return;
-    
     const level = state.enhancementLevel;
     const bonuses = state.selectedArmor.enhancement.bonuses;
     
@@ -1456,42 +789,22 @@ function renderEnhancementBonuses() {
     Object.entries(bonuses).forEach(([statKey, values]) => {
         const bonusValue = values[level] || 0;
         if (bonusValue !== 0) {
-            const statName = STAT_NAMES[statKey] || statKey;
-            const unit = STAT_UNITS[statKey] || '';
             const displayValue = bonusValue > 0 ? `+${formatNumber(bonusValue)}` : formatNumber(bonusValue);
-            
-            html += `
-                <div class="enhancement-bonus-item">
-                    <span class="enhancement-bonus-item__name">${statName}</span>
-                    <span class="enhancement-bonus-item__value">${displayValue}${unit}</span>
-                </div>
-            `;
+            html += `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${STAT_NAMES[statKey] || statKey}</span><span class="enhancement-bonus-item__value">${displayValue}${STAT_UNITS[statKey] || ''}</span></div>`;
         }
     });
-    
     elements.enhancementBonus.innerHTML = html || '<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">Бонусы отсутствуют</span></div>';
 }
 
 function getEnhancementBonuses() {
     const bonuses = {};
-    
-    if (!state.selectedArmor?.enhancement || state.enhancementLevel === 0) {
-        return bonuses;
-    }
-    
-    const enhancementData = state.selectedArmor.enhancement.bonuses;
-    
-    Object.entries(enhancementData).forEach(([statKey, values]) => {
+    if (!state.selectedArmor?.enhancement || state.enhancementLevel === 0) return bonuses;
+    Object.entries(state.selectedArmor.enhancement.bonuses).forEach(([statKey, values]) => {
         const bonusValue = values[state.enhancementLevel] || 0;
-        if (bonusValue !== 0) {
-            bonuses[statKey] = bonusValue;
-        }
+        if (bonusValue !== 0) bonuses[statKey] = bonusValue;
     });
-    
     return bonuses;
 }
-
-// ============== ОБРАБОТКА КОНТЕЙНЕРА ==============
 
 function handleContainerChange(e) {
     const containerId = e.target.value;
@@ -1508,10 +821,8 @@ function handleContainerChange(e) {
     }
     
     const previousArtifacts = [...state.artifacts];
-    
     state.selectedContainer = CONTAINERS.find(c => c.id === containerId);
     state.artifacts = new Array(state.selectedContainer.slots).fill(null);
-    
     for (let i = 0; i < Math.min(previousArtifacts.length, state.selectedContainer.slots); i++) {
         state.artifacts[i] = previousArtifacts[i];
     }
@@ -1532,17 +843,13 @@ function resetBuild() {
     const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     armorValueElement.textContent = 'Выберите броню...';
     armorValueElement.classList.remove('has-value');
-    if (elements.armorSearchInput) {
-        elements.armorSearchInput.value = '';
-    }
+    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
     renderArmorDropdownList();
     
     const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     containerValueElement.textContent = 'Выберите контейнер...';
     containerValueElement.classList.remove('has-value');
-    if (elements.containerSearchInput) {
-        elements.containerSearchInput.value = '';
-    }
+    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
     renderContainerDropdownList();
     
     elements.armorSelect.value = '';
@@ -1555,22 +862,12 @@ function resetBuild() {
     renderArtifactSlots();
     updateStats();
     
-    try {
-        localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {
-        console.warn('Не удалось очистить localStorage:', e);
-    }
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
 }
-
-// ============== РЕНДЕРИНГ ИНФОРМАЦИИ ==============
 
 function renderArmorInfo() {
     if (!state.selectedArmor) {
-        elements.armorInfo.innerHTML = `
-            <div class="armor-info__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>Выберите броню для просмотра характеристик</span>
-            </div>`;
+        elements.armorInfo.innerHTML = `<div class="armor-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Выберите броню для просмотра характеристик</span></div>`;
         return;
     }
     
@@ -1578,203 +875,91 @@ function renderArmorInfo() {
     const enhancementBonuses = getEnhancementBonuses();
     
     const statsHtml = Object.entries(armor.stats).map(([key, baseValue]) => {
-        const name = STAT_NAMES[key] || key;
-        const unit = STAT_UNITS[key] || '';
         const enhancementBonus = enhancementBonuses[key] || 0;
         const totalValue = baseValue + enhancementBonus;
-        
         const { displayValue, colorClass } = formatStatValue(key, totalValue);
-        
         let enhancementHtml = '';
         if (enhancementBonus !== 0) {
             const bonusStr = enhancementBonus > 0 ? `+${formatNumber(enhancementBonus)}` : formatNumber(enhancementBonus);
             enhancementHtml = `<span class="stat-enhancement-bonus">(${bonusStr})</span>`;
         }
-        
-        return `
-            <div class="armor-details__stat">
-                <span class="armor-details__stat-name">${name}</span>
-                <span class="armor-details__stat-value ${colorClass}">
-                    ${displayValue}${unit} ${enhancementHtml}
-                </span>
-            </div>
-        `;
+        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${STAT_NAMES[key] || key}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''} ${enhancementHtml}</span></div>`;
     }).join('');
     
-    elements.armorInfo.innerHTML = `
-        <div class="armor-details">
-            <div class="armor-details__header">
-                <span class="armor-details__name">${armor.name}</span>
-                <span class="armor-details__rarity rarity--${armor.rarity}">${armor.rarityName}</span>
-            </div>
-            <div class="armor-details__type">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                ${armor.type}
-            </div>
-            <div class="armor-details__stats">${statsHtml}</div>
-        </div>`;
+    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${armor.name}</span><span class="armor-details__rarity rarity--${armor.rarity}">${armor.rarityName}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${armor.type}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
 }
 
 function renderContainerInfo() {
     if (!state.selectedContainer) {
-        elements.containerInfo.innerHTML = `
-            <div class="container-info__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                <span>Выберите контейнер для добавления артефактов</span>
-            </div>`;
+        elements.containerInfo.innerHTML = `<div class="container-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Выберите контейнер для добавления артефактов</span></div>`;
         return;
     }
+    
     const container = state.selectedContainer;
     const statsHtml = Object.entries(container.stats).map(([key, value]) => {
-        const name = STAT_NAMES[key] || key;
-        const unit = STAT_UNITS[key] || '';
         const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${name}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${STAT_NAMES[key] || key}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''}</span></div>`;
     }).join('');
     
     const shieldingHtml = Object.entries(container.shielding).map(([key, value]) => {
-        const name = STAT_NAMES[key] || key;
-        const unit = STAT_UNITS[key] || '';
         const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${name}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${unit}</span></div>`;
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${STAT_NAMES[key] || key}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''}</span></div>`;
     }).join('') || '<span class="container-details__stat-name">Нет экранирования</span>';
     
-    elements.containerInfo.innerHTML = `
-        <div class="container-details">
-            <div class="container-details__header">
-                <span class="container-details__name">${container.name}</span>
-                <span class="container-details__rarity rarity--${container.rarity}">${container.rarityName}</span>
-            </div>
-            <div class="container-details__type">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                ${container.typeName} • ${container.slots} слот${getSlotWord(container.slots)}
-            </div>
-            ${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}
-            <div class="container-details__shielding">
-                <div class="container-details__shielding-title">Экранирование:</div>
-                ${shieldingHtml}
-            </div>
-        </div>`;
+    elements.containerInfo.innerHTML = `<div class="container-details"><div class="container-details__header"><span class="container-details__name">${container.name}</span><span class="container-details__rarity rarity--${container.rarity}">${container.rarityName}</span></div><div class="container-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>${container.typeName} • ${container.slots} слот${getSlotWord(container.slots)}</div>${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}<div class="container-details__shielding"><div class="container-details__shielding-title">Экранирование:</div>${shieldingHtml}</div></div>`;
 }
 
 function renderArtifactSlots() {
     if (!state.selectedContainer) {
-        elements.artifactSlots.innerHTML = `
-            <div class="artifact-slots__placeholder">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-                <span>Выберите контейнер для добавления артефактов</span>
-            </div>`;
+        elements.artifactSlots.innerHTML = `<div class="artifact-slots__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><span>Выберите контейнер для добавления артефактов</span></div>`;
         elements.artifactCounter.textContent = '0/0';
         return;
     }
+    
     const filledSlots = state.artifacts.filter(a => a !== null).length;
     elements.artifactCounter.textContent = `${filledSlots}/${state.selectedContainer.slots}`;
     
     const slotsHtml = state.artifacts.map((artifact, index) => {
         if (artifact) {
-            return `
-                <div class="artifact-slot" data-index="${index}">
-                    <div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div>
-                    <div class="artifact-slot__info">
-                        <div class="artifact-slot__name">${artifact.name}</div>
-                        <div class="artifact-slot__category">${getCategoryName(artifact.category)} • Tier ${artifact.tier}</div>
-                    </div>
-                    <button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="Удалить артефакт">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
-                    </button>
-                </div>`;
+            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${artifact.name}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • Tier ${artifact.tier}</div></div><button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="Удалить артефакт"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
         }
-        return `
-            <div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})">
-                <div class="artifact-slot__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-                </div>
-                <div class="artifact-slot__info"><span class="artifact-slot__empty-text">Нажмите, чтобы добавить артефакт</span></div>
-            </div>`;
+        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">Нажмите, чтобы добавить артефакт</span></div></div>`;
     }).join('');
     
     elements.artifactSlots.innerHTML = `<div class="artifact-slots__grid">${slotsHtml}</div>`;
 }
 
-// ============== МОДАЛЬНОЕ ОКНО АРТЕФАКТОВ ==============
-
 function updateArtifactCount(count) {
-    if (elements.artifactCount) {
-        elements.artifactCount.textContent = count;
-    }
+    if (elements.artifactCount) elements.artifactCount.textContent = count;
 }
 
 function renderArtifactList(artifacts = ARTIFACTS) {
     updateArtifactCount(artifacts.length);
     
     if (artifacts.length === 0) {
-        elements.artifactList.innerHTML = `
-            <div class="artifacts-empty">
-                <div class="artifacts-empty__icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="M21 21l-4.35-4.35"/>
-                    </svg>
-                </div>
-                <div class="artifacts-empty__title">Артефакты не найдены</div>
-                <div class="artifacts-empty__text">Попробуйте изменить параметры поиска</div>
-            </div>
-        `;
+        elements.artifactList.innerHTML = `<div class="artifacts-empty"><div class="artifacts-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="artifacts-empty__title">Артефакты не найдены</div><div class="artifacts-empty__text">Попробуйте изменить параметры поиска</div></div>`;
         return;
     }
     
     const listHtml = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
-        const categoryName = getCategoryName(artifact.category);
         const priceDisplay = artifact.price ? formatPrice(artifact.price) : (artifact.priceText || '—');
         
         const statsHtml = Object.entries(artifact.stats).map(([key, value]) => {
-            const name = STAT_NAMES[key] || key;
-            const unit = STAT_UNITS[key] || '';
             const isInverted = INVERTED_STATS.includes(key);
-            
             let displayValue, valueClass;
             if (value > 0) {
-                displayValue = `+${formatNumber(value)}${unit}`;
+                displayValue = `+${formatNumber(value)}${STAT_UNITS[key] || ''}`;
                 valueClass = isInverted ? 'artifact-stat-row__value--negative' : 'artifact-stat-row__value--positive';
             } else {
-                displayValue = `${formatNumber(value)}${unit}`;
+                displayValue = `${formatNumber(value)}${STAT_UNITS[key] || ''}`;
                 valueClass = isInverted ? 'artifact-stat-row__value--positive' : 'artifact-stat-row__value--negative';
             }
-            
-            return `
-                <div class="artifact-stat-row">
-                    <span class="artifact-stat-row__name">${name}</span>
-                    <span class="artifact-stat-row__value ${valueClass}">${displayValue}</span>
-                </div>
-            `;
+            return `<div class="artifact-stat-row"><span class="artifact-stat-row__name">${STAT_NAMES[key] || key}</span><span class="artifact-stat-row__value ${valueClass}">${displayValue}</span></div>`;
         }).join('');
         
-        return `
-            <div class="artifact-card artifact-card--${artifact.category}" onclick="selectArtifact('${artifact.id}')">
-                <div class="artifact-card__top">
-                    <div class="artifact-card__image-wrapper">
-                        <img src="../Table/${artifact.imageFolder}/${artifact.image}" 
-                             alt="${artifact.name}" 
-                             class="artifact-card__image" 
-                             onerror="this.src='../images/placeholder.png'">
-                    </div>
-                    <div class="artifact-card__info">
-                        <div class="artifact-card__name">${artifact.name}</div>
-                        <div class="artifact-card__meta">
-                            <span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span>
-                            <span class="artifact-card__category">${categoryName}</span>
-                            <span class="artifact-card__price">${priceDisplay}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="artifact-card__divider"></div>
-                <div class="artifact-card__stats">
-                    ${statsHtml}
-                </div>
-            </div>
-        `;
+        return `<div class="artifact-card artifact-card--${artifact.category}" onclick="selectArtifact('${artifact.id}')"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${artifact.name}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
     }).join('');
     
     elements.artifactList.innerHTML = listHtml;
@@ -1783,12 +968,8 @@ function renderArtifactList(artifacts = ARTIFACTS) {
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
+    if (elements.modalSlotInfo) elements.modalSlotInfo.textContent = `Слот #${slotIndex + 1}`;
     
-    if (elements.modalSlotInfo) {
-        elements.modalSlotInfo.textContent = `Слот #${slotIndex + 1}`;
-    }
-    
-    // Сбрасываем фильтры
     state.filters.search = '';
     state.filters.category = 'all';
     state.filters.positiveEffect = '';
@@ -1796,19 +977,11 @@ function openArtifactModal(slotIndex) {
     state.filtersExpanded = false;
     
     elements.artifactSearch.value = '';
+    elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
+    if (elements.searchClear) elements.searchClear.style.display = 'none';
     
-    elements.categoryTabs.forEach(tab => {
-        tab.classList.toggle('category-tab--active', tab.dataset.category === 'all');
-    });
-    
-    if (elements.searchClear) {
-        elements.searchClear.style.display = 'none';
-    }
-    
-    // Создаём фильтры если ещё не созданы
     createStatFilters();
     
-    // Сбрасываем UI фильтров
     const positiveSelect = document.getElementById('positiveEffectFilter');
     const negativeSelect = document.getElementById('negativeEffectFilter');
     const filtersToggle = document.getElementById('filtersToggle');
@@ -1824,10 +997,11 @@ function openArtifactModal(slotIndex) {
     
     updateFiltersBadge();
     updateResetButtonState();
-    
     renderArtifactList(ARTIFACTS);
     
-    elements.artifactSearch.focus();
+    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+    if (!isMobile) elements.artifactSearch.focus();
+    
     document.body.style.overflow = 'hidden';
 }
 
@@ -1857,28 +1031,22 @@ function removeArtifact(index) {
     saveStateToStorage();
 }
 
-// ============== РАСЧЁТ СТАТИСТИК ==============
-
 function updateStats() {
     const totalStats = calculateTotalStats();
-    const baseStats = calculateBaseStats();
-    
     updatePriorityStats(totalStats, state.previousStats);
     
     Object.entries(totalStats).forEach(([key, value]) => {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
-            const unit = STAT_UNITS[key] || '';
             const prevValue = state.previousStats ? state.previousStats[key] : value;
             const { displayValue, colorClass } = formatStatValueWithChange(key, value, prevValue);
-            element.textContent = displayValue + unit;
+            element.textContent = displayValue + (STAT_UNITS[key] || '');
             element.className = 'stat-row__value ' + colorClass;
         }
     });
     
     updateEffectiveBulletResistance(totalStats.bulletResistance);
     updateWarnings(totalStats);
-    
     state.previousStats = totalStats;
 }
 
@@ -1886,62 +1054,36 @@ function updatePriorityStats(currentStats, previousStats) {
     PRIORITY_STATS.forEach(statKey => {
         const element = document.querySelector(`[data-priority-stat="${statKey}"]`);
         const cardElement = element?.closest('.priority-stat');
-        
         if (!element || !cardElement) return;
         
         const value = currentStats[statKey] || 0;
         const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
-        const unit = STAT_UNITS[statKey] || '';
-        
         const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
         
-        element.textContent = displayValue + unit;
+        element.textContent = displayValue + (STAT_UNITS[statKey] || '');
         element.className = 'priority-stat__value';
-        if (colorClass) {
-            element.classList.add(colorClass);
-        }
+        if (colorClass) element.classList.add(colorClass);
         
         cardElement.classList.remove('priority-stat--danger', 'priority-stat--good');
-        if (isDangerous) {
-            cardElement.classList.add('priority-stat--danger');
-        } else if (isGood) {
-            cardElement.classList.add('priority-stat--good');
-        }
+        if (isDangerous) cardElement.classList.add('priority-stat--danger');
+        else if (isGood) cardElement.classList.add('priority-stat--good');
     });
 }
 
 function formatPriorityStatValue(statKey, value, prevValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
+    let displayValue = '', colorClass = '', isDangerous = false, isGood = false;
     
-    let displayValue = '';
-    let colorClass = '';
-    let isDangerous = false;
-    let isGood = false;
-    
-    if (value === 0) {
-        displayValue = '0';
-    } else if (value > 0) {
-        displayValue = `+${formatNumber(value)}`;
-    } else {
-        displayValue = formatNumber(value);
-    }
+    if (value === 0) displayValue = '0';
+    else if (value > 0) displayValue = `+${formatNumber(value)}`;
+    else displayValue = formatNumber(value);
     
     if (isInverted) {
-        if (value > 0) {
-            isDangerous = true;
-            colorClass = 'priority-stat__value--negative';
-        } else if (value < 0) {
-            isGood = true;
-            colorClass = 'priority-stat__value--positive';
-        }
+        if (value > 0) { isDangerous = true; colorClass = 'priority-stat__value--negative'; }
+        else if (value < 0) { isGood = true; colorClass = 'priority-stat__value--positive'; }
     } else {
-        if (value > 0) {
-            isGood = true;
-            colorClass = 'priority-stat__value--positive';
-        } else if (value < 0) {
-            isDangerous = true;
-            colorClass = 'priority-stat__value--negative';
-        }
+        if (value > 0) { isGood = true; colorClass = 'priority-stat__value--positive'; }
+        else if (value < 0) { isDangerous = true; colorClass = 'priority-stat__value--negative'; }
     }
     
     return { displayValue, colorClass, isDangerous, isGood };
@@ -1950,32 +1092,16 @@ function formatPriorityStatValue(statKey, value, prevValue) {
 function formatStatValueWithChange(statKey, currentValue, previousValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
     const diff = currentValue - previousValue;
+    let displayValue = '', colorClass = '';
     
-    let displayValue = '';
-    let colorClass = '';
-    
-    if (currentValue === 0) {
-        displayValue = '0';
-    } else if (currentValue > 0) {
-        displayValue = `+${formatNumber(currentValue)}`;
-    } else {
-        displayValue = formatNumber(currentValue);
-    }
+    if (currentValue === 0) displayValue = '0';
+    else if (currentValue > 0) displayValue = `+${formatNumber(currentValue)}`;
+    else displayValue = formatNumber(currentValue);
     
     if (diff !== 0) {
-        if (isInverted) {
-            colorClass = diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
-        } else {
-            colorClass = diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
-        }
-    } else {
-        if (currentValue !== 0) {
-            if (isInverted) {
-                colorClass = currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
-            } else {
-                colorClass = currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
-            }
-        }
+        colorClass = isInverted ? (diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
+    } else if (currentValue !== 0) {
+        colorClass = isInverted ? (currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
     }
     
     return { displayValue, colorClass };
@@ -1983,68 +1109,36 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
 
 function calculateBaseStats() {
     const stats = createEmptyStats();
-    
     if (state.selectedArmor) {
-        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-        
-        const enhancementBonuses = getEnhancementBonuses();
-        Object.entries(enhancementBonuses).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
+        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
+        Object.entries(getEnhancementBonuses()).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
     }
-    
     if (state.selectedContainer) {
-        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
+        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
+        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
     }
-    
     return stats;
 }
 
 function calculateTotalStats() {
     const stats = createEmptyStats();
-    
     if (state.selectedArmor) {
-        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-        
-        const enhancementBonuses = getEnhancementBonuses();
-        Object.entries(enhancementBonuses).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
+        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
+        Object.entries(getEnhancementBonuses()).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
     }
-    
     if (state.selectedContainer) {
-        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
-        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => {
-            if (stats.hasOwnProperty(key)) stats[key] += value;
-        });
+        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
+        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
     }
-    
     state.artifacts.forEach(artifact => {
-        if (artifact) {
-            Object.entries(artifact.stats).forEach(([key, value]) => {
-                if (stats.hasOwnProperty(key)) stats[key] += value;
-            });
-        }
+        if (artifact) Object.entries(artifact.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
     });
-    
     return stats;
 }
 
 function createEmptyStats() {
     return {
-        radiationProtection: 0, bioProtection: 0, thermalProtection: 0,
-        psiProtection: 0, frostProtection: 0,
+        radiationProtection: 0, bioProtection: 0, thermalProtection: 0, psiProtection: 0, frostProtection: 0,
         heatResistance: 0, chemResistance: 0, electroResistance: 0,
         impactResistance: 0, tearProtection: 0, bulletResistance: 0,
         regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
@@ -2052,33 +1146,15 @@ function createEmptyStats() {
     };
 }
 
-// ============== ПРЕДУПРЕЖДЕНИЯ ==============
-
 function updateWarnings(totalStats) {
     const warningsHtml = [];
-    
     Object.entries(WARNING_STATS).forEach(([statKey, config]) => {
         let value = totalStats[statKey] || 0;
-        let isDangerous = false;
-        
-        if (config.inverted) {
-            isDangerous = value < config.threshold;
-            value = Math.abs(value);
-        } else {
-            isDangerous = value > config.threshold;
-        }
+        let isDangerous = config.inverted ? value < config.threshold : value > config.threshold;
+        if (config.inverted) value = Math.abs(value);
         
         if (isDangerous) {
-            const iconSvg = getWarningIcon(statKey);
-            warningsHtml.push(`
-                <div class="warning-item warning-item--${config.color}">
-                    <div class="warning-item__icon">${iconSvg}</div>
-                    <div class="warning-item__content">
-                        <span class="warning-item__title">Внимание: ${config.title}!</span>
-                        <span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${config.unit}</span>
-                    </div>
-                </div>
-            `);
+            warningsHtml.push(`<div class="warning-item warning-item--${config.color}"><div class="warning-item__icon">${getWarningIcon(statKey)}</div><div class="warning-item__content"><span class="warning-item__title">Внимание: ${config.title}!</span><span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${config.unit}</span></div></div>`);
         }
     });
     
@@ -2089,7 +1165,6 @@ function updateWarnings(totalStats) {
         warningsContainer.id = 'warningsContainer';
         bulletResistance.parentNode.insertBefore(warningsContainer, bulletResistance.nextSibling);
     }
-    
     warningsContainer.innerHTML = warningsHtml.join('');
 }
 
@@ -2104,8 +1179,6 @@ function getWarningIcon(statKey) {
     return icons[statKey] || icons.radiation;
 }
 
-// ============== ПУЛЕСТОЙКОСТЬ ==============
-
 function updateEffectiveBulletResistance(bulletResistance) {
     const effectiveElement = document.getElementById('effectiveBulletResistance');
     const percentElement = document.getElementById('bulletResistancePercent');
@@ -2113,44 +1186,27 @@ function updateEffectiveBulletResistance(bulletResistance) {
     if (!effectiveElement) return;
     
     let percent = 0;
-    if (bulletResistance > 0) {
-        percent = (bulletResistance / (bulletResistance + BULLET_RESISTANCE_CONSTANT)) * 100;
-    } else if (bulletResistance < 0) {
-        percent = (bulletResistance / (Math.abs(bulletResistance) + BULLET_RESISTANCE_CONSTANT)) * 100;
-    }
+    if (bulletResistance > 0) percent = (bulletResistance / (bulletResistance + BULLET_RESISTANCE_CONSTANT)) * 100;
+    else if (bulletResistance < 0) percent = (bulletResistance / (Math.abs(bulletResistance) + BULLET_RESISTANCE_CONSTANT)) * 100;
     
     const clampedPercent = Math.max(-100, Math.min(percent, 99.99));
-    
     effectiveElement.textContent = formatNumber(bulletResistance);
     percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
     
     const barPercent = Math.max(0, Math.min(clampedPercent, 100));
     barElement.style.width = `${barPercent}%`;
     
-    if (clampedPercent >= 65) {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
-    } else if (clampedPercent >= 45) {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
-    } else {
-        barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
-    }
+    if (clampedPercent >= 65) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
+    else if (clampedPercent >= 45) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
+    else barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
 }
-
-// ============== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============
 
 function formatStatValue(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
     let displayValue, colorClass = '';
-    
-    if (value === 0) {
-        displayValue = '0';
-    } else if (value > 0) {
-        displayValue = `+${formatNumber(value)}`;
-        colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive';
-    } else {
-        displayValue = formatNumber(value);
-        colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative';
-    }
+    if (value === 0) displayValue = '0';
+    else if (value > 0) { displayValue = `+${formatNumber(value)}`; colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive'; }
+    else { displayValue = formatNumber(value); colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative'; }
     return { displayValue, colorClass };
 }
 
@@ -2159,8 +1215,6 @@ function getSlotWord(count) {
     if (count >= 2 && count <= 4) return 'а';
     return 'ов';
 }
-
-// ============== ГЛОБАЛЬНЫЕ ФУНКЦИИ ==============
 
 window.openArtifactModal = openArtifactModal;
 window.selectArtifact = selectArtifact;
