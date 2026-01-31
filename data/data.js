@@ -4,10 +4,25 @@
 
 // ============== ПРЕСЕТЫ ЗАТОЧКИ ==============
 const ENHANCEMENT_PRESETS = {
+    // Комбинированная броня (макс. +29.95)
     combined: {
         maxLevel: 15,
         bonuses: {
             bulletResistance: [0, 0.9, 1.8, 2.7, 3.59, 6.29, 7.79, 8.98, 10.48, 11.98, 15.87, 17.97, 19.77, 21.86, 23.96, 29.95]
+        }
+    },
+    // Боевая броня (макс. +60)
+    combat: {
+        maxLevel: 15,
+        bonuses: {
+            bulletResistance: [0, 1.8, 3.6, 5.4, 7.2, 12.6, 15.6, 18, 21, 24, 31.8, 36, 39.6, 43.8, 48, 60]
+        }
+    },
+    // Научная броня (макс. +15)
+    scientific: {
+        maxLevel: 15,
+        bonuses: {
+            bulletResistance: [0, 0.45, 0.9, 1.35, 1.8, 3.15, 3.9, 4.5, 5.25, 6, 7.95, 9, 9.9, 10.95, 12, 15]
         }
     }
 };
@@ -251,7 +266,7 @@ const ARMORS = [
             maxStamina: -3.00,
             maxWeight: 10.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'voshod',
@@ -274,7 +289,7 @@ const ARMORS = [
             maxStamina: -5.00,
             maxWeight: 20.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'fobos',
@@ -297,7 +312,7 @@ const ARMORS = [
             maxStamina: -8.00,
             maxWeight: 24.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99_ecolog',
@@ -320,7 +335,7 @@ const ARMORS = [
             maxStamina: -10.00,
             maxWeight: 26.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99_almaz',
@@ -343,7 +358,7 @@ const ARMORS = [
             maxStamina: -12.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99m_emerald',
@@ -366,7 +381,7 @@ const ARMORS = [
             maxStamina: -12.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99m_topaz',
@@ -389,7 +404,7 @@ const ARMORS = [
             maxStamina: -12.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99m_sapphire',
@@ -412,7 +427,7 @@ const ARMORS = [
             maxStamina: -12.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
     {
         id: 'ssp99m_ruby',
@@ -437,7 +452,7 @@ const ARMORS = [
             maxStamina: -15.00,
             maxWeight: 40.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.scientific
     },
 
     // ===== БОЕВЫЕ =====
@@ -457,7 +472,7 @@ const ARMORS = [
             bulletResistance: 92,
             maxWeight: 12.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'psz7b',
@@ -477,7 +492,7 @@ const ARMORS = [
             bulletResistance: 112,
             maxWeight: 12.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'shakal',
@@ -492,7 +507,7 @@ const ARMORS = [
             bulletResistance: 72,
             maxWeight: 8.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'ps5',
@@ -514,7 +529,7 @@ const ARMORS = [
             maxStamina: -10.00,
             maxWeight: 12.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'berill5m',
@@ -536,7 +551,7 @@ const ARMORS = [
             maxStamina: -10.00,
             maxWeight: 12.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'viking',
@@ -558,7 +573,7 @@ const ARMORS = [
             bulletResistance: 156,
             maxWeight: 24.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'psz9',
@@ -581,7 +596,7 @@ const ARMORS = [
             maxStamina: -20.00,
             maxWeight: 20.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'skat9m',
@@ -604,7 +619,7 @@ const ARMORS = [
             maxStamina: -20.00,
             maxWeight: 24.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'bulat',
@@ -627,7 +642,7 @@ const ARMORS = [
             maxStamina: -10.00,
             maxWeight: 24.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'skat10',
@@ -651,7 +666,7 @@ const ARMORS = [
             maxStamina: -10.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'heavy_voshod',
@@ -674,7 +689,7 @@ const ARMORS = [
             maxStamina: -30.00,
             maxWeight: 20.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'shturm',
@@ -697,7 +712,7 @@ const ARMORS = [
             maxStamina: -30.00,
             maxWeight: 30.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'pancir',
@@ -721,7 +736,7 @@ const ARMORS = [
             moveSpeed: -20.00,
             maxWeight: 60.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'exoskeleton',
@@ -745,7 +760,7 @@ const ARMORS = [
             moveSpeed: -5.00,
             maxWeight: 60.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
     {
         id: 'modified_exo',
@@ -768,7 +783,7 @@ const ARMORS = [
             maxStamina: 10.00,
             maxWeight: 70.00
         },
-        enhancement: null
+        enhancement: ENHANCEMENT_PRESETS.combat
     },
 
     // ===== КОМБИНИРОВАННЫЕ =====
