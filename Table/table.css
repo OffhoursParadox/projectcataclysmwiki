@@ -19,7 +19,7 @@
     --color-tier-2: #22c55e;
     --color-tier-3: #f97316;
     --color-tier-unique: #a855f7;
-    --color-gravity: #8b5cf6;
+    --color-gravity: #b8860b;
     --color-chemical: #10b981;
     --color-electric: #3b82f6;
     --color-thermal: #ef4444;
@@ -229,7 +229,7 @@ body {
     border-radius: 12px;
 }
 .category-header__icon svg { width: 24px; height: 24px; }
-.category-header--gravity .category-header__icon { background: rgba(139,92,246,0.2); color: var(--color-gravity); }
+.category-header--gravity .category-header__icon { background: rgba(184,134,11,0.2); color: var(--color-gravity); }
 .category-header--chemical .category-header__icon { background: rgba(16,185,129,0.2); color: var(--color-chemical); }
 .category-header--electric .category-header__icon { background: rgba(59,130,246,0.2); color: var(--color-electric); }
 .category-header--thermal .category-header__icon { background: rgba(239,68,68,0.2); color: var(--color-thermal); }
