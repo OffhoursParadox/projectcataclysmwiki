@@ -24,6 +24,13 @@ const ENHANCEMENT_PRESETS = {
         bonuses: {
             bulletResistance: [0, 0.45, 0.9, 1.35, 1.8, 3.15, 3.9, 4.5, 5.25, 6, 7.95, 9, 9.9, 10.95, 12, 15]
         }
+    },
+    // Легендарная броня (макс. +80)
+    legendary: {
+        maxLevel: 15,
+        bonuses: {
+            bulletResistance: [0, 2.4, 4.8, 7.2, 9.6, 16.8, 20.8, 24, 28, 32, 42.4, 48, 52.8, 58.4, 64, 80]
+        }
     }
 };
 
@@ -1240,7 +1247,7 @@ const ARMORS = [
             maxStamina: 20.00,
             maxWeight: 80.00
         },
-        enhancement: ENHANCEMENT_PRESETS.combined
+        enhancement: ENHANCEMENT_PRESETS.legendary
     }
 ];
 
