@@ -1,61 +1,78 @@
 // ============================================================
-// PROJECT CATACLYSM WIKI — ЛОГИКА DPS КАЛЬКУЛЯТОРА
+// PROJECT CATACLYSM WIKI — ЛОГИКА DPS КАЛЬКУЛЯТОРА v2.0
 // ============================================================
 
+// ===== СОСТОЯНИЕ ПРИЛОЖЕНИЯ =====
 const state = {
-    selectedWeapon: null,
-    selectedAmmo: null,
-    manualMode: false,
+    slots: [
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null }
+    ],
+    activeSlot: 0,
+    visibleSlots: 1,
     targetArmor: 0,
     targetHP: 100,
-    // Значения для ручного ввода
-    manualStats: {
-        damage: 41,
-        rpm: 600,
-        headshot: 1.25
-    },
-    manualAmmoStats: {
-        penetration: 0,
-        damageMod: 100 // В процентах
-    }
+    targetDistance: 0
 };
 
+// ===== ЦВЕТА ДЛЯ ГРАФИКОВ =====
+const SLOT_COLORS = ['#ef4444', '#3b82f6', '#22c55e'];
+
+// ===== ЭЛЕМЕНТЫ DOM =====
 const elements = {
-    // Ввод оружия
-    weaponSelect: document.getElementById('weaponSelect'),
-    weaponInfo: document.getElementById('weaponInfo'),
-    manualInput: document.getElementById('manualInput'),
-    manualModeToggle: document.getElementById('manualMode'),
-    manualFields: document.getElementById('manualFields'),
-    manualDamage: document.getElementById('manualDamage'),
-    manualRPM: document.getElementById('manualRPM'),
-    manualHeadshot: document.getElementById('manualHeadshot'),
+    // Слоты сравнения
+    comparisonSlots: document.getElementById('comparisonSlots'),
+    addSlotBtn: document.getElementById('addSlotBtn'),
+    currentSlotIndicator: document.getElementById('currentSlotIndicator'),
     
-    // Ввод патронов
-    ammoSelect: document.getElementById('ammoSelect'),
-    ammoInfo: document.getElementById('ammoInfo'),
-    manualAmmo: document.getElementById('manualAmmo'),
-    manualAP: document.getElementById('manualAP'),
-    manualDamageMod: document.getElementById('manualDamageMod'),
+    // Dropdown оружия
+    weaponDropdown: document.getElementById('weaponDropdown'),
+    weaponDropdownList: document.getElementById('weaponDropdownList'),
+    weaponSearchInput: document.getElementById('weaponSearchInput'),
+    weaponClearWrapper: document.getElementById('weaponClearWrapper'),
+    weaponClearBtn: document.getElementById('weaponClearBtn'),
+    weaponInfo: document.getElementById('weaponInfo'),
+    
+    // Dropdown патронов
+    ammoDropdown: document.getElementById('ammoDropdown'),
+    ammoDropdownList: document.getElementById('ammoDropdownList'),
+    ammoStats: document.getElementById('ammoStats'),
+    ammoDamageMod: document.getElementById('ammoDamageMod'),
+    ammoArmorPen: document.getElementById('ammoArmorPen'),
+    ammoPelletsContainer: document.getElementById('ammoPelletsContainer'),
+    ammoPellets: document.getElementById('ammoPellets'),
     
     // Цель
     targetArmor: document.getElementById('targetArmor'),
     targetHP: document.getElementById('targetHP'),
+    targetDistance: document.getElementById('targetDistance'),
     protectionPercent: document.getElementById('protectionPercent'),
     effectiveProtection: document.getElementById('effectiveProtection'),
+    
+    // График
+    damageChart: document.getElementById('damageChart'),
+    damageCanvas: document.getElementById('damageCanvas'),
+    chartLegend: document.getElementById('chartLegend'),
+    chartPlaceholder: document.getElementById('chartPlaceholder'),
+    chartTooltip: document.getElementById('chartTooltip'),
     
     // Результаты
     dpsBody: document.getElementById('dpsBody'),
     dpsHead: document.getElementById('dpsHead'),
     baseDamage: document.getElementById('baseDamage'),
+    distanceDamage: document.getElementById('distanceDamage'),
     armorDamage: document.getElementById('armorDamage'),
     headshotDamage: document.getElementById('headshotDamage'),
-    headshotArmorDamage: document.getElementById('headshotArmorDamage'),
     ttkBody: document.getElementById('ttkBody'),
     shotsBody: document.getElementById('shotsBody'),
     ttkHead: document.getElementById('ttkHead'),
     shotsHead: document.getElementById('shotsHead'),
     resetBtn: document.getElementById('resetBtn'),
+    
+    // Сравнительная таблица
+    comparisonTable: document.getElementById('comparisonTable'),
+    comparisonTableContent: document.getElementById('comparisonTableContent'),
     
     // Характеристики
     weaponStats: document.getElementById('weaponStats'),
@@ -70,258 +87,396 @@ const elements = {
 
 // ===== ИНИЦИАЛИЗАЦИЯ =====
 document.addEventListener('DOMContentLoaded', () => {
-    initWeaponSelect();
+    initComparisonSlots();
+    initWeaponDropdown();
+    initAmmoDropdown();
     initEventListeners();
     initScrollEffects();
-    calculateResults(); // Первичный расчёт (нули)
+    initChartInteractivity();
+    updateSlotIndicator();
+    calculateResults();
 });
 
-function initWeaponSelect() {
-    // Группировка по категориям
-    const categories = {};
-    
-    // Сортировка и группировка оружия
-    WEAPONS.forEach(weapon => {
-        const catId = weapon.category;
-        if (!categories[catId]) {
-            categories[catId] = [];
+// ===== СЛОТЫ СРАВНЕНИЯ =====
+function initComparisonSlots() {
+    elements.comparisonSlots.addEventListener('click', (e) => {
+        const slot = e.target.closest('.comparison-slot');
+        if (!slot) return;
+        
+        // Кнопка удаления
+        if (e.target.closest('.comparison-slot__remove')) {
+            const slotIndex = parseInt(slot.dataset.slot);
+            clearSlot(slotIndex);
+            return;
         }
-        categories[catId].push(weapon);
-    });
-    
-    // Заполнение селекта
-    Object.keys(WEAPON_CATEGORIES).forEach(catId => {
-        if (categories[catId]) {
-            const group = document.createElement('optgroup');
-            group.label = WEAPON_CATEGORIES[catId].name;
-            
-            categories[catId].forEach(weapon => {
-                const option = document.createElement('option');
-                option.value = weapon.id;
-                option.textContent = weapon.name;
-                group.appendChild(option);
-            });
-            
-            elements.weaponSelect.appendChild(group);
+        
+        // Кнопка добавления
+        if (slot.id === 'addSlotBtn') {
+            addNewSlot();
+            return;
+        }
+        
+        // Выбор слота
+        const slotIndex = parseInt(slot.dataset.slot);
+        if (!isNaN(slotIndex)) {
+            selectSlot(slotIndex);
         }
     });
+    
+    updateSlotsVisibility();
 }
 
-function initEventListeners() {
-    // Основные селекты
-    elements.weaponSelect.addEventListener('change', handleWeaponChange);
-    elements.ammoSelect.addEventListener('change', handleAmmoChange);
+function selectSlot(index) {
+    state.activeSlot = index;
     
-    // Переключатель ручного режима
-    elements.manualModeToggle.addEventListener('change', toggleManualMode);
-    
-    // Инпуты ручного ввода оружия
-    elements.manualDamage.addEventListener('input', (e) => {
-        state.manualStats.damage = parseFloat(e.target.value) || 0;
-        calculateResults();
-    });
-    elements.manualRPM.addEventListener('input', (e) => {
-        state.manualStats.rpm = parseFloat(e.target.value) || 0;
-        calculateResults();
-    });
-    elements.manualHeadshot.addEventListener('input', (e) => {
-        state.manualStats.headshot = parseFloat(e.target.value) || 1;
-        calculateResults();
+    document.querySelectorAll('.comparison-slot[data-slot]').forEach(slot => {
+        slot.classList.remove('comparison-slot--active');
+        if (parseInt(slot.dataset.slot) === index) {
+            slot.classList.add('comparison-slot--active');
+        }
     });
     
-    // Инпуты ручного ввода патронов
-    elements.manualAP.addEventListener('input', (e) => {
-        let val = parseFloat(e.target.value) || 0;
-        if (val > 100) val = 100; // Ограничение макс пробития
-        state.manualAmmoStats.penetration = val;
-        calculateResults();
-    });
-    elements.manualDamageMod.addEventListener('input', (e) => {
-        state.manualAmmoStats.damageMod = parseFloat(e.target.value) || 100;
-        calculateResults();
-    });
+    updateSlotIndicator();
+    loadSlotData(index);
+}
+
+function addNewSlot() {
+    if (state.visibleSlots >= 3) return;
     
-    // Инпуты цели
-    elements.targetArmor.addEventListener('input', (e) => {
-        state.targetArmor = Math.max(0, parseFloat(e.target.value) || 0);
-        calculateResults();
-    });
-    elements.targetHP.addEventListener('input', (e) => {
-        state.targetHP = Math.max(1, parseFloat(e.target.value) || 100);
-        calculateResults();
-    });
+    state.visibleSlots++;
+    updateSlotsVisibility();
+    selectSlot(state.visibleSlots - 1);
+}
+
+function clearSlot(index) {
+    state.slots[index] = { weapon: null, ammo: null };
     
-    // Кнопка сброса
-    elements.resetBtn.addEventListener('click', resetCalculator);
+    document.getElementById(`slotName${index}`).textContent = 'Не выбрано';
+    document.getElementById(`slotDps${index}`).textContent = '0';
     
-    // Мобильное меню
-    if (elements.burger && elements.mobileMenu) {
-        elements.burger.addEventListener('click', () => {
-            elements.burger.classList.toggle('active');
-            elements.mobileMenu.classList.toggle('active');
-        });
+    if (state.activeSlot === index) {
+        loadSlotData(index);
     }
+    
+    calculateResults();
+    updateChart();
+    updateComparisonTable();
 }
 
-// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
-
-function toggleManualMode(e) {
-    state.manualMode = e.target.checked;
-    
-    if (state.manualMode) {
-        // Включаем ручной режим
-        elements.weaponSelect.disabled = true;
-        elements.ammoSelect.disabled = true;
-        
-        elements.weaponInfo.style.display = 'none';
-        elements.manualFields.style.display = 'grid';
-        
-        elements.ammoInfo.style.display = 'none';
-        elements.manualAmmo.style.display = 'block';
-        elements.weaponStats.style.display = 'none';
-        
-        // Сбрасываем выбранное, чтобы считать по ручным полям
-        elements.weaponSelect.value = "";
-        elements.ammoSelect.innerHTML = '<option value="">Ручной ввод патронов...</option>';
-        elements.ammoSelect.disabled = true;
-        
-        state.selectedWeapon = null;
-        state.selectedAmmo = null;
-    } else {
-        // Выключаем ручной режим
-        elements.weaponSelect.disabled = false;
-        elements.weaponInfo.style.display = 'block';
-        elements.manualFields.style.display = 'none';
-        
-        elements.manualAmmo.style.display = 'none';
-        
-        // Восстанавливаем состояние селектов
-        if (state.selectedWeapon) {
-            updateAmmoOptions();
-            if (state.selectedAmmo) {
-                elements.ammoInfo.style.display = 'block';
+function updateSlotsVisibility() {
+    for (let i = 0; i < 3; i++) {
+        const slot = document.querySelector(`.comparison-slot[data-slot="${i}"]`);
+        if (slot) {
+            if (i < state.visibleSlots) {
+                slot.classList.remove('comparison-slot--hidden');
+            } else {
+                slot.classList.add('comparison-slot--hidden');
             }
-            elements.weaponStats.style.display = 'block';
-        } else {
-            elements.ammoSelect.innerHTML = '<option value="">Сначала выберите оружие...</option>';
-            elements.ammoSelect.disabled = true;
         }
     }
     
-    calculateResults();
+    if (elements.addSlotBtn) {
+        if (state.visibleSlots >= 3) {
+            elements.addSlotBtn.classList.add('comparison-slot--hidden');
+        } else {
+            elements.addSlotBtn.classList.remove('comparison-slot--hidden');
+        }
+    }
 }
 
-function handleWeaponChange(e) {
-    const weaponId = e.target.value;
+function updateSlotIndicator() {
+    if (!elements.currentSlotIndicator) return;
     
-    if (!weaponId) {
-        state.selectedWeapon = null;
-        state.selectedAmmo = null;
+    elements.currentSlotIndicator.textContent = `Слот ${state.activeSlot + 1}`;
+    
+    const colorMap = {
+        '#ef4444': '239,68,68',
+        '#3b82f6': '59,130,246',
+        '#22c55e': '34,197,94'
+    };
+    
+    const rgbColor = colorMap[SLOT_COLORS[state.activeSlot]] || '239,68,68';
+    elements.currentSlotIndicator.style.background = `rgba(${rgbColor}, 0.15)`;
+    elements.currentSlotIndicator.style.color = SLOT_COLORS[state.activeSlot];
+}
+
+function loadSlotData(index) {
+    const slotData = state.slots[index];
+    
+    const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
+    
+    if (slotData.weapon) {
+        valueElement.textContent = slotData.weapon.name;
+        valueElement.classList.add('has-value');
         renderWeaponInfo();
-        elements.ammoSelect.innerHTML = '<option value="">Сначала выберите оружие...</option>';
-        elements.ammoSelect.disabled = true;
-        elements.ammoInfo.style.display = 'none';
-        elements.weaponStats.style.display = 'none';
-        calculateResults();
-        return;
-    }
-    
-    state.selectedWeapon = getWeaponById(weaponId);
-    state.selectedAmmo = null; // Сбрасываем патрон при смене оружия
-    
-    renderWeaponInfo();
-    renderWeaponStats();
-    updateAmmoOptions();
-    calculateResults();
-}
-
-function handleAmmoChange(e) {
-    const ammoId = e.target.value;
-    
-    if (!ammoId) {
-        state.selectedAmmo = null;
-        elements.ammoInfo.style.display = 'none';
-        calculateResults();
-        return;
-    }
-    
-    state.selectedAmmo = getAmmoById(ammoId);
-    renderAmmoInfo();
-    calculateResults();
-}
-
-function updateAmmoOptions() {
-    elements.ammoSelect.innerHTML = '<option value="">Выберите патрон...</option>';
-    
-    if (!state.selectedWeapon) return;
-    
-    const availableAmmo = getAmmoForWeapon(state.selectedWeapon);
-    
-    availableAmmo.forEach(ammo => {
-        const option = document.createElement('option');
-        option.value = ammo.id;
-        option.textContent = ammo.name;
-        elements.ammoSelect.appendChild(option);
-    });
-    
-    elements.ammoSelect.disabled = false;
-}
-
-// ===== РЕНДЕРИНГ ИНФОРМАЦИИ =====
-
-function renderWeaponInfo() {
-    if (!state.selectedWeapon) {
+        renderWeaponStats();
+        updateAmmoOptions();
+        
+        if (slotData.ammo) {
+            selectAmmo(slotData.ammo.id, false);
+        }
+    } else {
+        valueElement.textContent = 'Выберите оружие...';
+        valueElement.classList.remove('has-value');
         elements.weaponInfo.innerHTML = `
             <div class="weapon-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                <span>Выберите оружие или введите характеристики вручную</span>
+                <span>Выберите оружие для расчёта</span>
+            </div>`;
+        
+        const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
+        ammoTrigger.disabled = true;
+        elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
+        elements.ammoStats.style.display = 'none';
+        elements.weaponStats.style.display = 'none';
+    }
+    
+    renderWeaponDropdownList();
+    calculateResults();
+}
+
+function updateSlotUI(index) {
+    const slotData = state.slots[index];
+    const nameEl = document.getElementById(`slotName${index}`);
+    const dpsEl = document.getElementById(`slotDps${index}`);
+    
+    if (!nameEl || !dpsEl) return;
+    
+    if (slotData.weapon) {
+        nameEl.textContent = slotData.weapon.name;
+        const result = calculateSlotDPS(index);
+        dpsEl.textContent = Math.round(result.dpsBody);
+    } else {
+        nameEl.textContent = 'Не выбрано';
+        dpsEl.textContent = '0';
+    }
+}
+
+// ===== DROPDOWN ОРУЖИЯ =====
+function initWeaponDropdown() {
+    renderWeaponDropdownList();
+    
+    elements.weaponDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleWeaponDropdown);
+    
+    if (elements.weaponSearchInput) {
+        elements.weaponSearchInput.addEventListener('input', handleWeaponSearch);
+    }
+    
+    elements.weaponDropdownList.addEventListener('click', handleWeaponListClick);
+    
+    if (elements.weaponClearBtn) {
+        elements.weaponClearBtn.addEventListener('click', clearWeaponSelection);
+    }
+    
+    document.addEventListener('click', (e) => {
+        if (!elements.weaponDropdown.contains(e.target)) {
+            closeWeaponDropdown();
+        }
+        if (!elements.ammoDropdown.contains(e.target)) {
+            closeAmmoDropdown();
+        }
+    });
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeWeaponDropdown();
+            closeAmmoDropdown();
+        }
+    });
+}
+
+function toggleWeaponDropdown() {
+    elements.weaponDropdown.classList.toggle('open');
+    if (elements.weaponDropdown.classList.contains('open') && elements.weaponSearchInput) {
+        elements.weaponSearchInput.focus();
+    }
+}
+
+function closeWeaponDropdown() {
+    elements.weaponDropdown.classList.remove('open');
+}
+
+function handleWeaponSearch(e) {
+    renderWeaponDropdownList(e.target.value.toLowerCase().trim());
+}
+
+function handleWeaponListClick(e) {
+    const item = e.target.closest('.custom-dropdown__item');
+    if (item?.dataset.weaponId) {
+        selectWeaponFromDropdown(item.dataset.weaponId);
+    }
+}
+
+function renderWeaponDropdownList(searchQuery = '') {
+    const groupedWeapons = {};
+    
+    WEAPONS.forEach(weapon => {
+        if (searchQuery && !weapon.name.toLowerCase().includes(searchQuery)) return;
+        if (!groupedWeapons[weapon.category]) {
+            groupedWeapons[weapon.category] = [];
+        }
+        groupedWeapons[weapon.category].push(weapon);
+    });
+    
+    const currentWeapon = state.slots[state.activeSlot].weapon;
+    if (elements.weaponClearWrapper) {
+        elements.weaponClearWrapper.style.display = currentWeapon ? 'block' : 'none';
+    }
+    
+    if (Object.keys(groupedWeapons).length === 0) {
+        elements.weaponDropdownList.innerHTML = `
+            <div class="custom-dropdown__empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <span>Оружие не найдено</span>
             </div>`;
         return;
     }
     
-    const w = state.selectedWeapon;
-    const catName = WEAPON_CATEGORIES[w.category]?.name || w.category;
+    let html = '';
+    const categoryOrder = ['assault', 'smg', 'pistol', 'shotgun', 'sniper', 'machinegun'];
+    
+    categoryOrder.forEach(catId => {
+        const weapons = groupedWeapons[catId];
+        if (!weapons?.length) return;
+        
+        const catName = WEAPON_CATEGORIES[catId]?.name || catId;
+        
+        html += `<div class="custom-dropdown__group custom-dropdown__group--${catId}">
+            <div class="custom-dropdown__group-title">${catName} (${weapons.length})</div>`;
+        
+        weapons.forEach(weapon => {
+            const isSelected = currentWeapon?.id === weapon.id;
+            
+            html += `
+                <div class="custom-dropdown__item custom-dropdown__item--${weapon.rarity} ${isSelected ? 'selected' : ''}" 
+                     data-weapon-id="${weapon.id}">
+                    <div class="custom-dropdown__item-info">
+                        <div class="custom-dropdown__item-name">${weapon.name}</div>
+                        <div class="custom-dropdown__item-meta">
+                            <span class="custom-dropdown__item-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                ${weapon.damage}
+                            </span>
+                            <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
+                        </div>
+                    </div>
+                    <span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>
+                </div>`;
+        });
+        
+        html += '</div>';
+    });
+    
+    elements.weaponDropdownList.innerHTML = html;
+}
+
+function selectWeaponFromDropdown(weaponId) {
+    const weapon = getWeaponById(weaponId);
+    if (!weapon) return;
+    
+    state.slots[state.activeSlot].weapon = weapon;
+    state.slots[state.activeSlot].ammo = null;
+    
+    const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = weapon.name;
+    valueElement.classList.add('has-value');
+    
+    closeWeaponDropdown();
+    if (elements.weaponSearchInput) elements.weaponSearchInput.value = '';
+    
+    renderWeaponInfo();
+    renderWeaponStats();
+    updateAmmoOptions();
+    updateSlotUI(state.activeSlot);
+    calculateResults();
+    updateChart();
+    updateComparisonTable();
+    renderWeaponDropdownList();
+}
+
+function clearWeaponSelection() {
+    state.slots[state.activeSlot].weapon = null;
+    state.slots[state.activeSlot].ammo = null;
+    
+    const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
+    valueElement.textContent = 'Выберите оружие...';
+    valueElement.classList.remove('has-value');
+    
+    closeWeaponDropdown();
+    if (elements.weaponSearchInput) elements.weaponSearchInput.value = '';
+    
+    renderWeaponInfo();
+    
+    const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
+    ammoTrigger.disabled = true;
+    elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
+    elements.ammoStats.style.display = 'none';
+    elements.weaponStats.style.display = 'none';
+    
+    updateSlotUI(state.activeSlot);
+    calculateResults();
+    updateChart();
+    updateComparisonTable();
+    renderWeaponDropdownList();
+}
+
+function renderWeaponInfo() {
+    const weapon = state.slots[state.activeSlot].weapon;
+    
+    if (!weapon) {
+        elements.weaponInfo.innerHTML = `
+            <div class="weapon-info__placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span>Выберите оружие для расчёта</span>
+            </div>`;
+        return;
+    }
     
     elements.weaponInfo.innerHTML = `
         <div class="weapon-details">
             <div class="weapon-details__header">
-                <span class="weapon-details__name">${w.name}</span>
-                <span class="weapon-details__rarity rarity--${w.rarity}">${w.rarityName}</span>
+                <span class="weapon-details__name">${weapon.name}</span>
+                <span class="weapon-details__rarity rarity--${weapon.rarity}">${weapon.rarityName}</span>
             </div>
             <div class="weapon-details__stats">
                 <div class="weapon-details__stat">
                     <span class="weapon-details__stat-name">Урон</span>
-                    <span class="weapon-details__stat-value weapon-details__stat-value--highlight">${w.damage}</span>
+                    <span class="weapon-details__stat-value weapon-details__stat-value--highlight">${weapon.damage}</span>
                 </div>
                 <div class="weapon-details__stat">
                     <span class="weapon-details__stat-name">Скорострельность</span>
-                    <span class="weapon-details__stat-value">${w.rpm} в/м</span>
+                    <span class="weapon-details__stat-value">${weapon.rpm} в/м</span>
                 </div>
                 <div class="weapon-details__stat">
                     <span class="weapon-details__stat-name">Множитель в голову</span>
-                    <span class="weapon-details__stat-value">x${w.headshotMult}</span>
+                    <span class="weapon-details__stat-value">x${weapon.headshotMult}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">Дистанция</span>
-                    <span class="weapon-details__stat-value">${w.effectiveRange} м</span>
+                    <span class="weapon-details__stat-name">Эфф. дистанция</span>
+                    <span class="weapon-details__stat-value">${weapon.effectiveRange} м</span>
                 </div>
             </div>
         </div>`;
 }
 
 function renderWeaponStats() {
-    if (!state.selectedWeapon || !state.selectedWeapon.stats) {
+    const weapon = state.slots[state.activeSlot].weapon;
+    
+    if (!weapon?.stats) {
         elements.weaponStats.style.display = 'none';
         return;
     }
     
-    const stats = state.selectedWeapon.stats;
+    const stats = weapon.stats;
     let html = '';
     
-    // Словарь названий статов (можно вынести в data.js если понадобится в других местах)
     const statNames = {
-        verticalRecoil: 'Вертикальная отдача',
-        horizontalRecoil: 'Горизонтальная отдача',
+        verticalRecoil: 'Верт. отдача',
+        horizontalRecoil: 'Гориз. отдача',
         hipSpread: 'Разброс от бедра',
         adsSpread: 'Разброс в прицеле',
         moveSpeed: 'Скорость бега'
@@ -334,198 +489,982 @@ function renderWeaponStats() {
     };
     
     Object.entries(stats).forEach(([key, value]) => {
-        const name = statNames[key] || key;
-        const unit = statUnits[key] || '';
-        const displayValue = (value > 0 && key === 'moveSpeed') ? `+${value}` : value;
-        
-        html += `
-            <div class="weapon-stat-row">
-                <span class="weapon-stat-row__name">${name}</span>
-                <span class="weapon-stat-row__value">${displayValue}${unit}</span>
-            </div>
-        `;
+        if (statNames[key]) {
+            const name = statNames[key];
+            const unit = statUnits[key] || '';
+            const displayValue = (value > 0 && key === 'moveSpeed') ? `+${value}` : value;
+            
+            html += `
+                <div class="weapon-stat-row">
+                    <span class="weapon-stat-row__name">${name}</span>
+                    <span class="weapon-stat-row__value">${displayValue}${unit}</span>
+                </div>`;
+        }
     });
     
     elements.weaponStatsGrid.innerHTML = html;
-    elements.weaponStats.style.display = 'block';
+    elements.weaponStats.style.display = html ? 'block' : 'none';
 }
 
-function renderAmmoInfo() {
-    if (!state.selectedAmmo) {
-        elements.ammoInfo.style.display = 'none';
+// ===== DROPDOWN ПАТРОНОВ =====
+function initAmmoDropdown() {
+    elements.ammoDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleAmmoDropdown);
+    elements.ammoDropdownList.addEventListener('click', handleAmmoListClick);
+}
+
+function toggleAmmoDropdown() {
+    const trigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
+    if (trigger.disabled) return;
+    
+    elements.ammoDropdown.classList.toggle('open');
+}
+
+function closeAmmoDropdown() {
+    elements.ammoDropdown.classList.remove('open');
+}
+
+function handleAmmoListClick(e) {
+    const item = e.target.closest('.ammo-item');
+    if (item?.dataset.ammoId) {
+        selectAmmo(item.dataset.ammoId, true);
+    }
+}
+
+function updateAmmoOptions() {
+    const weapon = state.slots[state.activeSlot].weapon;
+    const trigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
+    const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
+    
+    if (!weapon) {
+        trigger.disabled = true;
+        valueElement.textContent = 'Сначала выберите оружие...';
+        elements.ammoStats.style.display = 'none';
         return;
     }
     
-    const a = state.selectedAmmo;
-    const dmgMod = Math.round(a.damageModifier * 100);
-    const modClass = dmgMod > 100 ? 'ammo-info__value--positive' : (dmgMod < 100 ? 'ammo-info__value--negative' : '');
+    trigger.disabled = false;
+    valueElement.textContent = 'Выберите патроны...';
     
-    elements.ammoInfo.innerHTML = `
-        <div class="ammo-info__row">
-            <span class="ammo-info__label">Тип</span>
-            <span class="ammo-info__value">${a.description || a.type}</span>
-        </div>
-        <div class="ammo-info__row">
-            <span class="ammo-info__label">Бронепробитие</span>
-            <span class="ammo-info__value ammo-info__value--warning">${a.armorPenetration}%</span>
-        </div>
-        <div class="ammo-info__row">
-            <span class="ammo-info__label">Модификатор урона</span>
-            <span class="ammo-info__value ${modClass}">${dmgMod}%</span>
-        </div>
-    `;
-    elements.ammoInfo.style.display = 'block';
+    const availableAmmo = getAmmoForWeapon(weapon);
+    
+    let html = '';
+    availableAmmo.forEach(ammo => {
+        const stats = ammo.stats || {};
+        const dmgMod = stats.damageModifier || 0;
+        const armorPen = stats.armorPenetration || 0;
+        
+        const iconType = ammo.type === 'hp' ? 'hp' : 
+                        (ammo.type === 'ap' || ammo.type === 'ap_plus') ? 'ap' : 
+                        (ammo.pellets && ammo.pellets > 1) ? 'shot' : 'standard';
+        
+        const iconEmoji = iconType === 'hp' ? '💥' : 
+                         iconType === 'ap' ? '🔷' : 
+                         iconType === 'shot' ? '🔴' : '⚪';
+        
+        html += `
+            <div class="ammo-item ${state.slots[state.activeSlot].ammo?.id === ammo.id ? 'selected' : ''}" 
+                 data-ammo-id="${ammo.id}">
+                <div class="ammo-item__icon ammo-item__icon--${iconType}">${iconEmoji}</div>
+                <div class="ammo-item__info">
+                    <div class="ammo-item__name">${ammo.name}</div>
+                    <div class="ammo-item__desc">${ammo.description}</div>
+                </div>
+                <div class="ammo-item__stats">
+                    ${dmgMod !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${dmgMod > 0 ? 'positive' : 'negative'}">${dmgMod > 0 ? '+' : ''}${dmgMod}% урон</span>` : ''}
+                    ${armorPen !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${armorPen > 0 ? 'positive' : 'negative'}">${armorPen > 0 ? '+' : ''}${armorPen}% АП</span>` : ''}
+                    ${dmgMod === 0 && armorPen === 0 ? '<span class="ammo-item__stat ammo-item__stat--neutral">Стандарт</span>' : ''}
+                </div>
+            </div>`;
+    });
+    
+    elements.ammoDropdownList.innerHTML = html;
+}
+
+function selectAmmo(ammoId, updateUI = true) {
+    const ammo = getAmmoById(ammoId);
+    if (!ammo) return;
+    
+    state.slots[state.activeSlot].ammo = ammo;
+    
+    if (updateUI) {
+        closeAmmoDropdown();
+        
+        const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
+        valueElement.textContent = ammo.name;
+        valueElement.classList.add('has-value');
+        
+        renderAmmoStats();
+        updateAmmoOptions();
+        updateSlotUI(state.activeSlot);
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
+    }
+}
+
+function renderAmmoStats() {
+    const ammo = state.slots[state.activeSlot].ammo;
+    
+    if (!ammo) {
+        elements.ammoStats.style.display = 'none';
+        return;
+    }
+    
+    const stats = ammo.stats || {};
+    const dmgMod = stats.damageModifier || 0;
+    const armorPen = stats.armorPenetration || 0;
+    
+    elements.ammoDamageMod.textContent = dmgMod === 0 ? '0%' : `${dmgMod > 0 ? '+' : ''}${dmgMod}%`;
+    elements.ammoDamageMod.className = 'ammo-stats__value' + (dmgMod > 0 ? ' ammo-stats__value--positive' : dmgMod < 0 ? ' ammo-stats__value--negative' : '');
+    
+    elements.ammoArmorPen.textContent = armorPen === 0 ? '0%' : `${armorPen > 0 ? '+' : ''}${armorPen}%`;
+    elements.ammoArmorPen.className = 'ammo-stats__value' + (armorPen > 0 ? ' ammo-stats__value--positive' : armorPen < 0 ? ' ammo-stats__value--negative' : '');
+    
+    if (ammo.pellets && ammo.pellets > 1) {
+        elements.ammoPelletsContainer.style.display = 'block';
+        elements.ammoPellets.textContent = ammo.pellets;
+    } else {
+        elements.ammoPelletsContainer.style.display = 'none';
+    }
+    
+    elements.ammoStats.style.display = 'block';
+}
+
+// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+function initEventListeners() {
+    elements.targetArmor.addEventListener('input', (e) => {
+        state.targetArmor = Math.max(0, parseFloat(e.target.value) || 0);
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
+    });
+    
+    elements.targetHP.addEventListener('input', (e) => {
+        state.targetHP = Math.max(1, parseFloat(e.target.value) || 100);
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
+    });
+    
+    elements.targetDistance.addEventListener('input', (e) => {
+        state.targetDistance = Math.max(0, parseFloat(e.target.value) || 0);
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
+    });
+    
+    elements.resetBtn.addEventListener('click', resetCalculator);
+    
+    if (elements.burger && elements.mobileMenu) {
+        elements.burger.addEventListener('click', () => {
+            elements.burger.classList.toggle('active');
+            elements.mobileMenu.classList.toggle('active');
+        });
+    }
 }
 
 // ===== РАСЧЁТЫ =====
-
-function calculateResults() {
-    let damage, rpm, headshotMult, ap, damageMod;
+function calculateSlotDPS(slotIndex) {
+    const slotData = state.slots[slotIndex];
     
-    // 1. Получаем параметры оружия и патронов
-    if (state.manualMode) {
-        damage = state.manualStats.damage;
-        rpm = state.manualStats.rpm;
-        headshotMult = state.manualStats.headshot;
-        ap = state.manualAmmoStats.penetration;
-        damageMod = state.manualAmmoStats.damageMod / 100;
-    } else {
-        if (!state.selectedWeapon) {
-            updateUIWithZeros();
-            return;
-        }
+    if (!slotData.weapon) {
+        return {
+            dpsBody: 0,
+            dpsHead: 0,
+            baseDamage: 0,
+            distanceDamage: 0,
+            armorDamage: 0,
+            headshotDamage: 0,
+            ttkBody: Infinity,
+            ttkHead: Infinity,
+            shotsBody: 0,
+            shotsHead: 0,
+            protection: 0,
+            effectiveProtection: 0
+        };
+    }
+    
+    const weapon = slotData.weapon;
+    const ammo = slotData.ammo;
+    
+    let damage = weapon.damage;
+    let rpm = weapon.rpm;
+    let headshotMult = weapon.headshotMult;
+    let effectiveRange = weapon.effectiveRange;
+    let ap = 0;
+    let damageMod = 1.0;
+    let pellets = 1;
+    
+    if (ammo) {
+        const stats = ammo.stats || {};
+        ap = stats.armorPenetration || 0;
+        damageMod = 1 + ((stats.damageModifier || 0) / 100);
+        pellets = ammo.pellets || 1;
         
-        damage = state.selectedWeapon.damage;
-        rpm = state.selectedWeapon.rpm;
-        headshotMult = state.selectedWeapon.headshotMult;
-        
-        if (state.selectedAmmo) {
-            ap = state.selectedAmmo.armorPenetration;
-            damageMod = state.selectedAmmo.damageModifier;
-        } else {
-            // Если патрон не выбран, считаем как "стандарт" (0 пробития, 100% урона)
-            ap = 0;
-            damageMod = 1.0;
+        if (stats.rangeModifier) {
+            effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
         }
     }
     
-    // 2. Расчёт защиты цели
-    const protection = calculateArmorProtection(state.targetArmor); // % защиты от пулестойкости
-    const effectiveProtection = Math.max(0, protection - ap); // Формула балансера: Защита% - Бронебойность%
+    // Базовый урон с модификатором патронов
+    const baseShotDamage = damage * damageMod * pellets;
     
-    // 3. Расчёт урона
-    const baseShotDamage = damage * damageMod; // Базовый урон * модификатор патрона
+    // Урон на дистанции (падение урона после эффективной дальности)
+    let distanceDamage = baseShotDamage;
+    if (state.targetDistance > effectiveRange) {
+        const falloffDistance = state.targetDistance - effectiveRange;
+        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
+        distanceDamage = baseShotDamage * (1 - falloffPercent);
+    }
     
-    // Урон по телу (учитываем защиту)
-    // Формула: Урон * (1 - процент_эффективной_защиты/100)
-    const bodyShotDamage = baseShotDamage * (1 - (effectiveProtection / 100));
+    // Расчёт защиты
+    const protection = calculateArmorProtection(state.targetArmor);
+    const effectiveProtection = Math.max(0, protection - ap);
     
-    // Урон в голову (сначала множитель, потом броня - порядок математически не важен при умножении)
-    const headShotDamageRaw = baseShotDamage * headshotMult;
-    const headShotDamageArmor = headShotDamageRaw * (1 - (effectiveProtection / 100));
+    // Урон после брони
+    const armorDamage = distanceDamage * (1 - effectiveProtection / 100);
+    const headshotDamage = distanceDamage * headshotMult * (1 - effectiveProtection / 100);
     
-    // 4. Расчёт DPS
-    const dpsBodyVal = calculateDPS(bodyShotDamage, rpm);
-    const dpsHeadVal = calculateDPS(headShotDamageArmor, rpm);
+    // DPS
+    const dpsBody = calculateDPS(armorDamage, rpm);
+    const dpsHead = calculateDPS(headshotDamage, rpm);
     
-    // 5. Расчёт TTK
-    const ttkBodyVal = calculateTTK(bodyShotDamage, rpm, state.targetHP);
-    const ttkHeadVal = calculateTTK(headShotDamageArmor, rpm, state.targetHP);
+    // TTK
+    const ttkBody = calculateTTK(armorDamage, rpm, state.targetHP);
+    const ttkHead = calculateTTK(headshotDamage, rpm, state.targetHP);
     
-    // Вычисляем количество выстрелов для TTK
-    const shotsBodyVal = bodyShotDamage > 0 ? Math.ceil(state.targetHP / bodyShotDamage) : '∞';
-    const shotsHeadVal = headShotDamageArmor > 0 ? Math.ceil(state.targetHP / headShotDamageArmor) : '∞';
+    const shotsBody = armorDamage > 0 ? Math.ceil(state.targetHP / armorDamage) : Infinity;
+    const shotsHead = headshotDamage > 0 ? Math.ceil(state.targetHP / headshotDamage) : Infinity;
     
-    // 6. Обновление UI
-    updateUI({
+    return {
+        dpsBody,
+        dpsHead,
+        baseDamage: baseShotDamage,
+        distanceDamage,
+        armorDamage,
+        headshotDamage,
+        ttkBody,
+        ttkHead,
+        shotsBody,
+        shotsHead,
         protection,
-        effectiveProtection,
-        baseShotDamage,
-        bodyShotDamage,
-        headShotDamageRaw,
-        headShotDamageArmor,
-        dpsBodyVal,
-        dpsHeadVal,
-        ttkBodyVal,
-        ttkHeadVal,
-        shotsBodyVal,
-        shotsHeadVal
+        effectiveProtection
+    };
+}
+
+function calculateResults() {
+    const result = calculateSlotDPS(state.activeSlot);
+    
+    elements.protectionPercent.textContent = (result.protection?.toFixed(2) || '0') + '%';
+    elements.effectiveProtection.textContent = (result.effectiveProtection?.toFixed(2) || '0') + '%';
+    
+    elements.baseDamage.textContent = result.baseDamage.toFixed(1);
+    elements.distanceDamage.textContent = result.distanceDamage.toFixed(1);
+    elements.armorDamage.textContent = result.armorDamage.toFixed(1);
+    elements.headshotDamage.textContent = result.headshotDamage.toFixed(1);
+    
+    elements.dpsBody.textContent = Math.round(result.dpsBody);
+    elements.dpsHead.textContent = Math.round(result.dpsHead);
+    
+    elements.ttkBody.textContent = result.ttkBody === Infinity ? '∞' : result.ttkBody.toFixed(2) + ' сек';
+    elements.shotsBody.textContent = result.shotsBody === Infinity ? '∞' : result.shotsBody + ' выстр.';
+    
+    elements.ttkHead.textContent = result.ttkHead === Infinity ? '∞' : result.ttkHead.toFixed(2) + ' сек';
+    elements.shotsHead.textContent = result.shotsHead === Infinity ? '∞' : result.shotsHead + ' выстр.';
+    
+    // Обновляем DPS в слоте
+    const slotDpsEl = document.getElementById(`slotDps${state.activeSlot}`);
+    if (slotDpsEl) {
+        slotDpsEl.textContent = Math.round(result.dpsBody);
+    }
+}
+
+// ===== ГРАФИК TTK =====
+function updateChart() {
+    const hasWeapons = state.slots.some((slot, i) => i < state.visibleSlots && slot.weapon);
+    
+    if (!hasWeapons) {
+        elements.damageChart.classList.remove('visible');
+        elements.chartPlaceholder.classList.remove('hidden');
+        return;
+    }
+    
+    elements.damageChart.classList.add('visible');
+    elements.chartPlaceholder.classList.add('hidden');
+    
+    const canvas = elements.damageCanvas;
+    const ctx = canvas.getContext('2d');
+    
+    // Устанавливаем размеры canvas
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = 280 * 2;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '280px';
+    ctx.scale(2, 2);
+    
+    const width = rect.width;
+    const height = 280;
+    const padding = { top: 30, right: 20, bottom: 50, left: 60 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    // Очистка
+    ctx.clearRect(0, 0, width, height);
+    
+    // Находим максимальную дистанцию и TTK
+    let maxRange = 100;
+    let maxTTK = 0;
+    
+    for (let i = 0; i < state.visibleSlots; i++) {
+        const weapon = state.slots[i].weapon;
+        if (weapon) {
+            const ammo = state.slots[i].ammo;
+            let effectiveRange = weapon.effectiveRange;
+            if (ammo?.stats?.rangeModifier) {
+                effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
+            }
+            maxRange = Math.max(maxRange, effectiveRange * 2);
+            
+            // Рассчитываем максимальный TTK на максимальной дистанции
+            const ttkAtMaxRange = calculateTTKAtDistance(i, maxRange);
+            if (ttkAtMaxRange !== Infinity) {
+                maxTTK = Math.max(maxTTK, ttkAtMaxRange);
+            }
+        }
+    }
+    
+    // Добавляем запас сверху
+    maxTTK = Math.max(maxTTK * 1.2, 2);
+    
+    // Фон графика
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.fillRect(padding.left, padding.top, chartWidth, chartHeight);
+    
+    // Зона "быстрого убийства" (НИЖНЯЯ часть графика = низкий TTK = лучше)
+    const fastKillZone = chartHeight * 0.25;
+    const gradient = ctx.createLinearGradient(0, height - padding.bottom - fastKillZone, 0, height - padding.bottom);
+    gradient.addColorStop(0, 'rgba(34, 197, 94, 0)');
+    gradient.addColorStop(1, 'rgba(34, 197, 94, 0.15)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(padding.left, height - padding.bottom - fastKillZone, chartWidth, fastKillZone);
+    
+    // Рисуем сетку
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    
+    // Горизонтальные линии (TTK)
+    const ttkSteps = 5;
+    for (let i = 0; i <= ttkSteps; i++) {
+        const y = padding.top + (chartHeight / ttkSteps) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+    }
+    
+    // Вертикальные линии (дистанция)
+    const distSteps = 5;
+    for (let i = 0; i <= distSteps; i++) {
+        const x = padding.left + (chartWidth / distSteps) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, padding.top);
+        ctx.lineTo(x, height - padding.bottom);
+        ctx.stroke();
+    }
+    
+    // Подписи осей
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '11px Roboto';
+    
+    // Ось X (дистанция)
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= distSteps; i++) {
+        const x = padding.left + (chartWidth / distSteps) * i;
+        const dist = Math.round((maxRange / distSteps) * i);
+        ctx.fillText(dist + ' м', x, height - padding.bottom + 20);
+    }
+    
+    // Подпись оси X
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '10px Roboto';
+    ctx.fillText('ДИСТАНЦИЯ', padding.left + chartWidth / 2, height - 8);
+    
+    // Ось Y (TTK) - 0 ВНИЗУ, максимум ВВЕРХУ
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '11px Roboto';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= ttkSteps; i++) {
+        const y = padding.top + (chartHeight / ttkSteps) * i;
+        // Инвертируем: вверху max, внизу 0
+        const ttk = maxTTK - (maxTTK / ttkSteps) * i;
+        ctx.fillText(ttk.toFixed(1) + 'с', padding.left - 8, y + 4);
+    }
+    
+    // Подпись оси Y
+    ctx.save();
+    ctx.translate(12, padding.top + chartHeight / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '10px Roboto';
+    ctx.textAlign = 'center';
+    ctx.fillText('TTK (сек)', 0, 0);
+    ctx.restore();
+    
+    // Рисуем линии TTK для каждого слота
+    const legendItems = [];
+    
+    for (let slotIndex = 0; slotIndex < state.visibleSlots; slotIndex++) {
+        const slotData = state.slots[slotIndex];
+        if (!slotData.weapon) continue;
+        
+        const weapon = slotData.weapon;
+        const ammo = slotData.ammo;
+        const color = SLOT_COLORS[slotIndex];
+        
+        let effectiveRange = weapon.effectiveRange;
+        if (ammo?.stats?.rangeModifier) {
+            effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
+        }
+        
+        // Рисуем линию TTK
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        
+        const points = 100;
+        let firstPoint = true;
+        
+        for (let i = 0; i <= points; i++) {
+            const distance = (maxRange / points) * i;
+            const ttk = calculateTTKAtDistance(slotIndex, distance);
+            
+            if (ttk === Infinity || ttk > maxTTK) continue;
+            
+            const x = padding.left + (distance / maxRange) * chartWidth;
+            // ИСПРАВЛЕНО: низкий TTK = внизу графика (лучше)
+            const y = height - padding.bottom - (ttk / maxTTK) * chartHeight;
+            
+            if (firstPoint) {
+                ctx.moveTo(x, y);
+                firstPoint = false;
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        
+        ctx.stroke();
+        
+        // Область под линией (полупрозрачная заливка)
+        ctx.beginPath();
+        firstPoint = true;
+        let lastX = padding.left;
+        
+        for (let i = 0; i <= points; i++) {
+            const distance = (maxRange / points) * i;
+            const ttk = calculateTTKAtDistance(slotIndex, distance);
+            
+            if (ttk === Infinity || ttk > maxTTK) continue;
+            
+            const x = padding.left + (distance / maxRange) * chartWidth;
+            const y = height - padding.bottom - (ttk / maxTTK) * chartHeight;
+            
+            if (firstPoint) {
+                ctx.moveTo(x, height - padding.bottom);
+                ctx.lineTo(x, y);
+                firstPoint = false;
+            } else {
+                ctx.lineTo(x, y);
+            }
+            lastX = x;
+        }
+        
+        ctx.lineTo(lastX, height - padding.bottom);
+        ctx.closePath();
+        
+        ctx.fillStyle = hexToRgba(color, 0.1);
+        ctx.fill();
+        
+        // Отметка эффективной дистанции (вертикальная пунктирная линия)
+        const effX = padding.left + (effectiveRange / maxRange) * chartWidth;
+        if (effX < width - padding.right) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(effX, padding.top);
+            ctx.lineTo(effX, height - padding.bottom);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Подпись эффективной дистанции
+            ctx.fillStyle = color;
+            ctx.font = '9px Roboto';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.round(effectiveRange)}м`, effX, padding.top - 8);
+        }
+        
+        // Точка на текущей дистанции
+        if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
+            const ttk = calculateTTKAtDistance(slotIndex, state.targetDistance);
+            if (ttk !== Infinity && ttk <= maxTTK) {
+                const pointX = padding.left + (state.targetDistance / maxRange) * chartWidth;
+                const pointY = height - padding.bottom - (ttk / maxTTK) * chartHeight;
+                
+                // Внешний круг (свечение)
+                ctx.beginPath();
+                ctx.arc(pointX, pointY, 8, 0, Math.PI * 2);
+                ctx.fillStyle = hexToRgba(color, 0.3);
+                ctx.fill();
+                
+                // Внутренний круг
+                ctx.beginPath();
+                ctx.arc(pointX, pointY, 5, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                
+                // Белая обводка
+                ctx.beginPath();
+                ctx.arc(pointX, pointY, 5, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+        
+        legendItems.push({
+            name: weapon.name,
+            color: color,
+            ttk: calculateTTKAtDistance(slotIndex, state.targetDistance || 0)
+        });
+    }
+    
+    // Отметка текущей дистанции (общая вертикальная линия)
+    if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
+        const distX = padding.left + (state.targetDistance / maxRange) * chartWidth;
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(distX, padding.top);
+        ctx.lineTo(distX, height - padding.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    
+    // Подсказка "Лучше" ВНИЗУ (низкий TTK = быстрое убийство = лучше)
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.8)';
+    ctx.font = 'bold 10px Roboto';
+    ctx.textAlign = 'left';
+    ctx.fillText('✓ ЛУЧШЕ', padding.left + 8, height - padding.bottom - 8);
+    
+    // Подсказка "Хуже" ВВЕРХУ (высокий TTK = медленное убийство = хуже)
+    ctx.fillStyle = 'rgba(248, 113, 113, 0.6)';
+    ctx.textAlign = 'right';
+    ctx.fillText('ХУЖЕ ↑', width - padding.right - 8, padding.top + 15);
+    
+    // Обновляем легенду
+    renderChartLegend(legendItems);
+}
+
+// Вспомогательная функция для расчёта TTK на определённой дистанции
+function calculateTTKAtDistance(slotIndex, distance) {
+    const slotData = state.slots[slotIndex];
+    if (!slotData.weapon) return Infinity;
+    
+    const weapon = slotData.weapon;
+    const ammo = slotData.ammo;
+    
+    let damage = weapon.damage;
+    let rpm = weapon.rpm;
+    let effectiveRange = weapon.effectiveRange;
+    let ap = 0;
+    let damageMod = 1.0;
+    let pellets = 1;
+    
+    if (ammo) {
+        const stats = ammo.stats || {};
+        ap = stats.armorPenetration || 0;
+        damageMod = 1 + ((stats.damageModifier || 0) / 100);
+        pellets = ammo.pellets || 1;
+        
+        if (stats.rangeModifier) {
+            effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
+        }
+    }
+    
+    // Базовый урон
+    let shotDamage = damage * damageMod * pellets;
+    
+    // Падение урона на дистанции
+    if (distance > effectiveRange) {
+        const falloffDistance = distance - effectiveRange;
+        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
+        shotDamage = shotDamage * (1 - falloffPercent);
+    }
+    
+    // Урон после брони
+    const protection = calculateArmorProtection(state.targetArmor);
+    const effectiveProtection = Math.max(0, protection - ap);
+    shotDamage = shotDamage * (1 - effectiveProtection / 100);
+    
+    if (shotDamage <= 0) return Infinity;
+    
+    return calculateTTK(shotDamage, rpm, state.targetHP);
+}
+
+// Вспомогательная функция для расчёта урона на дистанции
+function calculateDamageAtDistance(slotIndex, distance) {
+    const slotData = state.slots[slotIndex];
+    if (!slotData.weapon) return 0;
+    
+    const weapon = slotData.weapon;
+    const ammo = slotData.ammo;
+    
+    let damage = weapon.damage;
+    let effectiveRange = weapon.effectiveRange;
+    let damageMod = 1.0;
+    let pellets = 1;
+    let ap = 0;
+    
+    if (ammo) {
+        const stats = ammo.stats || {};
+        damageMod = 1 + ((stats.damageModifier || 0) / 100);
+        pellets = ammo.pellets || 1;
+        ap = stats.armorPenetration || 0;
+        
+        if (stats.rangeModifier) {
+            effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
+        }
+    }
+    
+    let shotDamage = damage * damageMod * pellets;
+    
+    if (distance > effectiveRange) {
+        const falloffDistance = distance - effectiveRange;
+        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
+        shotDamage = shotDamage * (1 - falloffPercent);
+    }
+    
+    const protection = calculateArmorProtection(state.targetArmor);
+    const effectiveProtection = Math.max(0, protection - ap);
+    shotDamage = shotDamage * (1 - effectiveProtection / 100);
+    
+    return shotDamage;
+}
+
+// Конвертация HEX в RGBA
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function renderChartLegend(items) {
+    if (!items.length) {
+        elements.chartLegend.innerHTML = '';
+        return;
+    }
+    
+    // Сортируем по TTK (лучшие первые)
+    items.sort((a, b) => {
+        if (a.ttk === Infinity) return 1;
+        if (b.ttk === Infinity) return -1;
+        return a.ttk - b.ttk;
+    });
+    
+    elements.chartLegend.innerHTML = items.map((item, index) => {
+        const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
+        const rankClass = index === 0 && item.ttk !== Infinity ? 'chart-legend__item--best' : '';
+        
+        return `
+            <div class="chart-legend__item ${rankClass}">
+                <span class="chart-legend__color" style="background: ${item.color}"></span>
+                <span class="chart-legend__name">${item.name}</span>
+                <span class="chart-legend__ttk">${ttkText}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// ===== ИНТЕРАКТИВНОСТЬ ГРАФИКА =====
+function initChartInteractivity() {
+    if (!elements.damageCanvas) return;
+    
+    elements.damageCanvas.addEventListener('mousemove', (e) => {
+        const hasWeapons = state.slots.some((slot, i) => i < state.visibleSlots && slot.weapon);
+        if (!hasWeapons) return;
+        
+        const rect = elements.damageCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const padding = { left: 60, right: 20, top: 30, bottom: 50 };
+        const chartWidth = rect.width - padding.left - padding.right;
+        
+        if (x < padding.left || x > rect.width - padding.right) {
+            elements.chartTooltip.style.opacity = '0';
+            return;
+        }
+        
+        // Находим максимальную дистанцию
+        let maxRange = 100;
+        for (let i = 0; i < state.visibleSlots; i++) {
+            const weapon = state.slots[i].weapon;
+            if (weapon) {
+                const ammo = state.slots[i].ammo;
+                let effectiveRange = weapon.effectiveRange;
+                if (ammo?.stats?.rangeModifier) {
+                    effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
+                }
+                maxRange = Math.max(maxRange, effectiveRange * 2);
+            }
+        }
+        
+        const distance = ((x - padding.left) / chartWidth) * maxRange;
+        
+        // Собираем данные для tooltip
+        let tooltipItems = [];
+        
+        for (let i = 0; i < state.visibleSlots; i++) {
+            const slotData = state.slots[i];
+            if (!slotData.weapon) continue;
+            
+            const ttk = calculateTTKAtDistance(i, distance);
+            const damageAtDist = calculateDamageAtDistance(i, distance);
+            const shotsNeeded = damageAtDist > 0 ? Math.ceil(state.targetHP / damageAtDist) : Infinity;
+            
+            tooltipItems.push({
+                name: slotData.weapon.name,
+                color: SLOT_COLORS[i],
+                ttk: ttk,
+                shots: shotsNeeded
+            });
+        }
+        
+        // Сортируем по TTK
+        tooltipItems.sort((a, b) => {
+            if (a.ttk === Infinity) return 1;
+            if (b.ttk === Infinity) return -1;
+            return a.ttk - b.ttk;
+        });
+        
+        let tooltipContent = `
+            <div class="chart-tooltip__header">
+                <span class="chart-tooltip__distance">${Math.round(distance)} м</span>
+                <span class="chart-tooltip__label">дистанция</span>
+            </div>
+            <div class="chart-tooltip__divider"></div>
+        `;
+        
+        tooltipItems.forEach((item, index) => {
+            const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
+            const rankIcon = index === 0 && item.ttk !== Infinity ? '👑' : '';
+            const shotsText = item.shots === Infinity ? '∞' : item.shots;
+            
+            tooltipContent += `
+                <div class="chart-tooltip__item ${index === 0 && item.ttk !== Infinity ? 'chart-tooltip__item--best' : ''}">
+                    <span class="chart-tooltip__color" style="background: ${item.color}"></span>
+                    <span class="chart-tooltip__name">${item.name}</span>
+                    <div class="chart-tooltip__values">
+                        <span class="chart-tooltip__ttk">${rankIcon} ${ttkText}</span>
+                        <span class="chart-tooltip__shots">${shotsText} выстр.</span>
+                    </div>
+                </div>`;
+        });
+        
+        elements.chartTooltip.innerHTML = tooltipContent;
+        elements.chartTooltip.style.opacity = '1';
+        
+        // Позиционирование tooltip
+        let tooltipX = x + 15;
+        let tooltipY = y - 10;
+        
+        // Проверяем выход за границы
+        if (tooltipX + 200 > rect.width) {
+            tooltipX = x - 200 - 15;
+        }
+        
+        elements.chartTooltip.style.left = tooltipX + 'px';
+        elements.chartTooltip.style.top = tooltipY + 'px';
+    });
+    
+    elements.damageCanvas.addEventListener('mouseleave', () => {
+        elements.chartTooltip.style.opacity = '0';
+    });
+    
+    // Клик по графику устанавливает дистанцию
+    elements.damageCanvas.addEventListener('click', (e) => {
+        const rect = elements.damageCanvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const padding = { left: 60, right: 20 };
+        const chartWidth = rect.width - padding.left - padding.right;
+        
+        if (x < padding.left || x > rect.width - padding.right) return;
+        
+        let maxRange = 100;
+        for (let i = 0; i < state.visibleSlots; i++) {
+            const weapon = state.slots[i].weapon;
+            if (weapon) {
+                const ammo = state.slots[i].ammo;
+                let effectiveRange = weapon.effectiveRange;
+                if (ammo?.stats?.rangeModifier) {
+                    effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
+                }
+                maxRange = Math.max(maxRange, effectiveRange * 2);
+            }
+        }
+        
+        const distance = Math.round(((x - padding.left) / chartWidth) * maxRange);
+        state.targetDistance = distance;
+        elements.targetDistance.value = distance;
+        
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
     });
 }
 
-function updateUI(data) {
-    // Защита
-    elements.protectionPercent.textContent = data.protection.toFixed(2) + '%';
-    elements.effectiveProtection.textContent = data.effectiveProtection.toFixed(2) + '%';
+// ===== СРАВНИТЕЛЬНАЯ ТАБЛИЦА =====
+function updateComparisonTable() {
+    const activeSlots = [];
     
-    // Урон
-    elements.baseDamage.textContent = data.baseShotDamage.toFixed(1);
-    elements.armorDamage.textContent = data.bodyShotDamage.toFixed(1);
-    elements.headshotDamage.textContent = data.headShotDamageRaw.toFixed(1);
-    elements.headshotArmorDamage.textContent = data.headShotDamageArmor.toFixed(1);
+    for (let i = 0; i < state.visibleSlots; i++) {
+        if (state.slots[i].weapon) {
+            activeSlots.push({
+                index: i,
+                weapon: state.slots[i].weapon,
+                ammo: state.slots[i].ammo,
+                result: calculateSlotDPS(i)
+            });
+        }
+    }
     
-    // DPS
-    elements.dpsBody.textContent = Math.round(data.dpsBodyVal);
-    elements.dpsHead.textContent = Math.round(data.dpsHeadVal);
+    if (activeSlots.length < 2) {
+        elements.comparisonTable.classList.remove('visible');
+        return;
+    }
     
-    // TTK
-    elements.ttkBody.textContent = data.ttkBodyVal === Infinity ? '∞' : data.ttkBodyVal.toFixed(2) + ' сек';
-    elements.shotsBody.textContent = data.shotsBodyVal + ' выстр.';
+    elements.comparisonTable.classList.add('visible');
     
-    elements.ttkHead.textContent = data.ttkHeadVal === Infinity ? '∞' : data.ttkHeadVal.toFixed(2) + ' сек';
-    elements.shotsHead.textContent = data.shotsHeadVal + ' выстр.';
+    // Находим лучшие значения для подсветки
+    const bestDPS = Math.max(...activeSlots.map(s => s.result.dpsBody));
+    const bestTTK = Math.min(...activeSlots.map(s => s.result.ttkBody === Infinity ? 999999 : s.result.ttkBody));
+    const bestDamage = Math.max(...activeSlots.map(s => s.result.armorDamage));
+    
+    let html = `
+        <table class="comparison-table__table">
+            <thead>
+                <tr>
+                    <th>Оружие</th>
+                    <th>Патроны</th>
+                    <th>DPS (тело)</th>
+                    <th>Урон/выстрел</th>
+                    <th>TTK</th>
+                    <th>Выстрелов</th>
+                </tr>
+            </thead>
+            <tbody>`;
+    
+    activeSlots.forEach(slot => {
+        const r = slot.result;
+        const isBestDPS = r.dpsBody === bestDPS;
+        const isBestTTK = r.ttkBody === bestTTK && r.ttkBody !== Infinity;
+        const isBestDamage = r.armorDamage === bestDamage;
+        
+        html += `
+            <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
+                <td>
+                    <div class="comparison-table__weapon">
+                        <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
+                        <span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>
+                    </div>
+                </td>
+                <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
+                <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
+                <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
+                <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
+                <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
+            </tr>`;
+    });
+    
+    html += '</tbody></table>';
+    
+    elements.comparisonTableContent.innerHTML = html;
 }
 
-function updateUIWithZeros() {
-    const zeros = {
-        protection: 0,
-        effectiveProtection: 0,
-        baseShotDamage: 0,
-        bodyShotDamage: 0,
-        headShotDamageRaw: 0,
-        headShotDamageArmor: 0,
-        dpsBodyVal: 0,
-        dpsHeadVal: 0,
-        ttkBodyVal: 0,
-        ttkHeadVal: 0,
-        shotsBodyVal: 0,
-        shotsHeadVal: 0
-    };
-    updateUI(zeros);
-}
-
+// ===== СБРОС =====
 function resetCalculator() {
-    state.selectedWeapon = null;
-    state.selectedAmmo = null;
-    state.manualMode = false;
+    // Сбрасываем состояние
+    state.slots = [
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null }
+    ];
+    state.activeSlot = 0;
+    state.visibleSlots = 1;
     state.targetArmor = 0;
     state.targetHP = 100;
+    state.targetDistance = 0;
     
-    elements.weaponSelect.value = '';
-    elements.weaponSelect.disabled = false;
-    elements.ammoSelect.value = '';
-    elements.ammoSelect.disabled = true;
-    elements.manualModeToggle.checked = false;
+    // Сбрасываем UI слотов
+    for (let i = 0; i < 3; i++) {
+        const nameEl = document.getElementById(`slotName${i}`);
+        const dpsEl = document.getElementById(`slotDps${i}`);
+        if (nameEl) nameEl.textContent = 'Не выбрано';
+        if (dpsEl) dpsEl.textContent = '0';
+    }
+    
+    // Сбрасываем инпуты
     elements.targetArmor.value = 0;
     elements.targetHP.value = 100;
+    elements.targetDistance.value = 0;
     
-    elements.manualDamage.value = 41;
-    elements.manualRPM.value = 600;
-    elements.manualHeadshot.value = 1.25;
+    // Сбрасываем dropdown оружия
+    const weaponValue = elements.weaponDropdown.querySelector('.custom-dropdown__value');
+    weaponValue.textContent = 'Выберите оружие...';
+    weaponValue.classList.remove('has-value');
     
-    toggleManualMode({ target: { checked: false } }); // Reset UI state
+    // Сбрасываем dropdown патронов
+    const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
+    ammoTrigger.disabled = true;
+    elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
+    elements.ammoStats.style.display = 'none';
+    
+    // Сбрасываем видимость
+    updateSlotsVisibility();
+    selectSlot(0);
+    
+    // Скрываем таблицу и график
+    elements.comparisonTable.classList.remove('visible');
+    elements.damageChart.classList.remove('visible');
+    elements.chartPlaceholder.classList.remove('hidden');
+    elements.weaponStats.style.display = 'none';
+    
+    renderWeaponInfo();
+    renderWeaponDropdownList();
     calculateResults();
 }
 
+// ===== ЭФФЕКТЫ СКРОЛЛА =====
 function initScrollEffects() {
     window.addEventListener('scroll', () => {
-        elements.header.style.background = window.scrollY > 50 
-            ? 'rgba(10, 10, 11, 0.98)' 
-            : 'rgba(10, 10, 11, 0.9)';
-        elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
+        if (elements.header) {
+            elements.header.style.background = window.scrollY > 50 
+                ? 'rgba(10, 10, 11, 0.98)' 
+                : 'rgba(10, 10, 11, 0.9)';
+        }
+        
+        if (elements.scrollTop) {
+            elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
+        }
     });
     
-    elements.scrollTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    if (elements.scrollTop) {
+        elements.scrollTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 }
