@@ -2174,34 +2174,101 @@ const WEAPON_CATEGORIES = {
 };
 
 const WEAPONS = [
+    // ===== ДРОБОВИКИ =====
     {
-        id: 'galil_ace_51',
-        name: 'Galil ACE 51',
-        category: 'assault',
-        rarity: 'unique',
-        rarityName: 'Уникальное',
-        damage: 41,
-        rpm: 685,
+        id: 'toz194',
+        name: 'ТОЗ-194',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 84,
+        rpm: 45,
         headshotMult: 1.25,
-        effectiveRange: 90.0,
-        fireModes: ['auto', 'single'],
-        ammoTypes: ['762x51_m59', '762x51_m61'],
-        slots: { scope: true, muzzle: ['pbs_1'], grip: true },
-        stats: { verticalRecoil: 2.49, horizontalRecoil: 0.90, hipSpread: 0.48, adsSpread: 0.15 }
+        effectiveRange: 89.0,
+        fireModes: ['single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 5.56,
+            horizontalRecoil: 4.70,
+            hipSpread: 1.13,
+            adsSpread: 1.13
+        }
     },
     {
-        id: 'sako_trg42',
-        name: 'Sako TRG-42',
-        category: 'sniper',
-        rarity: 'unique',
-        rarityName: 'Уникальное',
-        damage: 185,
-        rpm: 25,
-        headshotMult: 1.50,
-        effectiveRange: 290.0,
+        id: 'fort500',
+        name: 'Форт-500',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 82,
+        rpm: 80,
+        headshotMult: 1.25,
+        effectiveRange: 85.0,
         fireModes: ['single'],
-        ammoTypes: ['308_winchester'],
-        stats: { verticalRecoil: 4.00, horizontalRecoil: 3.50, hipSpread: 5.00, adsSpread: 0.05, moveSpeed: -3.00 }
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 5.50,
+            horizontalRecoil: 4.72,
+            hipSpread: 1.19,
+            adsSpread: 1.19
+        }
+    },
+    {
+        id: 'mossberg_maverick',
+        name: 'Mossberg Maverick 88 Cruiser',
+        category: 'shotgun',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 86,
+        rpm: 80,
+        headshotMult: 1.25,
+        effectiveRange: 99.0,
+        fireModes: ['single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 4.77,
+            horizontalRecoil: 3.90,
+            hipSpread: 0.99,
+            adsSpread: 0.99
+        }
+    },
+    {
+        id: 'remington_870',
+        name: 'Remington 870 Tactical',
+        category: 'shotgun',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 95,
+        rpm: 50,
+        headshotMult: 1.25,
+        effectiveRange: 81.0,
+        fireModes: ['single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.81,
+            horizontalRecoil: 5.32,
+            hipSpread: 1.18,
+            adsSpread: 1.18
+        }
+    },
+    {
+        id: 'mp153',
+        name: 'MP-153',
+        category: 'shotgun',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 84,
+        rpm: 265,
+        headshotMult: 1.25,
+        effectiveRange: 95.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 4.68,
+            horizontalRecoil: 2.57,
+            hipSpread: 0.89,
+            adsSpread: 0.89
+        }
     },
     {
         id: 'protecta',
@@ -2215,19 +2282,2470 @@ const WEAPONS = [
         effectiveRange: 72.0,
         fireModes: ['auto'],
         ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
-        stats: { verticalRecoil: 5.52, horizontalRecoil: 3.35, hipSpread: 1.33, adsSpread: 1.33 }
+        stats: {
+            verticalRecoil: 5.52,
+            horizontalRecoil: 3.35,
+            hipSpread: 1.33,
+            adsSpread: 1.33
+        }
+    },
+    {
+        id: 'usas12',
+        name: 'Daewoo USAS-12',
+        category: 'shotgun',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 75,
+        rpm: 360,
+        headshotMult: 1.25,
+        effectiveRange: 73.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 5.11,
+            horizontalRecoil: 3.59,
+            hipSpread: 1.15,
+            adsSpread: 1.15
+        }
+    },
+    {
+        id: 'spas12',
+        name: 'Franchi SPAS-12',
+        category: 'shotgun',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 90,
+        rpm: 300,
+        headshotMult: 1.25,
+        effectiveRange: 76.0,
+        fireModes: ['auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.55,
+            horizontalRecoil: 3.10,
+            hipSpread: 0.98,
+            adsSpread: 0.98
+        }
+    },
+
+    // ===== ПИСТОЛЕТЫ-ПУЛЕМЁТЫ =====
+    {
+        id: 'skorpion_vz61',
+        name: 'Skorpion vz.61',
+        category: 'smg',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 22,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 22.5,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.27,
+            horizontalRecoil: 0.60,
+            hipSpread: 0.42,
+            adsSpread: 0.42
+        }
+    },
+    {
+        id: 'pp2000',
+        name: 'ПП-2000',
+        category: 'smg',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 25,
+        rpm: 725,
+        headshotMult: 1.25,
+        effectiveRange: 55.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 0.54,
+            horizontalRecoil: 0.31,
+            hipSpread: 0.40,
+            adsSpread: 0.40
+        }
+    },
+    {
+        id: 'mp5a3',
+        name: 'HK MP5A3',
+        category: 'smg',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 23,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 56.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.33,
+            horizontalRecoil: 0.42,
+            hipSpread: 0.44,
+            adsSpread: 0.44
+        }
+    },
+    {
+        id: 'pp19_bizon',
+        name: 'ПП-19 «Бизон»',
+        category: 'smg',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 25,
+        rpm: 700,
+        headshotMult: 1.25,
+        effectiveRange: 120.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.36,
+            horizontalRecoil: 0.40,
+            hipSpread: 0.36,
+            adsSpread: 0.36
+        }
+    },
+    {
+        id: 'ump45',
+        name: 'UMP45',
+        category: 'smg',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 36,
+        rpm: 660,
+        headshotMult: 1.25,
+        effectiveRange: 60.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 1.71,
+            horizontalRecoil: 0.36,
+            hipSpread: 0.31,
+            adsSpread: 0.31
+        }
+    },
+    {
+        id: '9a91',
+        name: '9A-91',
+        category: 'smg',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 35,
+        rpm: 700,
+        headshotMult: 1.35,
+        effectiveRange: 76.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.62,
+            horizontalRecoil: 0.60,
+            hipSpread: 0.64,
+            adsSpread: 0.19
+        }
+    },
+    {
+        id: 'sr3_vikhr',
+        name: 'СР-3 «Вихрь»',
+        category: 'smg',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 33,
+        rpm: 800,
+        headshotMult: 1.35,
+        effectiveRange: 66.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.77,
+            horizontalRecoil: 0.51,
+            hipSpread: 0.73,
+            adsSpread: 0.33
+        }
+    },
+    {
+        id: 'fn_p90',
+        name: 'FN P90',
+        category: 'smg',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 24,
+        rpm: 1100,
+        headshotMult: 1.25,
+        effectiveRange: 51.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 0.32,
+            horizontalRecoil: 0.51,
+            hipSpread: 0.37,
+            adsSpread: 0.37
+        }
+    },
+
+    // ===== ШТУРМОВЫЕ ВИНТОВКИ =====
+    {
+        id: 'aks74',
+        name: 'АКС-74',
+        category: 'assault',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 31,
+        rpm: 600,
+        headshotMult: 1.25,
+        effectiveRange: 104.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 2.05,
+            horizontalRecoil: 0.82,
+            hipSpread: 0.71,
+            adsSpread: 0.25
+        }
+    },
+    {
+        id: 'aks74u',
+        name: 'АКС-74У',
+        category: 'assault',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 30,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 58.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.87,
+            horizontalRecoil: 0.92,
+            hipSpread: 0.67,
+            adsSpread: 0.33
+        }
+    },
+    {
+        id: 'ak74m',
+        name: 'АК-74М',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 32,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 105.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.94,
+            horizontalRecoil: 0.79,
+            hipSpread: 0.65,
+            adsSpread: 0.25
+        }
+    },
+    {
+        id: 'm16a2',
+        name: 'M16A2',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 750,
+        headshotMult: 1.25,
+        effectiveRange: 100.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.83,
+            horizontalRecoil: 0.66,
+            hipSpread: 0.67,
+            adsSpread: 0.24
+        }
+    },
+    {
+        id: 'm4',
+        name: 'M4',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 100.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.92,
+            horizontalRecoil: 0.72,
+            hipSpread: 0.64,
+            adsSpread: 0.22
+        }
+    },
+    {
+        id: 'l85a1',
+        name: 'L85A1',
+        category: 'assault',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 30,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 110.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.35,
+            horizontalRecoil: 1.15,
+            hipSpread: 0.64,
+            adsSpread: 0.23
+        }
+    },
+    {
+        id: 'sig_sg550',
+        name: 'SIG SG 550',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 31,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 108.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.68,
+            horizontalRecoil: 0.59,
+            hipSpread: 0.62,
+            adsSpread: 0.22
+        }
+    },
+    {
+        id: 'steyr_aug_a1',
+        name: 'Steyr AUG A1',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 31,
+        rpm: 700,
+        headshotMult: 1.25,
+        effectiveRange: 110.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.44,
+            horizontalRecoil: 0.92,
+            hipSpread: 0.55,
+            adsSpread: 0.20
+        }
+    },
+    {
+        id: 'm16a4',
+        name: 'M16A4',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 750,
+        headshotMult: 1.25,
+        effectiveRange: 108.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.86,
+            horizontalRecoil: 0.68,
+            hipSpread: 0.67,
+            adsSpread: 0.24
+        }
+    },
+    {
+        id: 'famas_f1',
+        name: 'FAMAS F1',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 900,
+        headshotMult: 1.25,
+        effectiveRange: 76.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.45,
+            horizontalRecoil: 1.21,
+            hipSpread: 0.58,
+            adsSpread: 0.24
+        }
+    },
+    {
+        id: 'akm',
+        name: 'AKM',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 37,
+        rpm: 600,
+        headshotMult: 1.25,
+        effectiveRange: 110.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x39_ps', '762x39_bp'],
+        stats: {
+            verticalRecoil: 3.11,
+            horizontalRecoil: 1.22,
+            hipSpread: 0.68,
+            adsSpread: 0.30
+        }
+    },
+    {
+        id: 'an94_abakan',
+        name: 'АН-94 «Абакан»',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 34,
+        rpm: 625,
+        headshotMult: 1.25,
+        effectiveRange: 107.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.92,
+            horizontalRecoil: 0.41,
+            hipSpread: 0.74,
+            adsSpread: 0.19
+        }
+    },
+    {
+        id: 'ak105',
+        name: 'AK-105',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 33,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 86.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.72,
+            horizontalRecoil: 0.61,
+            hipSpread: 0.58,
+            adsSpread: 0.23
+        }
+    },
+    {
+        id: 'm4a1',
+        name: 'M4A1',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 30,
+        rpm: 850,
+        headshotMult: 1.25,
+        effectiveRange: 106.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.81,
+            horizontalRecoil: 0.68,
+            hipSpread: 0.52,
+            adsSpread: 0.20
+        }
+    },
+    {
+        id: 'fn_scar_l',
+        name: 'FN SCAR-L',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 32.5,
+        rpm: 625,
+        headshotMult: 1.25,
+        effectiveRange: 136.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.35,
+            horizontalRecoil: 0.38,
+            hipSpread: 0.44,
+            adsSpread: 0.15
+        }
+    },
+    {
+        id: 'hk_g36',
+        name: 'HK G36',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 33,
+        rpm: 750,
+        headshotMult: 1.25,
+        effectiveRange: 126.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.62,
+            horizontalRecoil: 0.33,
+            hipSpread: 0.65,
+            adsSpread: 0.15
+        }
+    },
+    {
+        id: 'fn_f2000',
+        name: 'FN F2000',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 34,
+        rpm: 850,
+        headshotMult: 1.25,
+        effectiveRange: 132.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.23,
+            horizontalRecoil: 0.59,
+            hipSpread: 0.61,
+            adsSpread: 0.18
+        }
+    },
+    {
+        id: 'hk_g3a3',
+        name: 'HK G3A3',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 43.5,
+        rpm: 600,
+        headshotMult: 1.25,
+        effectiveRange: 132.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 3.25,
+            horizontalRecoil: 0.95,
+            hipSpread: 0.88,
+            adsSpread: 0.16
+        }
+    },
+    {
+        id: 'steyr_aug_a3',
+        name: 'Steyr AUG A3',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 32,
+        rpm: 725,
+        headshotMult: 1.25,
+        effectiveRange: 112.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.39,
+            horizontalRecoil: 0.73,
+            hipSpread: 0.49,
+            adsSpread: 0.20
+        }
+    },
+    {
+        id: 'ak103',
+        name: 'AK-103',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 37,
+        rpm: 600,
+        headshotMult: 1.25,
+        effectiveRange: 112.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x39_ps', '762x39_bp'],
+        stats: {
+            verticalRecoil: 2.94,
+            horizontalRecoil: 1.10,
+            hipSpread: 0.60,
+            adsSpread: 0.23
+        }
+    },
+    {
+        id: 'ots14_groza',
+        name: 'ОЦ-14 «Гроза»',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 34,
+        rpm: 700,
+        headshotMult: 1.35,
+        effectiveRange: 74.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.42,
+            horizontalRecoil: 0.64,
+            hipSpread: 0.54,
+            adsSpread: 0.26
+        }
+    },
+    {
+        id: 'hk416',
+        name: 'HK416',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 32,
+        rpm: 850,
+        headshotMult: 1.25,
+        effectiveRange: 121.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.42,
+            horizontalRecoil: 0.36,
+            hipSpread: 0.60,
+            adsSpread: 0.20
+        }
+    },
+    {
+        id: 'fn_fnc',
+        name: 'FN FNC',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 38,
+        rpm: 700,
+        headshotMult: 1.25,
+        effectiveRange: 145.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.64,
+            horizontalRecoil: 0.54,
+            hipSpread: 0.48,
+            adsSpread: 0.14
+        }
+    },
+    {
+        id: 'fn_f2000_tactical',
+        name: 'FN F2000 Tactical',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 34,
+        rpm: 850,
+        headshotMult: 1.25,
+        effectiveRange: 132.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.27,
+            horizontalRecoil: 0.49,
+            hipSpread: 0.46,
+            adsSpread: 0.18
+        }
+    },
+    {
+        id: 'aek971',
+        name: 'АЕК-971',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 34,
+        rpm: 900,
+        headshotMult: 1.25,
+        effectiveRange: 100.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.37,
+            horizontalRecoil: 0.31,
+            hipSpread: 0.49,
+            adsSpread: 0.22
+        }
+    },
+    {
+        id: 'ak12',
+        name: 'AK-12',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 34,
+        rpm: 740,
+        headshotMult: 1.25,
+        effectiveRange: 110.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp', '545x39_bs'],
+        stats: {
+            verticalRecoil: 1.69,
+            horizontalRecoil: 0.49,
+            hipSpread: 0.53,
+            adsSpread: 0.17
+        }
+    },
+    {
+        id: 'hk_xm8',
+        name: 'HK XM8',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 35,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 120.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.38,
+            horizontalRecoil: 0.35,
+            hipSpread: 0.54,
+            adsSpread: 0.18
+        }
+    },
+    {
+        id: 'hk417',
+        name: 'HK417',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 45,
+        rpm: 575,
+        headshotMult: 1.25,
+        effectiveRange: 140.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 2.55,
+            horizontalRecoil: 0.76,
+            hipSpread: 0.60,
+            adsSpread: 0.05
+        }
+    },
+    {
+        id: 'galil_ace_51',
+        name: 'Galil ACE 51',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 41,
+        rpm: 685,
+        headshotMult: 1.25,
+        effectiveRange: 90.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 2.49,
+            horizontalRecoil: 0.90,
+            hipSpread: 0.48,
+            adsSpread: 0.15
+        }
+    },
+    {
+        id: 'fn_scar_h',
+        name: 'FN SCAR-H',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 42,
+        rpm: 600,
+        headshotMult: 1.25,
+        effectiveRange: 126.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 2.45,
+            horizontalRecoil: 1.15,
+            hipSpread: 0.57,
+            adsSpread: 0.08
+        }
+    },
+    {
+        id: 'lr300',
+        name: 'LR-300',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 33,
+        rpm: 950,
+        headshotMult: 1.25,
+        effectiveRange: 74.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.71,
+            horizontalRecoil: 0.54,
+            hipSpread: 0.53,
+            adsSpread: 0.20
+        }
+    },
+    {
+        id: 'fn_fal',
+        name: 'FN FAL',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 44,
+        rpm: 675,
+        headshotMult: 1.25,
+        effectiveRange: 124.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 3.19,
+            horizontalRecoil: 1.24,
+            hipSpread: 0.51,
+            adsSpread: 0.12
+        }
+    },
+    {
+        id: 'as_val',
+        name: 'АС «Вал»',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 32,
+        rpm: 925,
+        headshotMult: 1.35,
+        effectiveRange: 70.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.86,
+            horizontalRecoil: 0.31,
+            hipSpread: 0.62,
+            adsSpread: 0.21
+        }
+    },
+    {
+        id: 'ash12',
+        name: 'АШ-12',
+        category: 'assault',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 53,
+        rpm: 575,
+        headshotMult: 1.25,
+        effectiveRange: 72.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['127x55'],
+        stats: {
+            verticalRecoil: 4.35,
+            horizontalRecoil: 1.74,
+            hipSpread: 0.55,
+            adsSpread: 0.18,
+            armorPenetration: 5
+        }
+    },
+
+    // ===== СНАЙПЕРСКИЕ ВИНТОВКИ =====
+    {
+        id: 'remington_700',
+        name: 'Remington 700',
+        category: 'sniper',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 140,
+        rpm: 30,
+        headshotMult: 1.50,
+        effectiveRange: 105.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 3.00,
+            horizontalRecoil: 2.15,
+            hipSpread: 2.00,
+            adsSpread: 0.08
+        }
+    },
+    {
+        id: 'svd',
+        name: 'Снайперская винтовка Драгунова',
+        category: 'sniper',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 115,
+        rpm: 100,
+        headshotMult: 1.25,
+        effectiveRange: 105.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 3.20,
+            horizontalRecoil: 2.40,
+            hipSpread: 2.00,
+            adsSpread: 0.11
+        }
+    },
+    {
+        id: 'vsk94',
+        name: 'ВСК-94',
+        category: 'sniper',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 40,
+        rpm: 700,
+        headshotMult: 1.35,
+        effectiveRange: 80.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.43,
+            horizontalRecoil: 0.22,
+            hipSpread: 5.00,
+            adsSpread: 0.10
+        }
+    },
+    {
+        id: 'sig_sg550_sniper',
+        name: 'SIG SG 550 Sniper',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 38,
+        rpm: 480,
+        headshotMult: 1.35,
+        effectiveRange: 180.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.72,
+            horizontalRecoil: 0.38,
+            hipSpread: 2.00,
+            adsSpread: 0.05
+        }
+    },
+    {
+        id: 'walther_wa2000',
+        name: 'Walther WA 2000',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 138,
+        rpm: 100,
+        headshotMult: 1.35,
+        effectiveRange: 240.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 5.00,
+            horizontalRecoil: 1.50,
+            hipSpread: 5.00,
+            adsSpread: 0.05,
+            moveSpeed: -3.00
+        }
+    },
+    {
+        id: 'sv98',
+        name: 'СВ-98',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 183,
+        rpm: 33,
+        headshotMult: 1.50,
+        effectiveRange: 270.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 3.55,
+            horizontalRecoil: 3.10,
+            hipSpread: 2.00,
+            adsSpread: 0.03,
+            moveSpeed: -3.00
+        }
+    },
+    {
+        id: 'sako_trg42',
+        name: 'Sako TRG-42',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 185,
+        rpm: 25,
+        headshotMult: 1.50,
+        effectiveRange: 290.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 4.00,
+            horizontalRecoil: 3.50,
+            hipSpread: 5.00,
+            adsSpread: 0.05,
+            moveSpeed: -3.00
+        }
+    },
+    {
+        id: 'barrett_m82',
+        name: 'Barrett M82',
+        category: 'sniper',
+        rarity: 'legendary',
+        rarityName: 'Легендарное',
+        damage: 195,
+        rpm: 111,
+        headshotMult: 1.35,
+        effectiveRange: 280.0,
+        fireModes: ['single'],
+        ammoTypes: ['127x55'],
+        stats: {
+            verticalRecoil: 12.50,
+            horizontalRecoil: 11.00,
+            hipSpread: 10.00,
+            adsSpread: 0.07,
+            moveSpeed: -10.00,
+            mutantDamageMultiplier: 2.5
+        }
+    },
+
+    // ===== ПИСТОЛЕТЫ =====
+    {
+        id: 'glock18',
+        name: 'Glock 18',
+        category: 'pistol',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 27,
+        rpm: 800,
+        headshotMult: 1.75,
+        effectiveRange: 45.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.43,
+            horizontalRecoil: 0.67,
+            hipSpread: 0.52,
+            adsSpread: 0.52,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'aps',
+        name: 'АПС',
+        category: 'pistol',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 32,
+        rpm: 750,
+        headshotMult: 1.75,
+        effectiveRange: 36.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.92,
+            horizontalRecoil: 0.80,
+            hipSpread: 0.45,
+            adsSpread: 0.45,
+            moveSpeed: 2.00
+        }
+    },
+
+    // ===== ПУЛЕМЁТЫ =====
+    {
+        id: 'rpk74',
+        name: 'РПК-74',
+        category: 'machinegun',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 36,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 124.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 2.55,
+            horizontalRecoil: 0.71,
+            hipSpread: 0.45,
+            adsSpread: 0.17,
+            moveSpeed: -4.00
+        }
+    },
+    {
+        id: 'm249_saw',
+        name: 'M249 SAW',
+        category: 'machinegun',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 32,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 120.0,
+        fireModes: ['auto'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 2.35,
+            horizontalRecoil: 0.62,
+            hipSpread: 0.70,
+            adsSpread: 0.19,
+            moveSpeed: -3.00
+        }
+    },
+    {
+        id: 'm60',
+        name: 'M60',
+        category: 'machinegun',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 47,
+        rpm: 550,
+        headshotMult: 1.25,
+        effectiveRange: 124.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 3.83,
+            horizontalRecoil: 1.36,
+            hipSpread: 0.65,
+            adsSpread: 0.15,
+            moveSpeed: -6.00
+        }
+    },
+
+    // ===== СПЕЦИАЛЬНОЕ =====
+    {
+        id: 'gauss_gun',
+        name: 'Гаусс-пушка',
+        category: 'sniper',
+        rarity: 'legendary',
+        rarityName: 'Легендарное',
+        damage: 70,
+        rpm: 25,
+        headshotMult: 1.50,
+        effectiveRange: 200.0,
+        fireModes: ['single'],
+        ammoTypes: ['makeshift_batteries', 'accumulators'],
+        stats: {
+            verticalRecoil: 0.00,
+            horizontalRecoil: 0.00,
+            hipSpread: 1.50,
+            adsSpread: 0.01,
+            moveSpeed: -4.00,
+            armorPenetration: 100
+        }
+    },
+        // ===== ПИСТОЛЕТЫ (НОВЫЕ) =====
+    {
+        id: 'colt_1911',
+        name: 'Colt 1911',
+        category: 'pistol',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 39,
+        rpm: 265,
+        headshotMult: 2.50,
+        effectiveRange: 54.0,
+        fireModes: ['single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 2.00,
+            horizontalRecoil: 1.50,
+            hipSpread: 0.39,
+            adsSpread: 0.39,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'gsh18',
+        name: 'ГШ-18',
+        category: 'pistol',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 35,
+        rpm: 365,
+        headshotMult: 2.00,
+        effectiveRange: 51.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.62,
+            horizontalRecoil: 1.15,
+            hipSpread: 0.48,
+            adsSpread: 0.48,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'sig_p220',
+        name: 'SIG Sauer P220',
+        category: 'pistol',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 36,
+        rpm: 290,
+        headshotMult: 2.00,
+        effectiveRange: 54.0,
+        fireModes: ['single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 1.78,
+            horizontalRecoil: 1.25,
+            hipSpread: 0.40,
+            adsSpread: 0.40,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'desert_eagle',
+        name: 'Desert Eagle Mark XIX',
+        category: 'pistol',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 52,
+        rpm: 250,
+        headshotMult: 2.50,
+        effectiveRange: 63.0,
+        fireModes: ['single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 2.88,
+            horizontalRecoil: 2.40,
+            hipSpread: 0.39,
+            adsSpread: 0.39,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'pm',
+        name: 'Пистолет Макарова',
+        category: 'pistol',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 30,
+        rpm: 250,
+        headshotMult: 2.00,
+        effectiveRange: 45.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.87,
+            horizontalRecoil: 1.50,
+            hipSpread: 0.55,
+            adsSpread: 0.55,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'pb',
+        name: 'Пистолет Бесшумный (ПБ)',
+        category: 'pistol',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 250,
+        headshotMult: 2.00,
+        effectiveRange: 36.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.82,
+            horizontalRecoil: 1.39,
+            hipSpread: 0.55,
+            adsSpread: 0.55,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'fort12',
+        name: 'Форт-12',
+        category: 'pistol',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 31,
+        rpm: 280,
+        headshotMult: 2.00,
+        effectiveRange: 42.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.66,
+            horizontalRecoil: 1.17,
+            hipSpread: 0.49,
+            adsSpread: 0.49,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'browning_hp',
+        name: 'Browning Hi-Power',
+        category: 'pistol',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 32,
+        rpm: 310,
+        headshotMult: 2.00,
+        effectiveRange: 48.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.63,
+            horizontalRecoil: 0.90,
+            hipSpread: 0.45,
+            adsSpread: 0.45,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'walther_p99',
+        name: 'Walther P99',
+        category: 'pistol',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 35,
+        rpm: 275,
+        headshotMult: 2.00,
+        effectiveRange: 48.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.88,
+            horizontalRecoil: 1.31,
+            hipSpread: 0.44,
+            adsSpread: 0.44,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'beretta_92fs',
+        name: 'Beretta 92FS',
+        category: 'pistol',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 33,
+        rpm: 300,
+        headshotMult: 2.00,
+        effectiveRange: 51.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.59,
+            horizontalRecoil: 1.25,
+            hipSpread: 0.47,
+            adsSpread: 0.47,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'gsh18_slavena',
+        name: 'ГШ-18 Славена',
+        category: 'pistol',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 35,
+        rpm: 365,
+        headshotMult: 2.00,
+        effectiveRange: 51.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.62,
+            horizontalRecoil: 1.15,
+            hipSpread: 0.48,
+            adsSpread: 0.48,
+            moveSpeed: 2.00
+        }
+    },
+
+    // ===== ПИСТОЛЕТЫ-ПУЛЕМЁТЫ (НОВЫЕ) =====
+    {
+        id: 'mp5sd6',
+        name: 'HK MP5SD6',
+        category: 'smg',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 24,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 49.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.21,
+            horizontalRecoil: 0.38,
+            hipSpread: 0.39,
+            adsSpread: 0.39
+        }
+    },
+    {
+        id: 'pp19_vityaz',
+        name: 'ПП-19-01 «Витязь»',
+        category: 'smg',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 28,
+        rpm: 750,
+        headshotMult: 1.25,
+        effectiveRange: 65.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.10,
+            horizontalRecoil: 0.22,
+            hipSpread: 0.27,
+            adsSpread: 0.27
+        }
+    },
+    {
+        id: 'mp5sd6_sindbad',
+        name: 'HK MP5SD6 Синдбада',
+        category: 'smg',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 24,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 49.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'],
+        stats: {
+            verticalRecoil: 1.21,
+            horizontalRecoil: 0.38,
+            hipSpread: 0.39,
+            adsSpread: 0.39
+        }
+    },
+
+    // ===== ШТУРМОВЫЕ ВИНТОВКИ (НОВЫЕ) =====
+    {
+        id: 'gorn',
+        name: '«Горн»',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 850,
+        headshotMult: 1.25,
+        effectiveRange: 76.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.45,
+            horizontalRecoil: 1.21,
+            hipSpread: 0.58,
+            adsSpread: 0.24
+        }
+    },
+    {
+        id: 'aks74u_modified',
+        name: 'Модифицированный АКС-74У',
+        category: 'assault',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 30,
+        rpm: 675,
+        headshotMult: 1.25,
+        effectiveRange: 62.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.84,
+            horizontalRecoil: 0.90,
+            hipSpread: 0.58,
+            adsSpread: 0.28
+        }
+    },
+    {
+        id: 'an94_assault',
+        name: 'АН-94 «Абакан» штурмовой',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 35,
+        rpm: 625,
+        headshotMult: 1.25,
+        effectiveRange: 112.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.92,
+            horizontalRecoil: 0.41,
+            hipSpread: 0.74,
+            adsSpread: 0.19
+        }
+    },
+
+    // ===== ПУЛЕМЁТЫ (НОВЫЕ) =====
+    {
+        id: 'rpd',
+        name: 'РПД',
+        category: 'machinegun',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 37,
+        rpm: 700,
+        headshotMult: 1.25,
+        effectiveRange: 118.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x39_ps', '762x39_bp'],
+        stats: {
+            verticalRecoil: 2.90,
+            horizontalRecoil: 0.81,
+            hipSpread: 0.65,
+            adsSpread: 0.27,
+            moveSpeed: -5.00
+        }
+    },
+    {
+        id: 'pkm',
+        name: 'ПКМ',
+        category: 'machinegun',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 43,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 120.0,
+        fireModes: ['auto'],
+        ammoTypes: ['762x54_pp'],
+        stats: {
+            verticalRecoil: 3.45,
+            horizontalRecoil: 1.29,
+            hipSpread: 0.85,
+            adsSpread: 0.20,
+            moveSpeed: -6.00
+        }
+    },
+    {
+        id: 'pkp_pecheneg',
+        name: 'ПКП «Печенег»',
+        category: 'machinegun',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 43,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 126.0,
+        fireModes: ['auto'],
+        ammoTypes: ['762x54_pp'],
+        stats: {
+            verticalRecoil: 3.12,
+            horizontalRecoil: 1.05,
+            hipSpread: 0.69,
+            adsSpread: 0.16,
+            moveSpeed: -5.00
+        }
+    },
+
+    // ===== СНАЙПЕРСКИЕ ВИНТОВКИ (НОВЫЕ) =====
+    {
+        id: 'm24',
+        name: 'Снайперская винтовка М24',
+        category: 'sniper',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 158,
+        rpm: 35,
+        headshotMult: 1.50,
+        effectiveRange: 135.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 2.75,
+            horizontalRecoil: 1.80,
+            hipSpread: 2.00,
+            adsSpread: 0.05
+        }
+    },
+    {
+        id: 'mosin_obrez',
+        name: 'Обрез винтовки Мосина',
+        category: 'sniper',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 122,
+        rpm: 20,
+        headshotMult: 1.50,
+        effectiveRange: 81.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 3.65,
+            horizontalRecoil: 2.20,
+            hipSpread: 2.00,
+            adsSpread: 0.19
+        }
+    },
+    {
+        id: 'mosin',
+        name: 'Винтовка Мосина',
+        category: 'sniper',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 125,
+        rpm: 20,
+        headshotMult: 1.50,
+        effectiveRange: 90.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 3.65,
+            horizontalRecoil: 2.20,
+            hipSpread: 2.00,
+            adsSpread: 0.08
+        }
+    },
+    {
+        id: 'l96a1',
+        name: 'L96A1',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 180,
+        rpm: 30,
+        headshotMult: 1.50,
+        effectiveRange: 300.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 2.10,
+            horizontalRecoil: 1.00,
+            hipSpread: 2.00,
+            adsSpread: 0.03,
+            moveSpeed: -3.00
+        }
+    },
+    {
+        id: 'svu',
+        name: 'Снайперская винтовка укороченная',
+        category: 'sniper',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 95,
+        rpm: 125,
+        headshotMult: 1.35,
+        effectiveRange: 96.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 2.00,
+            horizontalRecoil: 1.60,
+            hipSpread: 5.00,
+            adsSpread: 0.10
+        }
+    },
+    {
+        id: 'svds',
+        name: 'СВД-С',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 120,
+        rpm: 100,
+        headshotMult: 1.35,
+        effectiveRange: 114.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 2.75,
+            horizontalRecoil: 1.20,
+            hipSpread: 2.00,
+            adsSpread: 0.09
+        }
+    },
+    {
+        id: 'mk14_ebr',
+        name: 'Mk14 Enhanced Battle Rifle',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 52,
+        rpm: 525,
+        headshotMult: 1.35,
+        effectiveRange: 190.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 4.05,
+            horizontalRecoil: 1.38,
+            hipSpread: 1.10,
+            adsSpread: 0.08
+        }
+    },
+    {
+        id: 'sr25',
+        name: 'SR-25',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 85,
+        rpm: 215,
+        headshotMult: 1.50,
+        effectiveRange: 130.0,
+        fireModes: ['single'],
+        ammoTypes: ['308_winchester'],
+        stats: {
+            verticalRecoil: 2.52,
+            horizontalRecoil: 0.55,
+            hipSpread: 5.00,
+            adsSpread: 0.10
+        }
+    },
+    {
+        id: 'sks',
+        name: 'СКС',
+        category: 'sniper',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 45,
+        rpm: 460,
+        headshotMult: 1.35,
+        effectiveRange: 150.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x39_ps', '762x39_bp'],
+        stats: {
+            verticalRecoil: 2.62,
+            horizontalRecoil: 0.85,
+            hipSpread: 5.00,
+            adsSpread: 0.17
+        }
+    },
+    {
+        id: 'vssk_vykhlop',
+        name: 'ВССК «Выхлоп»',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 68,
+        rpm: 33,
+        headshotMult: 1.60,
+        effectiveRange: 310.0,
+        fireModes: ['single'],
+        ammoTypes: ['127x55'],
+        stats: {
+            verticalRecoil: 4.50,
+            horizontalRecoil: 4.25,
+            hipSpread: 5.00,
+            adsSpread: 0.04,
+            moveSpeed: -4.00,
+            armorPenetration: 90
+        }
+    },
+    {
+        id: 'svt40',
+        name: 'СВТ-40',
+        category: 'sniper',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 75,
+        rpm: 120,
+        headshotMult: 1.25,
+        effectiveRange: 87.0,
+        fireModes: ['single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 3.70,
+            horizontalRecoil: 2.65,
+            hipSpread: 2.20,
+            adsSpread: 0.16
+        }
+    },
+    {
+        id: 'avt40',
+        name: 'АВТ-40',
+        category: 'sniper',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 81,
+        rpm: 160,
+        headshotMult: 1.25,
+        effectiveRange: 162.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 0.91,
+            horizontalRecoil: 0.45,
+            hipSpread: 5.00,
+            adsSpread: 0.35
+        }
+    },
+    {
+        id: 'vintorez_m',
+        name: 'ВССМ «Винторез-М» 6П29М',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 36,
+        rpm: 800,
+        headshotMult: 1.35,
+        effectiveRange: 68.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.40,
+            horizontalRecoil: 0.22,
+            hipSpread: 5.00,
+            adsSpread: 0.10
+        }
+    },
+    {
+        id: 'vss_vintorez',
+        name: 'ВСС «Винторез»',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 36.5,
+        rpm: 750,
+        headshotMult: 1.35,
+        effectiveRange: 78.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.46,
+            horizontalRecoil: 0.31,
+            hipSpread: 5.00,
+            adsSpread: 0.12
+        }
+    },
+    {
+        id: 'ots03_svua',
+        name: 'ОЦ-03 СВУ-А',
+        category: 'sniper',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 65,
+        rpm: 221,
+        headshotMult: 1.35,
+        effectiveRange: 87.0,
+        fireModes: ['auto'],
+        ammoTypes: ['762x54_lps', '762x54_bs', '762x54_hp'],
+        stats: {
+            verticalRecoil: 1.50,
+            horizontalRecoil: 0.93,
+            hipSpread: 5.00,
+            adsSpread: 0.12
+        }
+    },
+    {
+        id: 'hk_g3sg1',
+        name: 'HK G3SG-1',
+        category: 'sniper',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 57,
+        rpm: 380,
+        headshotMult: 1.35,
+        effectiveRange: 200.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['762x51_m59', '762x51_m61'],
+        stats: {
+            verticalRecoil: 1.98,
+            horizontalRecoil: 0.45,
+            hipSpread: 2.50,
+            adsSpread: 0.15
+        }
+    },
+
+    // ===== ДРОБОВИКИ (НОВЫЕ) =====
+    {
+        id: 'toz34_obrez',
+        name: 'Обрез ТОЗ-34',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 77,
+        rpm: 1000,
+        headshotMult: 1.25,
+        effectiveRange: 72.0,
+        fireModes: ['single', 'auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.25,
+            horizontalRecoil: 4.75,
+            hipSpread: 1.18,
+            adsSpread: 1.18
+        }
+    },
+    {
+        id: 'toz34',
+        name: 'Охотничье ружьё ТОЗ-34',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 81,
+        rpm: 1000,
+        headshotMult: 1.25,
+        effectiveRange: 96.0,
+        fireModes: ['single', 'auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.14,
+            horizontalRecoil: 4.64,
+            hipSpread: 1.06,
+            adsSpread: 1.06
+        }
+    },
+    {
+        id: 'toz66_obrez',
+        name: 'Обрез ТОЗ-66',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 80,
+        rpm: 1000,
+        headshotMult: 1.25,
+        effectiveRange: 72.0,
+        fireModes: ['single', 'auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.00,
+            horizontalRecoil: 5.00,
+            hipSpread: 1.30,
+            adsSpread: 1.30
+        }
+    },
+    {
+        id: 'toz66',
+        name: 'Охотничье ружьё ТОЗ-66',
+        category: 'shotgun',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        damage: 84,
+        rpm: 1000,
+        headshotMult: 1.25,
+        effectiveRange: 89.0,
+        fireModes: ['single', 'auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 5.89,
+            horizontalRecoil: 4.89,
+            hipSpread: 1.11,
+            adsSpread: 1.11
+        }
+    },
+    {
+        id: 'saiga12c',
+        name: 'Сайга-12C',
+        category: 'shotgun',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 88,
+        rpm: 310,
+        headshotMult: 1.25,
+        effectiveRange: 94.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 5.54,
+            horizontalRecoil: 3.05,
+            hipSpread: 0.93,
+            adsSpread: 0.93
+        }
+    },
+    {
+        id: 'vepr12_molot',
+        name: 'Вепрь-12 «Молот»',
+        category: 'shotgun',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 80,
+        rpm: 335,
+        headshotMult: 1.25,
+        effectiveRange: 90.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 4.67,
+            horizontalRecoil: 2.70,
+            hipSpread: 0.88,
+            adsSpread: 0.88
+        }
+    },
+    {
+        id: 'toz66_obrez_sisyphus',
+        name: 'Обрез ТОЗ-66 Сизифа',
+        category: 'shotgun',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 80,
+        rpm: 800,
+        headshotMult: 1.25,
+        effectiveRange: 72.0,
+        fireModes: ['single', 'auto'],
+        ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'],
+        stats: {
+            verticalRecoil: 6.00,
+            horizontalRecoil: 5.00,
+            hipSpread: 1.30,
+            adsSpread: 1.30
+        }
     }
 ];
 
+// ============================================================
+// ТИПЫ ПАТРОНОВ ДЛЯ DPS-КАЛЬКУЛЯТОРА
+// ============================================================
+
 const AMMO_TYPES = [
-    { id: '762x51_m59', name: 'Патроны 7,62x51 мм M59', caliber: '7.62x51', type: 'standard', armorPenetration: 0, damageModifier: 1.0, description: 'Стандартные патроны' },
-    { id: '762x51_m61', name: 'Патроны 7,62x51 мм M61', caliber: '7.62x51', type: 'ap', armorPenetration: 18, damageModifier: 0.86, description: 'Бронебойные патроны' },
-    { id: '308_winchester', name: 'Патроны .308 Winchester', caliber: '.308', type: 'standard', armorPenetration: 0, damageModifier: 1.0, description: 'Стандартные снайперские патроны' },
-    { id: '12x70_shot', name: 'Патроны 12x70 Дробь', caliber: '12gauge', type: 'shot', armorPenetration: 0, damageModifier: 1.0, pellets: 8, description: 'Дробовые патроны, 8 дробин' },
-    { id: '12x70_buckshot', name: 'Патроны 12x70 Картечь', caliber: '12gauge', type: 'buckshot', armorPenetration: 5, damageModifier: 1.1, pellets: 9, description: 'Картечные патроны, 9 картечин' },
-    { id: '12x76_dart', name: 'Патроны 12x76 Дротик', caliber: '12gauge', type: 'dart', armorPenetration: 20, damageModifier: 0.8, pellets: 1, description: 'Подкалиберный дротик' },
-    { id: '12x76_slug', name: 'Патроны 12x76 Жакан', caliber: '12gauge', type: 'slug', armorPenetration: 10, damageModifier: 1.5, pellets: 1, description: 'Пулевой патрон' }
+    // ===== 9x18 мм =====
+    {
+        id: '9x18_p',
+        name: 'Патроны 9x18 мм П',
+        caliber: '9x18',
+        type: 'standard',
+        price: 2,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные пистолетные патроны'
+    },
+    {
+        id: '9x18_pp',
+        name: 'Патроны 9x18 мм +P+',
+        caliber: '9x18',
+        type: 'hp',
+        price: 3,
+        stats: {
+            damageModifier: 20,
+            armorPenetration: -5
+        },
+        pellets: null,
+        description: 'Усиленные патроны с повышенным уроном'
+    },
+    {
+        id: '9x18_bjt',
+        name: 'Патроны 9x18 мм БЖТ',
+        caliber: '9x18',
+        type: 'ap',
+        price: null,
+        stats: {
+            armorPenetration: 5
+        },
+        pellets: null,
+        description: 'Бронебойно-зажигательно-трассирующие патроны'
+    },
+
+    // ===== 9x19 мм =====
+    {
+        id: '9x19_ps',
+        name: 'Патроны 9x19 мм ПС',
+        caliber: '9x19',
+        type: 'standard',
+        price: 3,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные пистолетные патроны'
+    },
+    {
+        id: '9x19_dum',
+        name: 'Патроны 9x19 мм «Дум-дум»',
+        caliber: '9x19',
+        type: 'hp',
+        price: 4,
+        stats: {
+            damageModifier: 17,
+            armorPenetration: -5
+        },
+        pellets: null,
+        description: 'Экспансивные патроны с повышенным уроном'
+    },
+    {
+        id: '9x19_pp',
+        name: 'Патроны 9x19 мм ПП',
+        caliber: '9x19',
+        type: 'ap',
+        price: null,
+        stats: {
+            armorPenetration: 8
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+
+    // ===== 9x39 мм =====
+    {
+        id: '9x39_sp5',
+        name: 'Патроны 9x39 мм СП-5',
+        caliber: '9x39',
+        type: 'standard',
+        price: 7,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные дозвуковые патроны'
+    },
+    {
+        id: '9x39_sp6',
+        name: 'Патроны 9x39 мм СП-6',
+        caliber: '9x39',
+        type: 'ap',
+        price: null,
+        stats: {
+            rangeModifier: 25,
+            armorPenetration: 10
+        },
+        pellets: null,
+        description: 'Бронебойные дозвуковые патроны'
+    },
+
+    // ===== .45 ACP =====
+    {
+        id: '45acp',
+        name: 'Патроны .45 ACP',
+        caliber: '.45ACP',
+        type: 'standard',
+        price: 4,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные пистолетные патроны'
+    },
+    {
+        id: '45acp_hydra',
+        name: 'Патроны .45 ACP Hydroshock',
+        caliber: '.45ACP',
+        type: 'hp',
+        price: 5,
+        stats: {
+            damageModifier: 80,
+            armorPenetration: -25
+        },
+        pellets: null,
+        description: 'Экспансивные патроны с высоким уроном'
+    },
+    {
+        id: '45acp_super',
+        name: 'Патроны .45 ACP +P Super',
+        caliber: '.45ACP',
+        type: 'ap',
+        price: null,
+        stats: {
+            damageModifier: -3,
+            armorPenetration: 10
+        },
+        pellets: null,
+        description: 'Усиленные бронебойные патроны'
+    },
+
+    // ===== 5,45x39 мм =====
+    {
+        id: '545x39_ps',
+        name: 'Патроны 5,45x39 мм ПС',
+        caliber: '5.45x39',
+        type: 'standard',
+        price: 5,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные автоматные патроны'
+    },
+    {
+        id: '545x39_snp',
+        name: 'Патроны 5,45x39 мм СН-П',
+        caliber: '5.45x39',
+        type: 'hp',
+        price: 6,
+        stats: {
+            damageModifier: 50,
+            armorPenetration: -15
+        },
+        pellets: null,
+        description: 'Экспансивные патроны с повышенным уроном'
+    },
+    {
+        id: '545x39_bp',
+        name: 'Патроны 5,45x39 мм БП',
+        caliber: '5.45x39',
+        type: 'ap',
+        price: null,
+        stats: {
+            damageModifier: -5,
+            armorPenetration: 12
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+
+    // ===== 5,56x45 мм =====
+    {
+        id: '556x45_m855',
+        name: 'Патроны 5,56x45 мм M855',
+        caliber: '5.56x45',
+        type: 'standard',
+        price: 6,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные патроны НАТО'
+    },
+    {
+        id: '556x45_hp',
+        name: 'Патроны 5,56x45 мм БПЗ НР',
+        caliber: '5.56x45',
+        type: 'hp',
+        price: 7,
+        stats: {
+            damageModifier: 50,
+            armorPenetration: -15
+        },
+        pellets: null,
+        description: 'Экспансивные патроны с повышенным уроном'
+    },
+    {
+        id: '556x45_m995',
+        name: 'Патроны 5,56x45 мм M995',
+        caliber: '5.56x45',
+        type: 'ap',
+        price: null,
+        stats: {
+            damageModifier: -9,
+            armorPenetration: 14
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+
+    // ===== 7,62x39 мм =====
+    {
+        id: '762x39_ps',
+        name: 'Патроны 7,62x39 мм ПС',
+        caliber: '7.62x39',
+        type: 'standard',
+        price: 12,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные автоматные патроны'
+    },
+    {
+        id: '762x39_bp',
+        name: 'Патроны 7,62x39 мм БП',
+        caliber: '7.62x39',
+        type: 'ap',
+        price: null,
+        stats: {
+            damageModifier: -7,
+            armorPenetration: 13
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+
+    // ===== 7,62x51 мм =====
+    {
+        id: '762x51_m59',
+        name: 'Патроны 7,62x51 мм M59',
+        caliber: '7.62x51',
+        type: 'standard',
+        price: 13,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные винтовочные патроны'
+    },
+    {
+        id: '762x51_m61',
+        name: 'Патроны 7,62x51 мм М61',
+        caliber: '7.62x51',
+        type: 'ap',
+        price: null,
+        stats: {
+            damageModifier: -14,
+            armorPenetration: 18
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+
+    // ===== 7,62x54 мм =====
+    {
+        id: '762x54_lps',
+        name: 'Патроны 7,62x54 мм ЛПС',
+        caliber: '7.62x54',
+        type: 'standard',
+        price: 14,
+        stats: {},
+        pellets: null,
+        description: 'Стандартные винтовочные патроны'
+    },
+    {
+        id: '762x54_hp',
+        name: 'Патроны 7,62x54 мм HP',
+        caliber: '7.62x54',
+        type: 'hp',
+        price: 16,
+        stats: {
+            damageModifier: 50,
+            armorPenetration: -20
+        },
+        pellets: null,
+        description: 'Экспансивные патроны с повышенным уроном'
+    },
+    {
+        id: '762x54_pp',
+        name: 'Патроны 7,62x54 мм ПП',
+        caliber: '7.62x54',
+        type: 'ap',
+        price: 26,
+        stats: {
+            damageModifier: -15,
+            armorPenetration: 20
+        },
+        pellets: null,
+        description: 'Бронебойные патроны'
+    },
+    {
+        id: '762x54_bs',
+        name: 'Патроны 7,62x54 мм БС',
+        caliber: '7.62x54',
+        type: 'ap_plus',
+        price: null,
+        stats: {
+            armorPenetration: 10
+        },
+        pellets: null,
+        description: 'Бронебойно-зажигательные патроны'
+    },
+
+    // ===== .308 Winchester =====
+    {
+        id: '308_winchester',
+        name: 'Патроны .308 Winchester',
+        caliber: '.308',
+        type: 'standard',
+        price: 21,
+        stats: {
+            armorPenetration: 10
+        },
+        pellets: null,
+        description: 'Снайперские патроны'
+    },
+
+    // ===== 12,7x55 мм =====
+    {
+        id: '127x55',
+        name: 'Патроны 12,7x55 мм',
+        caliber: '12.7x55',
+        type: 'standard',
+        price: 19,
+        stats: {
+            armorPenetration: 10
+        },
+        pellets: null,
+        description: 'Крупнокалиберные патроны'
+    },
+
+    // ===== 12x70 / 12x76 (дробовики) =====
+    {
+        id: '12x70_shot',
+        name: 'Патроны 12x70 Дробь',
+        caliber: '12gauge',
+        type: 'shot',
+        price: 4,
+        stats: {
+            rangeModifier: -60,
+            damageModifier: -48,
+            armorPenetration: -25,
+            spreadModifier: 300
+        },
+        pellets: 8,
+        description: 'Дробовые патроны, 8 дробин'
+    },
+    {
+        id: '12x70_buckshot',
+        name: 'Патроны 12x70 Картечь',
+        caliber: '12gauge',
+        type: 'buckshot',
+        price: 5,
+        stats: {
+            rangeModifier: -10,
+            damageModifier: -60,
+            armorPenetration: -16,
+            spreadModifier: 200
+        },
+        pellets: 5,
+        description: 'Картечные патроны, 5 картечин'
+    },
+    {
+        id: '12x76_dart',
+        name: 'Патроны 12x76 Дротик',
+        caliber: '12gauge',
+        type: 'dart',
+        price: 6,
+        stats: {
+            damageModifier: -18,
+            armorPenetration: 20,
+            spreadModifier: -62
+        },
+        pellets: 1,
+        description: 'Подкалиберный дротик'
+    },
+    {
+        id: '12x76_slug',
+        name: 'Патроны 12x76 Жакан',
+        caliber: '12gauge',
+        type: 'slug',
+        price: 5,
+        stats: {
+            armorPenetration: -2,
+            spreadModifier: -38
+        },
+        pellets: 1,
+        description: 'Пулевой патрон'
+    },
+
+    // ===== Специальные =====
+    {
+        id: 'firemix',
+        name: 'Огнесмесь',
+        caliber: 'flamethrower',
+        type: 'incendiary',
+        price: 5,
+        stats: {
+            armorPenetration: -15,
+            spreadModifier: 300,
+            mutantDamageMultiplier: 2.0
+        },
+        pellets: 6,
+        description: 'Зажигательная смесь для огнемёта'
+    },
+    {
+        id: 'makeshift_batteries',
+        name: 'Кустарные батареи',
+        caliber: 'electric',
+        type: 'standard',
+        price: null,
+        stats: {
+            armorPenetration: -30
+        },
+        pellets: null,
+        description: 'Самодельные батареи для электрооружия'
+    },
+    {
+        id: 'accumulators',
+        name: 'Аккумуляторы',
+        caliber: 'electric',
+        type: 'enhanced',
+        price: null,
+        stats: {
+            rangeModifier: 20,
+            damageModifier: 10
+        },
+        pellets: null,
+        description: 'Качественные аккумуляторы для электрооружия'
+    }
 ];
+
+// ============================================================
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ПАТРОНОВ
+// ============================================================
+
+function getAmmoById(ammoId) {
+    return AMMO_TYPES.find(a => a.id === ammoId);
+}
+
+function getAmmoByCaliber(caliber) {
+    return AMMO_TYPES.filter(a => a.caliber === caliber);
+}
+
+function getAmmoForWeapon(weapon) {
+    if (!weapon.ammoTypes) return [];
+    return AMMO_TYPES.filter(a => weapon.ammoTypes.includes(a.id));
+}
+
+function calculateAmmoDamage(baseDamage, ammo) {
+    const modifier = ammo.stats?.damageModifier || 0;
+    return baseDamage * (1 + modifier / 100);
+}
+
+function calculateAmmoArmorPen(baseArmorPen, ammo) {
+    const modifier = ammo.stats?.armorPenetration || 0;
+    return baseArmorPen + modifier;
+}
+
+function calculateAmmoRange(baseRange, ammo) {
+    const modifier = ammo.stats?.rangeModifier || 0;
+    return baseRange * (1 + modifier / 100);
+}
+
+function calculateAmmoSpread(baseSpread, ammo) {
+    const modifier = ammo.stats?.spreadModifier || 0;
+    return baseSpread * (1 + modifier / 100);
+}
 
 const ATTACHMENTS = [
     { id: 'barska', name: 'Коллиматорный прицел Barska', type: 'scope', stats: { aimTime: -15.00 } },
