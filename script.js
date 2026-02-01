@@ -1,6 +1,7 @@
 const burger = document.getElementById('burger');
 const mobileMenu = document.getElementById('mobileMenu');
 const header = document.querySelector('.header');
+const scrollTopBtn = document.getElementById('scrollTop');
 
 if (burger && mobileMenu) {
     burger.addEventListener('click', () => {
@@ -11,14 +12,16 @@ if (burger && mobileMenu) {
 
 window.addEventListener('scroll', () => {
     header.style.background = window.scrollY > 50 
-        ? 'rgba(10, 10, 11, 0.95)' 
-        : 'rgba(10, 10, 11, 0.8)';
+        ? 'rgba(10, 10, 11, 0.98)' 
+        : 'rgba(10, 10, 11, 0.9)';
+    
+    if (scrollTopBtn) {
+        scrollTopBtn.classList.toggle('visible', window.scrollY > 300);
+    }
 });
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
+if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
-});
+}
