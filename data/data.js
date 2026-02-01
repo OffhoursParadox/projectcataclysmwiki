@@ -18,6 +18,20 @@ const ENHANCEMENT_PRESETS = {
             bulletResistance: [0, 1.8, 3.6, 5.4, 7.2, 12.6, 15.6, 18, 21, 24, 31.8, 36, 39.6, 43.8, 48, 60]
         }
     },
+    // Экзоскелеты (макс. +70)
+    exoskeleton: {
+        maxLevel: 15,
+        bonuses: {
+            bulletResistance: [0, 2.1, 4.2, 6.3, 8.4, 14.7, 18.2, 21, 24.5, 28, 37.1, 42, 46.2, 51.1, 56, 70]
+        }
+    },
+    // Сверхтяжёлая броня (макс. +160) — Панцирь
+    superHeavy: {
+        maxLevel: 15,
+        bonuses: {
+            bulletResistance: [0, 4.8, 9.6, 14.4, 19.2, 33.6, 41.6, 48, 56, 64, 84.8, 96, 105.6, 116.8, 128, 160]
+        }
+    },
     // Научная броня (макс. +15)
     scientific: {
         maxLevel: 15,
@@ -464,6 +478,71 @@ const ARMORS = [
 
     // ===== БОЕВЫЕ =====
     {
+        id: 'rat_cloak',
+        name: 'Плащ из крысиных шкур',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 100,
+            bioProtection: 20,
+            heatResistance: 14,
+            chemResistance: 14,
+            electroResistance: 14,
+            impactResistance: 12,
+            tearProtection: 16,
+            bulletResistance: 24,
+            bleeding: -1.00,
+            saturation: 0.60,
+            regeneration: 0.50,
+            moveSpeed: 5.00,
+            maxWeight: 7.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combat
+    },
+    {
+        id: 'brown_leather_cloak',
+        name: 'Коричневый кожаный плащ',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 20,
+            bioProtection: 20,
+            heatResistance: 12,
+            chemResistance: 8,
+            electroResistance: 32,
+            impactResistance: 48,
+            tearProtection: 92,
+            bulletResistance: 54,
+            maxWeight: 8.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combat
+    },
+    {
+        id: 'green_canvas_cloak',
+        name: 'Зелёный брезентовый плащ',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 20,
+            bioProtection: 20,
+            heatResistance: 12,
+            chemResistance: 8,
+            electroResistance: 32,
+            impactResistance: 86,
+            tearProtection: 112,
+            bulletResistance: 48,
+            bleeding: -0.25,
+            maxWeight: 12.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combat
+    },
+    {
         id: 'psz7',
         name: 'Армейский бронежилет ПСЗ-7',
         rarity: 'common',
@@ -579,6 +658,51 @@ const ARMORS = [
             tearProtection: 98,
             bulletResistance: 156,
             maxWeight: 24.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combat
+    },
+    {
+        id: 'raider',
+        name: 'Бронекостюм «Рейдер»',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 100,
+            bioProtection: 100,
+            heatResistance: 34,
+            chemResistance: 26,
+            electroResistance: 16,
+            impactResistance: 80,
+            tearProtection: 68,
+            bulletResistance: 126,
+            moveSpeed: 2.00,
+            maxWeight: 12.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combat
+    },
+    {
+        id: 'healing_berill',
+        name: 'Лечебный «Берилл-5М»',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        type: 'Боевые',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 100,
+            bioProtection: 100,
+            thermalProtection: 60,
+            heatResistance: 38,
+            chemResistance: 28,
+            electroResistance: 20,
+            impactResistance: 98,
+            tearProtection: 102,
+            bulletResistance: 158,
+            bleeding: -3.00,
+            regeneration: 1.00,
+            maxStamina: -5.00,
+            maxWeight: 12.00
         },
         enhancement: ENHANCEMENT_PRESETS.combat
     },
@@ -743,7 +867,7 @@ const ARMORS = [
             moveSpeed: -20.00,
             maxWeight: 60.00
         },
-        enhancement: ENHANCEMENT_PRESETS.combat
+        enhancement: ENHANCEMENT_PRESETS.superHeavy
     },
     {
         id: 'exoskeleton',
@@ -767,7 +891,7 @@ const ARMORS = [
             moveSpeed: -5.00,
             maxWeight: 60.00
         },
-        enhancement: ENHANCEMENT_PRESETS.combat
+        enhancement: ENHANCEMENT_PRESETS.exoskeleton
     },
     {
         id: 'modified_exo',
@@ -790,7 +914,7 @@ const ARMORS = [
             maxStamina: 10.00,
             maxWeight: 70.00
         },
-        enhancement: ENHANCEMENT_PRESETS.combat
+        enhancement: ENHANCEMENT_PRESETS.exoskeleton
     },
 
     // ===== КОМБИНИРОВАННЫЕ =====
@@ -1195,6 +1319,31 @@ const ARMORS = [
             bulletResistance: 272,
             bleeding: -1.00,
             maxWeight: 50.00
+        },
+        enhancement: ENHANCEMENT_PRESETS.combined
+    },
+    {
+        id: 'prorok',
+        name: 'Комбинезон «Пророк»',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        type: 'Комбинированные',
+        containerTypes: ['all'],
+        stats: {
+            radiationProtection: 300,
+            bioProtection: 200,
+            thermalProtection: 200,
+            psiProtection: 200,
+            heatResistance: 86,
+            chemResistance: 84,
+            electroResistance: 88,
+            impactResistance: 144,
+            tearProtection: 172,
+            bulletResistance: 232,
+            bleeding: -0.50,
+            regeneration: 1.00,
+            moveSpeed: 2.00,
+            maxWeight: 34.00
         },
         enhancement: ENHANCEMENT_PRESETS.combined
     },
