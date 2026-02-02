@@ -1,10 +1,9 @@
-// ============================================================
-// PROJECT CATACLYSM WIKI — ЛОГИКА DPS КАЛЬКУЛЯТОРА v2.0
-// ============================================================
+// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.1
 
-// ===== СОСТОЯНИЕ ПРИЛОЖЕНИЯ =====
 const state = {
     slots: [
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null },
         { weapon: null, ammo: null },
         { weapon: null, ammo: null },
         { weapon: null, ammo: null }
@@ -16,25 +15,27 @@ const state = {
     targetDistance: 0
 };
 
-// ===== ЦВЕТА ДЛЯ ГРАФИКОВ =====
-const SLOT_COLORS = ['#ef4444', '#3b82f6', '#22c55e'];
+const SLOT_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7'];
 
-// ===== ЭЛЕМЕНТЫ DOM =====
+const RARITY_ORDER = {
+    'legendary': 6,
+    'unique': 5,
+    'rare': 4,
+    'collection': 3,
+    'uncommon': 2,
+    'common': 1
+};
+
 const elements = {
-    // Слоты сравнения
     comparisonSlots: document.getElementById('comparisonSlots'),
     addSlotBtn: document.getElementById('addSlotBtn'),
     currentSlotIndicator: document.getElementById('currentSlotIndicator'),
-    
-    // Dropdown оружия
     weaponDropdown: document.getElementById('weaponDropdown'),
     weaponDropdownList: document.getElementById('weaponDropdownList'),
     weaponSearchInput: document.getElementById('weaponSearchInput'),
     weaponClearWrapper: document.getElementById('weaponClearWrapper'),
     weaponClearBtn: document.getElementById('weaponClearBtn'),
     weaponInfo: document.getElementById('weaponInfo'),
-    
-    // Dropdown патронов
     ammoDropdown: document.getElementById('ammoDropdown'),
     ammoDropdownList: document.getElementById('ammoDropdownList'),
     ammoStats: document.getElementById('ammoStats'),
@@ -42,22 +43,16 @@ const elements = {
     ammoArmorPen: document.getElementById('ammoArmorPen'),
     ammoPelletsContainer: document.getElementById('ammoPelletsContainer'),
     ammoPellets: document.getElementById('ammoPellets'),
-    
-    // Цель
     targetArmor: document.getElementById('targetArmor'),
     targetHP: document.getElementById('targetHP'),
     targetDistance: document.getElementById('targetDistance'),
     protectionPercent: document.getElementById('protectionPercent'),
     effectiveProtection: document.getElementById('effectiveProtection'),
-    
-    // График
     damageChart: document.getElementById('damageChart'),
     damageCanvas: document.getElementById('damageCanvas'),
     chartLegend: document.getElementById('chartLegend'),
     chartPlaceholder: document.getElementById('chartPlaceholder'),
     chartTooltip: document.getElementById('chartTooltip'),
-    
-    // Результаты
     dpsBody: document.getElementById('dpsBody'),
     dpsHead: document.getElementById('dpsHead'),
     baseDamage: document.getElementById('baseDamage'),
@@ -69,23 +64,16 @@ const elements = {
     ttkHead: document.getElementById('ttkHead'),
     shotsHead: document.getElementById('shotsHead'),
     resetBtn: document.getElementById('resetBtn'),
-    
-    // Сравнительная таблица
     comparisonTable: document.getElementById('comparisonTable'),
     comparisonTableContent: document.getElementById('comparisonTableContent'),
-    
-    // Характеристики
     weaponStats: document.getElementById('weaponStats'),
     weaponStatsGrid: document.getElementById('weaponStatsGrid'),
-    
-    // Навигация
     burger: document.getElementById('burger'),
     mobileMenu: document.getElementById('mobileMenu'),
     scrollTop: document.getElementById('scrollTop'),
     header: document.querySelector('.header')
 };
 
-// ===== ИНИЦИАЛИЗАЦИЯ =====
 document.addEventListener('DOMContentLoaded', () => {
     initComparisonSlots();
     initWeaponDropdown();
@@ -97,30 +85,38 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateResults();
 });
 
-// ===== СЛОТЫ СРАВНЕНИЯ =====
+function getRarityPriority(rarity) {
+    return RARITY_ORDER[rarity] || 0;
+}
+
+function sortWeaponsByRarity(weapons) {
+    return [...weapons].sort((a, b) => {
+        const priorityA = getRarityPriority(a.rarity);
+        const priorityB = getRarityPriority(b.rarity);
+        if (priorityB !== priorityA) return priorityB - priorityA;
+        return a.name.localeCompare(b.name, 'ru');
+    });
+}
+
 function initComparisonSlots() {
     elements.comparisonSlots.addEventListener('click', (e) => {
         const slot = e.target.closest('.comparison-slot');
         if (!slot) return;
         
-        // Кнопка удаления
         if (e.target.closest('.comparison-slot__remove')) {
+            e.stopPropagation();
             const slotIndex = parseInt(slot.dataset.slot);
-            clearSlot(slotIndex);
+            removeSlot(slotIndex);
             return;
         }
         
-        // Кнопка добавления
         if (slot.id === 'addSlotBtn') {
             addNewSlot();
             return;
         }
         
-        // Выбор слота
         const slotIndex = parseInt(slot.dataset.slot);
-        if (!isNaN(slotIndex)) {
-            selectSlot(slotIndex);
-        }
+        if (!isNaN(slotIndex)) selectSlot(slotIndex);
     });
     
     updateSlotsVisibility();
@@ -141,46 +137,63 @@ function selectSlot(index) {
 }
 
 function addNewSlot() {
-    if (state.visibleSlots >= 3) return;
-    
+    if (state.visibleSlots >= 5) return;
     state.visibleSlots++;
     updateSlotsVisibility();
     selectSlot(state.visibleSlots - 1);
 }
 
-function clearSlot(index) {
+function removeSlot(index) {
     state.slots[index] = { weapon: null, ammo: null };
     
-    document.getElementById(`slotName${index}`).textContent = 'Не выбрано';
-    document.getElementById(`slotDps${index}`).textContent = '0';
+    const nameEl = document.getElementById(`slotName${index}`);
+    const dpsEl = document.getElementById(`slotDps${index}`);
+    if (nameEl) nameEl.textContent = 'Не выбрано';
+    if (dpsEl) dpsEl.textContent = '0';
     
-    if (state.activeSlot === index) {
-        loadSlotData(index);
+    if (index < state.visibleSlots - 1) {
+        for (let i = index; i < state.visibleSlots - 1; i++) {
+            state.slots[i] = { ...state.slots[i + 1] };
+            updateSlotUI(i);
+        }
+        state.slots[state.visibleSlots - 1] = { weapon: null, ammo: null };
     }
     
+    if (state.visibleSlots > 1) {
+        state.visibleSlots--;
+        updateSlotsVisibility();
+    }
+    
+    if (state.activeSlot >= state.visibleSlots) {
+        state.activeSlot = state.visibleSlots - 1;
+    }
+    
+    selectSlot(state.activeSlot);
+    calculateResults();
+    updateChart();
+    updateComparisonTable();
+}
+
+function clearSlot(index) {
+    state.slots[index] = { weapon: null, ammo: null };
+    document.getElementById(`slotName${index}`).textContent = 'Не выбрано';
+    document.getElementById(`slotDps${index}`).textContent = '0';
+    if (state.activeSlot === index) loadSlotData(index);
     calculateResults();
     updateChart();
     updateComparisonTable();
 }
 
 function updateSlotsVisibility() {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
         const slot = document.querySelector(`.comparison-slot[data-slot="${i}"]`);
         if (slot) {
-            if (i < state.visibleSlots) {
-                slot.classList.remove('comparison-slot--hidden');
-            } else {
-                slot.classList.add('comparison-slot--hidden');
-            }
+            slot.classList.toggle('comparison-slot--hidden', i >= state.visibleSlots);
         }
     }
     
     if (elements.addSlotBtn) {
-        if (state.visibleSlots >= 3) {
-            elements.addSlotBtn.classList.add('comparison-slot--hidden');
-        } else {
-            elements.addSlotBtn.classList.remove('comparison-slot--hidden');
-        }
+        elements.addSlotBtn.classList.toggle('comparison-slot--hidden', state.visibleSlots >= 5);
     }
 }
 
@@ -192,7 +205,9 @@ function updateSlotIndicator() {
     const colorMap = {
         '#ef4444': '239,68,68',
         '#3b82f6': '59,130,246',
-        '#22c55e': '34,197,94'
+        '#22c55e': '34,197,94',
+        '#f59e0b': '245,158,11',
+        '#a855f7': '168,85,247'
     };
     
     const rgbColor = colorMap[SLOT_COLORS[state.activeSlot]] || '239,68,68';
@@ -202,7 +217,6 @@ function updateSlotIndicator() {
 
 function loadSlotData(index) {
     const slotData = state.slots[index];
-    
     const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
     
     if (slotData.weapon) {
@@ -211,10 +225,7 @@ function loadSlotData(index) {
         renderWeaponInfo();
         renderWeaponStats();
         updateAmmoOptions();
-        
-        if (slotData.ammo) {
-            selectAmmo(slotData.ammo.id, false);
-        }
+        if (slotData.ammo) selectAmmo(slotData.ammo.id, false);
     } else {
         valueElement.textContent = 'Выберите оружие...';
         valueElement.classList.remove('has-value');
@@ -252,29 +263,20 @@ function updateSlotUI(index) {
     }
 }
 
-// ===== DROPDOWN ОРУЖИЯ =====
 function initWeaponDropdown() {
     renderWeaponDropdownList();
-    
     elements.weaponDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleWeaponDropdown);
-    
     if (elements.weaponSearchInput) {
         elements.weaponSearchInput.addEventListener('input', handleWeaponSearch);
     }
-    
     elements.weaponDropdownList.addEventListener('click', handleWeaponListClick);
-    
     if (elements.weaponClearBtn) {
         elements.weaponClearBtn.addEventListener('click', clearWeaponSelection);
     }
     
     document.addEventListener('click', (e) => {
-        if (!elements.weaponDropdown.contains(e.target)) {
-            closeWeaponDropdown();
-        }
-        if (!elements.ammoDropdown.contains(e.target)) {
-            closeAmmoDropdown();
-        }
+        if (!elements.weaponDropdown.contains(e.target)) closeWeaponDropdown();
+        if (!elements.ammoDropdown.contains(e.target)) closeAmmoDropdown();
     });
     
     document.addEventListener('keydown', (e) => {
@@ -302,9 +304,7 @@ function handleWeaponSearch(e) {
 
 function handleWeaponListClick(e) {
     const item = e.target.closest('.custom-dropdown__item');
-    if (item?.dataset.weaponId) {
-        selectWeaponFromDropdown(item.dataset.weaponId);
-    }
+    if (item?.dataset.weaponId) selectWeaponFromDropdown(item.dataset.weaponId);
 }
 
 function renderWeaponDropdownList(searchQuery = '') {
@@ -312,10 +312,12 @@ function renderWeaponDropdownList(searchQuery = '') {
     
     WEAPONS.forEach(weapon => {
         if (searchQuery && !weapon.name.toLowerCase().includes(searchQuery)) return;
-        if (!groupedWeapons[weapon.category]) {
-            groupedWeapons[weapon.category] = [];
-        }
+        if (!groupedWeapons[weapon.category]) groupedWeapons[weapon.category] = [];
         groupedWeapons[weapon.category].push(weapon);
+    });
+    
+    Object.keys(groupedWeapons).forEach(category => {
+        groupedWeapons[category] = sortWeaponsByRarity(groupedWeapons[category]);
     });
     
     const currentWeapon = state.slots[state.activeSlot].weapon;
@@ -342,7 +344,6 @@ function renderWeaponDropdownList(searchQuery = '') {
         if (!weapons?.length) return;
         
         const catName = WEAPON_CATEGORIES[catId]?.name || catId;
-        
         html += `<div class="custom-dropdown__group custom-dropdown__group--${catId}">
             <div class="custom-dropdown__group-title">${catName} (${weapons.length})</div>`;
         
@@ -351,24 +352,23 @@ function renderWeaponDropdownList(searchQuery = '') {
             const rarityClass = weapon.rarity ? `custom-dropdown__item--${weapon.rarity}` : '';
             
             html += `
-            <div class="custom-dropdown__item ${rarityClass} ${isSelected ? 'selected' : ''}" 
-                data-weapon-id="${weapon.id}">
-                <div class="custom-dropdown__item-info">
-                    <div class="custom-dropdown__item-name">${weapon.name}</div>
-                    <div class="custom-dropdown__item-meta">
-                        <span class="custom-dropdown__item-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                            </svg>
-                            ${weapon.damage}
-                        </span>
-                        <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
+                <div class="custom-dropdown__item ${rarityClass} ${isSelected ? 'selected' : ''}" 
+                     data-weapon-id="${weapon.id}">
+                    <div class="custom-dropdown__item-info">
+                        <div class="custom-dropdown__item-name">${weapon.name}</div>
+                        <div class="custom-dropdown__item-meta">
+                            <span class="custom-dropdown__item-stat">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                ${weapon.damage}
+                            </span>
+                            <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
+                        </div>
                     </div>
-                </div>
-                ${weapon.rarityName ? `<span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>` : ''}
-            </div>`;
+                    ${weapon.rarityName ? `<span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>` : ''}
+                </div>`;
         });
-        
         html += '</div>';
     });
     
@@ -499,7 +499,6 @@ function renderWeaponStats() {
         if (statNames[key]) {
             const name = statNames[key];
             const unit = statUnits[key] || '';
-            
             let displayValue = value;
             let valueClass = '';
             
@@ -520,7 +519,6 @@ function renderWeaponStats() {
     elements.weaponStats.style.display = html ? 'block' : 'none';
 }
 
-// ===== DROPDOWN ПАТРОНОВ =====
 function initAmmoDropdown() {
     elements.ammoDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleAmmoDropdown);
     elements.ammoDropdownList.addEventListener('click', handleAmmoListClick);
@@ -529,7 +527,6 @@ function initAmmoDropdown() {
 function toggleAmmoDropdown() {
     const trigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
     if (trigger.disabled) return;
-    
     elements.ammoDropdown.classList.toggle('open');
 }
 
@@ -539,9 +536,7 @@ function closeAmmoDropdown() {
 
 function handleAmmoListClick(e) {
     const item = e.target.closest('.ammo-item');
-    if (item?.dataset.ammoId) {
-        selectAmmo(item.dataset.ammoId, true);
-    }
+    if (item?.dataset.ammoId) selectAmmo(item.dataset.ammoId, true);
 }
 
 function updateAmmoOptions() {
@@ -560,8 +555,8 @@ function updateAmmoOptions() {
     valueElement.textContent = 'Выберите патроны...';
     
     const availableAmmo = getAmmoForWeapon(weapon);
-    
     let html = '';
+    
     availableAmmo.forEach(ammo => {
         const stats = ammo.stats || {};
         const dmgMod = stats.damageModifier || 0;
@@ -602,11 +597,9 @@ function selectAmmo(ammoId, updateUI = true) {
     
     if (updateUI) {
         closeAmmoDropdown();
-        
         const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
         valueElement.textContent = ammo.name;
         valueElement.classList.add('has-value');
-        
         renderAmmoStats();
         updateAmmoOptions();
         updateSlotUI(state.activeSlot);
@@ -644,7 +637,6 @@ function renderAmmoStats() {
     elements.ammoStats.style.display = 'block';
 }
 
-// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
 function initEventListeners() {
     elements.targetArmor.addEventListener('input', (e) => {
         state.targetArmor = Math.max(0, parseFloat(e.target.value) || 0);
@@ -677,29 +669,15 @@ function initEventListeners() {
     }
 }
 
-// ===== РАСЧЁТЫ =====
 function calculateSlotDPS(slotIndex) {
     const slotData = state.slots[slotIndex];
     
     if (!slotData.weapon) {
         return {
-            dpsBody: 0,
-            dpsHead: 0,
-            baseDamage: 0,
-            damagePerPellet: 0,
-            pellets: 1,
-            totalShotDamage: 0,
-            distanceDamage: 0,
-            armorDamage: 0,
-            headshotDamage: 0,
-            ttkBody: Infinity,
-            ttkHead: Infinity,
-            shotsBody: 0,
-            shotsHead: 0,
-            protection: 0,
-            effectiveProtection: 0,
-            effectiveRange: 0,
-            maxRange: 0
+            dpsBody: 0, dpsHead: 0, baseDamage: 0, damagePerPellet: 0, pellets: 1,
+            totalShotDamage: 0, distanceDamage: 0, armorDamage: 0, headshotDamage: 0,
+            ttkBody: Infinity, ttkHead: Infinity, shotsBody: 0, shotsHead: 0,
+            protection: 0, effectiveProtection: 0, effectiveRange: 0, maxRange: 0
         };
     }
     
@@ -712,8 +690,6 @@ function calculateSlotDPS(slotIndex) {
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
-    
-    // Базовая бронебойность оружия
     let ap = weapon.stats?.armorPenetration || 0;
     
     if (ammo) {
@@ -721,36 +697,25 @@ function calculateSlotDPS(slotIndex) {
         ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
-        
         if (stats.rangeModifier) {
             effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
         }
     }
     
-    // Урон за одну дробину/пулю (как показывает игра)
     const damagePerPellet = damage * damageMod;
-    
-    // Общий урон выстрела (все дробины)
     const totalShotDamage = damagePerPellet * pellets;
-    
-    // Максимальная дальность (для дроби/картечи ~3.5x от эффективной)
     const maxRange = pellets > 1 ? effectiveRange * 3.5 : effectiveRange * 2;
     
-    // Урон на дистанции
     let distanceDamage = totalShotDamage;
     if (state.targetDistance > 0) {
         if (state.targetDistance > maxRange) {
-            // За пределами макс. дальности урон = 0
             distanceDamage = 0;
         } else if (state.targetDistance > effectiveRange) {
-            // Падение урона после эффективной дальности
             const falloffDistance = state.targetDistance - effectiveRange;
             const maxFalloffDistance = maxRange - effectiveRange;
             const falloffPercent = Math.min(falloffDistance / maxFalloffDistance, 1.0);
             
-            // Для дроби урон падает быстрее + меньше дробин попадает
             if (pellets > 1) {
-                // Уменьшаем эффективное количество попавших дробин
                 const effectivePellets = Math.max(1, Math.round(pellets * (1 - falloffPercent * 0.7)));
                 distanceDamage = damagePerPellet * effectivePellets * (1 - falloffPercent * 0.5);
             } else {
@@ -759,19 +724,15 @@ function calculateSlotDPS(slotIndex) {
         }
     }
     
-    // Расчёт защиты
     const protection = calculateArmorProtection(state.targetArmor);
     const effectiveProtection = Math.max(0, protection - ap);
     
-    // Урон после брони
     const armorDamage = distanceDamage * (1 - effectiveProtection / 100);
     const headshotDamage = (distanceDamage / (pellets > 1 ? pellets : 1)) * headshotMult * (1 - effectiveProtection / 100);
     
-    // DPS
     const dpsBody = calculateDPS(armorDamage, rpm);
     const dpsHead = calculateDPS(headshotDamage, rpm);
     
-    // TTK
     const ttkBody = calculateTTK(armorDamage, rpm, state.targetHP);
     const ttkHead = calculateTTK(headshotDamage, rpm, state.targetHP);
     
@@ -779,23 +740,9 @@ function calculateSlotDPS(slotIndex) {
     const shotsHead = headshotDamage > 0 ? Math.ceil(state.targetHP / headshotDamage) : Infinity;
     
     return {
-        dpsBody,
-        dpsHead,
-        baseDamage: damage,
-        damagePerPellet,
-        pellets,
-        totalShotDamage,
-        distanceDamage,
-        armorDamage,
-        headshotDamage,
-        ttkBody,
-        ttkHead,
-        shotsBody,
-        shotsHead,
-        protection,
-        effectiveProtection,
-        effectiveRange,
-        maxRange
+        dpsBody, dpsHead, baseDamage: damage, damagePerPellet, pellets, totalShotDamage,
+        distanceDamage, armorDamage, headshotDamage, ttkBody, ttkHead, shotsBody, shotsHead,
+        protection, effectiveProtection, effectiveRange, maxRange
     };
 }
 
@@ -805,9 +752,7 @@ function calculateResults() {
     elements.protectionPercent.textContent = (result.protection?.toFixed(2) || '0') + '%';
     elements.effectiveProtection.textContent = (result.effectiveProtection?.toFixed(2) || '0') + '%';
     
-    // Отображение урона
     if (result.pellets > 1) {
-        // Для дроби/картечи показываем урон за дробину и общий
         elements.baseDamage.textContent = `${result.damagePerPellet.toFixed(1)} ×${result.pellets}`;
     } else {
         elements.baseDamage.textContent = result.damagePerPellet.toFixed(1);
@@ -826,14 +771,10 @@ function calculateResults() {
     elements.ttkHead.textContent = result.ttkHead === Infinity ? '∞' : result.ttkHead.toFixed(2) + ' сек';
     elements.shotsHead.textContent = result.shotsHead === Infinity ? '∞' : result.shotsHead + ' выстр.';
     
-    // Обновляем DPS в слоте
     const slotDpsEl = document.getElementById(`slotDps${state.activeSlot}`);
-    if (slotDpsEl) {
-        slotDpsEl.textContent = Math.round(result.dpsBody);
-    }
+    if (slotDpsEl) slotDpsEl.textContent = Math.round(result.dpsBody);
 }
 
-// ===== ГРАФИК TTK =====
 function updateChart() {
     const hasWeapons = state.slots.some((slot, i) => i < state.visibleSlots && slot.weapon);
     
@@ -849,7 +790,6 @@ function updateChart() {
     const canvas = elements.damageCanvas;
     const ctx = canvas.getContext('2d');
     
-    // Устанавливаем размеры canvas
     const rect = canvas.parentElement.getBoundingClientRect();
     canvas.width = rect.width * 2;
     canvas.height = 280 * 2;
@@ -863,10 +803,8 @@ function updateChart() {
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
     
-    // Очистка
     ctx.clearRect(0, 0, width, height);
     
-    // Находим максимальную дистанцию и TTK
     let maxRange = 100;
     let maxTTK = 0;
     
@@ -879,23 +817,16 @@ function updateChart() {
                 effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
             }
             maxRange = Math.max(maxRange, effectiveRange * 2);
-            
-            // Рассчитываем максимальный TTK на максимальной дистанции
             const ttkAtMaxRange = calculateTTKAtDistance(i, maxRange);
-            if (ttkAtMaxRange !== Infinity) {
-                maxTTK = Math.max(maxTTK, ttkAtMaxRange);
-            }
+            if (ttkAtMaxRange !== Infinity) maxTTK = Math.max(maxTTK, ttkAtMaxRange);
         }
     }
     
-    // Добавляем запас сверху
     maxTTK = Math.max(maxTTK * 1.2, 2);
     
-    // Фон графика
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.fillRect(padding.left, padding.top, chartWidth, chartHeight);
     
-    // Зона "быстрого убийства" (НИЖНЯЯ часть графика = низкий TTK = лучше)
     const fastKillZone = chartHeight * 0.25;
     const gradient = ctx.createLinearGradient(0, height - padding.bottom - fastKillZone, 0, height - padding.bottom);
     gradient.addColorStop(0, 'rgba(34, 197, 94, 0)');
@@ -903,11 +834,9 @@ function updateChart() {
     ctx.fillStyle = gradient;
     ctx.fillRect(padding.left, height - padding.bottom - fastKillZone, chartWidth, fastKillZone);
     
-    // Рисуем сетку
     ctx.strokeStyle = 'rgba(255,255,255,0.08)';
     ctx.lineWidth = 1;
     
-    // Горизонтальные линии (TTK)
     const ttkSteps = 5;
     for (let i = 0; i <= ttkSteps; i++) {
         const y = padding.top + (chartHeight / ttkSteps) * i;
@@ -917,7 +846,6 @@ function updateChart() {
         ctx.stroke();
     }
     
-    // Вертикальные линии (дистанция)
     const distSteps = 5;
     for (let i = 0; i <= distSteps; i++) {
         const x = padding.left + (chartWidth / distSteps) * i;
@@ -927,35 +855,30 @@ function updateChart() {
         ctx.stroke();
     }
     
-    // Подписи осей
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '11px Roboto';
-    
-    // Ось X (дистанция)
     ctx.textAlign = 'center';
+    
     for (let i = 0; i <= distSteps; i++) {
         const x = padding.left + (chartWidth / distSteps) * i;
         const dist = Math.round((maxRange / distSteps) * i);
         ctx.fillText(dist + ' м', x, height - padding.bottom + 20);
     }
     
-    // Подпись оси X
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = '10px Roboto';
     ctx.fillText('ДИСТАНЦИЯ', padding.left + chartWidth / 2, height - 8);
     
-    // Ось Y (TTK) - 0 ВНИЗУ, максимум ВВЕРХУ
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '11px Roboto';
     ctx.textAlign = 'right';
+    
     for (let i = 0; i <= ttkSteps; i++) {
         const y = padding.top + (chartHeight / ttkSteps) * i;
-        // Инвертируем: вверху max, внизу 0
         const ttk = maxTTK - (maxTTK / ttkSteps) * i;
         ctx.fillText(ttk.toFixed(1) + 'с', padding.left - 8, y + 4);
     }
     
-    // Подпись оси Y
     ctx.save();
     ctx.translate(12, padding.top + chartHeight / 2);
     ctx.rotate(-Math.PI / 2);
@@ -965,7 +888,6 @@ function updateChart() {
     ctx.fillText('TTK (сек)', 0, 0);
     ctx.restore();
     
-    // Рисуем линии TTK для каждого слота
     const legendItems = [];
     
     for (let slotIndex = 0; slotIndex < state.visibleSlots; slotIndex++) {
@@ -981,7 +903,6 @@ function updateChart() {
             effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
         }
         
-        // Рисуем линию TTK
         ctx.strokeStyle = color;
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
@@ -994,11 +915,9 @@ function updateChart() {
         for (let i = 0; i <= points; i++) {
             const distance = (maxRange / points) * i;
             const ttk = calculateTTKAtDistance(slotIndex, distance);
-            
             if (ttk === Infinity || ttk > maxTTK) continue;
             
             const x = padding.left + (distance / maxRange) * chartWidth;
-            // ИСПРАВЛЕНО: низкий TTK = внизу графика (лучше)
             const y = height - padding.bottom - (ttk / maxTTK) * chartHeight;
             
             if (firstPoint) {
@@ -1008,10 +927,8 @@ function updateChart() {
                 ctx.lineTo(x, y);
             }
         }
-        
         ctx.stroke();
         
-        // Область под линией (полупрозрачная заливка)
         ctx.beginPath();
         firstPoint = true;
         let lastX = padding.left;
@@ -1019,7 +936,6 @@ function updateChart() {
         for (let i = 0; i <= points; i++) {
             const distance = (maxRange / points) * i;
             const ttk = calculateTTKAtDistance(slotIndex, distance);
-            
             if (ttk === Infinity || ttk > maxTTK) continue;
             
             const x = padding.left + (distance / maxRange) * chartWidth;
@@ -1037,11 +953,9 @@ function updateChart() {
         
         ctx.lineTo(lastX, height - padding.bottom);
         ctx.closePath();
-        
         ctx.fillStyle = hexToRgba(color, 0.1);
         ctx.fill();
         
-        // Отметка эффективной дистанции (вертикальная пунктирная линия)
         const effX = padding.left + (effectiveRange / maxRange) * chartWidth;
         if (effX < width - padding.right) {
             ctx.strokeStyle = color;
@@ -1053,33 +967,28 @@ function updateChart() {
             ctx.stroke();
             ctx.setLineDash([]);
             
-            // Подпись эффективной дистанции
             ctx.fillStyle = color;
             ctx.font = '9px Roboto';
             ctx.textAlign = 'center';
             ctx.fillText(`${Math.round(effectiveRange)}м`, effX, padding.top - 8);
         }
         
-        // Точка на текущей дистанции
         if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
             const ttk = calculateTTKAtDistance(slotIndex, state.targetDistance);
             if (ttk !== Infinity && ttk <= maxTTK) {
                 const pointX = padding.left + (state.targetDistance / maxRange) * chartWidth;
                 const pointY = height - padding.bottom - (ttk / maxTTK) * chartHeight;
                 
-                // Внешний круг (свечение)
                 ctx.beginPath();
                 ctx.arc(pointX, pointY, 8, 0, Math.PI * 2);
                 ctx.fillStyle = hexToRgba(color, 0.3);
                 ctx.fill();
                 
-                // Внутренний круг
                 ctx.beginPath();
                 ctx.arc(pointX, pointY, 5, 0, Math.PI * 2);
                 ctx.fillStyle = color;
                 ctx.fill();
                 
-                // Белая обводка
                 ctx.beginPath();
                 ctx.arc(pointX, pointY, 5, 0, Math.PI * 2);
                 ctx.strokeStyle = 'rgba(255,255,255,0.8)';
@@ -1095,7 +1004,6 @@ function updateChart() {
         });
     }
     
-    // Отметка текущей дистанции (общая вертикальная линия)
     if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
         const distX = padding.left + (state.targetDistance / maxRange) * chartWidth;
         ctx.strokeStyle = 'rgba(255,255,255,0.4)';
@@ -1108,22 +1016,18 @@ function updateChart() {
         ctx.setLineDash([]);
     }
     
-    // Подсказка "Лучше" ВНИЗУ (низкий TTK = быстрое убийство = лучше)
     ctx.fillStyle = 'rgba(34, 197, 94, 0.8)';
     ctx.font = 'bold 10px Roboto';
     ctx.textAlign = 'left';
     ctx.fillText('✓ ЛУЧШЕ', padding.left + 8, height - padding.bottom - 8);
     
-    // Подсказка "Хуже" ВВЕРХУ (высокий TTK = медленное убийство = хуже)
     ctx.fillStyle = 'rgba(248, 113, 113, 0.6)';
     ctx.textAlign = 'right';
     ctx.fillText('ХУЖЕ ↑', width - padding.right - 8, padding.top + 15);
     
-    // Обновляем легенду
     renderChartLegend(legendItems);
 }
 
-// Вспомогательная функция для расчёта TTK на определённой дистанции
 function calculateTTKAtDistance(slotIndex, distance) {
     const slotData = state.slots[slotIndex];
     if (!slotData.weapon) return Infinity;
@@ -1143,7 +1047,6 @@ function calculateTTKAtDistance(slotIndex, distance) {
         ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
-        
         if (stats.rangeModifier) {
             effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
         }
@@ -1153,7 +1056,6 @@ function calculateTTKAtDistance(slotIndex, distance) {
     const totalShotDamage = damagePerPellet * pellets;
     const maxRange = pellets > 1 ? effectiveRange * 3.5 : effectiveRange * 2;
     
-    // Урон на дистанции
     let shotDamage = totalShotDamage;
     
     if (distance > maxRange) {
@@ -1171,17 +1073,14 @@ function calculateTTKAtDistance(slotIndex, distance) {
         }
     }
     
-    // Урон после брони
     const protection = calculateArmorProtection(state.targetArmor);
     const effectiveProtection = Math.max(0, protection - ap);
     shotDamage = shotDamage * (1 - effectiveProtection / 100);
     
     if (shotDamage <= 0) return Infinity;
-    
     return calculateTTK(shotDamage, rpm, state.targetHP);
 }
 
-// Вспомогательная функция для расчёта урона на дистанции
 function calculateDamageAtDistance(slotIndex, distance) {
     const slotData = state.slots[slotIndex];
     if (!slotData.weapon) return 0;
@@ -1200,7 +1099,6 @@ function calculateDamageAtDistance(slotIndex, distance) {
         ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
-        
         if (stats.rangeModifier) {
             effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
         }
@@ -1234,7 +1132,6 @@ function calculateDamageAtDistance(slotIndex, distance) {
     return shotDamage;
 }
 
-// Конвертация HEX в RGBA
 function hexToRgba(hex, alpha) {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -1248,7 +1145,6 @@ function renderChartLegend(items) {
         return;
     }
     
-    // Сортируем по TTK (лучшие первые)
     items.sort((a, b) => {
         if (a.ttk === Infinity) return 1;
         if (b.ttk === Infinity) return -1;
@@ -1258,18 +1154,15 @@ function renderChartLegend(items) {
     elements.chartLegend.innerHTML = items.map((item, index) => {
         const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
         const rankClass = index === 0 && item.ttk !== Infinity ? 'chart-legend__item--best' : '';
-        
         return `
             <div class="chart-legend__item ${rankClass}">
                 <span class="chart-legend__color" style="background: ${item.color}"></span>
                 <span class="chart-legend__name">${item.name}</span>
                 <span class="chart-legend__ttk">${ttkText}</span>
-            </div>
-        `;
+            </div>`;
     }).join('');
 }
 
-// ===== ИНТЕРАКТИВНОСТЬ ГРАФИКА =====
 function initChartInteractivity() {
     if (!elements.damageCanvas) return;
     
@@ -1288,7 +1181,6 @@ function initChartInteractivity() {
             return;
         }
         
-        // Находим максимальную дистанцию
         let maxRange = 100;
         for (let i = 0; i < state.visibleSlots; i++) {
             const weapon = state.slots[i].weapon;
@@ -1303,8 +1195,6 @@ function initChartInteractivity() {
         }
         
         const distance = ((x - padding.left) / chartWidth) * maxRange;
-        
-        // Собираем данные для tooltip
         let tooltipItems = [];
         
         for (let i = 0; i < state.visibleSlots; i++) {
@@ -1323,7 +1213,6 @@ function initChartInteractivity() {
             });
         }
         
-        // Сортируем по TTK
         tooltipItems.sort((a, b) => {
             if (a.ttk === Infinity) return 1;
             if (b.ttk === Infinity) return -1;
@@ -1335,8 +1224,7 @@ function initChartInteractivity() {
                 <span class="chart-tooltip__distance">${Math.round(distance)} м</span>
                 <span class="chart-tooltip__label">дистанция</span>
             </div>
-            <div class="chart-tooltip__divider"></div>
-        `;
+            <div class="chart-tooltip__divider"></div>`;
         
         tooltipItems.forEach((item, index) => {
             const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
@@ -1357,14 +1245,9 @@ function initChartInteractivity() {
         elements.chartTooltip.innerHTML = tooltipContent;
         elements.chartTooltip.style.opacity = '1';
         
-        // Позиционирование tooltip
         let tooltipX = x + 15;
         let tooltipY = y - 10;
-        
-        // Проверяем выход за границы
-        if (tooltipX + 200 > rect.width) {
-            tooltipX = x - 200 - 15;
-        }
+        if (tooltipX + 200 > rect.width) tooltipX = x - 200 - 15;
         
         elements.chartTooltip.style.left = tooltipX + 'px';
         elements.chartTooltip.style.top = tooltipY + 'px';
@@ -1374,7 +1257,6 @@ function initChartInteractivity() {
         elements.chartTooltip.style.opacity = '0';
     });
     
-    // Клик по графику устанавливает дистанцию
     elements.damageCanvas.addEventListener('click', (e) => {
         const rect = elements.damageCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -1406,7 +1288,6 @@ function initChartInteractivity() {
     });
 }
 
-// ===== СРАВНИТЕЛЬНАЯ ТАБЛИЦА =====
 function updateComparisonTable() {
     const activeSlots = [];
     
@@ -1428,7 +1309,6 @@ function updateComparisonTable() {
     
     elements.comparisonTable.classList.add('visible');
     
-    // Находим лучшие значения для подсветки
     const bestDPS = Math.max(...activeSlots.map(s => s.result.dpsBody));
     const bestTTK = Math.min(...activeSlots.map(s => s.result.ttkBody === Infinity ? 999999 : s.result.ttkBody));
     const bestDamage = Math.max(...activeSlots.map(s => s.result.armorDamage));
@@ -1452,36 +1332,35 @@ function updateComparisonTable() {
         const isBestDPS = r.dpsBody === bestDPS;
         const isBestTTK = r.ttkBody === bestTTK && r.ttkBody !== Infinity;
         const isBestDamage = r.armorDamage === bestDamage;
-
-         const rarityHtml = slot.weapon.rarityName 
-        ? `<span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>` 
-        : '';
+        
+        const rarityHtml = slot.weapon.rarityName 
+            ? `<span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>` 
+            : '';
         
         html += `
-        <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
-            <td>
-                <div class="comparison-table__weapon">
-                    <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
-                    ${rarityHtml}
-                </div>
-            </td>
-            <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
-            <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
-            <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
-            <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
-            <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
-        </tr>`;
+            <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
+                <td>
+                    <div class="comparison-table__weapon">
+                        <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
+                        ${rarityHtml}
+                    </div>
+                </td>
+                <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
+                <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
+                <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
+                <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
+                <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
+            </tr>`;
     });
     
     html += '</tbody></table>';
-    
     elements.comparisonTableContent.innerHTML = html;
 }
 
-// ===== СБРОС =====
 function resetCalculator() {
-    // Сбрасываем состояние
     state.slots = [
+        { weapon: null, ammo: null },
+        { weapon: null, ammo: null },
         { weapon: null, ammo: null },
         { weapon: null, ammo: null },
         { weapon: null, ammo: null }
@@ -1492,35 +1371,29 @@ function resetCalculator() {
     state.targetHP = 100;
     state.targetDistance = 0;
     
-    // Сбрасываем UI слотов
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
         const nameEl = document.getElementById(`slotName${i}`);
         const dpsEl = document.getElementById(`slotDps${i}`);
         if (nameEl) nameEl.textContent = 'Не выбрано';
         if (dpsEl) dpsEl.textContent = '0';
     }
     
-    // Сбрасываем инпуты
     elements.targetArmor.value = 0;
     elements.targetHP.value = 100;
     elements.targetDistance.value = 0;
     
-    // Сбрасываем dropdown оружия
     const weaponValue = elements.weaponDropdown.querySelector('.custom-dropdown__value');
     weaponValue.textContent = 'Выберите оружие...';
     weaponValue.classList.remove('has-value');
     
-    // Сбрасываем dropdown патронов
     const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
     ammoTrigger.disabled = true;
     elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
     elements.ammoStats.style.display = 'none';
     
-    // Сбрасываем видимость
     updateSlotsVisibility();
     selectSlot(0);
     
-    // Скрываем таблицу и график
     elements.comparisonTable.classList.remove('visible');
     elements.damageChart.classList.remove('visible');
     elements.chartPlaceholder.classList.remove('hidden');
@@ -1531,7 +1404,6 @@ function resetCalculator() {
     calculateResults();
 }
 
-// ===== ЭФФЕКТЫ СКРОЛЛА =====
 function initScrollEffects() {
     window.addEventListener('scroll', () => {
         if (elements.header) {
@@ -1539,7 +1411,6 @@ function initScrollEffects() {
                 ? 'rgba(10, 10, 11, 0.98)' 
                 : 'rgba(10, 10, 11, 0.9)';
         }
-        
         if (elements.scrollTop) {
             elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
         }
