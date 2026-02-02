@@ -2333,8 +2333,6 @@ const WEAPONS = [
         id: 'skorpion_vz61',
         name: 'Skorpion vz.61',
         category: 'smg',
-        rarity: 'common',
-        rarityName: 'Распространённое',
         damage: 22,
         rpm: 800,
         headshotMult: 1.25,
@@ -2406,6 +2404,25 @@ const WEAPONS = [
         }
     },
     {
+        id: 'frezer',
+        name: 'Фрезер',
+        category: 'smg',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        damage: 29,
+        rpm: 825,
+        headshotMult: 1.25,
+        effectiveRange: 104.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 1.35,
+            horizontalRecoil: 0.49,
+            hipSpread: 0.42,
+            adsSpread: 0.42
+        }
+    },
+    {
         id: 'ump45',
         name: 'UMP45',
         category: 'smg',
@@ -2422,44 +2439,6 @@ const WEAPONS = [
             horizontalRecoil: 0.36,
             hipSpread: 0.31,
             adsSpread: 0.31
-        }
-    },
-    {
-        id: '9a91',
-        name: '9А-91',
-        category: 'smg',
-        rarity: 'collection',
-        rarityName: 'Коллекционное',
-        damage: 35,
-        rpm: 700,
-        headshotMult: 1.35,
-        effectiveRange: 76.0,
-        fireModes: ['auto', 'single'],
-        ammoTypes: ['9x39_sp5', '9x39_sp6'],
-        stats: {
-            verticalRecoil: 1.62,
-            horizontalRecoil: 0.60,
-            hipSpread: 0.64,
-            adsSpread: 0.19
-        }
-    },
-    {
-        id: 'sr3_vikhr',
-        name: 'СР-3 «Вихрь»',
-        category: 'smg',
-        rarity: 'rare',
-        rarityName: 'Раритетное',
-        damage: 33,
-        rpm: 800,
-        headshotMult: 1.35,
-        effectiveRange: 66.0,
-        fireModes: ['auto', 'single'],
-        ammoTypes: ['9x39_sp5', '9x39_sp6'],
-        stats: {
-            verticalRecoil: 1.77,
-            horizontalRecoil: 0.51,
-            hipSpread: 0.73,
-            adsSpread: 0.33
         }
     },
     {
@@ -2705,6 +2684,44 @@ const WEAPONS = [
             horizontalRecoil: 0.41,
             hipSpread: 0.74,
             adsSpread: 0.19
+        }
+    },
+    {
+        id: '9a91',
+        name: '9А-91',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 35,
+        rpm: 700,
+        headshotMult: 1.35,
+        effectiveRange: 76.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.62,
+            horizontalRecoil: 0.60,
+            hipSpread: 0.64,
+            adsSpread: 0.19
+        }
+    },
+    {
+        id: 'sr3_vikhr',
+        name: 'СР-3 «Вихрь»',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 33,
+        rpm: 800,
+        headshotMult: 1.35,
+        effectiveRange: 66.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 1.77,
+            horizontalRecoil: 0.51,
+            hipSpread: 0.73,
+            adsSpread: 0.33
         }
     },
     {
@@ -3365,6 +3382,26 @@ const WEAPONS = [
             moveSpeed: 2.00
         }
     },
+    {
+        id: 'aps-Kramora',
+        name: 'АПС Крамора',
+        category: 'pistol',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 32,
+        rpm: 750,
+        headshotMult: 1.75,
+        effectiveRange: 36.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'],
+        stats: {
+            verticalRecoil: 1.96,
+            horizontalRecoil: 0.82,
+            hipSpread: 0.48,
+            adsSpread: 0.48,
+            moveSpeed: 2.00
+        }
+    },
 
     // ===== ПУЛЕМЁТЫ =====
     {
@@ -3455,8 +3492,8 @@ const WEAPONS = [
         id: 'colt_1911',
         name: 'Colt 1911',
         category: 'pistol',
-        rarity: 'common',
-        rarityName: 'Распространённое',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
         damage: 39,
         rpm: 265,
         headshotMult: 2.50,
@@ -3475,8 +3512,8 @@ const WEAPONS = [
         id: 'gsh18',
         name: 'ГШ-18',
         category: 'pistol',
-        rarity: 'common',
-        rarityName: 'Распространённое',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
         damage: 35,
         rpm: 365,
         headshotMult: 2.00,
@@ -3495,8 +3532,28 @@ const WEAPONS = [
         id: 'sig_p220',
         name: 'SIG Sauer P220',
         category: 'pistol',
-        rarity: 'uncommon',
-        rarityName: 'Необычное',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 36,
+        rpm: 290,
+        headshotMult: 2.00,
+        effectiveRange: 54.0,
+        fireModes: ['single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 1.78,
+            horizontalRecoil: 1.25,
+            hipSpread: 0.40,
+            adsSpread: 0.40,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'alpine',
+        name: '«Альпиец»',
+        category: 'pistol',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
         damage: 36,
         rpm: 290,
         headshotMult: 2.00,
@@ -3515,8 +3572,8 @@ const WEAPONS = [
         id: 'desert_eagle',
         name: 'Desert Eagle Mark XIX',
         category: 'pistol',
-        rarity: 'rare',
-        rarityName: 'Раритетное',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
         damage: 52,
         rpm: 250,
         headshotMult: 2.50,
@@ -3532,11 +3589,49 @@ const WEAPONS = [
         }
     },
     {
+        id: 'black-hawk',
+        name: 'Черный ястреб',
+        category: 'pistol',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 50,
+        rpm: 267,
+        headshotMult: 2.50,
+        effectiveRange: 45.0,
+        fireModes: ['single'],
+        ammoTypes: ['9x39_sp5', '9x39_sp6'],
+        stats: {
+            verticalRecoil: 2.75,
+            horizontalRecoil: 2.20,
+            hipSpread: 0.46,
+            adsSpread: 0.46,
+            moveSpeed: 2.00
+        }
+    },
+    {
+        id: 'big-jackpot',
+        name: 'Большой куш',
+        category: 'pistol',
+        rarity: 'unique',
+        rarityName: 'Уникальное',
+        damage: 60,
+        rpm: 325,
+        headshotMult: 2.50,
+        effectiveRange: 69.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['45acp', '45acp_super', '45acp_hydra'],
+        stats: {
+            verticalRecoil: 2.30,
+            horizontalRecoil: 0.80,
+            hipSpread: 0.15,
+            adsSpread: 0.15,
+            moveSpeed: 2.00
+        }
+    },
+    {
         id: 'pm',
         name: 'Пистолет Макарова',
         category: 'pistol',
-        rarity: 'common',
-        rarityName: 'Распространённое',
         damage: 30,
         rpm: 250,
         headshotMult: 2.00,
@@ -3555,8 +3650,6 @@ const WEAPONS = [
         id: 'pb',
         name: 'Пистолет Бесшумный (ПБ)',
         category: 'pistol',
-        rarity: 'uncommon',
-        rarityName: 'Необычное',
         damage: 29,
         rpm: 250,
         headshotMult: 2.00,
@@ -3595,8 +3688,8 @@ const WEAPONS = [
         id: 'browning_hp',
         name: 'Browning Hi-Power',
         category: 'pistol',
-        rarity: 'uncommon',
-        rarityName: 'Необычное',
+        rarity: 'common',
+        rarityName: 'Распространённое',
         damage: 32,
         rpm: 310,
         headshotMult: 2.00,
@@ -3635,8 +3728,8 @@ const WEAPONS = [
         id: 'beretta_92fs',
         name: 'Beretta 92FS',
         category: 'pistol',
-        rarity: 'uncommon',
-        rarityName: 'Необычное',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
         damage: 33,
         rpm: 300,
         headshotMult: 2.00,
@@ -4331,7 +4424,7 @@ const AMMO_TYPES = [
         type: 'ap',
         price: null,
         stats: {
-            armorPenetration: 5
+            armorPenetration: 8
         },
         pellets: null,
         description: 'Бронебойно-зажигательно-трассирующие патроны'
