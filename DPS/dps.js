@@ -1,4 +1,4 @@
-// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.1
+// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.3
 
 const state = {
     slots: [
@@ -53,6 +53,7 @@ const elements = {
     chartLegend: document.getElementById('chartLegend'),
     chartPlaceholder: document.getElementById('chartPlaceholder'),
     chartTooltip: document.getElementById('chartTooltip'),
+    chartCursorLine: null, // Будет создан динамически
     dpsBody: document.getElementById('dpsBody'),
     dpsHead: document.getElementById('dpsHead'),
     baseDamage: document.getElementById('baseDamage'),
@@ -74,6 +75,11 @@ const elements = {
     header: document.querySelector('.header')
 };
 
+// Проверка на устройство с мышью (ПК)
+function isDesktop() {
+    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initComparisonSlots();
     initWeaponDropdown();
@@ -81,9 +87,22 @@ document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     initScrollEffects();
     initChartInteractivity();
+    createChartCursorLine();
     updateSlotIndicator();
     calculateResults();
 });
+
+// Создаём элемент курсорной линии для графика
+function createChartCursorLine() {
+    const container = document.querySelector('.damage-chart__container');
+    if (!container) return;
+    
+    const cursorLine = document.createElement('div');
+    cursorLine.className = 'chart-cursor-line';
+    cursorLine.id = 'chartCursorLine';
+    container.appendChild(cursorLine);
+    elements.chartCursorLine = cursorLine;
+}
 
 function getRarityPriority(rarity) {
     return RARITY_ORDER[rarity] || 0;
@@ -218,14 +237,20 @@ function updateSlotIndicator() {
 function loadSlotData(index) {
     const slotData = state.slots[index];
     const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
+    const ammoValueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
     
     if (slotData.weapon) {
         valueElement.textContent = slotData.weapon.name;
         valueElement.classList.add('has-value');
         renderWeaponInfo();
         renderWeaponStats();
-        updateAmmoOptions();
-        if (slotData.ammo) selectAmmo(slotData.ammo.id, false);
+        updateAmmoOptions(false);
+        
+        if (slotData.ammo) {
+            ammoValueElement.textContent = slotData.ammo.name;
+            ammoValueElement.classList.add('has-value');
+            renderAmmoStats();
+        }
     } else {
         valueElement.textContent = 'Выберите оружие...';
         valueElement.classList.remove('has-value');
@@ -237,7 +262,8 @@ function loadSlotData(index) {
         
         const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
         ammoTrigger.disabled = true;
-        elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
+        ammoValueElement.textContent = 'Сначала выберите оружие...';
+        ammoValueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         elements.weaponStats.style.display = 'none';
     }
@@ -290,7 +316,13 @@ function initWeaponDropdown() {
 function toggleWeaponDropdown() {
     elements.weaponDropdown.classList.toggle('open');
     if (elements.weaponDropdown.classList.contains('open') && elements.weaponSearchInput) {
-        elements.weaponSearchInput.focus();
+        // Фокус только на ПК (устройства с мышью), не на мобильных
+        if (isDesktop()) {
+            // Небольшая задержка для корректной работы анимации открытия
+            setTimeout(() => {
+                elements.weaponSearchInput.focus();
+            }, 50);
+        }
     }
 }
 
@@ -391,7 +423,7 @@ function selectWeaponFromDropdown(weaponId) {
     
     renderWeaponInfo();
     renderWeaponStats();
-    updateAmmoOptions();
+    updateAmmoOptions(true);
     updateSlotUI(state.activeSlot);
     calculateResults();
     updateChart();
@@ -407,6 +439,10 @@ function clearWeaponSelection() {
     valueElement.textContent = 'Выберите оружие...';
     valueElement.classList.remove('has-value');
     
+    const ammoValueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
+    ammoValueElement.textContent = 'Сначала выберите оружие...';
+    ammoValueElement.classList.remove('has-value');
+    
     closeWeaponDropdown();
     if (elements.weaponSearchInput) elements.weaponSearchInput.value = '';
     
@@ -414,7 +450,6 @@ function clearWeaponSelection() {
     
     const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
     ammoTrigger.disabled = true;
-    elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
     elements.ammoStats.style.display = 'none';
     elements.weaponStats.style.display = 'none';
     
@@ -539,7 +574,7 @@ function handleAmmoListClick(e) {
     if (item?.dataset.ammoId) selectAmmo(item.dataset.ammoId, true);
 }
 
-function updateAmmoOptions() {
+function updateAmmoOptions(autoSelectFirst = false) {
     const weapon = state.slots[state.activeSlot].weapon;
     const trigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
     const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
@@ -547,33 +582,41 @@ function updateAmmoOptions() {
     if (!weapon) {
         trigger.disabled = true;
         valueElement.textContent = 'Сначала выберите оружие...';
+        valueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         return;
     }
     
     trigger.disabled = false;
-    valueElement.textContent = 'Выберите патроны...';
     
     const availableAmmo = getAmmoForWeapon(weapon);
+    const currentAmmo = state.slots[state.activeSlot].ammo;
+    
     let html = '';
     
     availableAmmo.forEach(ammo => {
         const stats = ammo.stats || {};
         const dmgMod = stats.damageModifier || 0;
         const armorPen = stats.armorPenetration || 0;
+        const isSelected = currentAmmo?.id === ammo.id;
         
         const iconType = ammo.type === 'hp' ? 'hp' : 
                         (ammo.type === 'ap' || ammo.type === 'ap_plus') ? 'ap' : 
                         (ammo.pellets && ammo.pellets > 1) ? 'shot' : 'standard';
         
-        const iconEmoji = iconType === 'hp' ? '💥' : 
-                         iconType === 'ap' ? '🔷' : 
-                         iconType === 'shot' ? '🔴' : '⚪';
+        let iconHtml;
+        if (ammo.image) {
+            iconHtml = `<img src="${ammo.image}" alt="${ammo.name}" class="ammo-item__image">`;
+        } else {
+            const iconEmoji = iconType === 'hp' ? '💥' : 
+                             iconType === 'ap' ? '🔷' : 
+                             iconType === 'shot' ? '🔴' : '⚪';
+            iconHtml = iconEmoji;
+        }
         
         html += `
-            <div class="ammo-item ${state.slots[state.activeSlot].ammo?.id === ammo.id ? 'selected' : ''}" 
-                 data-ammo-id="${ammo.id}">
-                <div class="ammo-item__icon ammo-item__icon--${iconType}">${iconEmoji}</div>
+            <div class="ammo-item ${isSelected ? 'selected' : ''}" data-ammo-id="${ammo.id}">
+                <div class="ammo-item__icon ammo-item__icon--${iconType}">${iconHtml}</div>
                 <div class="ammo-item__info">
                     <div class="ammo-item__name">${ammo.name}</div>
                     <div class="ammo-item__desc">${ammo.description}</div>
@@ -587,6 +630,17 @@ function updateAmmoOptions() {
     });
     
     elements.ammoDropdownList.innerHTML = html;
+    
+    if (autoSelectFirst && availableAmmo.length > 0) {
+        selectAmmo(availableAmmo[0].id, true);
+    } else if (currentAmmo) {
+        valueElement.textContent = currentAmmo.name;
+        valueElement.classList.add('has-value');
+        renderAmmoStats();
+    } else {
+        valueElement.textContent = 'Выберите патроны...';
+        valueElement.classList.remove('has-value');
+    }
 }
 
 function selectAmmo(ammoId, updateUI = true) {
@@ -597,11 +651,17 @@ function selectAmmo(ammoId, updateUI = true) {
     
     if (updateUI) {
         closeAmmoDropdown();
+        
         const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
         valueElement.textContent = ammo.name;
         valueElement.classList.add('has-value');
+        
         renderAmmoStats();
-        updateAmmoOptions();
+        
+        elements.ammoDropdownList.querySelectorAll('.ammo-item').forEach(item => {
+            item.classList.toggle('selected', item.dataset.ammoId === ammoId);
+        });
+        
         updateSlotUI(state.activeSlot);
         calculateResults();
         updateChart();
@@ -823,6 +883,14 @@ function updateChart() {
     }
     
     maxTTK = Math.max(maxTTK * 1.2, 2);
+    
+    // Сохраняем параметры графика для использования в интерактивности
+    canvas.dataset.maxRange = maxRange;
+    canvas.dataset.maxTTK = maxTTK;
+    canvas.dataset.paddingLeft = padding.left;
+    canvas.dataset.paddingRight = padding.right;
+    canvas.dataset.paddingTop = padding.top;
+    canvas.dataset.paddingBottom = padding.bottom;
     
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.fillRect(padding.left, padding.top, chartWidth, chartHeight);
@@ -1166,33 +1234,38 @@ function renderChartLegend(items) {
 function initChartInteractivity() {
     if (!elements.damageCanvas) return;
     
+    const container = elements.damageCanvas.parentElement;
+    
     elements.damageCanvas.addEventListener('mousemove', (e) => {
         const hasWeapons = state.slots.some((slot, i) => i < state.visibleSlots && slot.weapon);
-        if (!hasWeapons) return;
+        if (!hasWeapons) {
+            hideCursorLine();
+            return;
+        }
         
         const rect = elements.damageCanvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        const padding = { left: 60, right: 20, top: 30, bottom: 50 };
+        
+        const padding = {
+            left: parseFloat(elements.damageCanvas.dataset.paddingLeft) || 60,
+            right: parseFloat(elements.damageCanvas.dataset.paddingRight) || 20,
+            top: parseFloat(elements.damageCanvas.dataset.paddingTop) || 30,
+            bottom: parseFloat(elements.damageCanvas.dataset.paddingBottom) || 50
+        };
+        
         const chartWidth = rect.width - padding.left - padding.right;
         
         if (x < padding.left || x > rect.width - padding.right) {
             elements.chartTooltip.style.opacity = '0';
+            hideCursorLine();
             return;
         }
         
-        let maxRange = 100;
-        for (let i = 0; i < state.visibleSlots; i++) {
-            const weapon = state.slots[i].weapon;
-            if (weapon) {
-                const ammo = state.slots[i].ammo;
-                let effectiveRange = weapon.effectiveRange;
-                if (ammo?.stats?.rangeModifier) {
-                    effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
-                }
-                maxRange = Math.max(maxRange, effectiveRange * 2);
-            }
-        }
+        // Обновляем позицию курсорной линии
+        updateCursorLine(x, padding);
+        
+        const maxRange = parseFloat(elements.damageCanvas.dataset.maxRange) || 100;
         
         const distance = ((x - padding.left) / chartWidth) * maxRange;
         let tooltipItems = [];
@@ -1245,16 +1318,13 @@ function initChartInteractivity() {
         elements.chartTooltip.innerHTML = tooltipContent;
         elements.chartTooltip.style.opacity = '1';
         
-        let tooltipX = x + 15;
-        let tooltipY = y - 10;
-        if (tooltipX + 200 > rect.width) tooltipX = x - 200 - 15;
-        
-        elements.chartTooltip.style.left = tooltipX + 'px';
-        elements.chartTooltip.style.top = tooltipY + 'px';
+        // Позиционирование tooltip с учётом границ контейнера и viewport
+        positionTooltip(e.clientX, e.clientY, container);
     });
     
     elements.damageCanvas.addEventListener('mouseleave', () => {
         elements.chartTooltip.style.opacity = '0';
+        hideCursorLine();
     });
     
     elements.damageCanvas.addEventListener('click', (e) => {
@@ -1286,6 +1356,50 @@ function initChartInteractivity() {
         updateChart();
         updateComparisonTable();
     });
+}
+
+function updateCursorLine(x, padding) {
+    if (!elements.chartCursorLine) return;
+    
+    elements.chartCursorLine.style.left = x + 'px';
+    elements.chartCursorLine.style.top = padding.top + 'px';
+    elements.chartCursorLine.style.height = `calc(100% - ${padding.top + padding.bottom}px)`;
+    elements.chartCursorLine.classList.add('visible');
+}
+
+function hideCursorLine() {
+    if (!elements.chartCursorLine) return;
+    elements.chartCursorLine.classList.remove('visible');
+}
+
+function positionTooltip(clientX, clientY, container) {
+    const tooltip = elements.chartTooltip;
+    const containerRect = container.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    
+    tooltip.style.position = 'fixed';
+    
+    let tooltipX = clientX + 15;
+    let tooltipY = clientY - 10;
+    
+    if (tooltipX + tooltipRect.width > window.innerWidth - 10) {
+        tooltipX = clientX - tooltipRect.width - 15;
+    }
+    
+    if (tooltipY + tooltipRect.height > window.innerHeight - 10) {
+        tooltipY = window.innerHeight - tooltipRect.height - 10;
+    }
+    
+    if (tooltipY < 10) {
+        tooltipY = 10;
+    }
+    
+    if (tooltipX < 10) {
+        tooltipX = 10;
+    }
+    
+    tooltip.style.left = tooltipX + 'px';
+    tooltip.style.top = tooltipY + 'px';
 }
 
 function updateComparisonTable() {
@@ -1386,9 +1500,12 @@ function resetCalculator() {
     weaponValue.textContent = 'Выберите оружие...';
     weaponValue.classList.remove('has-value');
     
+    const ammoValue = elements.ammoDropdown.querySelector('.custom-dropdown__value');
+    ammoValue.textContent = 'Сначала выберите оружие...';
+    ammoValue.classList.remove('has-value');
+    
     const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
     ammoTrigger.disabled = true;
-    elements.ammoDropdown.querySelector('.custom-dropdown__value').textContent = 'Сначала выберите оружие...';
     elements.ammoStats.style.display = 'none';
     
     updateSlotsVisibility();
