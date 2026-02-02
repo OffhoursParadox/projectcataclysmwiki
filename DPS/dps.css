@@ -2264,3 +2264,62 @@ body {
 .weapon-stat-row__value--negative {
     color: #ef4444;
 }
+
+/* Цвета слотов */
+.comparison-slot--red .comparison-slot__color { background: #ef4444; }
+.comparison-slot--blue .comparison-slot__color { background: #3b82f6; }
+.comparison-slot--green .comparison-slot__color { background: #22c55e; }
+.comparison-slot--orange .comparison-slot__color { background: #f59e0b; }
+.comparison-slot--purple .comparison-slot__color { background: #a855f7; }
+
+/* Кнопка удаления с цветом слота */
+.comparison-slot__remove {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.comparison-slot--red .comparison-slot__remove {
+    color: #ef4444;
+}
+.comparison-slot--red .comparison-slot__remove:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+.comparison-slot--blue .comparison-slot__remove {
+    color: #3b82f6;
+}
+.comparison-slot--blue .comparison-slot__remove:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.comparison-slot--green .comparison-slot__remove {
+    color: #22c55e;
+}
+.comparison-slot--green .comparison-slot__remove:hover {
+    background: rgba(34, 197, 94, 0.2);
+}
+
+.comparison-slot--orange .comparison-slot__remove {
+    color: #f59e0b;
+}
+.comparison-slot--orange .comparison-slot__remove:hover {
+    background: rgba(245, 158, 11, 0.2);
+}
+
+.comparison-slot--purple .comparison-slot__remove {
+    color: #a855f7;
+}
+.comparison-slot--purple .comparison-slot__remove:hover {
+    background: rgba(168, 85, 247, 0.2);
+}
