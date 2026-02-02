@@ -1214,3 +1214,102 @@ body {
         scroll-behavior: auto !important;
     }
 }
+
+.ttk-mode-toggle {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.ttk-mode-toggle__btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-family: var(--font-main);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.ttk-mode-toggle__btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.ttk-mode-toggle__btn:hover {
+    color: var(--color-text);
+    background: rgba(255,255,255,0.05);
+}
+
+.ttk-mode-toggle__btn--active {
+    color: var(--color-accent);
+    background: rgba(196,163,90,0.15);
+}
+
+.ttk-mode-toggle__btn--active:hover {
+    color: var(--color-accent);
+    background: rgba(196,163,90,0.2);
+}
+
+.ttk-mode-toggle__btn[data-mode="head"].ttk-mode-toggle__btn--active {
+    color: var(--color-headshot);
+    background: rgba(249,115,22,0.15);
+}
+
+.ttk-mode-toggle__btn[data-mode="head"].ttk-mode-toggle__btn--active:hover {
+    background: rgba(249,115,22,0.2);
+}
+
+@media (max-width: 768px) {
+    .ttk-mode-toggle {
+        padding: 3px;
+    }
+    
+    .ttk-mode-toggle__btn {
+        padding: 5px 8px;
+        font-size: 11px;
+    }
+    
+    .ttk-mode-toggle__btn svg {
+        width: 12px;
+        height: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .calc-card__header {
+        flex-wrap: wrap;
+    }
+    
+    .ttk-mode-toggle {
+        width: 100%;
+        margin-top: 10px;
+        justify-content: center;
+    }
+}
+
+.chart-tooltip__header--head {
+    background: rgba(249, 115, 22, 0.1);
+}
+
+.chart-legend__item--head.chart-legend__item--best {
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.chart-legend__item--head.chart-legend__item--best:hover {
+    background: rgba(249, 115, 22, 0.15);
+}
+
+.chart-legend__item--head.chart-legend__item--best .chart-legend__ttk {
+    color: var(--color-headshot);
+}
