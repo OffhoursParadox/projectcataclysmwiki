@@ -2993,6 +2993,44 @@ const WEAPONS = [
         }
     },
     {
+        id: 'fn2000_bezliky',
+        name: 'FN F2000 «Безликий»',
+        category: 'assault',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 32,
+        rpm: 825,
+        headshotMult: 1.25,
+        effectiveRange: 132.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['556x45_m855', '556x45_m995', '556x45_hp'],
+        stats: {
+            verticalRecoil: 1.23,
+            horizontalRecoil: 0.59,
+            hipSpread: 0.61,
+            adsSpread: 0.18
+        }
+    },
+    {
+        id: 'grom_545',
+        name: 'Гром 5.45',
+        category: 'assault',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        damage: 32,
+        rpm: 750,
+        headshotMult: 1.25,
+        effectiveRange: 121.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['545x39_ps', '545x39_bp', '545x39_snp'],
+        stats: {
+            verticalRecoil: 1.53,
+            horizontalRecoil: 0.90,
+            hipSpread: 0.69,
+            adsSpread: 0.18
+        }
+    },
+    {
         id: 'hk417',
         name: 'HK417',
         category: 'assault',
