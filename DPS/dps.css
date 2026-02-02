@@ -2256,3 +2256,11 @@ body {
     width: 14px;
     height: 14px;
 }
+
+.weapon-stat-row__value--positive {
+    color: #22c55e;
+}
+
+.weapon-stat-row__value--negative {
+    color: #ef4444;
+}
