@@ -1313,3 +1313,6 @@ body {
 .chart-legend__item--head.chart-legend__item--best .chart-legend__ttk {
     color: var(--color-headshot);
 }
+
+.custom-dropdown__group--special .custom-dropdown__group-title { color: #f97316; }
+.custom-dropdown__group--special .custom-dropdown__group-title::before { background: #f97316; }
