@@ -387,7 +387,7 @@ function renderWeaponDropdownList(searchQuery = '') {
     }
     
     let html = '';
-    const categoryOrder = ['assault', 'smg', 'pistol', 'shotgun', 'sniper', 'machinegun'];
+    const categoryOrder = ['assault', 'smg', 'pistol', 'shotgun', 'sniper', 'machinegun', 'special'];
     
     categoryOrder.forEach(catId => {
         const weapons = groupedWeapons[catId];
