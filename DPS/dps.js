@@ -686,6 +686,9 @@ function calculateSlotDPS(slotIndex) {
             dpsBody: 0,
             dpsHead: 0,
             baseDamage: 0,
+            damagePerPellet: 0,
+            pellets: 1,
+            totalShotDamage: 0,
             distanceDamage: 0,
             armorDamage: 0,
             headshotDamage: 0,
@@ -694,7 +697,9 @@ function calculateSlotDPS(slotIndex) {
             shotsBody: 0,
             shotsHead: 0,
             protection: 0,
-            effectiveProtection: 0
+            effectiveProtection: 0,
+            effectiveRange: 0,
+            maxRange: 0
         };
     }
     
@@ -707,7 +712,7 @@ function calculateSlotDPS(slotIndex) {
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
-
+    
     // Базовая бронебойность оружия
     let ap = weapon.stats?.armorPenetration || 0;
     
@@ -722,15 +727,36 @@ function calculateSlotDPS(slotIndex) {
         }
     }
     
-    // Базовый урон с модификатором патронов
-    const baseShotDamage = damage * damageMod * pellets;
+    // Урон за одну дробину/пулю (как показывает игра)
+    const damagePerPellet = damage * damageMod;
     
-    // Урон на дистанции (падение урона после эффективной дальности)
-    let distanceDamage = baseShotDamage;
-    if (state.targetDistance > effectiveRange) {
-        const falloffDistance = state.targetDistance - effectiveRange;
-        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
-        distanceDamage = baseShotDamage * (1 - falloffPercent);
+    // Общий урон выстрела (все дробины)
+    const totalShotDamage = damagePerPellet * pellets;
+    
+    // Максимальная дальность (для дроби/картечи ~3.5x от эффективной)
+    const maxRange = pellets > 1 ? effectiveRange * 3.5 : effectiveRange * 2;
+    
+    // Урон на дистанции
+    let distanceDamage = totalShotDamage;
+    if (state.targetDistance > 0) {
+        if (state.targetDistance > maxRange) {
+            // За пределами макс. дальности урон = 0
+            distanceDamage = 0;
+        } else if (state.targetDistance > effectiveRange) {
+            // Падение урона после эффективной дальности
+            const falloffDistance = state.targetDistance - effectiveRange;
+            const maxFalloffDistance = maxRange - effectiveRange;
+            const falloffPercent = Math.min(falloffDistance / maxFalloffDistance, 1.0);
+            
+            // Для дроби урон падает быстрее + меньше дробин попадает
+            if (pellets > 1) {
+                // Уменьшаем эффективное количество попавших дробин
+                const effectivePellets = Math.max(1, Math.round(pellets * (1 - falloffPercent * 0.7)));
+                distanceDamage = damagePerPellet * effectivePellets * (1 - falloffPercent * 0.5);
+            } else {
+                distanceDamage = totalShotDamage * (1 - falloffPercent * 0.7);
+            }
+        }
     }
     
     // Расчёт защиты
@@ -739,7 +765,7 @@ function calculateSlotDPS(slotIndex) {
     
     // Урон после брони
     const armorDamage = distanceDamage * (1 - effectiveProtection / 100);
-    const headshotDamage = distanceDamage * headshotMult * (1 - effectiveProtection / 100);
+    const headshotDamage = (distanceDamage / (pellets > 1 ? pellets : 1)) * headshotMult * (1 - effectiveProtection / 100);
     
     // DPS
     const dpsBody = calculateDPS(armorDamage, rpm);
@@ -755,7 +781,10 @@ function calculateSlotDPS(slotIndex) {
     return {
         dpsBody,
         dpsHead,
-        baseDamage: baseShotDamage,
+        baseDamage: damage,
+        damagePerPellet,
+        pellets,
+        totalShotDamage,
         distanceDamage,
         armorDamage,
         headshotDamage,
@@ -764,7 +793,9 @@ function calculateSlotDPS(slotIndex) {
         shotsBody,
         shotsHead,
         protection,
-        effectiveProtection
+        effectiveProtection,
+        effectiveRange,
+        maxRange
     };
 }
 
@@ -774,7 +805,14 @@ function calculateResults() {
     elements.protectionPercent.textContent = (result.protection?.toFixed(2) || '0') + '%';
     elements.effectiveProtection.textContent = (result.effectiveProtection?.toFixed(2) || '0') + '%';
     
-    elements.baseDamage.textContent = result.baseDamage.toFixed(1);
+    // Отображение урона
+    if (result.pellets > 1) {
+        // Для дроби/картечи показываем урон за дробину и общий
+        elements.baseDamage.textContent = `${result.damagePerPellet.toFixed(1)} ×${result.pellets}`;
+    } else {
+        elements.baseDamage.textContent = result.damagePerPellet.toFixed(1);
+    }
+    
     elements.distanceDamage.textContent = result.distanceDamage.toFixed(1);
     elements.armorDamage.textContent = result.armorDamage.toFixed(1);
     elements.headshotDamage.textContent = result.headshotDamage.toFixed(1);
@@ -1098,8 +1136,6 @@ function calculateTTKAtDistance(slotIndex, distance) {
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
-    
-    // Базовая бронебойность оружия
     let ap = weapon.stats?.armorPenetration || 0;
     
     if (ammo) {
@@ -1113,14 +1149,26 @@ function calculateTTKAtDistance(slotIndex, distance) {
         }
     }
     
-    // Базовый урон
-    let shotDamage = damage * damageMod * pellets;
+    const damagePerPellet = damage * damageMod;
+    const totalShotDamage = damagePerPellet * pellets;
+    const maxRange = pellets > 1 ? effectiveRange * 3.5 : effectiveRange * 2;
     
-    // Падение урона на дистанции
-    if (distance > effectiveRange) {
+    // Урон на дистанции
+    let shotDamage = totalShotDamage;
+    
+    if (distance > maxRange) {
+        return Infinity;
+    } else if (distance > effectiveRange) {
         const falloffDistance = distance - effectiveRange;
-        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
-        shotDamage = shotDamage * (1 - falloffPercent);
+        const maxFalloffDistance = maxRange - effectiveRange;
+        const falloffPercent = Math.min(falloffDistance / maxFalloffDistance, 1.0);
+        
+        if (pellets > 1) {
+            const effectivePellets = Math.max(1, Math.round(pellets * (1 - falloffPercent * 0.7)));
+            shotDamage = damagePerPellet * effectivePellets * (1 - falloffPercent * 0.5);
+        } else {
+            shotDamage = totalShotDamage * (1 - falloffPercent * 0.7);
+        }
     }
     
     // Урон после брони
@@ -1145,8 +1193,6 @@ function calculateDamageAtDistance(slotIndex, distance) {
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
-    
-    // Базовая бронебойность оружия
     let ap = weapon.stats?.armorPenetration || 0;
     
     if (ammo) {
@@ -1160,12 +1206,25 @@ function calculateDamageAtDistance(slotIndex, distance) {
         }
     }
     
-    let shotDamage = damage * damageMod * pellets;
+    const damagePerPellet = damage * damageMod;
+    const totalShotDamage = damagePerPellet * pellets;
+    const maxRange = pellets > 1 ? effectiveRange * 3.5 : effectiveRange * 2;
     
-    if (distance > effectiveRange) {
+    let shotDamage = totalShotDamage;
+    
+    if (distance > maxRange) {
+        return 0;
+    } else if (distance > effectiveRange) {
         const falloffDistance = distance - effectiveRange;
-        const falloffPercent = Math.min(falloffDistance / effectiveRange, 0.7);
-        shotDamage = shotDamage * (1 - falloffPercent);
+        const maxFalloffDistance = maxRange - effectiveRange;
+        const falloffPercent = Math.min(falloffDistance / maxFalloffDistance, 1.0);
+        
+        if (pellets > 1) {
+            const effectivePellets = Math.max(1, Math.round(pellets * (1 - falloffPercent * 0.7)));
+            shotDamage = damagePerPellet * effectivePellets * (1 - falloffPercent * 0.5);
+        } else {
+            shotDamage = totalShotDamage * (1 - falloffPercent * 0.7);
+        }
     }
     
     const protection = calculateArmorProtection(state.targetArmor);
