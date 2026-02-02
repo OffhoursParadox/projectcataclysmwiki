@@ -1,4 +1,4 @@
-// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.3
+// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.4
 
 const state = {
     slots: [
@@ -12,7 +12,8 @@ const state = {
     visibleSlots: 1,
     targetArmor: 0,
     targetHP: 100,
-    targetDistance: 0
+    targetDistance: 0,
+    ttkMode: 'body' // 'body' или 'head'
 };
 
 const SLOT_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7'];
@@ -53,7 +54,8 @@ const elements = {
     chartLegend: document.getElementById('chartLegend'),
     chartPlaceholder: document.getElementById('chartPlaceholder'),
     chartTooltip: document.getElementById('chartTooltip'),
-    chartCursorLine: null, // Будет создан динамически
+    chartCursorLine: null,
+    ttkModeToggle: document.getElementById('ttkModeToggle'),
     dpsBody: document.getElementById('dpsBody'),
     dpsHead: document.getElementById('dpsHead'),
     baseDamage: document.getElementById('baseDamage'),
@@ -75,7 +77,6 @@ const elements = {
     header: document.querySelector('.header')
 };
 
-// Проверка на устройство с мышью (ПК)
 function isDesktop() {
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 }
@@ -87,12 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     initScrollEffects();
     initChartInteractivity();
+    initTtkModeToggle();
     createChartCursorLine();
     updateSlotIndicator();
     calculateResults();
 });
 
-// Создаём элемент курсорной линии для графика
 function createChartCursorLine() {
     const container = document.querySelector('.damage-chart__container');
     if (!container) return;
@@ -102,6 +103,27 @@ function createChartCursorLine() {
     cursorLine.id = 'chartCursorLine';
     container.appendChild(cursorLine);
     elements.chartCursorLine = cursorLine;
+}
+
+function initTtkModeToggle() {
+    if (!elements.ttkModeToggle) return;
+    
+    elements.ttkModeToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.ttk-mode-toggle__btn');
+        if (!btn) return;
+        
+        const mode = btn.dataset.mode;
+        if (mode === state.ttkMode) return;
+        
+        state.ttkMode = mode;
+        
+        elements.ttkModeToggle.querySelectorAll('.ttk-mode-toggle__btn').forEach(b => {
+            b.classList.remove('ttk-mode-toggle__btn--active');
+        });
+        btn.classList.add('ttk-mode-toggle__btn--active');
+        
+        updateChart();
+    });
 }
 
 function getRarityPriority(rarity) {
@@ -316,9 +338,7 @@ function initWeaponDropdown() {
 function toggleWeaponDropdown() {
     elements.weaponDropdown.classList.toggle('open');
     if (elements.weaponDropdown.classList.contains('open') && elements.weaponSearchInput) {
-        // Фокус только на ПК (устройства с мышью), не на мобильных
         if (isDesktop()) {
-            // Небольшая задержка для корректной работы анимации открытия
             setTimeout(() => {
                 elements.weaponSearchInput.focus();
             }, 50);
@@ -868,6 +888,8 @@ function updateChart() {
     let maxRange = 100;
     let maxTTK = 0;
     
+    const isHeadMode = state.ttkMode === 'head';
+    
     for (let i = 0; i < state.visibleSlots; i++) {
         const weapon = state.slots[i].weapon;
         if (weapon) {
@@ -877,14 +899,13 @@ function updateChart() {
                 effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
             }
             maxRange = Math.max(maxRange, effectiveRange * 2);
-            const ttkAtMaxRange = calculateTTKAtDistance(i, maxRange);
+            const ttkAtMaxRange = calculateTTKAtDistance(i, maxRange, isHeadMode);
             if (ttkAtMaxRange !== Infinity) maxTTK = Math.max(maxTTK, ttkAtMaxRange);
         }
     }
     
     maxTTK = Math.max(maxTTK * 1.2, 2);
     
-    // Сохраняем параметры графика для использования в интерактивности
     canvas.dataset.maxRange = maxRange;
     canvas.dataset.maxTTK = maxTTK;
     canvas.dataset.paddingLeft = padding.left;
@@ -896,9 +917,10 @@ function updateChart() {
     ctx.fillRect(padding.left, padding.top, chartWidth, chartHeight);
     
     const fastKillZone = chartHeight * 0.25;
+    const zoneColor = isHeadMode ? '249, 115, 22' : '34, 197, 94';
     const gradient = ctx.createLinearGradient(0, height - padding.bottom - fastKillZone, 0, height - padding.bottom);
-    gradient.addColorStop(0, 'rgba(34, 197, 94, 0)');
-    gradient.addColorStop(1, 'rgba(34, 197, 94, 0.15)');
+    gradient.addColorStop(0, `rgba(${zoneColor}, 0)`);
+    gradient.addColorStop(1, `rgba(${zoneColor}, 0.15)`);
     ctx.fillStyle = gradient;
     ctx.fillRect(padding.left, height - padding.bottom - fastKillZone, chartWidth, fastKillZone);
     
@@ -953,7 +975,8 @@ function updateChart() {
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = '10px Roboto';
     ctx.textAlign = 'center';
-    ctx.fillText('TTK (сек)', 0, 0);
+    const ttkLabel = isHeadMode ? 'TTK ГОЛОВА (сек)' : 'TTK ТЕЛО (сек)';
+    ctx.fillText(ttkLabel, 0, 0);
     ctx.restore();
     
     const legendItems = [];
@@ -982,7 +1005,7 @@ function updateChart() {
         
         for (let i = 0; i <= points; i++) {
             const distance = (maxRange / points) * i;
-            const ttk = calculateTTKAtDistance(slotIndex, distance);
+            const ttk = calculateTTKAtDistance(slotIndex, distance, isHeadMode);
             if (ttk === Infinity || ttk > maxTTK) continue;
             
             const x = padding.left + (distance / maxRange) * chartWidth;
@@ -1003,7 +1026,7 @@ function updateChart() {
         
         for (let i = 0; i <= points; i++) {
             const distance = (maxRange / points) * i;
-            const ttk = calculateTTKAtDistance(slotIndex, distance);
+            const ttk = calculateTTKAtDistance(slotIndex, distance, isHeadMode);
             if (ttk === Infinity || ttk > maxTTK) continue;
             
             const x = padding.left + (distance / maxRange) * chartWidth;
@@ -1042,7 +1065,7 @@ function updateChart() {
         }
         
         if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
-            const ttk = calculateTTKAtDistance(slotIndex, state.targetDistance);
+            const ttk = calculateTTKAtDistance(slotIndex, state.targetDistance, isHeadMode);
             if (ttk !== Infinity && ttk <= maxTTK) {
                 const pointX = padding.left + (state.targetDistance / maxRange) * chartWidth;
                 const pointY = height - padding.bottom - (ttk / maxTTK) * chartHeight;
@@ -1068,7 +1091,7 @@ function updateChart() {
         legendItems.push({
             name: weapon.name,
             color: color,
-            ttk: calculateTTKAtDistance(slotIndex, state.targetDistance || 0)
+            ttk: calculateTTKAtDistance(slotIndex, state.targetDistance || 0, isHeadMode)
         });
     }
     
@@ -1084,7 +1107,8 @@ function updateChart() {
         ctx.setLineDash([]);
     }
     
-    ctx.fillStyle = 'rgba(34, 197, 94, 0.8)';
+    const betterColor = isHeadMode ? 'rgba(249, 115, 22, 0.8)' : 'rgba(34, 197, 94, 0.8)';
+    ctx.fillStyle = betterColor;
     ctx.font = 'bold 10px Roboto';
     ctx.textAlign = 'left';
     ctx.fillText('✓ ЛУЧШЕ', padding.left + 8, height - padding.bottom - 8);
@@ -1096,7 +1120,7 @@ function updateChart() {
     renderChartLegend(legendItems);
 }
 
-function calculateTTKAtDistance(slotIndex, distance) {
+function calculateTTKAtDistance(slotIndex, distance, isHeadshot = false) {
     const slotData = state.slots[slotIndex];
     if (!slotData.weapon) return Infinity;
     
@@ -1105,6 +1129,7 @@ function calculateTTKAtDistance(slotIndex, distance) {
     
     let damage = weapon.damage;
     let rpm = weapon.rpm;
+    let headshotMult = weapon.headshotMult;
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
@@ -1143,13 +1168,20 @@ function calculateTTKAtDistance(slotIndex, distance) {
     
     const protection = calculateArmorProtection(state.targetArmor);
     const effectiveProtection = Math.max(0, protection - ap);
+    
+    if (isHeadshot) {
+        // Для хедшота: урон одной пули * множитель хедшота
+        const singleBulletDamage = (shotDamage / (pellets > 1 ? pellets : 1));
+        shotDamage = singleBulletDamage * headshotMult;
+    }
+    
     shotDamage = shotDamage * (1 - effectiveProtection / 100);
     
     if (shotDamage <= 0) return Infinity;
     return calculateTTK(shotDamage, rpm, state.targetHP);
 }
 
-function calculateDamageAtDistance(slotIndex, distance) {
+function calculateDamageAtDistance(slotIndex, distance, isHeadshot = false) {
     const slotData = state.slots[slotIndex];
     if (!slotData.weapon) return 0;
     
@@ -1157,6 +1189,7 @@ function calculateDamageAtDistance(slotIndex, distance) {
     const ammo = slotData.ammo;
     
     let damage = weapon.damage;
+    let headshotMult = weapon.headshotMult;
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
@@ -1195,6 +1228,12 @@ function calculateDamageAtDistance(slotIndex, distance) {
     
     const protection = calculateArmorProtection(state.targetArmor);
     const effectiveProtection = Math.max(0, protection - ap);
+    
+    if (isHeadshot) {
+        const singleBulletDamage = (shotDamage / (pellets > 1 ? pellets : 1));
+        shotDamage = singleBulletDamage * headshotMult;
+    }
+    
     shotDamage = shotDamage * (1 - effectiveProtection / 100);
     
     return shotDamage;
@@ -1219,11 +1258,14 @@ function renderChartLegend(items) {
         return a.ttk - b.ttk;
     });
     
+    const isHeadMode = state.ttkMode === 'head';
+    
     elements.chartLegend.innerHTML = items.map((item, index) => {
         const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
         const rankClass = index === 0 && item.ttk !== Infinity ? 'chart-legend__item--best' : '';
+        const modeClass = isHeadMode ? 'chart-legend__item--head' : '';
         return `
-            <div class="chart-legend__item ${rankClass}">
+            <div class="chart-legend__item ${rankClass} ${modeClass}">
                 <span class="chart-legend__color" style="background: ${item.color}"></span>
                 <span class="chart-legend__name">${item.name}</span>
                 <span class="chart-legend__ttk">${ttkText}</span>
@@ -1262,10 +1304,10 @@ function initChartInteractivity() {
             return;
         }
         
-        // Обновляем позицию курсорной линии
         updateCursorLine(x, padding);
         
         const maxRange = parseFloat(elements.damageCanvas.dataset.maxRange) || 100;
+        const isHeadMode = state.ttkMode === 'head';
         
         const distance = ((x - padding.left) / chartWidth) * maxRange;
         let tooltipItems = [];
@@ -1274,8 +1316,8 @@ function initChartInteractivity() {
             const slotData = state.slots[i];
             if (!slotData.weapon) continue;
             
-            const ttk = calculateTTKAtDistance(i, distance);
-            const damageAtDist = calculateDamageAtDistance(i, distance);
+            const ttk = calculateTTKAtDistance(i, distance, isHeadMode);
+            const damageAtDist = calculateDamageAtDistance(i, distance, isHeadMode);
             const shotsNeeded = damageAtDist > 0 ? Math.ceil(state.targetHP / damageAtDist) : Infinity;
             
             tooltipItems.push({
@@ -1292,10 +1334,12 @@ function initChartInteractivity() {
             return a.ttk - b.ttk;
         });
         
+        const modeLabel = isHeadMode ? '🎯 ГОЛОВА' : '👤 ТЕЛО';
+        
         let tooltipContent = `
-            <div class="chart-tooltip__header">
+            <div class="chart-tooltip__header ${isHeadMode ? 'chart-tooltip__header--head' : ''}">
                 <span class="chart-tooltip__distance">${Math.round(distance)} м</span>
-                <span class="chart-tooltip__label">дистанция</span>
+                <span class="chart-tooltip__label">${modeLabel}</span>
             </div>
             <div class="chart-tooltip__divider"></div>`;
         
@@ -1318,7 +1362,6 @@ function initChartInteractivity() {
         elements.chartTooltip.innerHTML = tooltipContent;
         elements.chartTooltip.style.opacity = '1';
         
-        // Позиционирование tooltip с учётом границ контейнера и viewport
         positionTooltip(e.clientX, e.clientY, container);
     });
     
@@ -1374,7 +1417,6 @@ function hideCursorLine() {
 
 function positionTooltip(clientX, clientY, container) {
     const tooltip = elements.chartTooltip;
-    const containerRect = container.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
     
     tooltip.style.position = 'fixed';
@@ -1484,6 +1526,7 @@ function resetCalculator() {
     state.targetArmor = 0;
     state.targetHP = 100;
     state.targetDistance = 0;
+    state.ttkMode = 'body';
     
     for (let i = 0; i < 5; i++) {
         const nameEl = document.getElementById(`slotName${i}`);
@@ -1495,6 +1538,16 @@ function resetCalculator() {
     elements.targetArmor.value = 0;
     elements.targetHP.value = 100;
     elements.targetDistance.value = 0;
+    
+    // Сброс переключателя режима TTK
+    if (elements.ttkModeToggle) {
+        elements.ttkModeToggle.querySelectorAll('.ttk-mode-toggle__btn').forEach(btn => {
+            btn.classList.remove('ttk-mode-toggle__btn--active');
+            if (btn.dataset.mode === 'body') {
+                btn.classList.add('ttk-mode-toggle__btn--active');
+            }
+        });
+    }
     
     const weaponValue = elements.weaponDropdown.querySelector('.custom-dropdown__value');
     weaponValue.textContent = 'Выберите оружие...';
