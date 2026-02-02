@@ -2170,7 +2170,8 @@ const WEAPON_CATEGORIES = {
     shotgun: { id: 'shotgun', name: 'Дробовики', nameShort: 'Дробовики', icon: '💥' },
     smg: { id: 'smg', name: 'Пистолеты-пулемёты', nameShort: 'ПП', icon: '🔧' },
     pistol: { id: 'pistol', name: 'Пистолеты', nameShort: 'Пистолеты', icon: '🔫' },
-    machinegun: { id: 'machinegun', name: 'Пулемёты', nameShort: 'Пулемёты', icon: '⚙️' }
+    machinegun: { id: 'machinegun', name: 'Пулемёты', nameShort: 'Пулемёты', icon: '⚙️' },
+    special: { id: 'special', name: 'Специальное', nameShort: 'Спец', icon: '🔥' }
 };
 
 const WEAPONS = [
@@ -4450,6 +4451,26 @@ const WEAPONS = [
             horizontalRecoil: 5.00,
             hipSpread: 1.30,
             adsSpread: 1.30
+        }
+    },
+    // ===== СПЕЦИАЛЬНОЕ =====
+    {
+        id: 'flamethrower',
+        name: 'Огнемёт',
+        category: 'special',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        damage: 10,
+        rpm: 650,
+        headshotMult: 1.25,
+        effectiveRange: 15.0,
+        fireModes: ['auto', 'single'],
+        ammoTypes: ['firemix'],
+        stats: {
+            verticalRecoil: 0.40,
+            horizontalRecoil: 0.00,
+            hipSpread: 1.00,
+            adsSpread: 1.00
         }
     }
 ];
