@@ -348,24 +348,25 @@ function renderWeaponDropdownList(searchQuery = '') {
         
         weapons.forEach(weapon => {
             const isSelected = currentWeapon?.id === weapon.id;
+            const rarityClass = weapon.rarity ? `custom-dropdown__item--${weapon.rarity}` : '';
             
             html += `
-                <div class="custom-dropdown__item custom-dropdown__item--${weapon.rarity} ${isSelected ? 'selected' : ''}" 
-                     data-weapon-id="${weapon.id}">
-                    <div class="custom-dropdown__item-info">
-                        <div class="custom-dropdown__item-name">${weapon.name}</div>
-                        <div class="custom-dropdown__item-meta">
-                            <span class="custom-dropdown__item-stat">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                                </svg>
-                                ${weapon.damage}
-                            </span>
-                            <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
-                        </div>
+            <div class="custom-dropdown__item ${rarityClass} ${isSelected ? 'selected' : ''}" 
+                data-weapon-id="${weapon.id}">
+                <div class="custom-dropdown__item-info">
+                    <div class="custom-dropdown__item-name">${weapon.name}</div>
+                    <div class="custom-dropdown__item-meta">
+                        <span class="custom-dropdown__item-stat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                            </svg>
+                            ${weapon.damage}
+                        </span>
+                        <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
                     </div>
-                    <span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>
-                </div>`;
+                </div>
+                ${weapon.rarityName ? `<span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>` : ''}
+            </div>`;
         });
         
         html += '</div>';
@@ -435,12 +436,16 @@ function renderWeaponInfo() {
             </div>`;
         return;
     }
+
+    const rarityHtml = weapon.rarityName 
+        ? `<span class="weapon-details__rarity rarity--${weapon.rarity}">${weapon.rarityName}</span>` 
+        : '';
     
     elements.weaponInfo.innerHTML = `
         <div class="weapon-details">
             <div class="weapon-details__header">
                 <span class="weapon-details__name">${weapon.name}</span>
-                <span class="weapon-details__rarity rarity--${weapon.rarity}">${weapon.rarityName}</span>
+                ${rarityHtml}
             </div>
             <div class="weapon-details__stats">
                 <div class="weapon-details__stat">
@@ -479,25 +484,34 @@ function renderWeaponStats() {
         horizontalRecoil: 'Гориз. отдача',
         hipSpread: 'Разброс от бедра',
         adsSpread: 'Разброс в прицеле',
-        moveSpeed: 'Скорость бега'
+        moveSpeed: 'Скорость бега',
+        armorPenetration: 'Бронебойность'
     };
     
     const statUnits = {
         verticalRecoil: '°',
         horizontalRecoil: '°',
-        moveSpeed: '%'
+        moveSpeed: '%',
+        armorPenetration: '%'
     };
     
     Object.entries(stats).forEach(([key, value]) => {
         if (statNames[key]) {
             const name = statNames[key];
             const unit = statUnits[key] || '';
-            const displayValue = (value > 0 && key === 'moveSpeed') ? `+${value}` : value;
+            
+            let displayValue = value;
+            let valueClass = '';
+            
+            if (key === 'moveSpeed' || key === 'armorPenetration') {
+                displayValue = value > 0 ? `+${value}` : value;
+                valueClass = value > 0 ? 'weapon-stat-row__value--positive' : (value < 0 ? 'weapon-stat-row__value--negative' : '');
+            }
             
             html += `
                 <div class="weapon-stat-row">
                     <span class="weapon-stat-row__name">${name}</span>
-                    <span class="weapon-stat-row__value">${displayValue}${unit}</span>
+                    <span class="weapon-stat-row__value ${valueClass}">${displayValue}${unit}</span>
                 </div>`;
         }
     });
@@ -691,13 +705,15 @@ function calculateSlotDPS(slotIndex) {
     let rpm = weapon.rpm;
     let headshotMult = weapon.headshotMult;
     let effectiveRange = weapon.effectiveRange;
-    let ap = 0;
     let damageMod = 1.0;
     let pellets = 1;
+
+    // Базовая бронебойность оружия
+    let ap = weapon.stats?.armorPenetration || 0;
     
     if (ammo) {
         const stats = ammo.stats || {};
-        ap = stats.armorPenetration || 0;
+        ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
         
@@ -1080,13 +1096,15 @@ function calculateTTKAtDistance(slotIndex, distance) {
     let damage = weapon.damage;
     let rpm = weapon.rpm;
     let effectiveRange = weapon.effectiveRange;
-    let ap = 0;
     let damageMod = 1.0;
     let pellets = 1;
     
+    // Базовая бронебойность оружия
+    let ap = weapon.stats?.armorPenetration || 0;
+    
     if (ammo) {
         const stats = ammo.stats || {};
-        ap = stats.armorPenetration || 0;
+        ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
         
@@ -1127,13 +1145,15 @@ function calculateDamageAtDistance(slotIndex, distance) {
     let effectiveRange = weapon.effectiveRange;
     let damageMod = 1.0;
     let pellets = 1;
-    let ap = 0;
+    
+    // Базовая бронебойность оружия
+    let ap = weapon.stats?.armorPenetration || 0;
     
     if (ammo) {
         const stats = ammo.stats || {};
+        ap += stats.armorPenetration || 0;
         damageMod = 1 + ((stats.damageModifier || 0) / 100);
         pellets = ammo.pellets || 1;
-        ap = stats.armorPenetration || 0;
         
         if (stats.rangeModifier) {
             effectiveRange = effectiveRange * (1 + stats.rangeModifier / 100);
@@ -1373,21 +1393,25 @@ function updateComparisonTable() {
         const isBestDPS = r.dpsBody === bestDPS;
         const isBestTTK = r.ttkBody === bestTTK && r.ttkBody !== Infinity;
         const isBestDamage = r.armorDamage === bestDamage;
+
+         const rarityHtml = slot.weapon.rarityName 
+        ? `<span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>` 
+        : '';
         
         html += `
-            <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
-                <td>
-                    <div class="comparison-table__weapon">
-                        <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
-                        <span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>
-                    </div>
-                </td>
-                <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
-                <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
-                <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
-                <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
-                <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
-            </tr>`;
+        <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
+            <td>
+                <div class="comparison-table__weapon">
+                    <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
+                    ${rarityHtml}
+                </div>
+            </td>
+            <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
+            <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
+            <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
+            <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
+            <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
+        </tr>`;
     });
     
     html += '</tbody></table>';
