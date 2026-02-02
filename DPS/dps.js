@@ -1,5 +1,3 @@
-// PROJECT CATACLYSM WIKI — DPS КАЛЬКУЛЯТОР v2.4
-
 const state = {
     slots: [
         { weapon: null, ammo: null },
@@ -13,7 +11,7 @@ const state = {
     targetArmor: 0,
     targetHP: 100,
     targetDistance: 0,
-    ttkMode: 'body' // 'body' или 'head'
+    ttkMode: 'body'
 };
 
 const SLOT_COLORS = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#a855f7'];
@@ -1170,7 +1168,6 @@ function calculateTTKAtDistance(slotIndex, distance, isHeadshot = false) {
     const effectiveProtection = Math.max(0, protection - ap);
     
     if (isHeadshot) {
-        // Для хедшота: урон одной пули * множитель хедшота
         const singleBulletDamage = (shotDamage / (pellets > 1 ? pellets : 1));
         shotDamage = singleBulletDamage * headshotMult;
     }
