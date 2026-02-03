@@ -6,9 +6,10 @@ const MAP_CONFIG = {
     width: 11264,
     height: 16896,
     tileSize: 256,
-    minZoom: 4,  // Уровни 4-7 (+ 8 после генерации)
-    maxZoom: 7,  // Поменяй на 8 после генерации нового уровня
-    defaultZoom: 5
+    minZoom: 4,
+    maxZoom: 8,      // Теперь можно ставить 8!
+    defaultZoom: 5,
+    nativeZoom: 7    // Базовый уровень - для которого указаны width/height
 };
 
 // ============================================================
@@ -75,8 +76,8 @@ function initMap() {
         attributionControl: false
     });
 
-    const southWest = map.unproject([0, MAP_CONFIG.height], MAP_CONFIG.maxZoom);
-    const northEast = map.unproject([MAP_CONFIG.width, 0], MAP_CONFIG.maxZoom);
+    const southWest = map.unproject([0, MAP_CONFIG.height], MAP_CONFIG.nativeZoom);
+    const northEast = map.unproject([MAP_CONFIG.width, 0], MAP_CONFIG.nativeZoom);
     const bounds = new L.LatLngBounds(southWest, northEast);
 
     L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
@@ -88,12 +89,12 @@ function initMap() {
         errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
     }).addTo(map);
 
-    const center = map.unproject([MAP_CONFIG.width / 2, MAP_CONFIG.height / 2], MAP_CONFIG.maxZoom);
+    const center = map.unproject([MAP_CONFIG.width / 2, MAP_CONFIG.height / 2], MAP_CONFIG.nativeZoom);
     map.setView(center, MAP_CONFIG.defaultZoom);
     map.setMaxBounds(bounds.pad(0.1));
 
     map.on('mousemove', (e) => {
-        const point = map.project(e.latlng, MAP_CONFIG.maxZoom);
+        const point = map.project(e.latlng, MAP_CONFIG.nativeZoom);
         document.getElementById('coordX').textContent = Math.round(point.x);
         document.getElementById('coordY').textContent = Math.round(point.y);
     });
@@ -111,7 +112,7 @@ function initMarkers() {
         MARKERS_DATA[type].forEach(markerData => {
             const pixelY = markerData.coords[0];
             const pixelX = markerData.coords[1];
-            const latLng = map.unproject([pixelX, pixelY], MAP_CONFIG.maxZoom);
+            const latLng = map.unproject([pixelX, pixelY], MAP_CONFIG.nativeZoom);
             
             const icon = MARKER_ICONS[type];
             if (!icon) return;
