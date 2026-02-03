@@ -598,3 +598,17 @@ body {
     .scroll-top { bottom: 20px; right: 20px; width: 44px; height: 44px; }
     .footer__content { flex-direction: column; text-align: center; }
 }
+
+.quick-card--featured {
+    background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(18,18,26,0.9) 100%);
+    border-color: rgba(59,130,246,0.3);
+}
+
+.quick-card--featured:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 8px 32px rgba(59,130,246,0.2);
+}
+
+.quick-card--featured .quick-card__arrow {
+    color: #3b82f6;
+}
