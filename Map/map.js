@@ -141,10 +141,36 @@ function updateMarkerCounts() {
 
 function initSidebar() {
     const sidebar = document.getElementById('sidebar');
-    document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
+    const toggle = document.getElementById('sidebarToggle');
+    
+    if (!sidebar || !toggle) return;
+    
+    const isMobile = () => window.innerWidth <= 768;
+    
+    toggle.addEventListener('click', () => {
+        if (isMobile()) {
+            sidebar.classList.toggle('open');
+        } else {
+            sidebar.classList.toggle('collapsed');
+        }
         setTimeout(() => map.invalidateSize(), 300);
     });
+    
+    document.getElementById('map')?.addEventListener('click', () => {
+        if (isMobile() && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            setTimeout(() => map.invalidateSize(), 300);
+        }
+    });
+    
+    window.addEventListener('resize', () => {
+        if (isMobile()) {
+            sidebar.classList.remove('collapsed');
+        } else {
+            sidebar.classList.remove('open');
+        }
+    });
+    
     document.getElementById('resetFilters')?.addEventListener('click', () => {
         document.querySelectorAll('.filter-checkbox').forEach(cb => {
             cb.checked = false;
