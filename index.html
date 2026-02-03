@@ -28,25 +28,25 @@
                     </svg>
                     Главная
                 </span>
-                <span class="nav-link nav-link--disabled">
+                <a href="Map/map.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
                     </svg>
                     Карта
-                </span>
-                <a href="Table/table.html" class="nav-link nav-link--active">
+                </a>
+                <a href="Table/table.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                     Артефакты
                 </a>
-                <a href="Calculator/calculator.html" class="nav-link nav-link--active">
+                <a href="Calculator/calculator.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>
                     </svg>
                     Калькулятор
                 </a>
-                <a href="DPS/dps.html" class="nav-link nav-link--active">
+                <a href="DPS/dps.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
@@ -61,7 +61,7 @@
     <div class="mobile-menu" id="mobileMenu">
         <nav class="mobile-menu__nav">
             <span class="mobile-menu__link mobile-menu__link--current">Главная</span>
-            <span class="mobile-menu__link mobile-menu__link--disabled">Интерактивная карта</span>
+            <a href="Map/map.html" class="mobile-menu__link">Интерактивная карта</a>
             <a href="Table/table.html" class="mobile-menu__link">Таблица артефактов</a>
             <a href="Calculator/calculator.html" class="mobile-menu__link">Калькулятор сборок</a>
             <a href="DPS/dps.html" class="mobile-menu__link">Калькулятор DPS</a>
@@ -127,7 +127,7 @@
                         </svg>
                     </a>
 
-                    <div class="quick-card quick-card--disabled">
+                    <a href="Map/map.html" class="quick-card quick-card--featured">
                         <div class="quick-card__icon quick-card__icon--map">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
@@ -137,8 +137,10 @@
                             <h3 class="quick-card__title">Интерактивная карта</h3>
                             <p class="quick-card__desc">Все локации и точки интереса</p>
                         </div>
-                        <span class="quick-card__status">Скоро</span>
-                    </div>
+                        <svg class="quick-card__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </section>
@@ -218,6 +220,14 @@
                         </div>
                         <div class="updates-block__content">
                             <div class="update-entry">
+                                <span class="update-entry__date">3 февраля 2026</span>
+                                <ul class="update-entry__list">
+                                    <li>Добавлена интерактивная карта</li>
+                                    <li>Отмечены ящики, мутанты, торговцы и НПС</li>
+                                    <li>Реализована система фильтров</li>
+                                </ul>
+                            </div>
+                            <div class="update-entry">
                                 <span class="update-entry__date">2 февраля 2026</span>
                                 <ul class="update-entry__list">
                                     <li>Полностью обновлён UX калькулятора DPS</li>
@@ -273,7 +283,7 @@
                     </div>
                     <div class="about-card__content">
                         <h3 class="about-card__title">О проекте</h3>
-                        <p class="about-card__text"><strong>Project Cataclysm Wiki</strong> — неофициальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, справочные данные. В будущем появятся разделы с квестами и интерактивная карта.</p>
+                        <p class="about-card__text"><strong>Project Cataclysm Wiki</strong> — неофициальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, интерактивная карта и справочные данные.</p>
                     </div>
                 </div>
             </div>
