@@ -40,6 +40,11 @@ const translations = {
 
         // Обновления
         "updates.title": "Обновления",
+        "updates.date0": "5 февраля 2026",
+        "updates.update0_1": "Весь сайт был переведён на английский язык",
+        "updates.update0_2": "Добавлена кнопка переключения языка",
+        "updates.date1": "3 февраля 2026",
+        "updates.title": "Обновления",
         "updates.date1": "3 февраля 2026",
         "updates.update1_1": "Добавлена интерактивная карта",
         "updates.update1_2": "Отмечены ящики, мутанты, торговцы и НПС",
@@ -582,6 +587,11 @@ const translations = {
         "rf.crater": "Frost Hollow",
 
         // Обновления
+        "updates.title": "Updates",
+        "updates.date0": "February 5, 2026",
+        "updates.update0_1": "The entire website has been translated to English",
+        "updates.update0_2": "Added language switch button",
+        "updates.date1": "February 3, 2026",
         "updates.title": "Updates",
         "updates.date1": "February 3, 2026",
         "updates.update1_1": "Added interactive map",
