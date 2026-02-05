@@ -22,7 +22,7 @@ const translations = {
         "cards.map.title": "Интерактивная карта",
         "cards.map.desc": "Все локации и точки интереса",
 
-        // RF частоты
+        // Частоты RF-ресивера
         "rf.title": "Частоты RF-ресивера",
         "rf.mhz": "МГц",
         "rf.junkyard": "Свалка",
@@ -97,7 +97,7 @@ const translations = {
         "artifacts.price.cantSell": "Нельзя продать",
         "artifacts.price.event": "Ивент",
 
-        // ========== СВОЙСТВА АРТЕФАКТОВ ==========
+        // Свойства артефактов
         "prop.regeneration": "Регенерация",
         "prop.bleeding": "Кровотечение",
         "prop.radiation": "Радиация",
@@ -122,7 +122,7 @@ const translations = {
         "prop.kg": "кг",
         "prop.msvSec": "мЗв/сек",
 
-        // ========== НАЗВАНИЯ АРТЕФАКТОВ ==========
+        // Названия артефактов
         "artifact.bloodStone": "Кровь камня",
         "artifact.vyvert": "Выверт",
         "artifact.medusa": "Медуза",
@@ -201,10 +201,14 @@ const translations = {
         "calc.keyEffects": "Ключевые эффекты",
         "calc.effectiveBulletResistance": "Приведённая пулестойкость",
         "calc.bulletResistanceHint": "Процент снижения урона от пуль (формула с убывающей отдачей). Бронебойность патрона снижает эффективную пулестойкость.",
+
+        // Группы характеристик
         "calc.group.protections": "Защиты",
         "calc.group.resistances": "Сопротивления",
         "calc.group.armor": "Броня",
         "calc.group.character": "Персонаж",
+
+        // Характеристики калькулятора
         "calc.stat.regeneration": "Регенерация",
         "calc.stat.bleeding": "Кровотечение",
         "calc.stat.radiation": "Радиация",
@@ -225,6 +229,8 @@ const translations = {
         "calc.stat.staminaRegen": "Восстановление сил",
         "calc.stat.moveSpeed": "Скорость передвижения",
         "calc.stat.maxWeight": "Макс. вес",
+
+        // Модальное окно выбора артефакта
         "calc.modal.title": "Выбор артефакта",
         "calc.modal.slot": "Слот",
         "calc.modal.searchPlaceholder": "Название артефакта...",
@@ -239,26 +245,40 @@ const translations = {
         "calc.modal.catFrost": "Мороз",
         "calc.modal.noResults": "Артефакты не найдены",
         "calc.modal.tryOtherFilters": "Попробуйте изменить фильтры",
+
+        // Слоты и предупреждения
         "calc.slot.empty": "Пустой слот",
         "calc.slot.clickToAdd": "Нажмите, чтобы добавить",
-        "calc.warning.radiation": "Высокая радиация!",
-        "calc.warning.cold": "Сильное охлаждение!",
-        "calc.warning.bleeding": "Сильное кровотечение!",
-        "calc.warning.saturation": "Быстрое голодание!",
+        "calc.warning.attention": "Внимание",
+        "calc.warning.radiation": "Накопление радиации",
+        "calc.warning.cold": "Накопление холода",
+        "calc.warning.bleeding": "Накопление кровотечения",
+        "calc.warning.healthLoss": "Потеря здоровья",
+        "calc.warning.saturation": "Накопление голода",
+
+        // Редкости
         "calc.rarity.legendary": "Легендарный",
         "calc.rarity.unique": "Уникальный",
         "calc.rarity.rare": "Редкий",
         "calc.rarity.collection": "Коллекционный",
         "calc.rarity.uncommon": "Необычный",
         "calc.rarity.common": "Обычный",
+
+        // Типы контейнеров
         "calc.containerType.standard": "Стандартный",
         "calc.containerType.bulky": "Громоздкий",
         "calc.containerType.compact": "Компактный",
         "calc.containerType.spacious": "Вместительный",
+
+        // Единицы измерения
         "calc.unit.sec": "сек",
         "calc.unit.kg": "кг",
         "calc.unit.msvSec": "мЗв/сек",
         "calc.unit.slots": "слотов",
+        "calc.unit.perSec": "/сек",
+        "calc.unit.percentSec": "%/сек",
+
+        // Прочее калькулятора
         "calc.armorNotFound": "Броня не найдена",
         "calc.containerNotFound": "Контейнер не найден",
         "calc.shielding": "Экран",
@@ -271,25 +291,27 @@ const translations = {
         "calc.filter.positive": "Положительный",
         "calc.filter.negative": "Отрицательный",
         "calc.filter.resetAll": "Сбросить всё",
-        "calc.warning.attention": "Внимание",
-        "calc.warning.radiation": "Накопление радиации",
-        "calc.warning.cold": "Накопление холода",
-        "calc.warning.bleeding": "Накопление кровотечения",
-        "calc.warning.healthLoss": "Потеря здоровья",
-        "calc.warning.saturation": "Накопление голода",
-        "calc.unit.perSec": "/сек",
-        "calc.unit.percentSec": "%/сек",
 
         // ========== DPS КАЛЬКУЛЯТОР ==========
         "dps.pageTitle": "DPS Калькулятор",
         "dps.pageSubtitle": "Сравни урон оружия с учётом брони, патронов и дистанции",
         "dps.weaponNotFound": "Оружие не найдено",
+
+        // Характеристики оружия
         "dps.stat.verticalRecoil": "Верт. отдача",
         "dps.stat.horizontalRecoil": "Гориз. отдача",
         "dps.stat.hipSpread": "Разброс от бедра",
         "dps.stat.adsSpread": "Разброс в прицеле",
         "dps.stat.armorPen": "Бронебойность",
-        
+        "dps.stat.damage": "Урон",
+        "dps.stat.rpm": "Скорострельность",
+        "dps.stat.accuracy": "Точность",
+        "dps.stat.recoil": "Отдача",
+        "dps.stat.range": "Дальность",
+        "dps.stat.magazine": "Магазин",
+        "dps.stat.reloadTime": "Перезарядка",
+        "dps.stat.headshotMult": "Множ. хедшота",
+
         // Слоты сравнения
         "dps.notSelected": "Не выбрано",
         "dps.remove": "Удалить",
@@ -299,14 +321,14 @@ const translations = {
         "dps.slot3": "Слот 3",
         "dps.slot4": "Слот 4",
         "dps.slot5": "Слот 5",
-        
+
         // Оружие
         "dps.weapon": "Оружие",
         "dps.selectWeapon": "Выберите оружие...",
         "dps.searchWeapon": "Поиск оружия...",
         "dps.resetSelection": "Сбросить выбор",
         "dps.selectWeaponHint": "Выберите оружие для расчёта",
-        
+
         // Патроны
         "dps.ammo": "Патроны",
         "dps.selectWeaponFirst": "Сначала выберите оружие...",
@@ -314,7 +336,7 @@ const translations = {
         "dps.damageModifier": "Модификатор урона",
         "dps.armorPenetration": "Бронепробитие",
         "dps.pelletCount": "Количество дробин",
-        
+
         // Цель
         "dps.target": "Цель",
         "dps.bulletResistance": "Пулестойкость",
@@ -322,14 +344,14 @@ const translations = {
         "dps.distance": "Дистанция (м)",
         "dps.bulletProtection": "Защита от пуль:",
         "dps.effectiveProtection": "Эффективная защита:",
-        
+
         // График TTK
         "dps.ttkChart": "График TTK",
         "dps.body": "Тело",
         "dps.head": "Голова",
         "dps.chartHint": "Кликните на график чтобы установить дистанцию",
         "dps.chartPlaceholder": "Выберите оружие для отображения графика TTK",
-        
+
         // Результаты
         "dps.results": "Результаты",
         "dps.resetAll": "Сбросить всё",
@@ -344,7 +366,7 @@ const translations = {
         "dps.shots": "выстр.",
         "dps.weaponStats": "Характеристики оружия",
         "dps.weaponComparison": "Сравнение оружия",
-        
+
         // Категории оружия
         "dps.cat.assault": "Штурмовые винтовки",
         "dps.cat.smg": "Пистолеты-пулемёты",
@@ -353,25 +375,15 @@ const translations = {
         "dps.cat.sniper": "Снайперские винтовки",
         "dps.cat.machinegun": "Пулемёты",
         "dps.cat.special": "Особое",
-        
-        // Характеристики оружия
-        "dps.stat.damage": "Урон",
-        "dps.stat.rpm": "Скорострельность",
-        "dps.stat.accuracy": "Точность",
-        "dps.stat.recoil": "Отдача",
-        "dps.stat.range": "Дальность",
-        "dps.stat.magazine": "Магазин",
-        "dps.stat.reloadTime": "Перезарядка",
-        "dps.stat.headshotMult": "Множ. хедшота",
-        
-        // Редкости (общие для DPS и калькулятора)
+
+        // Редкости оружия
         "dps.rarity.common": "Обычный",
         "dps.rarity.uncommon": "Необычный",
         "dps.rarity.collection": "Коллекционный",
         "dps.rarity.rare": "Редкий",
         "dps.rarity.unique": "Уникальный",
         "dps.rarity.legendary": "Легендарный",
-        
+
         // Таблица сравнения
         "dps.table.weapon": "Оружие",
         "dps.table.dpsBody": "DPS (тело)",
@@ -380,7 +392,7 @@ const translations = {
         "dps.table.ttkHead": "TTK (голова)",
         "dps.table.shotsBody": "Выстрелов",
         "dps.table.shotsHead": "Выстрелов",
-        
+
         // Типы патронов
         "dps.ammoType.standard": "Стандартные",
         "dps.ammoType.hp": "Экспансивные (HP)",
@@ -391,7 +403,7 @@ const translations = {
         "dps.ammoType.buckshot": "Картечь",
         "dps.ammoType.slug": "Пуля",
         "dps.ammoType.flechette": "Флешетт",
-        
+
         // Описания патронов
         "dps.ammoDesc.standard": "Стандартные патроны",
         "dps.ammoDesc.hp": "Повышенный урон, низкое пробитие",
@@ -403,26 +415,26 @@ const translations = {
         "dps.ammoDesc.slug": "Одиночная пуля",
         "dps.ammoDesc.flechette": "Стрелки, высокое пробитие",
 
-         // ========== ИНТЕРАКТИВНАЯ КАРТА ==========
+        // ========== ИНТЕРАКТИВНАЯ КАРТА ==========
         "map.filters.title": "Фильтры",
         "map.filters.resetAll": "Сбросить всё",
         "map.sidebar.toggle": "Свернуть/развернуть",
-        
-        // Категории
+
+        // Категории меток
         "map.category.containers": "Контейнеры",
         "map.category.mutants": "Мутанты",
         "map.category.traders": "Торговцы",
         "map.category.npc": "НПС",
-        
-        // Типы меток - Контейнеры
+
+        // Типы меток — контейнеры
         "map.marker.ammo": "Патроны",
         "map.marker.supply": "Припасы",
         "map.marker.tools": "Инструменты",
         "map.marker.barrels": "Бочки",
         "map.marker.science": "Научное оборудование",
         "map.marker.stash": "Тайники",
-        
-        // Типы меток - Мутанты
+
+        // Типы меток — мутанты
         "map.marker.blind_dog": "Слепые псы",
         "map.marker.pseudodog": "Псевдособаки",
         "map.marker.flesh": "Плоти",
@@ -433,11 +445,11 @@ const translations = {
         "map.marker.bloodsucker": "Кровосос",
         "map.marker.bloodsucker_strong": "Матёрый кровосос",
         "map.marker.chimera": "Химера",
-        
-        // Типы меток - Торговцы
+
+        // Типы меток — торговцы
         "map.marker.trader": "Маклак",
-        
-        // Типы меток - НПС
+
+        // Типы меток — НПС
         "map.marker.zombified": "Зомбированные",
         "map.marker.bandits": "Бандиты",
         "map.marker.military": "Военные",
@@ -447,13 +459,13 @@ const translations = {
         "map.marker.sins": "Греховцы",
         "map.marker.monolith": "Монолитовцы",
         "map.marker.obliterator": "Облитератор",
-        
+
         // Управление картой
         "map.controls.zoomIn": "Приблизить",
         "map.controls.zoomOut": "Отдалить",
         "map.controls.resetView": "Сбросить вид",
         "map.controls.fullscreen": "Полноэкранный режим",
-        
+
         // Пользовательские метки
         "map.userMarkers.addMarker": "Добавить метку",
         "map.userMarkers.yourMarkers": "Ваши метки",
@@ -461,8 +473,12 @@ const translations = {
         "map.userMarkers.deleteAll": "Удалить все",
         "map.userMarkers.clickToAdd": "Нажмите на карту, чтобы добавить метку",
         "map.userMarkers.copyForSharing": "Копировать для отправки",
-        
-        // Модальное окно
+        "map.userMarkers.cancel": "Отменить",
+        "map.userMarkers.showOnMap": "Показать на карте",
+        "map.userMarkers.copy": "Копировать",
+        "map.userMarkers.delete": "Удалить",
+
+        // Модальное окно метки
         "map.modal.newMarker": "Новая метка",
         "map.modal.coordinates": "Координаты:",
         "map.modal.category": "Категория:",
@@ -473,24 +489,22 @@ const translations = {
         "map.modal.gameCoordsPlaceholder": "Например: -426, 69, -370",
         "map.modal.cancel": "Отмена",
         "map.modal.add": "Добавить",
-        
-        // Уведомления
-        "map.toast.copied": "Скопировано в буфер обмена!",
 
-        // Дополнительные ключи для карты
-        "map.userMarkers.cancel": "Отменить",
-        "map.userMarkers.showOnMap": "Показать на карте",
-        "map.userMarkers.copy": "Копировать",
-        "map.userMarkers.delete": "Удалить",
-        "map.popup.yourMarker": "ваша метка",
-        "map.popup.gameCoords": "Игровые",
-        "map.popup.pixels": "Пиксели",
+        // Уведомления карты
+        "map.toast.copied": "Скопировано в буфер обмена!",
         "map.toast.markerAdded": "Метка добавлена!",
         "map.toast.markerCodeCopied": "Код метки скопирован!",
         "map.toast.allMarkersCopied": "Все метки скопированы!",
         "map.toast.copiedForDiscord": "Скопировано для Discord!",
         "map.toast.allMarkersDeleted": "Все метки удалены",
         "map.confirm.deleteAllMarkers": "Удалить все ваши метки?",
+
+        // Всплывающие окна карты
+        "map.popup.yourMarker": "ваша метка",
+        "map.popup.gameCoords": "Игровые",
+        "map.popup.pixels": "Пиксели",
+
+        // Локации мутантов
         "map.mutant.location.tunnel": "Лаборатория в тоннеле",
         "map.mutant.location.tunnelMini": "Мини лаборатория в тоннеле",
         "map.mutant.location.inLab": "Находится в лаборатории",
@@ -501,9 +515,13 @@ const translations = {
         "map.mutant.location.x18": "Лаборатория X-18",
         "map.mutant.location.x18floor1": "Лаборатория X-18<br>-1 этаж",
         "map.mutant.location.x18floor2": "Лаборатория X-18<br>-2 этаж",
+
+        // Контейнеры
         "map.container.coords": "Координаты",
         "map.container.alsoContains": "Также лежит",
         "map.container.track": "Трек",
+
+        // Торговцы
         "map.trader.appearsOn": "Появляется",
         "map.trader.time": "Время",
         "map.trader.floor3": "на третьем этаже",
@@ -512,6 +530,8 @@ const translations = {
         "map.trader.farRoom": "на втором этаже в крайней комнате",
         "map.trader.corridor": "на втором этаже в коридоре",
         "map.trader.untilRainEnds": "конец дождя",
+
+        // НПС
         "map.npc.base": "База",
         "map.npc.checkpoint": "блокпост",
         "map.npc.veryStrong": "Очень сильные",
@@ -519,12 +539,11 @@ const translations = {
         "map.npc.freedomBase": "База Свободы",
         "map.npc.dutyBase": "База Долга",
         "map.npc.mercsBase": "База Наемников",
-        "map.npc.militaryCheckpoint": "Военный блокпост",
-        "map.container.coords": "Координаты"
+        "map.npc.militaryCheckpoint": "Военный блокпост"
     },
 
     en: {
-        // ========== NAVIGATION ==========
+        // ========== НАВИГАЦИЯ ==========
         "nav.home": "Home",
         "nav.map": "Map",
         "nav.artifacts": "Artifacts",
@@ -535,7 +554,7 @@ const translations = {
         "nav.buildsCalculator": "Build Calculator",
         "nav.dpsCalculator": "DPS Calculator",
 
-        // ========== MAIN PAGE ==========
+        // ========== ГЛАВНАЯ СТРАНИЦА ==========
         "hero.desc": "Unofficial knowledge base for Project Cataclysm game",
         "cards.artifacts.title": "Artifacts",
         "cards.artifacts.desc": "Complete catalog with stats and prices",
@@ -546,7 +565,7 @@ const translations = {
         "cards.map.title": "Interactive Map",
         "cards.map.desc": "All locations and points of interest",
 
-        // RF Frequencies
+        // Частоты RF-ресивера
         "rf.title": "RF Receiver Frequencies",
         "rf.mhz": "MHz",
         "rf.junkyard": "Garbage",
@@ -562,7 +581,7 @@ const translations = {
         "rf.militaryWarehouses": "Military Warehouses",
         "rf.crater": "Frost Hollow",
 
-        // Updates
+        // Обновления
         "updates.title": "Updates",
         "updates.date1": "February 3, 2026",
         "updates.update1_1": "Added interactive map",
@@ -589,14 +608,14 @@ const translations = {
         "updates.update6_1": "Added artifact build calculator",
         "updates.update6_2": "Updated website design",
 
-        // About
+        // О проекте
         "about.title": "About",
         "about.text": "<strong>Project Cataclysm Wiki</strong> — an unofficial knowledge base for the game. Here you'll find up-to-date information: artifact tables, build calculator, interactive map and reference data.",
 
-        // Footer
+        // Футер
         "footer.copy": "© 2026 Project Cataclysm Wiki. Unofficial fan site.",
 
-        // ========== ARTIFACTS PAGE ==========
+        // ========== СТРАНИЦА АРТЕФАКТОВ ==========
         "artifacts.pageTitle": "Artifacts",
         "artifacts.pageSubtitle": "Complete artifact catalog with stats and prices",
         "artifacts.cat.gravity": "Gravitational",
@@ -621,7 +640,7 @@ const translations = {
         "artifacts.price.cantSell": "Cannot sell",
         "artifacts.price.event": "Event",
 
-        // ========== ARTIFACT PROPERTIES ==========
+        // Свойства артефактов
         "prop.regeneration": "Regeneration",
         "prop.bleeding": "Bleeding",
         "prop.radiation": "Radiation",
@@ -646,7 +665,7 @@ const translations = {
         "prop.kg": "kg",
         "prop.msvSec": "mSv/sec",
 
-        // ========== ARTIFACT NAMES ==========
+        // Названия артефактов
         "artifact.bloodStone": "Blood Stone",
         "artifact.vyvert": "Vyvert",
         "artifact.medusa": "Medusa",
@@ -705,7 +724,7 @@ const translations = {
         "artifact.iceFlower": "Ice Flower",
         "artifact.tesseract": "Tesseract",
 
-        // ========== BUILD CALCULATOR ==========
+        // ========== КАЛЬКУЛЯТОР СБОРОК ==========
         "calc.pageTitle": "Build Calculator",
         "calc.pageSubtitle": "Create the optimal build with armor, container and artifacts",
         "calc.armor": "Armor",
@@ -725,10 +744,14 @@ const translations = {
         "calc.keyEffects": "Key Effects",
         "calc.effectiveBulletResistance": "Effective Bullet Resistance",
         "calc.bulletResistanceHint": "Bullet damage reduction percentage (diminishing returns formula). Armor penetration reduces effective bullet resistance.",
+
+        // Группы характеристик
         "calc.group.protections": "Protections",
         "calc.group.resistances": "Resistances",
         "calc.group.armor": "Armor",
         "calc.group.character": "Character",
+
+        // Характеристики калькулятора
         "calc.stat.regeneration": "Regeneration",
         "calc.stat.bleeding": "Bleeding",
         "calc.stat.radiation": "Radiation",
@@ -749,6 +772,8 @@ const translations = {
         "calc.stat.staminaRegen": "Stamina Recovery",
         "calc.stat.moveSpeed": "Movement Speed",
         "calc.stat.maxWeight": "Max Weight",
+
+        // Модальное окно выбора артефакта
         "calc.modal.title": "Select Artifact",
         "calc.modal.slot": "Slot",
         "calc.modal.searchPlaceholder": "Artifact name...",
@@ -763,26 +788,40 @@ const translations = {
         "calc.modal.catFrost": "Frost",
         "calc.modal.noResults": "No artifacts found",
         "calc.modal.tryOtherFilters": "Try changing filters",
+
+        // Слоты и предупреждения
         "calc.slot.empty": "Empty slot",
         "calc.slot.clickToAdd": "Click to add",
-        "calc.warning.radiation": "High radiation!",
-        "calc.warning.cold": "Strong cooling!",
-        "calc.warning.bleeding": "Heavy bleeding!",
-        "calc.warning.saturation": "Rapid starvation!",
+        "calc.warning.attention": "Warning",
+        "calc.warning.radiation": "Radiation accumulation",
+        "calc.warning.cold": "Cold accumulation",
+        "calc.warning.bleeding": "Bleeding accumulation",
+        "calc.warning.healthLoss": "Health loss",
+        "calc.warning.saturation": "Hunger accumulation",
+
+        // Редкости
         "calc.rarity.legendary": "Legendary",
         "calc.rarity.unique": "Unique",
         "calc.rarity.rare": "Rare",
         "calc.rarity.collection": "Collection",
         "calc.rarity.uncommon": "Uncommon",
         "calc.rarity.common": "Common",
+
+        // Типы контейнеров
         "calc.containerType.standard": "Standard",
         "calc.containerType.bulky": "Bulky",
         "calc.containerType.compact": "Compact",
         "calc.containerType.spacious": "Spacious",
+
+        // Единицы измерения
         "calc.unit.sec": "sec",
         "calc.unit.kg": "kg",
         "calc.unit.msvSec": "mSv/sec",
         "calc.unit.slots": "slots",
+        "calc.unit.perSec": "/sec",
+        "calc.unit.percentSec": "%/sec",
+
+        // Прочее калькулятора
         "calc.armorNotFound": "Armor not found",
         "calc.containerNotFound": "Container not found",
         "calc.shielding": "Shielding",
@@ -795,26 +834,28 @@ const translations = {
         "calc.filter.positive": "Positive",
         "calc.filter.negative": "Negative",
         "calc.filter.resetAll": "Reset all",
-        "calc.warning.attention": "Warning",
-        "calc.warning.radiation": "Radiation accumulation",
-        "calc.warning.cold": "Cold accumulation",
-        "calc.warning.bleeding": "Bleeding accumulation",
-        "calc.warning.healthLoss": "Health loss",
-        "calc.warning.saturation": "Hunger accumulation",
-        "calc.unit.perSec": "/sec",
-        "calc.unit.percentSec": "%/sec",
 
-        // ========== DPS CALCULATOR ==========
+        // ========== DPS КАЛЬКУЛЯТОР ==========
         "dps.pageTitle": "DPS Calculator",
         "dps.pageSubtitle": "Compare weapon damage considering armor, ammo and distance",
         "dps.weaponNotFound": "Weapon not found",
+
+        // Характеристики оружия
         "dps.stat.verticalRecoil": "Vertical recoil",
         "dps.stat.horizontalRecoil": "Horizontal recoil",
         "dps.stat.hipSpread": "Hip spread",
         "dps.stat.adsSpread": "ADS spread",
         "dps.stat.armorPen": "Armor penetration",
-        
-        // Comparison slots
+        "dps.stat.damage": "Damage",
+        "dps.stat.rpm": "Fire rate",
+        "dps.stat.accuracy": "Accuracy",
+        "dps.stat.recoil": "Recoil",
+        "dps.stat.range": "Range",
+        "dps.stat.magazine": "Magazine",
+        "dps.stat.reloadTime": "Reload time",
+        "dps.stat.headshotMult": "Headshot mult.",
+
+        // Слоты сравнения
         "dps.notSelected": "Not selected",
         "dps.remove": "Remove",
         "dps.add": "Add",
@@ -823,38 +864,38 @@ const translations = {
         "dps.slot3": "Slot 3",
         "dps.slot4": "Slot 4",
         "dps.slot5": "Slot 5",
-        
-        // Weapon
+
+        // Оружие
         "dps.weapon": "Weapon",
         "dps.selectWeapon": "Select weapon...",
         "dps.searchWeapon": "Search weapon...",
         "dps.resetSelection": "Reset selection",
         "dps.selectWeaponHint": "Select weapon for calculation",
-        
-        // Ammo
+
+        // Патроны
         "dps.ammo": "Ammo",
         "dps.selectWeaponFirst": "First select a weapon...",
         "dps.selectAmmo": "Select ammo...",
         "dps.damageModifier": "Damage modifier",
         "dps.armorPenetration": "Armor penetration",
         "dps.pelletCount": "Pellet count",
-        
-        // Target
+
+        // Цель
         "dps.target": "Target",
         "dps.bulletResistance": "Bullet resistance",
         "dps.targetHP": "Target HP",
         "dps.distance": "Distance (m)",
         "dps.bulletProtection": "Bullet protection:",
         "dps.effectiveProtection": "Effective protection:",
-        
-        // TTK Chart
+
+        // График TTK
         "dps.ttkChart": "TTK Chart",
         "dps.body": "Body",
         "dps.head": "Head",
         "dps.chartHint": "Click on chart to set distance",
         "dps.chartPlaceholder": "Select weapon to display TTK chart",
-        
-        // Results
+
+        // Результаты
         "dps.results": "Results",
         "dps.resetAll": "Reset all",
         "dps.dpsBody": "DPS (body)",
@@ -868,8 +909,8 @@ const translations = {
         "dps.shots": "shots",
         "dps.weaponStats": "Weapon stats",
         "dps.weaponComparison": "Weapon comparison",
-        
-        // Weapon categories
+
+        // Категории оружия
         "dps.cat.assault": "Assault rifles",
         "dps.cat.smg": "SMGs",
         "dps.cat.pistol": "Pistols",
@@ -877,26 +918,16 @@ const translations = {
         "dps.cat.sniper": "Sniper rifles",
         "dps.cat.machinegun": "Machine guns",
         "dps.cat.special": "Special",
-        
-        // Weapon stats
-        "dps.stat.damage": "Damage",
-        "dps.stat.rpm": "Fire rate",
-        "dps.stat.accuracy": "Accuracy",
-        "dps.stat.recoil": "Recoil",
-        "dps.stat.range": "Range",
-        "dps.stat.magazine": "Magazine",
-        "dps.stat.reloadTime": "Reload time",
-        "dps.stat.headshotMult": "Headshot mult.",
-        
-        // Rarities
+
+        // Редкости оружия
         "dps.rarity.common": "Common",
         "dps.rarity.uncommon": "Uncommon",
         "dps.rarity.collection": "Collection",
         "dps.rarity.rare": "Rare",
         "dps.rarity.unique": "Unique",
         "dps.rarity.legendary": "Legendary",
-        
-        // Comparison table
+
+        // Таблица сравнения
         "dps.table.weapon": "Weapon",
         "dps.table.dpsBody": "DPS (body)",
         "dps.table.dpsHead": "DPS (head)",
@@ -904,8 +935,8 @@ const translations = {
         "dps.table.ttkHead": "TTK (head)",
         "dps.table.shotsBody": "Shots",
         "dps.table.shotsHead": "Shots",
-        
-        // Ammo types
+
+        // Типы патронов
         "dps.ammoType.standard": "Standard",
         "dps.ammoType.hp": "Hollow Point (HP)",
         "dps.ammoType.ap": "Armor Piercing (AP)",
@@ -915,8 +946,8 @@ const translations = {
         "dps.ammoType.buckshot": "Buckshot",
         "dps.ammoType.slug": "Slug",
         "dps.ammoType.flechette": "Flechette",
-        
-        // Ammo descriptions
+
+        // Описания патронов
         "dps.ammoDesc.standard": "Standard ammunition",
         "dps.ammoDesc.hp": "Increased damage, low penetration",
         "dps.ammoDesc.ap": "High armor penetration",
@@ -927,26 +958,26 @@ const translations = {
         "dps.ammoDesc.slug": "Single projectile",
         "dps.ammoDesc.flechette": "Darts, high penetration",
 
-        // ========== INTERACTIVE MAP ==========
+        // ========== ИНТЕРАКТИВНАЯ КАРТА ==========
         "map.filters.title": "Filters",
         "map.filters.resetAll": "Reset all",
         "map.sidebar.toggle": "Collapse/Expand",
-        
-        // Categories
+
+        // Категории меток
         "map.category.containers": "Containers",
         "map.category.mutants": "Mutants",
         "map.category.traders": "Traders",
         "map.category.npc": "NPCs",
-        
-        // Marker types - Containers
+
+        // Типы меток — контейнеры
         "map.marker.ammo": "Ammo",
         "map.marker.supply": "Supplies",
         "map.marker.tools": "Tools",
         "map.marker.barrels": "Barrels",
         "map.marker.science": "Scientific Equipment",
         "map.marker.stash": "Stashes",
-        
-        // Marker types - Mutants
+
+        // Типы меток — мутанты
         "map.marker.blind_dog": "Blind Dogs",
         "map.marker.pseudodog": "Pseudodogs",
         "map.marker.flesh": "Fleshes",
@@ -957,11 +988,11 @@ const translations = {
         "map.marker.bloodsucker": "Bloodsucker",
         "map.marker.bloodsucker_strong": "Elder Bloodsucker",
         "map.marker.chimera": "Chimera",
-        
-        // Marker types - Traders
+
+        // Типы меток — торговцы
         "map.marker.trader": "Dealer",
-        
-        // Marker types - NPCs
+
+        // Типы меток — НПС
         "map.marker.zombified": "Zombified",
         "map.marker.bandits": "Bandits",
         "map.marker.military": "Military",
@@ -971,22 +1002,26 @@ const translations = {
         "map.marker.sins": "Sinners",
         "map.marker.monolith": "Monolith",
         "map.marker.obliterator": "Obliterator",
-        
-        // Map controls
+
+        // Управление картой
         "map.controls.zoomIn": "Zoom In",
         "map.controls.zoomOut": "Zoom Out",
         "map.controls.resetView": "Reset View",
         "map.controls.fullscreen": "Fullscreen",
-        
-        // User markers
+
+        // Пользовательские метки
         "map.userMarkers.addMarker": "Add Marker",
         "map.userMarkers.yourMarkers": "Your Markers",
         "map.userMarkers.copyAll": "Copy All",
         "map.userMarkers.deleteAll": "Delete All",
         "map.userMarkers.clickToAdd": "Click on the map to add a marker",
         "map.userMarkers.copyForSharing": "Copy for sharing",
-        
-        // Modal
+        "map.userMarkers.cancel": "Cancel",
+        "map.userMarkers.showOnMap": "Show on map",
+        "map.userMarkers.copy": "Copy",
+        "map.userMarkers.delete": "Delete",
+
+        // Модальное окно метки
         "map.modal.newMarker": "New Marker",
         "map.modal.coordinates": "Coordinates:",
         "map.modal.category": "Category:",
@@ -997,24 +1032,22 @@ const translations = {
         "map.modal.gameCoordsPlaceholder": "Example: -426, 69, -370",
         "map.modal.cancel": "Cancel",
         "map.modal.add": "Add",
-        
-        // Notifications
-        "map.toast.copied": "Copied to clipboard!",
 
-         // Additional map keys
-        "map.userMarkers.cancel": "Cancel",
-        "map.userMarkers.showOnMap": "Show on map",
-        "map.userMarkers.copy": "Copy",
-        "map.userMarkers.delete": "Delete",
-        "map.popup.yourMarker": "your marker",
-        "map.popup.gameCoords": "Game coords",
-        "map.popup.pixels": "Pixels",
+        // Уведомления карты
+        "map.toast.copied": "Copied to clipboard!",
         "map.toast.markerAdded": "Marker added!",
         "map.toast.markerCodeCopied": "Marker code copied!",
         "map.toast.allMarkersCopied": "All markers copied!",
         "map.toast.copiedForDiscord": "Copied for Discord!",
         "map.toast.allMarkersDeleted": "All markers deleted",
         "map.confirm.deleteAllMarkers": "Delete all your markers?",
+
+        // Всплывающие окна карты
+        "map.popup.yourMarker": "your marker",
+        "map.popup.gameCoords": "Game coords",
+        "map.popup.pixels": "Pixels",
+
+        // Локации мутантов
         "map.mutant.location.tunnel": "Laboratory in the tunnel",
         "map.mutant.location.tunnelMini": "Mini laboratory in the tunnel",
         "map.mutant.location.inLab": "Located in the laboratory",
@@ -1025,9 +1058,13 @@ const translations = {
         "map.mutant.location.x18": "Laboratory X-18",
         "map.mutant.location.x18floor1": "Laboratory X-18<br>-1 floor",
         "map.mutant.location.x18floor2": "Laboratory X-18<br>-2 floor",
+
+        // Контейнеры
         "map.container.coords": "Coordinates",
         "map.container.alsoContains": "Also contains",
         "map.container.track": "Track",
+
+        // Торговцы
         "map.trader.appearsOn": "Appears",
         "map.trader.time": "Time",
         "map.trader.floor3": "on the third floor",
@@ -1036,6 +1073,8 @@ const translations = {
         "map.trader.farRoom": "on the second floor in the far room",
         "map.trader.corridor": "on the second floor in the corridor",
         "map.trader.untilRainEnds": "end of rain",
+
+        // НПС
         "map.npc.base": "Base",
         "map.npc.checkpoint": "checkpoint",
         "map.npc.veryStrong": "Very strong",
@@ -1043,8 +1082,7 @@ const translations = {
         "map.npc.freedomBase": "Freedom Base",
         "map.npc.dutyBase": "Duty Base",
         "map.npc.mercsBase": "Mercenary Base",
-        "map.npc.militaryCheckpoint": "Military checkpoint",
-        "map.container.coords": "Coordinates"
+        "map.npc.militaryCheckpoint": "Military checkpoint"
     }
 };
 
@@ -1096,34 +1134,28 @@ class I18n {
         localStorage.setItem('wiki-lang', lang);
         document.documentElement.lang = lang;
 
-        // Обновить индикатор текущего языка
         const currentLangEl = document.getElementById('currentLang');
         if (currentLangEl) {
             currentLangEl.textContent = lang.toUpperCase();
         }
 
-        // Обновить активные классы в dropdown
         document.querySelectorAll('.lang-dropdown__item').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
-        // Обновить активные классы в мобильном меню
         document.querySelectorAll('.mobile-lang-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.lang === lang);
         });
 
-        // Перевести страницу
         this.translatePage();
         this.updateArtifactNames();
 
-        // Вызвать событие смены языка для динамического контента
         document.dispatchEvent(new CustomEvent('languageChanged', { 
             detail: { lang: this.currentLang } 
         }));
     }
 
     translatePage() {
-        // Перевод текстового содержимого
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.dataset.i18n;
             const translation = translations[this.currentLang][key];
@@ -1136,7 +1168,6 @@ class I18n {
             }
         });
 
-        // Перевод placeholder'ов
         document.querySelectorAll('[data-placeholder-i18n]').forEach(el => {
             const key = el.dataset.placeholderI18n;
             const translation = translations[this.currentLang][key];
@@ -1145,7 +1176,6 @@ class I18n {
             }
         });
 
-        // Перевод атрибутов title
         document.querySelectorAll('[data-title-i18n]').forEach(el => {
             const key = el.dataset.titleI18n;
             const translation = translations[this.currentLang][key];
@@ -1180,51 +1210,37 @@ class I18n {
 
     /**
      * Получить перевод по ключу
-     * @param {string} key - Ключ перевода
-     * @param {object} params - Параметры для подстановки (опционально)
-     * @returns {string} Переведённая строка или ключ, если перевод не найден
+     * @param {string} key — ключ перевода
+     * @param {object} params — параметры для подстановки
+     * @returns {string} переведённая строка или ключ
      */
     t(key, params = {}) {
         let translation = translations[this.currentLang][key] || key;
-        
-        // Подстановка параметров (например, {count} -> 5)
         Object.keys(params).forEach(param => {
             translation = translation.replace(new RegExp(`{${param}}`, 'g'), params[param]);
         });
-        
         return translation;
     }
 
-    /**
-     * Получить текущий язык
-     * @returns {string} Код текущего языка ('ru' или 'en')
-     */
+    /** Получить текущий язык */
     getCurrentLang() {
         return this.currentLang;
     }
 
-    /**
-     * Проверить, является ли текущий язык английским
-     * @returns {boolean}
-     */
+    /** Проверить, является ли текущий язык английским */
     isEnglish() {
         return this.currentLang === 'en';
     }
 
-    /**
-     * Проверить, является ли текущий язык русским
-     * @returns {boolean}
-     */
+    /** Проверить, является ли текущий язык русским */
     isRussian() {
         return this.currentLang === 'ru';
     }
 }
 
-// Создание глобального экземпляра
 const i18n = new I18n();
 window.i18n = i18n;
 
-// Экспорт для модульного использования (если понадобится)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { I18n, translations };
 }
