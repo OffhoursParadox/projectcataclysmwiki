@@ -75,6 +75,57 @@ const elements = {
     header: document.querySelector('.header')
 };
 
+// ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ЛОКАЛИЗАЦИИ ====================
+
+/**
+ * Получить перевод с fallback
+ */
+function t(key, fallback = '') {
+    if (window.i18n && typeof window.i18n.t === 'function') {
+        const translation = window.i18n.t(key);
+        return translation !== key ? translation : fallback || key;
+    }
+    return fallback || key;
+}
+
+/**
+ * Проверить, выбран ли английский язык
+ */
+function isEnglish() {
+    return window.i18n && window.i18n.isEnglish && window.i18n.isEnglish();
+}
+
+/**
+ * Получить локализованное название категории оружия
+ */
+function getCategoryName(categoryId) {
+    const categoryKey = `dps.cat.${categoryId}`;
+    const translation = t(categoryKey);
+    
+    // Если перевод найден, используем его
+    if (translation !== categoryKey) {
+        return translation;
+    }
+    
+    // Fallback на данные из WEAPON_CATEGORIES
+    if (typeof WEAPON_CATEGORIES !== 'undefined' && WEAPON_CATEGORIES[categoryId]) {
+        return WEAPON_CATEGORIES[categoryId].name;
+    }
+    
+    return categoryId;
+}
+
+/**
+ * Получить локализованное название редкости
+ */
+function getRarityName(rarity) {
+    if (!rarity) return '';
+    const key = `dps.rarity.${rarity}`;
+    return t(key, rarity);
+}
+
+// ==================== ОСНОВНОЙ КОД ====================
+
 function isDesktop() {
     return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 }
@@ -90,6 +141,22 @@ document.addEventListener('DOMContentLoaded', () => {
     createChartCursorLine();
     updateSlotIndicator();
     calculateResults();
+    
+    // Слушать изменение языка
+    document.addEventListener('languageChanged', () => {
+        // Перерисовать весь UI
+        updateSlotIndicator();
+        renderWeaponDropdownList();
+        loadSlotData(state.activeSlot);
+        calculateResults();
+        updateChart();
+        updateComparisonTable();
+        
+        // Обновить названия в слотах
+        for (let i = 0; i < state.visibleSlots; i++) {
+            updateSlotUI(i);
+        }
+    });
 });
 
 function createChartCursorLine() {
@@ -133,7 +200,7 @@ function sortWeaponsByRarity(weapons) {
         const priorityA = getRarityPriority(a.rarity);
         const priorityB = getRarityPriority(b.rarity);
         if (priorityB !== priorityA) return priorityB - priorityA;
-        return a.name.localeCompare(b.name, 'ru');
+        return a.name.localeCompare(b.name, isEnglish() ? 'en' : 'ru');
     });
 }
 
@@ -187,7 +254,7 @@ function removeSlot(index) {
     
     const nameEl = document.getElementById(`slotName${index}`);
     const dpsEl = document.getElementById(`slotDps${index}`);
-    if (nameEl) nameEl.textContent = 'Не выбрано';
+    if (nameEl) nameEl.textContent = t('dps.notSelected', 'Не выбрано');
     if (dpsEl) dpsEl.textContent = '0';
     
     if (index < state.visibleSlots - 1) {
@@ -215,7 +282,7 @@ function removeSlot(index) {
 
 function clearSlot(index) {
     state.slots[index] = { weapon: null, ammo: null };
-    document.getElementById(`slotName${index}`).textContent = 'Не выбрано';
+    document.getElementById(`slotName${index}`).textContent = t('dps.notSelected', 'Не выбрано');
     document.getElementById(`slotDps${index}`).textContent = '0';
     if (state.activeSlot === index) loadSlotData(index);
     calculateResults();
@@ -239,7 +306,8 @@ function updateSlotsVisibility() {
 function updateSlotIndicator() {
     if (!elements.currentSlotIndicator) return;
     
-    elements.currentSlotIndicator.textContent = `Слот ${state.activeSlot + 1}`;
+    const slotKey = `dps.slot${state.activeSlot + 1}`;
+    elements.currentSlotIndicator.textContent = t(slotKey, `Слот ${state.activeSlot + 1}`);
     
     const colorMap = {
         '#ef4444': '239,68,68',
@@ -260,29 +328,29 @@ function loadSlotData(index) {
     const ammoValueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
     
     if (slotData.weapon) {
-        valueElement.textContent = slotData.weapon.name;
+        valueElement.textContent = getLocalizedName(slotData.weapon);
         valueElement.classList.add('has-value');
         renderWeaponInfo();
         renderWeaponStats();
         updateAmmoOptions(false);
         
         if (slotData.ammo) {
-            ammoValueElement.textContent = slotData.ammo.name;
+            ammoValueElement.textContent = getLocalizedName(slotData.ammo);
             ammoValueElement.classList.add('has-value');
             renderAmmoStats();
         }
     } else {
-        valueElement.textContent = 'Выберите оружие...';
+        valueElement.textContent = t('dps.selectWeapon', 'Выберите оружие...');
         valueElement.classList.remove('has-value');
         elements.weaponInfo.innerHTML = `
             <div class="weapon-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                <span>Выберите оружие для расчёта</span>
+                <span>${t('dps.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
             </div>`;
         
         const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
         ammoTrigger.disabled = true;
-        ammoValueElement.textContent = 'Сначала выберите оружие...';
+        ammoValueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
         ammoValueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         elements.weaponStats.style.display = 'none';
@@ -300,11 +368,11 @@ function updateSlotUI(index) {
     if (!nameEl || !dpsEl) return;
     
     if (slotData.weapon) {
-        nameEl.textContent = slotData.weapon.name;
+        nameEl.textContent = getLocalizedName(slotData.weapon);
         const result = calculateSlotDPS(index);
         dpsEl.textContent = Math.round(result.dpsBody);
     } else {
-        nameEl.textContent = 'Не выбрано';
+        nameEl.textContent = t('dps.notSelected', 'Не выбрано');
         dpsEl.textContent = '0';
     }
 }
@@ -381,7 +449,7 @@ function renderWeaponDropdownList(searchQuery = '') {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <span>Оружие не найдено</span>
+                <span>${t('dps.weaponNotFound', 'Оружие не найдено')}</span>
             </div>`;
         return;
     }
@@ -393,19 +461,20 @@ function renderWeaponDropdownList(searchQuery = '') {
         const weapons = groupedWeapons[catId];
         if (!weapons?.length) return;
         
-        const catName = WEAPON_CATEGORIES[catId]?.name || catId;
+        const catName = getCategoryName(catId);
         html += `<div class="custom-dropdown__group custom-dropdown__group--${catId}">
             <div class="custom-dropdown__group-title">${catName} (${weapons.length})</div>`;
         
         weapons.forEach(weapon => {
             const isSelected = currentWeapon?.id === weapon.id;
             const rarityClass = weapon.rarity ? `custom-dropdown__item--${weapon.rarity}` : '';
+            const localizedRarity = getRarityName(weapon.rarity);
             
             html += `
                 <div class="custom-dropdown__item ${rarityClass} ${isSelected ? 'selected' : ''}" 
                      data-weapon-id="${weapon.id}">
                     <div class="custom-dropdown__item-info">
-                        <div class="custom-dropdown__item-name">${weapon.name}</div>
+                        <div class="custom-dropdown__item-name">${getLocalizedName(weapon)}</div>
                         <div class="custom-dropdown__item-meta">
                             <span class="custom-dropdown__item-stat">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -416,7 +485,7 @@ function renderWeaponDropdownList(searchQuery = '') {
                             <span class="custom-dropdown__item-rpm">${weapon.rpm} RPM</span>
                         </div>
                     </div>
-                    ${weapon.rarityName ? `<span class="custom-dropdown__item-rarity">${weapon.rarityName}</span>` : ''}
+                    ${localizedRarity ? `<span class="custom-dropdown__item-rarity">${localizedRarity}</span>` : ''}
                 </div>`;
         });
         html += '</div>';
@@ -433,7 +502,7 @@ function selectWeaponFromDropdown(weaponId) {
     state.slots[state.activeSlot].ammo = null;
     
     const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = weapon.name;
+    valueElement.textContent = getLocalizedName(weapon);
     valueElement.classList.add('has-value');
     
     closeWeaponDropdown();
@@ -454,11 +523,11 @@ function clearWeaponSelection() {
     state.slots[state.activeSlot].ammo = null;
     
     const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = 'Выберите оружие...';
+    valueElement.textContent = t('dps.selectWeapon', 'Выберите оружие...');
     valueElement.classList.remove('has-value');
     
     const ammoValueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
-    ammoValueElement.textContent = 'Сначала выберите оружие...';
+    ammoValueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
     ammoValueElement.classList.remove('has-value');
     
     closeWeaponDropdown();
@@ -485,37 +554,41 @@ function renderWeaponInfo() {
         elements.weaponInfo.innerHTML = `
             <div class="weapon-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                <span>Выберите оружие для расчёта</span>
+                <span>${t('dps.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
             </div>`;
         return;
     }
 
-    const rarityHtml = weapon.rarityName 
-        ? `<span class="weapon-details__rarity rarity--${weapon.rarity}">${weapon.rarityName}</span>` 
+    const localizedRarity = getRarityName(weapon.rarity);
+    const rarityHtml = localizedRarity 
+        ? `<span class="weapon-details__rarity rarity--${weapon.rarity}">${localizedRarity}</span>` 
         : '';
+    
+    const rpmUnit = isEnglish() ? 'RPM' : 'в/м';
+    const meterUnit = isEnglish() ? 'm' : 'м';
     
     elements.weaponInfo.innerHTML = `
         <div class="weapon-details">
             <div class="weapon-details__header">
-                <span class="weapon-details__name">${weapon.name}</span>
+                <span class="weapon-details__name">${getLocalizedName(weapon)}</span>
                 ${rarityHtml}
             </div>
             <div class="weapon-details__stats">
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">Урон</span>
+                    <span class="weapon-details__stat-name">${t('dps.stat.damage', 'Урон')}</span>
                     <span class="weapon-details__stat-value weapon-details__stat-value--highlight">${weapon.damage}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">Скорострельность</span>
-                    <span class="weapon-details__stat-value">${weapon.rpm} в/м</span>
+                    <span class="weapon-details__stat-name">${t('dps.stat.rpm', 'Скорострельность')}</span>
+                    <span class="weapon-details__stat-value">${weapon.rpm} ${rpmUnit}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">Множитель в голову</span>
+                    <span class="weapon-details__stat-name">${t('dps.stat.headshotMult', 'Множитель в голову')}</span>
                     <span class="weapon-details__stat-value">x${weapon.headshotMult}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">Эфф. дистанция</span>
-                    <span class="weapon-details__stat-value">${weapon.effectiveRange} м</span>
+                    <span class="weapon-details__stat-name">${t('dps.stat.range', 'Эфф. дистанция')}</span>
+                    <span class="weapon-details__stat-value">${weapon.effectiveRange} ${meterUnit}</span>
                 </div>
             </div>
         </div>`;
@@ -532,13 +605,14 @@ function renderWeaponStats() {
     const stats = weapon.stats;
     let html = '';
     
+    // Локализованные названия характеристик
     const statNames = {
-        verticalRecoil: 'Верт. отдача',
-        horizontalRecoil: 'Гориз. отдача',
-        hipSpread: 'Разброс от бедра',
-        adsSpread: 'Разброс в прицеле',
-        moveSpeed: 'Скорость бега',
-        armorPenetration: 'Бронебойность'
+        verticalRecoil: t('dps.stat.verticalRecoil', 'Верт. отдача'),
+        horizontalRecoil: t('dps.stat.horizontalRecoil', 'Гориз. отдача'),
+        hipSpread: t('dps.stat.hipSpread', 'Разброс от бедра'),
+        adsSpread: t('dps.stat.adsSpread', 'Разброс в прицеле'),
+        moveSpeed: t('dps.stat.moveSpeed', 'Скорость бега'),
+        armorPenetration: t('dps.stat.armorPen', 'Бронебойность')
     };
     
     const statUnits = {
@@ -599,7 +673,7 @@ function updateAmmoOptions(autoSelectFirst = false) {
     
     if (!weapon) {
         trigger.disabled = true;
-        valueElement.textContent = 'Сначала выберите оружие...';
+        valueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
         valueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         return;
@@ -609,6 +683,11 @@ function updateAmmoOptions(autoSelectFirst = false) {
     
     const availableAmmo = getAmmoForWeapon(weapon);
     const currentAmmo = state.slots[state.activeSlot].ammo;
+    
+    // Локализованные единицы
+    const dmgLabel = isEnglish() ? 'dmg' : 'урон';
+    const apLabel = isEnglish() ? 'AP' : 'АП';
+    const standardLabel = t('dps.ammoType.standard', 'Стандарт');
     
     let html = '';
     
@@ -636,13 +715,13 @@ function updateAmmoOptions(autoSelectFirst = false) {
             <div class="ammo-item ${isSelected ? 'selected' : ''}" data-ammo-id="${ammo.id}">
                 <div class="ammo-item__icon ammo-item__icon--${iconType}">${iconHtml}</div>
                 <div class="ammo-item__info">
-                    <div class="ammo-item__name">${ammo.name}</div>
-                    <div class="ammo-item__desc">${ammo.description}</div>
+                    <div class="ammo-item__name">${getLocalizedName(ammo)}</div>
+                    <div class="ammo-item__desc">${getLocalizedField(ammo, 'description')}</div>
                 </div>
                 <div class="ammo-item__stats">
-                    ${dmgMod !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${dmgMod > 0 ? 'positive' : 'negative'}">${dmgMod > 0 ? '+' : ''}${dmgMod}% урон</span>` : ''}
-                    ${armorPen !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${armorPen > 0 ? 'positive' : 'negative'}">${armorPen > 0 ? '+' : ''}${armorPen}% АП</span>` : ''}
-                    ${dmgMod === 0 && armorPen === 0 ? '<span class="ammo-item__stat ammo-item__stat--neutral">Стандарт</span>' : ''}
+                    ${dmgMod !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${dmgMod > 0 ? 'positive' : 'negative'}">${dmgMod > 0 ? '+' : ''}${dmgMod}% ${dmgLabel}</span>` : ''}
+                    ${armorPen !== 0 ? `<span class="ammo-item__stat ammo-item__stat--${armorPen > 0 ? 'positive' : 'negative'}">${armorPen > 0 ? '+' : ''}${armorPen}% ${apLabel}</span>` : ''}
+                    ${dmgMod === 0 && armorPen === 0 ? `<span class="ammo-item__stat ammo-item__stat--neutral">${standardLabel}</span>` : ''}
                 </div>
             </div>`;
     });
@@ -652,11 +731,11 @@ function updateAmmoOptions(autoSelectFirst = false) {
     if (autoSelectFirst && availableAmmo.length > 0) {
         selectAmmo(availableAmmo[0].id, true);
     } else if (currentAmmo) {
-        valueElement.textContent = currentAmmo.name;
+        valueElement.textContent = getLocalizedName(currentAmmo);
         valueElement.classList.add('has-value');
         renderAmmoStats();
     } else {
-        valueElement.textContent = 'Выберите патроны...';
+        valueElement.textContent = t('dps.selectAmmo', 'Выберите патроны...');
         valueElement.classList.remove('has-value');
     }
 }
@@ -671,7 +750,7 @@ function selectAmmo(ammoId, updateUI = true) {
         closeAmmoDropdown();
         
         const valueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
-        valueElement.textContent = ammo.name;
+        valueElement.textContent = getLocalizedName(ammo);
         valueElement.classList.add('has-value');
         
         renderAmmoStats();
@@ -827,6 +906,9 @@ function calculateSlotDPS(slotIndex) {
 function calculateResults() {
     const result = calculateSlotDPS(state.activeSlot);
     
+    const secUnit = t('dps.sec', 'сек');
+    const shotsUnit = t('dps.shots', 'выстр.');
+    
     elements.protectionPercent.textContent = (result.protection?.toFixed(2) || '0') + '%';
     elements.effectiveProtection.textContent = (result.effectiveProtection?.toFixed(2) || '0') + '%';
     
@@ -843,11 +925,11 @@ function calculateResults() {
     elements.dpsBody.textContent = Math.round(result.dpsBody);
     elements.dpsHead.textContent = Math.round(result.dpsHead);
     
-    elements.ttkBody.textContent = result.ttkBody === Infinity ? '∞' : result.ttkBody.toFixed(2) + ' сек';
-    elements.shotsBody.textContent = result.shotsBody === Infinity ? '∞' : result.shotsBody + ' выстр.';
+    elements.ttkBody.textContent = result.ttkBody === Infinity ? '∞' : result.ttkBody.toFixed(2) + ' ' + secUnit;
+    elements.shotsBody.textContent = result.shotsBody === Infinity ? '∞' : result.shotsBody + ' ' + shotsUnit;
     
-    elements.ttkHead.textContent = result.ttkHead === Infinity ? '∞' : result.ttkHead.toFixed(2) + ' сек';
-    elements.shotsHead.textContent = result.shotsHead === Infinity ? '∞' : result.shotsHead + ' выстр.';
+    elements.ttkHead.textContent = result.ttkHead === Infinity ? '∞' : result.ttkHead.toFixed(2) + ' ' + secUnit;
+    elements.shotsHead.textContent = result.shotsHead === Infinity ? '∞' : result.shotsHead + ' ' + shotsUnit;
     
     const slotDpsEl = document.getElementById(`slotDps${state.activeSlot}`);
     if (slotDpsEl) slotDpsEl.textContent = Math.round(result.dpsBody);
@@ -943,6 +1025,16 @@ function updateChart() {
         ctx.stroke();
     }
     
+    // Локализованные подписи
+    const meterUnit = isEnglish() ? 'm' : 'м';
+    const secUnit = isEnglish() ? 's' : 'с';
+    const distanceLabel = isEnglish() ? 'DISTANCE' : 'ДИСТАНЦИЯ';
+    const ttkLabel = isHeadMode 
+        ? (isEnglish() ? 'TTK HEAD (sec)' : 'TTK ГОЛОВА (сек)')
+        : (isEnglish() ? 'TTK BODY (sec)' : 'TTK ТЕЛО (сек)');
+    const betterLabel = isEnglish() ? '✓ BETTER' : '✓ ЛУЧШЕ';
+    const worseLabel = isEnglish() ? 'WORSE ↑' : 'ХУЖЕ ↑';
+    
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '11px Roboto';
     ctx.textAlign = 'center';
@@ -950,12 +1042,12 @@ function updateChart() {
     for (let i = 0; i <= distSteps; i++) {
         const x = padding.left + (chartWidth / distSteps) * i;
         const dist = Math.round((maxRange / distSteps) * i);
-        ctx.fillText(dist + ' м', x, height - padding.bottom + 20);
+        ctx.fillText(dist + ' ' + meterUnit, x, height - padding.bottom + 20);
     }
     
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = '10px Roboto';
-    ctx.fillText('ДИСТАНЦИЯ', padding.left + chartWidth / 2, height - 8);
+    ctx.fillText(distanceLabel, padding.left + chartWidth / 2, height - 8);
     
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '11px Roboto';
@@ -964,7 +1056,7 @@ function updateChart() {
     for (let i = 0; i <= ttkSteps; i++) {
         const y = padding.top + (chartHeight / ttkSteps) * i;
         const ttk = maxTTK - (maxTTK / ttkSteps) * i;
-        ctx.fillText(ttk.toFixed(1) + 'с', padding.left - 8, y + 4);
+        ctx.fillText(ttk.toFixed(1) + secUnit, padding.left - 8, y + 4);
     }
     
     ctx.save();
@@ -973,7 +1065,6 @@ function updateChart() {
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = '10px Roboto';
     ctx.textAlign = 'center';
-    const ttkLabel = isHeadMode ? 'TTK ГОЛОВА (сек)' : 'TTK ТЕЛО (сек)';
     ctx.fillText(ttkLabel, 0, 0);
     ctx.restore();
     
@@ -1059,7 +1150,7 @@ function updateChart() {
             ctx.fillStyle = color;
             ctx.font = '9px Roboto';
             ctx.textAlign = 'center';
-            ctx.fillText(`${Math.round(effectiveRange)}м`, effX, padding.top - 8);
+            ctx.fillText(`${Math.round(effectiveRange)}${meterUnit}`, effX, padding.top - 8);
         }
         
         if (state.targetDistance > 0 && state.targetDistance <= maxRange) {
@@ -1087,7 +1178,7 @@ function updateChart() {
         }
         
         legendItems.push({
-            name: weapon.name,
+            name: getLocalizedName(weapon),
             color: color,
             ttk: calculateTTKAtDistance(slotIndex, state.targetDistance || 0, isHeadMode)
         });
@@ -1109,11 +1200,11 @@ function updateChart() {
     ctx.fillStyle = betterColor;
     ctx.font = 'bold 10px Roboto';
     ctx.textAlign = 'left';
-    ctx.fillText('✓ ЛУЧШЕ', padding.left + 8, height - padding.bottom - 8);
+    ctx.fillText(betterLabel, padding.left + 8, height - padding.bottom - 8);
     
     ctx.fillStyle = 'rgba(248, 113, 113, 0.6)';
     ctx.textAlign = 'right';
-    ctx.fillText('ХУЖЕ ↑', width - padding.right - 8, padding.top + 15);
+    ctx.fillText(worseLabel, width - padding.right - 8, padding.top + 15);
     
     renderChartLegend(legendItems);
 }
@@ -1256,9 +1347,10 @@ function renderChartLegend(items) {
     });
     
     const isHeadMode = state.ttkMode === 'head';
+    const secUnit = isEnglish() ? 's' : 'с';
     
     elements.chartLegend.innerHTML = items.map((item, index) => {
-        const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
+        const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + secUnit;
         const rankClass = index === 0 && item.ttk !== Infinity ? 'chart-legend__item--best' : '';
         const modeClass = isHeadMode ? 'chart-legend__item--head' : '';
         return `
@@ -1318,7 +1410,7 @@ function initChartInteractivity() {
             const shotsNeeded = damageAtDist > 0 ? Math.ceil(state.targetHP / damageAtDist) : Infinity;
             
             tooltipItems.push({
-                name: slotData.weapon.name,
+                name: getLocalizedName(slotData.weapon),
                 color: SLOT_COLORS[i],
                 ttk: ttk,
                 shots: shotsNeeded
@@ -1331,17 +1423,22 @@ function initChartInteractivity() {
             return a.ttk - b.ttk;
         });
         
-        const modeLabel = isHeadMode ? '🎯 ГОЛОВА' : '👤 ТЕЛО';
+        const meterUnit = isEnglish() ? 'm' : 'м';
+        const secUnit = isEnglish() ? 's' : 'с';
+        const shotsUnit = t('dps.shots', 'выстр.');
+        const modeLabel = isHeadMode 
+            ? (isEnglish() ? '🎯 HEAD' : '🎯 ГОЛОВА')
+            : (isEnglish() ? '👤 BODY' : '👤 ТЕЛО');
         
         let tooltipContent = `
             <div class="chart-tooltip__header ${isHeadMode ? 'chart-tooltip__header--head' : ''}">
-                <span class="chart-tooltip__distance">${Math.round(distance)} м</span>
+                <span class="chart-tooltip__distance">${Math.round(distance)} ${meterUnit}</span>
                 <span class="chart-tooltip__label">${modeLabel}</span>
             </div>
             <div class="chart-tooltip__divider"></div>`;
         
         tooltipItems.forEach((item, index) => {
-            const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + 'с';
+            const ttkText = item.ttk === Infinity ? '∞' : item.ttk.toFixed(2) + secUnit;
             const rankIcon = index === 0 && item.ttk !== Infinity ? '👑' : '';
             const shotsText = item.shots === Infinity ? '∞' : item.shots;
             
@@ -1351,7 +1448,7 @@ function initChartInteractivity() {
                     <span class="chart-tooltip__name">${item.name}</span>
                     <div class="chart-tooltip__values">
                         <span class="chart-tooltip__ttk">${rankIcon} ${ttkText}</span>
-                        <span class="chart-tooltip__shots">${shotsText} выстр.</span>
+                        <span class="chart-tooltip__shots">${shotsText} ${shotsUnit}</span>
                     </div>
                 </div>`;
         });
@@ -1466,16 +1563,28 @@ function updateComparisonTable() {
     const bestTTK = Math.min(...activeSlots.map(s => s.result.ttkBody === Infinity ? 999999 : s.result.ttkBody));
     const bestDamage = Math.max(...activeSlots.map(s => s.result.armorDamage));
     
+    // Локализованные заголовки таблицы
+    const headers = {
+        weapon: t('dps.table.weapon', 'Оружие'),
+        ammo: t('dps.ammo', 'Патроны'),
+        dpsBody: t('dps.table.dpsBody', 'DPS (тело)'),
+        damagePerShot: isEnglish() ? 'Dmg/shot' : 'Урон/выстрел',
+        ttk: 'TTK',
+        shots: isEnglish() ? 'Shots' : 'Выстрелов'
+    };
+    
+    const secUnit = isEnglish() ? 's' : 'с';
+    
     let html = `
         <table class="comparison-table__table">
             <thead>
                 <tr>
-                    <th>Оружие</th>
-                    <th>Патроны</th>
-                    <th>DPS (тело)</th>
-                    <th>Урон/выстрел</th>
-                    <th>TTK</th>
-                    <th>Выстрелов</th>
+                    <th>${headers.weapon}</th>
+                    <th>${headers.ammo}</th>
+                    <th>${headers.dpsBody}</th>
+                    <th>${headers.damagePerShot}</th>
+                    <th>${headers.ttk}</th>
+                    <th>${headers.shots}</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -1486,22 +1595,23 @@ function updateComparisonTable() {
         const isBestTTK = r.ttkBody === bestTTK && r.ttkBody !== Infinity;
         const isBestDamage = r.armorDamage === bestDamage;
         
-        const rarityHtml = slot.weapon.rarityName 
-            ? `<span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${slot.weapon.rarityName}</span>` 
+        const localizedRarity = getRarityName(slot.weapon.rarity);
+        const rarityHtml = localizedRarity 
+            ? `<span class="comparison-table__weapon-rarity rarity--${slot.weapon.rarity}">${localizedRarity}</span>` 
             : '';
         
         html += `
             <tr style="border-left: 3px solid ${SLOT_COLORS[slot.index]}">
                 <td>
                     <div class="comparison-table__weapon">
-                        <span class="comparison-table__weapon-name">${slot.weapon.name}</span>
+                        <span class="comparison-table__weapon-name">${getLocalizedName(slot.weapon)}</span>
                         ${rarityHtml}
                     </div>
                 </td>
-                <td>${slot.ammo ? slot.ammo.name.replace('Патроны ', '') : '—'}</td>
+                <td>${slot.ammo ? getLocalizedName(slot.ammo).replace(/^(Патроны |Ammo )/, '') : '—'}</td>
                 <td class="${isBestDPS ? 'comparison-table__best' : ''}">${Math.round(r.dpsBody)}</td>
                 <td class="${isBestDamage ? 'comparison-table__best' : ''}">${r.armorDamage.toFixed(1)}</td>
-                <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + 'с'}</td>
+                <td class="${isBestTTK ? 'comparison-table__best' : ''}">${r.ttkBody === Infinity ? '∞' : r.ttkBody.toFixed(2) + secUnit}</td>
                 <td>${r.shotsBody === Infinity ? '∞' : r.shotsBody}</td>
             </tr>`;
     });
@@ -1528,7 +1638,7 @@ function resetCalculator() {
     for (let i = 0; i < 5; i++) {
         const nameEl = document.getElementById(`slotName${i}`);
         const dpsEl = document.getElementById(`slotDps${i}`);
-        if (nameEl) nameEl.textContent = 'Не выбрано';
+        if (nameEl) nameEl.textContent = t('dps.notSelected', 'Не выбрано');
         if (dpsEl) dpsEl.textContent = '0';
     }
     
@@ -1547,11 +1657,11 @@ function resetCalculator() {
     }
     
     const weaponValue = elements.weaponDropdown.querySelector('.custom-dropdown__value');
-    weaponValue.textContent = 'Выберите оружие...';
+    weaponValue.textContent = t('dps.selectWeapon', 'Выберите оружие...');
     weaponValue.classList.remove('has-value');
     
     const ammoValue = elements.ammoDropdown.querySelector('.custom-dropdown__value');
-    ammoValue.textContent = 'Сначала выберите оружие...';
+    ammoValue.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
     ammoValue.classList.remove('has-value');
     
     const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
