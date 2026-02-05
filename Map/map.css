@@ -1,4 +1,5 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
     --color-bg:#0a0a0b;
     --color-bg-secondary:#12121a;
@@ -21,7 +22,9 @@
     --sidebar-width:320px;
     --container-width:1400px
 }
+
 html,body{height:100%;overflow:hidden}
+
 body{
     font-family:var(--font-main);
     font-size:14px;
@@ -40,6 +43,7 @@ body{
     backdrop-filter:blur(20px);
     border-bottom:1px solid var(--color-border)
 }
+
 .header__container{
     max-width:var(--container-width);
     margin:0 auto;
@@ -49,6 +53,7 @@ body{
     align-items:center;
     justify-content:space-between
 }
+
 .header__logo{
     display:flex;
     align-items:center;
@@ -56,14 +61,18 @@ body{
     text-decoration:none;
     color:var(--color-text)
 }
+
 .header__logo-text{
     font-family:var(--font-heading);
     font-size:20px;
     font-weight:600;
     letter-spacing:2px
 }
+
 .header__logo-accent{color:var(--color-accent)}
+
 .header__nav{display:flex;align-items:center;gap:8px}
+
 .nav-link{
     display:flex;
     align-items:center;
@@ -76,9 +85,13 @@ body{
     border-radius:8px;
     transition:var(--transition)
 }
+
 .nav-icon{width:18px;height:18px}
+
 .nav-link:hover{background:rgba(255,255,255,0.05);color:var(--color-text)}
+
 .nav-link--current{background:rgba(196,163,90,0.15);color:var(--color-accent)}
+
 .header__burger{
     display:none;
     flex-direction:column;
@@ -88,6 +101,7 @@ body{
     cursor:pointer;
     padding:10px
 }
+
 .header__burger span{
     display:block;
     width:24px;
@@ -95,6 +109,7 @@ body{
     background:var(--color-text);
     transition:var(--transition)
 }
+
 .header__burger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
 .header__burger.active span:nth-child(2){opacity:0}
 .header__burger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
@@ -111,8 +126,11 @@ body{
     z-index:999;
     padding:20px 24px
 }
+
 .mobile-menu.active{display:block}
+
 .mobile-menu__nav{display:flex;flex-direction:column;gap:8px}
+
 .mobile-menu__link{
     display:block;
     padding:12px 16px;
@@ -122,7 +140,9 @@ body{
     border-radius:8px;
     transition:var(--transition)
 }
+
 .mobile-menu__link:hover{background:rgba(255,255,255,0.05)}
+
 .mobile-menu__link--current{background:rgba(196,163,90,0.15);color:var(--color-accent)}
 
 .sidebar{
@@ -138,7 +158,9 @@ body{
     flex-direction:column;
     transition:transform 0.3s ease
 }
+
 .sidebar.collapsed{transform:translateX(-100%)}
+
 .sidebar__toggle{
     position:absolute;
     top:50%;
@@ -158,34 +180,45 @@ body{
     transition:background 0.3s ease,border-color 0.3s ease,color 0.3s ease,box-shadow 0.3s ease;
     z-index:501
 }
+
 .sidebar.collapsed .sidebar__toggle{
     background:linear-gradient(135deg,var(--color-bg-card) 0%,rgba(30,30,40,0.98) 100%);
     border:1px solid var(--color-border);
     box-shadow:4px 0 20px rgba(0,0,0,0.3)
 }
+
 .sidebar__toggle:hover{
     background:linear-gradient(135deg,rgba(196,163,90,0.15) 0%,rgba(196,163,90,0.05) 100%);
     border-color:var(--color-accent-dim);
     color:var(--color-accent)
 }
+
 .sidebar.collapsed .sidebar__toggle:hover{
     background:linear-gradient(135deg,rgba(196,163,90,0.2) 0%,rgba(196,163,90,0.1) 100%);
     border-color:var(--color-accent);
     box-shadow:4px 0 25px rgba(196,163,90,0.15)
 }
+
 .sidebar__toggle svg{width:20px;height:20px;transition:transform 0.3s ease}
+
 .sidebar.collapsed .sidebar__toggle svg{transform:rotate(180deg)}
+
+.sidebar__toggle-text{display:none}
+
 .sidebar__content{
     flex:1;
     overflow-y:auto;
     padding:16px;
     transition:opacity 0.2s ease
 }
+
 .sidebar.collapsed .sidebar__content{opacity:0;pointer-events:none}
+
 .sidebar__content::-webkit-scrollbar{width:6px}
 .sidebar__content::-webkit-scrollbar-track{background:rgba(0,0,0,0.2)}
 .sidebar__content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
 .sidebar__content::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
+
 .sidebar__header{
     display:flex;
     align-items:center;
@@ -194,12 +227,14 @@ body{
     padding-bottom:12px;
     border-bottom:1px solid var(--color-border)
 }
+
 .sidebar__title{
     font-family:var(--font-heading);
     font-size:18px;
     font-weight:500;
     letter-spacing:1px
 }
+
 .sidebar__reset{
     width:32px;
     height:32px;
@@ -213,11 +248,13 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .sidebar__reset:hover{
     background:rgba(248,113,113,0.1);
     border-color:rgba(248,113,113,0.3);
     color:var(--color-negative)
 }
+
 .sidebar__reset svg{width:16px;height:16px}
 
 .filter-group{
@@ -227,6 +264,7 @@ body{
     border-radius:12px;
     overflow:hidden
 }
+
 .filter-group__header{
     width:100%;
     display:flex;
@@ -239,7 +277,9 @@ body{
     color:var(--color-text);
     transition:var(--transition)
 }
+
 .filter-group__header:hover{background:rgba(255,255,255,0.03)}
+
 .filter-group__icon{
     width:36px;
     height:36px;
@@ -249,12 +289,16 @@ body{
     border-radius:8px;
     flex-shrink:0
 }
+
 .filter-group__icon svg{width:18px;height:18px}
+
 .filter-group__icon--containers{background:rgba(59,130,246,0.15);color:var(--color-containers)}
 .filter-group__icon--mutants{background:rgba(239,68,68,0.15);color:var(--color-mutants)}
 .filter-group__icon--traders{background:rgba(34,197,94,0.15);color:var(--color-traders)}
 .filter-group__icon--npc{background:rgba(168,85,247,0.15);color:var(--color-npc)}
+
 .filter-group__title{flex:1;font-size:14px;font-weight:500;text-align:left}
+
 .filter-group__count{
     font-size:12px;
     font-weight:600;
@@ -263,18 +307,22 @@ body{
     border-radius:10px;
     color:var(--color-text-muted)
 }
+
 .filter-group__arrow{
     width:18px;
     height:18px;
     color:var(--color-text-muted);
     transition:transform 0.3s ease
 }
+
 .filter-group.open .filter-group__arrow{transform:rotate(180deg)}
+
 .filter-group__content{
     display:none;
     padding:8px 14px 14px;
     border-top:1px solid var(--color-border)
 }
+
 .filter-group.open .filter-group__content{display:block}
 
 .filter-item{
@@ -287,8 +335,11 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .filter-item:hover{background:rgba(255,255,255,0.05)}
+
 .filter-checkbox{display:none}
+
 .filter-item__checkmark{
     width:18px;
     height:18px;
@@ -298,10 +349,12 @@ body{
     transition:var(--transition);
     flex-shrink:0
 }
+
 .filter-checkbox:checked+.filter-item__checkmark{
     background:var(--color-accent);
     border-color:var(--color-accent)
 }
+
 .filter-checkbox:checked+.filter-item__checkmark::after{
     content:'';
     position:absolute;
@@ -313,11 +366,14 @@ body{
     border-width:0 2px 2px 0;
     transform:rotate(45deg)
 }
+
 .filter-item__label{flex:1;font-size:13px;color:var(--color-text)}
+
 .filter-checkbox:not(:checked)~.filter-item__label{
     color:var(--color-text-muted);
     text-decoration:line-through
 }
+
 .filter-item__count{
     font-size:11px;
     color:var(--color-text-muted);
@@ -335,18 +391,24 @@ body{
     background:#1a1a1f;
     transition:left 0.3s ease,bottom 0.3s ease
 }
+
 .sidebar.collapsed~.map-container{left:0}
 
 .leaflet-container{background:#1a1a1f;font-family:var(--font-main)}
+
 .leaflet-control-zoom{display:none}
+
 .leaflet-popup-content-wrapper{
     background:var(--color-bg-card);
     border:1px solid var(--color-border);
     border-radius:12px;
     box-shadow:0 8px 32px rgba(0,0,0,0.5)
 }
+
 .leaflet-popup-content{margin:14px 16px;color:var(--color-text);font-size:14px}
+
 .leaflet-popup-tip{background:var(--color-bg-card);border:1px solid var(--color-border)}
+
 .leaflet-popup-close-button{
     color:var(--color-text-muted)!important;
     font-size:20px!important;
@@ -354,9 +416,11 @@ body{
     height:24px!important;
     padding:4px!important
 }
+
 .leaflet-popup-close-button:hover{color:var(--color-accent)!important}
 
 .marker-popup{min-width:180px}
+
 .marker-popup__title{
     font-family:var(--font-heading);
     font-size:16px;
@@ -364,7 +428,9 @@ body{
     margin-bottom:8px;
     color:var(--color-accent)
 }
+
 .marker-popup__desc{font-size:13px;color:var(--color-text-muted);line-height:1.5}
+
 .marker-popup__coords{
     margin-top:10px;
     padding-top:10px;
@@ -390,8 +456,11 @@ body{
     z-index:400;
     transition:left 0.3s ease,bottom 0.3s ease
 }
+
 .sidebar.collapsed~.coordinates{left:20px}
+
 .coordinates__label{color:var(--color-text-muted)}
+
 .coordinates__value{color:var(--color-accent);font-weight:500;min-width:50px}
 
 .map-controls{
@@ -404,6 +473,7 @@ body{
     z-index:400;
     transition:bottom 0.3s ease
 }
+
 .map-control{
     width:44px;
     height:44px;
@@ -417,11 +487,13 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .map-control:hover{
     background:rgba(196,163,90,0.1);
     border-color:var(--color-accent);
     color:var(--color-accent)
 }
+
 .map-control svg{width:20px;height:20px}
 
 .user-marker-toggle{
@@ -444,16 +516,21 @@ body{
     transition:var(--transition);
     box-shadow:0 4px 20px rgba(196,163,90,0.3)
 }
+
 .user-marker-toggle:hover{
     transform:translateY(-2px);
     box-shadow:0 6px 25px rgba(196,163,90,0.4)
 }
+
 .user-marker-toggle.active{
     background:linear-gradient(135deg,#ef4444,#dc2626);
     box-shadow:0 4px 20px rgba(239,68,68,0.3)
 }
+
 .user-marker-toggle svg{width:20px;height:20px;transition:transform 0.3s ease}
+
 .user-marker-toggle.active svg{transform:rotate(45deg)}
+
 .map-container.adding-marker,
 .map-container.adding-marker .leaflet-container{cursor:crosshair!important}
 
@@ -472,7 +549,9 @@ body{
     box-shadow:0 8px 32px rgba(0,0,0,0.5);
     overflow:hidden
 }
+
 .user-markers-panel.visible{display:flex}
+
 .user-markers-panel__header{
     display:flex;
     align-items:center;
@@ -481,6 +560,7 @@ body{
     background:rgba(0,0,0,0.3);
     border-bottom:1px solid var(--color-border)
 }
+
 .user-markers-panel__header h3{
     font-family:var(--font-heading);
     font-size:16px;
@@ -488,7 +568,9 @@ body{
     color:var(--color-accent);
     margin:0
 }
+
 .user-markers-panel__actions{display:flex;align-items:center;gap:8px}
+
 .user-markers-panel__btn{
     width:32px;
     height:32px;
@@ -502,17 +584,21 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .user-markers-panel__btn:hover{
     background:rgba(196,163,90,0.1);
     border-color:var(--color-accent);
     color:var(--color-accent)
 }
+
 .user-markers-panel__btn--danger:hover{
     background:rgba(239,68,68,0.1);
     border-color:#ef4444;
     color:#ef4444
 }
+
 .user-markers-panel__btn svg{width:16px;height:16px}
+
 .user-markers-panel__close{
     width:32px;
     height:32px;
@@ -526,11 +612,15 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .user-markers-panel__close:hover{color:var(--color-text)}
+
 .user-markers-panel__list{flex:1;overflow-y:auto;padding:12px}
+
 .user-markers-panel__list::-webkit-scrollbar{width:6px}
 .user-markers-panel__list::-webkit-scrollbar-track{background:rgba(0,0,0,0.2)}
 .user-markers-panel__list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
 .user-markers-panel__empty{
     text-align:center;
     padding:40px 20px;
@@ -546,13 +636,16 @@ body{
     margin-bottom:10px;
     transition:var(--transition)
 }
+
 .user-marker-item:hover{border-color:var(--color-accent-dim)}
+
 .user-marker-item__header{
     display:flex;
     align-items:center;
     justify-content:space-between;
     margin-bottom:8px
 }
+
 .user-marker-item__type{
     display:flex;
     align-items:center;
@@ -561,8 +654,11 @@ body{
     font-weight:500;
     color:var(--color-accent)
 }
+
 .user-marker-item__type-icon{width:20px;height:20px;object-fit:contain}
+
 .user-marker-item__actions{display:flex;gap:4px}
+
 .user-marker-item__btn{
     width:28px;
     height:28px;
@@ -576,15 +672,20 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .user-marker-item__btn:hover{background:rgba(196,163,90,0.1);color:var(--color-accent)}
+
 .user-marker-item__btn--delete:hover{background:rgba(239,68,68,0.1);color:#ef4444}
+
 .user-marker-item__btn svg{width:14px;height:14px}
+
 .user-marker-item__coords{
     font-size:12px;
     color:var(--color-text-muted);
     font-family:'Roboto Mono',monospace;
     margin-bottom:6px
 }
+
 .user-marker-item__desc{font-size:13px;color:var(--color-text);line-height:1.4}
 
 .user-markers-panel__footer{
@@ -592,6 +693,7 @@ body{
     border-top:1px solid var(--color-border);
     background:rgba(0,0,0,0.2)
 }
+
 .user-markers-panel__copy-btn{
     width:100%;
     display:flex;
@@ -609,11 +711,14 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .user-markers-panel__copy-btn:hover{
     transform:translateY(-2px);
     box-shadow:0 4px 15px rgba(196,163,90,0.3)
 }
+
 .user-markers-panel__copy-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
 .user-markers-panel__copy-btn svg{width:18px;height:18px}
 
 .marker-modal{
@@ -627,7 +732,9 @@ body{
     align-items:center;
     justify-content:center
 }
+
 .marker-modal.visible{display:flex}
+
 .marker-modal__overlay{
     position:absolute;
     top:0;
@@ -637,6 +744,7 @@ body{
     background:rgba(0,0,0,0.8);
     backdrop-filter:blur(4px)
 }
+
 .marker-modal__content{
     position:relative;
     width:90%;
@@ -647,6 +755,7 @@ body{
     box-shadow:0 20px 60px rgba(0,0,0,0.5);
     overflow:hidden
 }
+
 .marker-modal__header{
     display:flex;
     align-items:center;
@@ -655,6 +764,7 @@ body{
     background:rgba(0,0,0,0.3);
     border-bottom:1px solid var(--color-border)
 }
+
 .marker-modal__header h3{
     font-family:var(--font-heading);
     font-size:18px;
@@ -662,6 +772,7 @@ body{
     color:var(--color-accent);
     margin:0
 }
+
 .marker-modal__close{
     width:32px;
     height:32px;
@@ -675,8 +786,11 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .marker-modal__close:hover{color:var(--color-text)}
+
 .marker-modal__body{padding:24px}
+
 .marker-modal__coords{
     display:flex;
     align-items:center;
@@ -688,13 +802,17 @@ body{
     margin-bottom:20px;
     font-size:14px
 }
+
 .marker-modal__coords span:first-child{color:var(--color-text-muted)}
+
 .marker-modal__coords span:last-child{
     color:var(--color-accent);
     font-family:'Roboto Mono',monospace;
     font-weight:500
 }
+
 .marker-modal__field{margin-bottom:16px}
+
 .marker-modal__field label{
     display:block;
     font-size:13px;
@@ -702,6 +820,7 @@ body{
     color:var(--color-text-muted);
     margin-bottom:8px
 }
+
 .marker-modal__select,
 .marker-modal__input,
 .marker-modal__textarea{
@@ -715,6 +834,7 @@ body{
     font-size:14px;
     transition:var(--transition)
 }
+
 .marker-modal__select:focus,
 .marker-modal__input:focus,
 .marker-modal__textarea:focus{
@@ -722,8 +842,11 @@ body{
     border-color:var(--color-accent);
     box-shadow:0 0 0 3px rgba(196,163,90,0.1)
 }
+
 .marker-modal__select option{background:var(--color-bg-secondary);color:var(--color-text)}
+
 .marker-modal__textarea{min-height:80px;resize:vertical}
+
 .marker-modal__footer{
     display:flex;
     gap:12px;
@@ -731,6 +854,7 @@ body{
     background:rgba(0,0,0,0.2);
     border-top:1px solid var(--color-border)
 }
+
 .marker-modal__btn{
     flex:1;
     padding:14px 20px;
@@ -742,20 +866,25 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .marker-modal__btn--cancel{
     background:rgba(255,255,255,0.05);
     color:var(--color-text-muted);
     border:1px solid var(--color-border)
 }
+
 .marker-modal__btn--cancel:hover{background:rgba(255,255,255,0.1);color:var(--color-text)}
+
 .marker-modal__btn--save{
     background:linear-gradient(135deg,var(--color-accent),var(--color-accent-dim));
     color:#0a0a0b
 }
+
 .marker-modal__btn--save:hover{
     transform:translateY(-2px);
     box-shadow:0 4px 15px rgba(196,163,90,0.3)
 }
+
 .marker-modal__btn--save:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
 .copy-toast{
@@ -776,10 +905,13 @@ body{
     opacity:0;
     transition:all 0.3s ease
 }
+
 .copy-toast.visible{transform:translateX(-50%) translateY(0);opacity:1}
+
 .copy-toast svg{width:20px;height:20px}
 
 .user-marker-icon{position:relative}
+
 .user-marker-icon::after{
     content:'';
     position:absolute;
@@ -793,6 +925,7 @@ body{
 }
 
 .custom-select{position:relative;width:100%}
+
 .custom-select__trigger{
     display:flex;
     align-items:center;
@@ -804,12 +937,16 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .custom-select__trigger:hover{border-color:var(--color-accent-dim)}
+
 .custom-select.open .custom-select__trigger{
     border-color:var(--color-accent);
     border-radius:10px 10px 0 0
 }
+
 .custom-select__placeholder{color:var(--color-text-muted);font-size:14px}
+
 .custom-select__selected{
     display:flex;
     align-items:center;
@@ -817,7 +954,9 @@ body{
     color:var(--color-text);
     font-size:14px
 }
+
 .custom-select__selected img{width:22px;height:22px;object-fit:contain}
+
 .custom-select__arrow{
     width:18px;
     height:18px;
@@ -825,7 +964,9 @@ body{
     transition:transform 0.3s ease;
     flex-shrink:0
 }
+
 .custom-select.open .custom-select__arrow{transform:rotate(180deg);color:var(--color-accent)}
+
 .custom-select__dropdown{
     position:absolute;
     top:100%;
@@ -841,16 +982,21 @@ body{
     display:none;
     box-shadow:0 10px 30px rgba(0,0,0,0.4)
 }
+
 .custom-select.open .custom-select__dropdown{display:block;animation:dropdownFade 0.2s ease}
+
 @keyframes dropdownFade{
     from{opacity:0;transform:translateY(-10px)}
     to{opacity:1;transform:translateY(0)}
 }
+
 .custom-select__dropdown::-webkit-scrollbar{width:6px}
 .custom-select__dropdown::-webkit-scrollbar-track{background:rgba(0,0,0,0.2)}
 .custom-select__dropdown::-webkit-scrollbar-thumb{background:var(--color-accent-dim);border-radius:3px}
+
 .custom-select__group{padding:8px 0;border-bottom:1px solid var(--color-border)}
 .custom-select__group:last-child{border-bottom:none}
+
 .custom-select__group-title{
     display:flex;
     align-items:center;
@@ -863,7 +1009,9 @@ body{
     color:var(--color-accent);
     background:rgba(196,163,90,0.05)
 }
+
 .custom-select__group-title svg{width:16px;height:16px}
+
 .custom-select__group:nth-child(1) .custom-select__group-title{color:var(--color-containers);background:rgba(59,130,246,0.05)}
 .custom-select__group:nth-child(1) .custom-select__group-title svg{color:var(--color-containers)}
 .custom-select__group:nth-child(2) .custom-select__group-title{color:var(--color-mutants);background:rgba(239,68,68,0.05)}
@@ -872,6 +1020,7 @@ body{
 .custom-select__group:nth-child(3) .custom-select__group-title svg{color:var(--color-traders)}
 .custom-select__group:nth-child(4) .custom-select__group-title{color:var(--color-npc);background:rgba(168,85,247,0.05)}
 .custom-select__group:nth-child(4) .custom-select__group-title svg{color:var(--color-npc)}
+
 .custom-select__option{
     display:flex;
     align-items:center;
@@ -880,11 +1029,55 @@ body{
     cursor:pointer;
     transition:var(--transition)
 }
+
 .custom-select__option:hover{background:rgba(255,255,255,0.05)}
+
 .custom-select__option.selected{background:rgba(196,163,90,0.15)}
+
 .custom-select__option img{width:24px;height:24px;object-fit:contain;flex-shrink:0}
+
 .custom-select__option span{font-size:14px;color:var(--color-text)}
+
 .custom-select__option:hover span{color:var(--color-accent)}
+
+.mobile-lang-switcher{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid var(--color-border)
+}
+
+.mobile-lang-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    padding:16px 20px;
+    background:linear-gradient(135deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%);
+    border:1px solid var(--color-border);
+    border-radius:12px;
+    color:var(--color-text-muted);
+    font-family:var(--font-main);
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.4,0,0.2,1)
+}
+
+.mobile-lang-btn:hover{
+    background:rgba(255,255,255,0.08);
+    color:var(--color-text);
+    transform:translateY(-2px)
+}
+
+.mobile-lang-btn.active{
+    background:linear-gradient(135deg,rgba(196,163,90,0.2) 0%,rgba(196,163,90,0.1) 100%);
+    border-color:var(--color-accent);
+    color:var(--color-accent);
+    box-shadow:0 4px 16px rgba(196,163,90,0.2)
+}
 
 @media(max-width:1024px){
     .header__nav{display:none}
@@ -897,7 +1090,6 @@ body{
 }
 
 @media(max-width:768px){
-    /* ===== SIDEBAR КАК BOTTOM SHEET ===== */
     .sidebar{
         position:fixed;
         width:100%;
@@ -910,30 +1102,16 @@ body{
         border-right:none;
         border-radius:0;
         z-index:600;
-        transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
         transform:translateY(calc(100% - 56px));
         background:transparent
     }
     
-    .sidebar.open{
-        transform:translateY(0)
-    }
+    .sidebar.open{transform:translateY(0)}
+    .sidebar.collapsed{transform:translateY(calc(100% - 56px))}
+    .sidebar.collapsed .sidebar__content{opacity:1;pointer-events:auto}
+    .sidebar.collapsed .sidebar__toggle svg{transform:rotate(-90deg)}
     
-    /* Игнорируем collapsed на мобильных */
-    .sidebar.collapsed{
-        transform:translateY(calc(100% - 56px))
-    }
-    
-    .sidebar.collapsed .sidebar__content{
-        opacity:1;
-        pointer-events:auto
-    }
-    
-    .sidebar.collapsed .sidebar__toggle svg{
-        transform:rotate(-90deg)
-    }
-    
-    /* ===== КНОПКА TOGGLE ===== */
     .sidebar__toggle{
         position:relative;
         top:auto;
@@ -953,7 +1131,6 @@ body{
         box-shadow:0 -4px 20px rgba(0,0,0,0.3)
     }
     
-    /* Ручка для визуального указания на drag */
     .sidebar__toggle::after{
         content:'';
         position:absolute;
@@ -966,17 +1143,12 @@ body{
         border-radius:2px
     }
     
-    /* Текст кнопки */
-    .sidebar__toggle::before{
-        content:'Фильтры';
+    .sidebar__toggle-text{
+        display:block;
         font-size:14px;
         font-weight:600;
         color:var(--color-text);
         letter-spacing:0.5px
-    }
-    
-    .sidebar.open .sidebar__toggle::before{
-        content:'Скрыть'
     }
     
     .sidebar__toggle svg{
@@ -987,11 +1159,8 @@ body{
         color:var(--color-text-muted)
     }
     
-    .sidebar.open .sidebar__toggle svg{
-        transform:rotate(90deg)
-    }
+    .sidebar.open .sidebar__toggle svg{transform:rotate(90deg)}
     
-    /* ===== КОНТЕНТ SIDEBAR ===== */
     .sidebar__content{
         background:var(--color-bg-card);
         max-height:calc(75vh - 56px);
@@ -1000,33 +1169,12 @@ body{
         border-top:1px solid var(--color-border)
     }
     
-    /* ===== АДАПТАЦИЯ КАРТЫ И КОНТРОЛОВ ===== */
-    .map-container{
-        left:0;
-        bottom:56px
-    }
+    .map-container{left:0;bottom:56px}
+    .sidebar.collapsed~.map-container{left:0}
+    .coordinates{left:10px;bottom:70px;padding:8px 12px;font-size:11px}
+    .sidebar.collapsed~.coordinates{left:10px}
+    .map-controls{bottom:70px;right:10px}
     
-    .sidebar.collapsed~.map-container{
-        left:0
-    }
-    
-    .coordinates{
-        left:10px;
-        bottom:70px;
-        padding:8px 12px;
-        font-size:11px
-    }
-    
-    .sidebar.collapsed~.coordinates{
-        left:10px
-    }
-    
-    .map-controls{
-        bottom:70px;
-        right:10px
-    }
-    
-    /* ===== КНОПКА ДОБАВЛЕНИЯ МЕТКИ ===== */
     .user-marker-toggle{
         top:calc(var(--header-height) + 10px);
         right:10px;
@@ -1037,16 +1185,9 @@ body{
         justify-content:center
     }
     
-    .user-marker-toggle span{
-        display:none
-    }
+    .user-marker-toggle span{display:none}
+    .user-marker-toggle svg{width:24px;height:24px}
     
-    .user-marker-toggle svg{
-        width:24px;
-        height:24px
-    }
-    
-    /* ===== ПАНЕЛЬ ПОЛЬЗОВАТЕЛЬСКИХ МЕТОК ===== */
     .user-markers-panel{
         top:calc(var(--header-height) + 70px);
         right:10px;
@@ -1056,230 +1197,54 @@ body{
         border-radius:12px
     }
     
-    .user-markers-panel__header{
-        padding:12px 16px
-    }
+    .user-markers-panel__header{padding:12px 16px}
+    .user-markers-panel__header h3{font-size:14px}
+    .user-markers-panel__list{padding:8px;max-height:30vh}
+    .user-markers-panel__empty{padding:20px 16px;font-size:13px}
+    .user-marker-item{padding:10px;margin-bottom:8px}
+    .user-marker-item__header{margin-bottom:6px}
+    .user-marker-item__type{font-size:12px;gap:6px}
+    .user-marker-item__type-icon{width:18px;height:18px}
+    .user-marker-item__btn{width:28px;height:28px}
+    .user-marker-item__btn svg{width:14px;height:14px}
+    .user-marker-item__coords{font-size:11px;margin-bottom:4px}
+    .user-marker-item__desc{font-size:12px}
+    .user-markers-panel__footer{padding:10px 12px}
+    .user-markers-panel__copy-btn{padding:12px 16px;font-size:13px;gap:8px}
+    .user-markers-panel__copy-btn svg{width:16px;height:16px}
+    .sidebar__header{padding-bottom:10px;margin-bottom:12px}
+    .sidebar__title{font-size:16px}
+    .filter-group{margin-bottom:6px}
+    .filter-group__header{padding:10px 12px;gap:10px}
+    .filter-group__icon{width:32px;height:32px}
+    .filter-group__icon svg{width:16px;height:16px}
+    .filter-group__title{font-size:13px}
+    .filter-group__count{font-size:11px;padding:2px 6px}
+    .filter-group__content{padding:6px 12px 12px}
+    .filter-item{padding:8px 10px;gap:10px}
+    .filter-item__checkmark{width:18px;height:18px}
+    .filter-checkbox:checked+.filter-item__checkmark::after{left:5px;top:2px;width:4px;height:8px}
+    .filter-item__label{font-size:13px}
+    .filter-item__count{font-size:11px;padding:2px 6px}
     
-    .user-markers-panel__header h3{
-        font-size:14px
-    }
-    
-    .user-markers-panel__list{
-        padding:8px;
-        max-height:30vh
-    }
-    
-    .user-markers-panel__empty{
-        padding:20px 16px;
-        font-size:13px
-    }
-    
-    .user-marker-item{
-        padding:10px;
-        margin-bottom:8px
-    }
-    
-    .user-marker-item__header{
-        margin-bottom:6px
-    }
-    
-    .user-marker-item__type{
-        font-size:12px;
-        gap:6px
-    }
-    
-    .user-marker-item__type-icon{
-        width:18px;
-        height:18px
-    }
-    
-    .user-marker-item__btn{
-        width:28px;
-        height:28px
-    }
-    
-    .user-marker-item__btn svg{
-        width:14px;
-        height:14px
-    }
-    
-    .user-marker-item__coords{
-        font-size:11px;
-        margin-bottom:4px
-    }
-    
-    .user-marker-item__desc{
-        font-size:12px
-    }
-    
-    .user-markers-panel__footer{
-        padding:10px 12px
-    }
-    
-    .user-markers-panel__copy-btn{
-        padding:12px 16px;
-        font-size:13px;
-        gap:8px
-    }
-    
-    .user-markers-panel__copy-btn svg{
-        width:16px;
-        height:16px
-    }
-    
-    /* ===== ФИЛЬТРЫ ===== */
-    .sidebar__header{
-        padding-bottom:10px;
-        margin-bottom:12px
-    }
-    
-    .sidebar__title{
-        font-size:16px
-    }
-    
-    .filter-group{
-        margin-bottom:6px
-    }
-    
-    .filter-group__header{
-        padding:10px 12px;
-        gap:10px
-    }
-    
-    .filter-group__icon{
-        width:32px;
-        height:32px
-    }
-    
-    .filter-group__icon svg{
-        width:16px;
-        height:16px
-    }
-    
-    .filter-group__title{
-        font-size:13px
-    }
-    
-    .filter-group__count{
-        font-size:11px;
-        padding:2px 6px
-    }
-    
-    .filter-group__content{
-        padding:6px 12px 12px
-    }
-    
-    .filter-item{
-        padding:8px 10px;
-        gap:10px
-    }
-    
-    .filter-item__checkmark{
-        width:18px;
-        height:18px
-    }
-    
-    .filter-checkbox:checked+.filter-item__checkmark::after{
-        left:5px;
-        top:2px;
-        width:4px;
-        height:8px
-    }
-    
-    .filter-item__label{
-        font-size:13px
-    }
-    
-    .filter-item__count{
-        font-size:11px;
-        padding:2px 6px
-    }
+    .mobile-lang-switcher{flex-direction:column}
 }
 
 @media(max-width:480px){
-    .sidebar{
-        max-height:70vh
-    }
-    
-    .sidebar__content{
-        max-height:calc(70vh - 56px);
-        padding:10px
-    }
-    
-    .coordinates{
-        padding:6px 10px;
-        font-size:10px;
-        bottom:66px
-    }
-    
-    .map-controls{
-        bottom:66px
-    }
-    
-    .map-control{
-        width:40px;
-        height:40px
-    }
-    
-    .map-control svg{
-        width:18px;
-        height:18px
-    }
-    
-    .marker-modal__content{
-        width:95%;
-        margin:10px;
-        max-height:90vh;
-        overflow-y:auto
-    }
-    
-    .marker-modal__body{
-        padding:16px
-    }
-    
-    .marker-modal__footer{
-        flex-direction:column
-    }
-    
-    .user-marker-toggle{
-        width:44px;
-        height:44px
-    }
-    
-    .user-marker-toggle svg{
-        width:22px;
-        height:22px
-    }
-    
-    .user-markers-panel{
-        max-height:calc(100vh - var(--header-height) - 130px);
-        top:calc(var(--header-height) + 60px)
-    }
-    
-    .user-markers-panel__list{
-        max-height:25vh
-    }
-    
-    .filter-item{
-        padding:6px 8px
-    }
-    
-    .filter-item__label{
-        font-size:12px
-    }
-    
-    .sidebar__header{
-        flex-wrap:wrap;
-        gap:8px
-    }
-}
-
-.nav-link:hover { 
-    background: rgba(255,255,255,0.05); 
-    color: var(--color-text); 
-}
-
-.mobile-menu__link--current { 
-    background: rgba(196,163,90,0.15); 
-    color: var(--color-accent); 
+    .sidebar{max-height:70vh}
+    .sidebar__content{max-height:calc(70vh - 56px);padding:10px}
+    .coordinates{padding:6px 10px;font-size:10px;bottom:66px}
+    .map-controls{bottom:66px}
+    .map-control{width:40px;height:40px}
+    .map-control svg{width:18px;height:18px}
+    .marker-modal__content{width:95%;margin:10px;max-height:90vh;overflow-y:auto}
+    .marker-modal__body{padding:16px}
+    .marker-modal__footer{flex-direction:column}
+    .user-marker-toggle{width:44px;height:44px}
+    .user-marker-toggle svg{width:22px;height:22px}
+    .user-markers-panel{max-height:calc(100vh - var(--header-height) - 130px);top:calc(var(--header-height) + 60px)}
+    .user-markers-panel__list{max-height:25vh}
+    .filter-item{padding:6px 8px}
+    .filter-item__label{font-size:12px}
+    .sidebar__header{flex-wrap:wrap;gap:8px}
 }
