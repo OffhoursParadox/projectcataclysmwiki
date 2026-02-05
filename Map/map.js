@@ -37,9 +37,111 @@ const MARKER_ICONS = {
     obliterator: L.icon({ iconUrl: 'markers/NPC/Obliterator.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] })
 };
 
+const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera'];
+const NPC_TYPES = ['zombified', 'bandits', 'military', 'freedom', 'duty', 'mercs', 'sins', 'monolith', 'obliterator'];
+const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash'];
+
+const RUSSIAN_MUTANT_NAMES = {
+    'Слепые собаки': 'blind_dog',
+    'Псевдособаки': 'pseudodog',
+    'Плоти': 'flesh',
+    'Кабаны': 'boar',
+    'Крысы': 'rat',
+    'Снорки': 'snork',
+    'Зомби': 'zombie',
+    'Кровосос': 'bloodsucker',
+    'Матёрый кровосос': 'bloodsucker_strong',
+    'Химера': 'chimera'
+};
+
+const DESC_TRANSLATIONS = {
+    'Лаборатория в тоннеле': 'Laboratory in the tunnel',
+    'Мини лаборатория в тоннеле': 'Mini laboratory in the tunnel',
+    'Находится в лаборатории': 'Located in the laboratory',
+    'Подземелья Агропрома': 'Agroprom Underground',
+    'Лаборатория в пещере': 'Laboratory in the cave',
+    'Лаборатория X-16': 'Laboratory X-16',
+    'Выход из лаборатории X-16': 'Exit from Laboratory X-16',
+    'Лаборатория X-18': 'Laboratory X-18',
+    '-1 этаж': '-1 floor',
+    '-2 этаж': '-2 floor',
+    'Появляется на третьем этаже': 'Appears on the third floor',
+    'Появляется на верхнем ярусе крыши': 'Appears on the upper level of the roof',
+    'Появляется на втором этаже бойлерной': 'Appears on the second floor of the boiler room',
+    'Появляется на втором этаже в крайней комнате': 'Appears on the second floor in the far room',
+    'Появляется на втором этаже в коридоре': 'Appears on the second floor in the corridor',
+    'Время:': 'Time:',
+    'конец дождя': 'end of rain',
+    'Зомбированные': 'Zombified',
+    'Зомбированный': 'Zombified',
+    'Бандиты': 'Bandits',
+    'Мародеры': 'Marauders',
+    'Очень сильные': 'Very strong',
+    'Военные': 'Military',
+    'Военный блокпост': 'Military checkpoint',
+    'Свободовцы': 'Freedom',
+    'База Свободы': 'Freedom Base',
+    'Долговцы': 'Duty',
+    'База Долга': 'Duty Base',
+    'Наемники': 'Mercenaries',
+    'База Наемников': 'Mercenary Base',
+    'Грех': 'Sin',
+    'Монолитовцы': 'Monolith',
+    'Облитератор': 'Obliterator',
+    'Также лежит': 'Also contains',
+    'Трек:': 'Track:',
+    'Координаты:': 'Coordinates:'
+};
+
 let map;
 let markerLayers = {};
 let activeFilters = new Set();
+
+function t(key, params = {}) {
+    if (window.i18n && typeof window.i18n.t === 'function') {
+        return window.i18n.t(key, params);
+    }
+    return key;
+}
+
+function getMarkerTypeName(type) {
+    return t(`map.marker.${type}`);
+}
+
+function translateDescription(desc, type) {
+    if (!window.i18n?.isEnglish()) return desc;
+    
+    if (MUTANT_TYPES.includes(type)) {
+        let translated = desc;
+        Object.entries(RUSSIAN_MUTANT_NAMES).forEach(([ruName, typeKey]) => {
+            if (translated.startsWith(ruName)) {
+                translated = translated.replace(ruName, t(`map.marker.${typeKey}`));
+            }
+        });
+        Object.entries(DESC_TRANSLATIONS).forEach(([ru, en]) => {
+            translated = translated.split(ru).join(en);
+        });
+        return translated;
+    }
+    
+    if (NPC_TYPES.includes(type) || type === 'trader') {
+        let translated = desc;
+        Object.entries(DESC_TRANSLATIONS).forEach(([ru, en]) => {
+            translated = translated.split(ru).join(en);
+        });
+        return translated;
+    }
+    
+    if (CONTAINER_TYPES.includes(type)) {
+        let translated = desc;
+        Object.entries(DESC_TRANSLATIONS).forEach(([ru, en]) => {
+            translated = translated.split(ru).join(en);
+        });
+        return translated;
+    }
+    
+    return desc;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     initMap();
@@ -50,6 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     updateMarkerCounts();
     setTimeout(() => UserMarkerTool.init(), 100);
+});
+
+document.addEventListener('languageChanged', () => {
+    refreshMarkersPopups();
+    UserMarkerTool.refreshAllMarkers();
+    UserMarkerTool.renderMarkersList();
+    UserMarkerTool.updateToggleButtonText();
+    UserMarkerTool.updateSelectedCategory();
 });
 
 function initMap() {
@@ -90,16 +200,33 @@ function initMarkers() {
             const icon = MARKER_ICONS[type];
             if (!icon) return;
             const marker = L.marker(latLng, { icon });
-            let popupContent = `<div class="marker-popup">`;
-            if (markerData.image) {
-                popupContent += `<img src="${markerData.image}" alt="" style="max-width: 280px; border-radius: 8px; margin-bottom: 10px;">`;
-            }
-            popupContent += `<div class="marker-popup__desc">${markerData.desc}</div></div>`;
-            marker.bindPopup(popupContent);
+            marker.markerType = type;
+            marker.markerData = markerData;
+            marker.bindPopup(() => createMarkerPopup(type, markerData));
             markerLayers[type].addLayer(marker);
         });
         markerLayers[type].addTo(map);
         activeFilters.add(type);
+    });
+}
+
+function createMarkerPopup(type, markerData) {
+    let popupContent = `<div class="marker-popup">`;
+    if (markerData.image) {
+        popupContent += `<img src="${markerData.image}" alt="" style="max-width: 280px; border-radius: 8px; margin-bottom: 10px;">`;
+    }
+    const desc = translateDescription(markerData.desc, type);
+    popupContent += `<div class="marker-popup__desc">${desc}</div></div>`;
+    return popupContent;
+}
+
+function refreshMarkersPopups() {
+    Object.values(markerLayers).forEach(layerGroup => {
+        layerGroup.eachLayer(marker => {
+            if (marker.markerType && marker.markerData) {
+                marker.setPopupContent(createMarkerPopup(marker.markerType, marker.markerData));
+            }
+        });
     });
 }
 
@@ -204,15 +331,9 @@ const UserMarkerTool = {
     userMarkers: [],
     markerLayerGroup: null,
     currentCoords: null,
-    categoryNames: {
-        ammo: 'Патроны', supply: 'Припасы', tools: 'Инструменты', barrels: 'Бочки',
-        science: 'Научное оборудование', stash: 'Тайник', blind_dog: 'Слепые псы',
-        pseudodog: 'Псевдособаки', flesh: 'Плоти', boar: 'Кабаны', rat: 'Крысы',
-        snork: 'Снорки', zombie: 'Зомби', bloodsucker: 'Кровосос',
-        bloodsucker_strong: 'Матёрый кровосос', chimera: 'Химера', trader: 'Маклак',
-        zombified: 'Зомбированные', bandits: 'Бандиты', military: 'Военные',
-        freedom: 'Свободовцы', duty: 'Долговцы', mercs: 'Наемники',
-        sins: 'Греховцы', monolith: 'Монолитовцы', obliterator: 'Облитератор'
+
+    getCategoryName(type) {
+        return t(`map.marker.${type}`);
     },
 
     init() {
@@ -278,6 +399,37 @@ const UserMarkerTool = {
         });
     },
 
+    updateToggleButtonText() {
+        const btn = document.getElementById('userMarkerToggle');
+        const spanEl = btn?.querySelector('span');
+        if (spanEl) {
+            spanEl.textContent = this.isActive 
+                ? t('map.userMarkers.cancel') 
+                : t('map.userMarkers.addMarker');
+        }
+    },
+
+    updateSelectedCategory() {
+        const hiddenInput = document.getElementById('markerCategory');
+        const trigger = document.querySelector('#categorySelect .custom-select__trigger');
+        const value = hiddenInput?.value;
+        
+        if (value && trigger) {
+            const option = document.querySelector(`.custom-select__option[data-value="${value}"]`);
+            if (option) {
+                const img = option.querySelector('img')?.src;
+                const text = option.querySelector('span')?.textContent;
+                trigger.innerHTML = `
+                    <div class="custom-select__selected">
+                        <img src="${img}" alt=""><span>${text}</span>
+                    </div>
+                    <svg class="custom-select__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>`;
+            }
+        }
+    },
+
     toggleMode() {
         this.isActive = !this.isActive;
         const btn = document.getElementById('userMarkerToggle');
@@ -285,12 +437,12 @@ const UserMarkerTool = {
         const panel = document.getElementById('userMarkersPanel');
         if (this.isActive) {
             btn?.classList.add('active');
-            btn.querySelector('span').textContent = 'Отменить';
+            btn.querySelector('span').textContent = t('map.userMarkers.cancel');
             mapContainer?.classList.add('adding-marker');
             panel?.classList.add('visible');
         } else {
             btn?.classList.remove('active');
-            btn.querySelector('span').textContent = 'Добавить метку';
+            btn.querySelector('span').textContent = t('map.userMarkers.addMarker');
             mapContainer?.classList.remove('adding-marker');
             panel?.classList.remove('visible');
         }
@@ -309,7 +461,7 @@ const UserMarkerTool = {
         const trigger = select?.querySelector('.custom-select__trigger');
         if (trigger) {
             trigger.innerHTML = `
-                <span class="custom-select__placeholder">Выберите категорию</span>
+                <span class="custom-select__placeholder">${t('map.modal.selectCategory')}</span>
                 <svg class="custom-select__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M6 9l6 6 6-6"/>
                 </svg>`;
@@ -351,7 +503,7 @@ const UserMarkerTool = {
         this.saveToStorage();
         this.renderMarkersList();
         this.closeModal();
-        this.showToast('Метка добавлена!');
+        this.showToast(t('map.toast.markerAdded'));
     },
 
     addMarkerToMap(marker) {
@@ -366,14 +518,27 @@ const UserMarkerTool = {
             iconAnchor: icon.options.iconAnchor
         });
         const leafletMarker = L.marker(marker.latlng, { icon: customIcon });
-        let popupContent = `<div class="marker-popup">
-            <div class="marker-popup__title">${this.categoryNames[marker.category]} (ваша метка)</div>`;
-        if (marker.description) popupContent += `<div class="marker-popup__desc">${marker.description}</div>`;
-        if (marker.gameCoords) popupContent += `<div class="marker-popup__coords">Игровые: ${marker.gameCoords}</div>`;
-        popupContent += `<div class="marker-popup__coords">Пиксели: X: ${marker.pixelX}, Y: ${marker.pixelY}</div></div>`;
-        leafletMarker.bindPopup(popupContent);
+        leafletMarker.userMarkerData = marker;
+        leafletMarker.bindPopup(() => this.createUserMarkerPopup(marker));
         leafletMarker.markerId = marker.id;
         this.markerLayerGroup.addLayer(leafletMarker);
+    },
+
+    createUserMarkerPopup(marker) {
+        let popupContent = `<div class="marker-popup">
+            <div class="marker-popup__title">${this.getCategoryName(marker.category)} (${t('map.popup.yourMarker')})</div>`;
+        if (marker.description) popupContent += `<div class="marker-popup__desc">${marker.description}</div>`;
+        if (marker.gameCoords) popupContent += `<div class="marker-popup__coords">${t('map.popup.gameCoords')}: ${marker.gameCoords}</div>`;
+        popupContent += `<div class="marker-popup__coords">${t('map.popup.pixels')}: X: ${marker.pixelX}, Y: ${marker.pixelY}</div></div>`;
+        return popupContent;
+    },
+
+    refreshAllMarkers() {
+        this.markerLayerGroup.eachLayer(layer => {
+            if (layer.userMarkerData) {
+                layer.setPopupContent(this.createUserMarkerPopup(layer.userMarkerData));
+            }
+        });
     },
 
     removeMarker(id) {
@@ -399,7 +564,7 @@ const UserMarkerTool = {
         const list = document.getElementById('userMarkersList');
         const copyBtn = document.getElementById('copyForDiscord');
         if (this.userMarkers.length === 0) {
-            list.innerHTML = `<div class="user-markers-panel__empty">Нажмите на карту, чтобы добавить метку</div>`;
+            list.innerHTML = `<div class="user-markers-panel__empty">${t('map.userMarkers.clickToAdd')}</div>`;
             if (copyBtn) copyBtn.disabled = true;
             return;
         }
@@ -410,20 +575,20 @@ const UserMarkerTool = {
                 <div class="user-marker-item__header">
                     <div class="user-marker-item__type">
                         <img src="${iconUrl}" class="user-marker-item__type-icon" alt="">
-                        ${this.categoryNames[marker.category]}
+                        ${this.getCategoryName(marker.category)}
                     </div>
                     <div class="user-marker-item__actions">
-                        <button class="user-marker-item__btn" onclick="UserMarkerTool.focusMarker(${marker.id})" title="Показать на карте">
+                        <button class="user-marker-item__btn" onclick="UserMarkerTool.focusMarker(${marker.id})" title="${t('map.userMarkers.showOnMap')}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                             </svg>
                         </button>
-                        <button class="user-marker-item__btn" onclick="UserMarkerTool.copySingleMarker(${marker.id})" title="Копировать">
+                        <button class="user-marker-item__btn" onclick="UserMarkerTool.copySingleMarker(${marker.id})" title="${t('map.userMarkers.copy')}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
                             </svg>
                         </button>
-                        <button class="user-marker-item__btn user-marker-item__btn--delete" onclick="UserMarkerTool.removeMarker(${marker.id})" title="Удалить">
+                        <button class="user-marker-item__btn user-marker-item__btn--delete" onclick="UserMarkerTool.removeMarker(${marker.id})" title="${t('map.userMarkers.delete')}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M18 6L6 18M6 6l12 12"/>
                             </svg>
@@ -438,19 +603,42 @@ const UserMarkerTool = {
 
     generateExportText() {
         if (this.userMarkers.length === 0) return '';
-        let text = `🗺️ НОВЫЕ МЕТКИ ДЛЯ КАРТЫ PROJECT CATACLYSM\n`;
-        text += `📅 Дата: ${new Date().toLocaleDateString('ru-RU')}\n`;
-        text += `📍 Количество меток: ${this.userMarkers.length}\n`;
+        const isEn = window.i18n?.isEnglish();
+        let text = isEn 
+            ? `🗺️ NEW MARKERS FOR PROJECT CATACLYSM MAP\n`
+            : `🗺️ НОВЫЕ МЕТКИ ДЛЯ КАРТЫ PROJECT CATACLYSM\n`;
+        text += isEn
+            ? `📅 Date: ${new Date().toLocaleDateString('en-US')}\n`
+            : `📅 Дата: ${new Date().toLocaleDateString('ru-RU')}\n`;
+        text += isEn
+            ? `📍 Markers count: ${this.userMarkers.length}\n`
+            : `📍 Количество меток: ${this.userMarkers.length}\n`;
         text += `${'─'.repeat(40)}\n\n`;
         this.userMarkers.forEach((marker, index) => {
-            text += `【 Метка ${index + 1} 】\n`;
-            text += `• Тип: ${this.categoryNames[marker.category]}\n`;
-            text += `• Категория (код): ${marker.category}\n`;
-            text += `• Координаты на карте: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`;
-            if (marker.gameCoords) text += `• Игровые координаты: ${marker.gameCoords}\n`;
-            if (marker.description) text += `• Описание: ${marker.description}\n`;
-            text += `\n📋 Код для добавления:\n`;
-            const desc = marker.gameCoords ? `Координаты: ${marker.gameCoords}` : (marker.description || this.categoryNames[marker.category]);
+            text += isEn ? `【 Marker ${index + 1} 】\n` : `【 Метка ${index + 1} 】\n`;
+            text += isEn 
+                ? `• Type: ${this.getCategoryName(marker.category)}\n`
+                : `• Тип: ${this.getCategoryName(marker.category)}\n`;
+            text += isEn
+                ? `• Category (code): ${marker.category}\n`
+                : `• Категория (код): ${marker.category}\n`;
+            text += isEn
+                ? `• Map coordinates: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`
+                : `• Координаты на карте: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`;
+            if (marker.gameCoords) {
+                text += isEn
+                    ? `• Game coordinates: ${marker.gameCoords}\n`
+                    : `• Игровые координаты: ${marker.gameCoords}\n`;
+            }
+            if (marker.description) {
+                text += isEn
+                    ? `• Description: ${marker.description}\n`
+                    : `• Описание: ${marker.description}\n`;
+            }
+            text += isEn ? `\n📋 Code for adding:\n` : `\n📋 Код для добавления:\n`;
+            const desc = marker.gameCoords 
+                ? (isEn ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
+                : (marker.description || this.getCategoryName(marker.category));
             text += `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },\n\n`;
         });
         return text;
@@ -459,28 +647,31 @@ const UserMarkerTool = {
     copySingleMarker(id) {
         const marker = this.userMarkers.find(m => m.id === id);
         if (!marker) return;
-        const desc = marker.gameCoords ? `Координаты: ${marker.gameCoords}` : (marker.description || this.categoryNames[marker.category]);
+        const isEn = window.i18n?.isEnglish();
+        const desc = marker.gameCoords 
+            ? (isEn ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
+            : (marker.description || this.getCategoryName(marker.category));
         const code = `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },`;
-        navigator.clipboard.writeText(code).then(() => this.showToast('Код метки скопирован!'));
+        navigator.clipboard.writeText(code).then(() => this.showToast(t('map.toast.markerCodeCopied')));
     },
 
     copyAllMarkers() {
         const text = this.generateExportText();
-        if (text) navigator.clipboard.writeText(text).then(() => this.showToast('Все метки скопированы!'));
+        if (text) navigator.clipboard.writeText(text).then(() => this.showToast(t('map.toast.allMarkersCopied')));
     },
 
     copyForDiscord() {
         const text = this.generateExportText();
-        if (text) navigator.clipboard.writeText("```\n" + text + "```").then(() => this.showToast('Скопировано для Discord!'));
+        if (text) navigator.clipboard.writeText("```\n" + text + "```").then(() => this.showToast(t('map.toast.copiedForDiscord')));
     },
 
     clearAllMarkers() {
-        if (!confirm('Удалить все ваши метки?')) return;
+        if (!confirm(t('map.confirm.deleteAllMarkers'))) return;
         this.userMarkers = [];
         this.markerLayerGroup.clearLayers();
         this.saveToStorage();
         this.renderMarkersList();
-        this.showToast('Все метки удалены');
+        this.showToast(t('map.toast.allMarkersDeleted'));
     },
 
     saveToStorage() {
