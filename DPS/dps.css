@@ -438,7 +438,6 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
     *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
 }
 
-/* ===== Language Switcher ===== */
 .lang-switcher {
     position: relative;
     margin-left: 16px;
@@ -589,7 +588,6 @@ body{font-family:var(--font-main);font-size:15px;line-height:1.6;color:var(--col
     transform: scale(1);
 }
 
-/* Mobile Language Switcher */
 .mobile-lang-switcher {
     display: flex;
     gap: 12px;
