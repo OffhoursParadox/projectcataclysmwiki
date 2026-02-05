@@ -20,28 +20,29 @@ const BULLET_RESISTANCE_CONSTANT = 166.67;
 const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
 const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
 
+// Ключи для i18n вместо захардкоженных строк
 const WARNING_STATS = {
-    radiation: { threshold: 0, color: 'radiation', title: 'Накопление радиации', unit: 'мЗв/сек' },
-    cold: { threshold: 0, color: 'cold', title: 'Накопление холода', unit: '/сек' },
-    bleeding: { threshold: 0, color: 'bleeding', title: 'Накопление кровотечения', unit: '/сек' },
-    regeneration: { threshold: 0, color: 'regeneration', title: 'Потеря здоровья', unit: '%/сек', inverted: true },
-    saturation: { threshold: 0, color: 'saturation', title: 'Накопление голода', unit: '%/сек', inverted: true }
+    radiation: { threshold: 0, color: 'radiation', titleKey: 'calc.warning.radiation', unitKey: 'calc.unit.msvSec' },
+    cold: { threshold: 0, color: 'cold', titleKey: 'calc.warning.cold', unitKey: 'calc.unit.perSec' },
+    bleeding: { threshold: 0, color: 'bleeding', titleKey: 'calc.warning.bleeding', unitKey: 'calc.unit.perSec' },
+    regeneration: { threshold: 0, color: 'regeneration', titleKey: 'calc.warning.healthLoss', unitKey: 'calc.unit.percentSec', inverted: true },
+    saturation: { threshold: 0, color: 'saturation', titleKey: 'calc.warning.saturation', unitKey: 'calc.unit.percentSec', inverted: true }
 };
 
-const RARITY_NAMES = {
-    legendary: 'Легендарное',
-    unique: 'Уникальное',
-    rare: 'Раритетное',
-    collection: 'Коллекционное',
-    uncommon: 'Необычное',
-    common: 'Распространённое'
+const RARITY_KEYS = {
+    legendary: 'calc.rarity.legendary',
+    unique: 'calc.rarity.unique',
+    rare: 'calc.rarity.rare',
+    collection: 'calc.rarity.collection',
+    uncommon: 'calc.rarity.uncommon',
+    common: 'calc.rarity.common'
 };
 
-const CONTAINER_TYPE_NAMES = {
-    standard: 'Стандартный',
-    bulky: 'Громоздкий',
-    compact: 'Компактный',
-    spacious: 'Вместительный'
+const CONTAINER_TYPE_KEYS = {
+    standard: 'calc.containerType.standard',
+    bulky: 'calc.containerType.bulky',
+    compact: 'calc.containerType.compact',
+    spacious: 'calc.containerType.spacious'
 };
 
 const CONTAINER_TYPE_ICONS = {
@@ -50,6 +51,15 @@ const CONTAINER_TYPE_ICONS = {
     compact: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8"/><path d="M8 12h8"/><circle cx="12" cy="12" r="3"/></svg>`,
     spacious: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><ellipse cx="12" cy="19" rx="9" ry="3"/></svg>`
 };
+
+// Вспомогательная функция для получения перевода
+function t(key, params = {}) {
+    if (window.i18n && typeof window.i18n.t === 'function') {
+        return window.i18n.t(key, params);
+    }
+    // Fallback если i18n не загружен
+    return key;
+}
 
 const elements = {
     armorSelect: document.getElementById('armorSelect'),
@@ -124,7 +134,7 @@ function restoreState() {
             state.selectedArmor = armor;
             state.enhancementLevel = saved.enhancementLevel || 0;
             const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-            valueElement.textContent = armor.name;
+            valueElement.textContent = getLocalizedName(armor);
             valueElement.classList.add('has-value');
             elements.armorSelect.value = saved.armorId;
             if (armor.enhancement) {
@@ -144,7 +154,7 @@ function restoreState() {
             state.selectedContainer = container;
             state.artifacts = new Array(container.slots).fill(null);
             const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-            valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+            valueElement.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
             valueElement.classList.add('has-value');
             elements.containerSelect.value = saved.containerId;
             if (saved.artifactIds && Array.isArray(saved.artifactIds)) {
@@ -175,6 +185,52 @@ document.addEventListener('DOMContentLoaded', () => {
     restoreState();
     updateStats();
 });
+
+// Подписка на смену языка для обновления интерфейса
+document.addEventListener('languageChanged', () => {
+    // Обновляем текст в выпадающих списках
+    if (state.selectedArmor) {
+        const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+        armorValueElement.textContent = getLocalizedName(state.selectedArmor);
+    } else {
+        const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
+        armorValueElement.textContent = t('calc.selectArmor');
+    }
+    
+    if (state.selectedContainer) {
+        const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+        containerValueElement.textContent = `${getLocalizedName(state.selectedContainer)} (${getSlotsText(state.selectedContainer.slots)})`;
+    } else {
+        const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
+        containerValueElement.textContent = t('calc.selectContainer');
+    }
+    
+    // Обновляем опции в select элементах
+    initContainerSelect();
+    
+    renderArmorDropdownList();
+    renderContainerDropdownList();
+    renderArmorInfo();
+    renderContainerInfo();
+    renderArtifactSlots();
+    renderEnhancementBonuses();
+    updateStats();
+    
+    // Обновляем фильтры в модальном окне если оно открыто
+    if (elements.modal.classList.contains('active')) {
+        recreateStatFilters();
+    }
+});
+
+function recreateStatFilters() {
+    const container = document.getElementById('statFiltersContainer');
+    const toggle = document.getElementById('filtersToggle');
+    const wrapper = document.getElementById('statFiltersWrapper');
+    if (container) container.remove();
+    if (toggle) toggle.remove();
+    if (wrapper) wrapper.remove();
+    createStatFilters();
+}
 
 function injectStatFilterStyles() {
     if (document.getElementById('stat-filter-styles')) return;
@@ -276,9 +332,9 @@ function createStatFilters() {
     const sortedNegative = [...negativeStats.entries()].sort((a, b) => b[1] - a[1]);
     
     const createOptions = (statsMap) => {
-        let options = '<option value="">Любой</option>';
+        let options = `<option value="">${t('calc.filter.any')}</option>`;
         statsMap.forEach(([statKey, count]) => {
-            options += `<option value="${statKey}">${STAT_NAMES[statKey] || statKey} (${count})</option>`;
+            options += `<option value="${statKey}">${getStatName(statKey)} (${count})</option>`;
         });
         return options;
     };
@@ -287,7 +343,7 @@ function createStatFilters() {
     toggleBtn.id = 'filtersToggle';
     toggleBtn.className = 'filters-toggle';
     toggleBtn.type = 'button';
-    toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filters-toggle__text">Фильтры по свойствам</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
+    toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filters-toggle__text">${t('calc.filter.byProperties')}</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
     
     const wrapper = document.createElement('div');
     wrapper.id = 'statFiltersWrapper';
@@ -296,7 +352,7 @@ function createStatFilters() {
     const container = document.createElement('div');
     container.id = 'statFiltersContainer';
     container.className = 'stat-filters';
-    container.innerHTML = `<div class="stat-filter stat-filter--positive"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Положительный</label><select class="stat-filter__select" id="positiveEffectFilter">${createOptions(sortedPositive)}</select></div><div class="stat-filter stat-filter--negative"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>Отрицательный</label><select class="stat-filter__select" id="negativeEffectFilter">${createOptions(sortedNegative)}</select></div><div class="stat-filters__reset"><button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Сбросить всё</button></div>`;
+    container.innerHTML = `<div class="stat-filter stat-filter--positive"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>${t('calc.filter.positive')}</label><select class="stat-filter__select" id="positiveEffectFilter">${createOptions(sortedPositive)}</select></div><div class="stat-filter stat-filter--negative"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>${t('calc.filter.negative')}</label><select class="stat-filter__select" id="negativeEffectFilter">${createOptions(sortedNegative)}</select></div><div class="stat-filters__reset"><button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>${t('calc.filter.resetAll')}</button></div>`;
     
     wrapper.appendChild(container);
     toolbar.appendChild(toggleBtn);
@@ -406,7 +462,12 @@ function handleArmorListClick(e) {
 function renderArmorDropdownList(searchQuery = '') {
     const groupedArmors = {};
     ARMORS.forEach(armor => {
-        if (searchQuery && !armor.name.toLowerCase().includes(searchQuery)) return;
+        // Поиск по обоим языкам
+        if (searchQuery) {
+            const nameMatch = armor.name.toLowerCase().includes(searchQuery) || 
+                              (armor.nameEn && armor.nameEn.toLowerCase().includes(searchQuery));
+            if (!nameMatch) return;
+        }
         if (!groupedArmors[armor.rarity]) groupedArmors[armor.rarity] = [];
         groupedArmors[armor.rarity].push(armor);
     });
@@ -414,7 +475,7 @@ function renderArmorDropdownList(searchQuery = '') {
     if (elements.armorClearWrapper) elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
     
     if (Object.keys(groupedArmors).length === 0) {
-        elements.armorDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>Броня не найдена</span></div>`;
+        elements.armorDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.armorNotFound')}</span></div>`;
         return;
     }
     
@@ -422,11 +483,11 @@ function renderArmorDropdownList(searchQuery = '') {
     RARITY_ORDER.forEach(rarity => {
         const armors = groupedArmors[rarity];
         if (!armors?.length) return;
-        html += `<div class="custom-dropdown__group custom-dropdown__group--${rarity}"><div class="custom-dropdown__group-title">${RARITY_NAMES[rarity]} (${armors.length})</div>`;
+        html += `<div class="custom-dropdown__group custom-dropdown__group--${rarity}"><div class="custom-dropdown__group-title">${getRarityName(rarity)} (${armors.length})</div>`;
         armors.forEach(armor => {
             const isSelected = state.selectedArmor?.id === armor.id;
             const bulletRes = armor.stats.bulletResistance || 0;
-            html += `<div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${armor.name}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${armor.type}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${armor.rarityName}</span></div>`;
+            html += `<div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(armor)}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(armor)}</span></div>`;
         });
         html += '</div>';
     });
@@ -442,7 +503,7 @@ function selectArmorFromDropdown(armorId) {
     state.enhancementLevel = 0;
     
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = armor.name;
+    valueElement.textContent = getLocalizedName(armor);
     valueElement.classList.add('has-value');
     elements.armorSelect.value = armorId;
     
@@ -463,7 +524,7 @@ function clearArmorSelection() {
     state.enhancementLevel = 0;
     
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = 'Выберите броню...';
+    valueElement.textContent = t('calc.selectArmor');
     valueElement.classList.remove('has-value');
     elements.armorSelect.value = '';
     
@@ -521,7 +582,12 @@ function isContainerAvailable(container) {
 function renderContainerDropdownList(searchQuery = '') {
     const groupedContainers = {};
     CONTAINERS.forEach(container => {
-        if (searchQuery && !container.name.toLowerCase().includes(searchQuery)) return;
+        // Поиск по обоим языкам
+        if (searchQuery) {
+            const nameMatch = container.name.toLowerCase().includes(searchQuery) || 
+                              (container.nameEn && container.nameEn.toLowerCase().includes(searchQuery));
+            if (!nameMatch) return;
+        }
         if (!groupedContainers[container.type]) groupedContainers[container.type] = [];
         groupedContainers[container.type].push(container);
     });
@@ -529,7 +595,7 @@ function renderContainerDropdownList(searchQuery = '') {
     if (elements.containerClearWrapper) elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
     
     if (Object.keys(groupedContainers).length === 0) {
-        elements.containerDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>Контейнер не найден</span></div>`;
+        elements.containerDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.containerNotFound')}</span></div>`;
         return;
     }
     
@@ -537,12 +603,12 @@ function renderContainerDropdownList(searchQuery = '') {
     CONTAINER_TYPE_ORDER.forEach(type => {
         const containers = groupedContainers[type];
         if (!containers?.length) return;
-        html += `<div class="custom-dropdown__group custom-dropdown__group--${type}"><div class="custom-dropdown__group-title">${CONTAINER_TYPE_NAMES[type] || type} (${containers.length})</div>`;
+        html += `<div class="custom-dropdown__group custom-dropdown__group--${type}"><div class="custom-dropdown__group-title">${getContainerTypeName(type)} (${containers.length})</div>`;
         containers.forEach(container => {
             const isSelected = state.selectedContainer?.id === container.id;
             const isAvailable = isContainerAvailable(container);
             const totalShielding = Object.values(container.shielding || {}).reduce((sum, val) => sum + Math.abs(val), 0);
-            html += `<div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" data-container-id="${container.id}"><div class="custom-dropdown__item-icon">${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.standard}</div><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${container.name}</div><div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended"><span class="custom-dropdown__item-type-badge">${container.typeName || CONTAINER_TYPE_NAMES[type]}</span>${totalShielding > 0 ? `<span class="custom-dropdown__item-shielding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Экран</span>` : `<span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">Без экрана</span>`}</div></div><div class="custom-dropdown__item-slots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${container.slots}</div><span class="custom-dropdown__item-rarity">${container.rarityName || ''}</span></div>`;
+            html += `<div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" data-container-id="${container.id}"><div class="custom-dropdown__item-icon">${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.standard}</div><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(container)}</div><div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended"><span class="custom-dropdown__item-type-badge">${getLocalizedType(container)}</span>${totalShielding > 0 ? `<span class="custom-dropdown__item-shielding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${t('calc.shielding')}</span>` : `<span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">${t('calc.noShielding')}</span>`}</div></div><div class="custom-dropdown__item-slots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${container.slots}</div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(container)}</span></div>`;
         });
         html += '</div>';
     });
@@ -562,7 +628,7 @@ function selectContainerFromDropdown(containerId) {
     }
     
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+    valueElement.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
     valueElement.classList.add('has-value');
     elements.containerSelect.value = containerId;
     
@@ -582,7 +648,7 @@ function clearContainerSelection() {
     state.artifacts = [];
     
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = 'Выберите контейнер...';
+    valueElement.textContent = t('calc.selectContainer');
     valueElement.classList.remove('has-value');
     elements.containerSelect.value = '';
     
@@ -597,11 +663,11 @@ function clearContainerSelection() {
 }
 
 function initContainerSelect() {
-    elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
+    elements.containerSelect.innerHTML = `<option value="">${t('calc.selectContainer')}</option>`;
     CONTAINERS.forEach(container => {
         const option = document.createElement('option');
         option.value = container.id;
-        option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+        option.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
         elements.containerSelect.appendChild(option);
     });
     elements.containerSelect.disabled = false;
@@ -668,11 +734,16 @@ function applyFilters() {
     if (state.filters.search) {
         const searchLower = state.filters.search.toLowerCase();
         filtered = filtered.filter(a => {
+            // Поиск по русскому названию
             if (a.name.toLowerCase().includes(searchLower)) return true;
-            if (a.nameEn.toLowerCase().includes(searchLower)) return true;
+            // Поиск по английскому названию
+            if (a.nameEn && a.nameEn.toLowerCase().includes(searchLower)) return true;
+            // Поиск по названиям статов (на обоих языках)
             for (const statKey of Object.keys(a.stats)) {
-                const statName = STAT_NAMES[statKey];
-                if (statName && statName.toLowerCase().includes(searchLower)) return true;
+                const statNameRu = STAT_NAMES[statKey];
+                const statNameEn = STAT_NAMES_EN[statKey];
+                if (statNameRu && statNameRu.toLowerCase().includes(searchLower)) return true;
+                if (statNameEn && statNameEn.toLowerCase().includes(searchLower)) return true;
             }
             return false;
         });
@@ -706,13 +777,13 @@ function initScrollEffects() {
 
 function updateContainerOptions() {
     const currentContainerId = state.selectedContainer?.id;
-    elements.containerSelect.innerHTML = '<option value="">Выберите контейнер...</option>';
+    elements.containerSelect.innerHTML = `<option value="">${t('calc.selectContainer')}</option>`;
     const availableContainers = getAvailableContainers();
     
     availableContainers.forEach(container => {
         const option = document.createElement('option');
         option.value = container.id;
-        option.textContent = `${container.name} (${container.slots} слот${getSlotWord(container.slots)})`;
+        option.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
         elements.containerSelect.appendChild(option);
     });
     
@@ -723,7 +794,7 @@ function updateContainerOptions() {
         state.selectedContainer = null;
         state.artifacts = [];
         const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-        valueElement.textContent = 'Выберите контейнер...';
+        valueElement.textContent = t('calc.selectContainer');
         valueElement.classList.remove('has-value');
         renderContainerInfo();
         renderArtifactSlots();
@@ -781,7 +852,7 @@ function renderEnhancementBonuses() {
     const bonuses = state.selectedArmor.enhancement.bonuses;
     
     if (level === 0) {
-        elements.enhancementBonus.innerHTML = '<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">Бонусы отсутствуют</span></div>';
+        elements.enhancementBonus.innerHTML = `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
         return;
     }
     
@@ -790,10 +861,10 @@ function renderEnhancementBonuses() {
         const bonusValue = values[level] || 0;
         if (bonusValue !== 0) {
             const displayValue = bonusValue > 0 ? `+${formatNumber(bonusValue)}` : formatNumber(bonusValue);
-            html += `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${STAT_NAMES[statKey] || statKey}</span><span class="enhancement-bonus-item__value">${displayValue}${STAT_UNITS[statKey] || ''}</span></div>`;
+            html += `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${getStatName(statKey)}</span><span class="enhancement-bonus-item__value">${displayValue}${getStatUnit(statKey)}</span></div>`;
         }
     });
-    elements.enhancementBonus.innerHTML = html || '<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">Бонусы отсутствуют</span></div>';
+    elements.enhancementBonus.innerHTML = html || `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
 }
 
 function getEnhancementBonuses() {
@@ -841,13 +912,13 @@ function resetBuild() {
     state.enhancementLevel = 0;
     
     const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    armorValueElement.textContent = 'Выберите броню...';
+    armorValueElement.textContent = t('calc.selectArmor');
     armorValueElement.classList.remove('has-value');
     if (elements.armorSearchInput) elements.armorSearchInput.value = '';
     renderArmorDropdownList();
     
     const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    containerValueElement.textContent = 'Выберите контейнер...';
+    containerValueElement.textContent = t('calc.selectContainer');
     containerValueElement.classList.remove('has-value');
     if (elements.containerSearchInput) elements.containerSearchInput.value = '';
     renderContainerDropdownList();
@@ -867,7 +938,7 @@ function resetBuild() {
 
 function renderArmorInfo() {
     if (!state.selectedArmor) {
-        elements.armorInfo.innerHTML = `<div class="armor-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Выберите броню для просмотра характеристик</span></div>`;
+        elements.armorInfo.innerHTML = `<div class="armor-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>${t('calc.selectArmorHint')}</span></div>`;
         return;
     }
     
@@ -883,35 +954,35 @@ function renderArmorInfo() {
             const bonusStr = enhancementBonus > 0 ? `+${formatNumber(enhancementBonus)}` : formatNumber(enhancementBonus);
             enhancementHtml = `<span class="stat-enhancement-bonus">(${bonusStr})</span>`;
         }
-        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${STAT_NAMES[key] || key}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''} ${enhancementHtml}</span></div>`;
+        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${getStatName(key)}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)} ${enhancementHtml}</span></div>`;
     }).join('');
     
-    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${armor.name}</span><span class="armor-details__rarity rarity--${armor.rarity}">${armor.rarityName}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${armor.type}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
+    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${getLocalizedName(armor)}</span><span class="armor-details__rarity rarity--${armor.rarity}">${getLocalizedRarity(armor)}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
 }
 
 function renderContainerInfo() {
     if (!state.selectedContainer) {
-        elements.containerInfo.innerHTML = `<div class="container-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>Выберите контейнер для добавления артефактов</span></div>`;
+        elements.containerInfo.innerHTML = `<div class="container-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
         return;
     }
     
     const container = state.selectedContainer;
     const statsHtml = Object.entries(container.stats).map(([key, value]) => {
         const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${STAT_NAMES[key] || key}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''}</span></div>`;
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
     }).join('');
     
     const shieldingHtml = Object.entries(container.shielding).map(([key, value]) => {
         const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${STAT_NAMES[key] || key}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${STAT_UNITS[key] || ''}</span></div>`;
-    }).join('') || '<span class="container-details__stat-name">Нет экранирования</span>';
+        return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
+    }).join('') || `<span class="container-details__stat-name">${t('calc.noShieldingFull')}</span>`;
     
-    elements.containerInfo.innerHTML = `<div class="container-details"><div class="container-details__header"><span class="container-details__name">${container.name}</span><span class="container-details__rarity rarity--${container.rarity}">${container.rarityName}</span></div><div class="container-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>${container.typeName} • ${container.slots} слот${getSlotWord(container.slots)}</div>${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}<div class="container-details__shielding"><div class="container-details__shielding-title">Экранирование:</div>${shieldingHtml}</div></div>`;
+    elements.containerInfo.innerHTML = `<div class="container-details"><div class="container-details__header"><span class="container-details__name">${getLocalizedName(container)}</span><span class="container-details__rarity rarity--${container.rarity}">${getLocalizedRarity(container)}</span></div><div class="container-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>${getLocalizedType(container)} • ${getSlotsText(container.slots)}</div>${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}<div class="container-details__shielding"><div class="container-details__shielding-title">${t('calc.shieldingTitle')}:</div>${shieldingHtml}</div></div>`;
 }
 
 function renderArtifactSlots() {
     if (!state.selectedContainer) {
-        elements.artifactSlots.innerHTML = `<div class="artifact-slots__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><span>Выберите контейнер для добавления артефактов</span></div>`;
+        elements.artifactSlots.innerHTML = `<div class="artifact-slots__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
         elements.artifactCounter.textContent = '0/0';
         return;
     }
@@ -921,9 +992,10 @@ function renderArtifactSlots() {
     
     const slotsHtml = state.artifacts.map((artifact, index) => {
         if (artifact) {
-            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${artifact.name}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • Tier ${artifact.tier}</div></div><button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="Удалить артефакт"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
+            const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
+            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${getLocalizedName(artifact)}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • ${tierDisplay}</div></div><button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="${t('calc.removeArtifact')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
         }
-        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">Нажмите, чтобы добавить артефакт</span></div></div>`;
+        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">${t('calc.slot.clickToAdd')}</span></div></div>`;
     }).join('');
     
     elements.artifactSlots.innerHTML = `<div class="artifact-slots__grid">${slotsHtml}</div>`;
@@ -937,29 +1009,29 @@ function renderArtifactList(artifacts = ARTIFACTS) {
     updateArtifactCount(artifacts.length);
     
     if (artifacts.length === 0) {
-        elements.artifactList.innerHTML = `<div class="artifacts-empty"><div class="artifacts-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="artifacts-empty__title">Артефакты не найдены</div><div class="artifacts-empty__text">Попробуйте изменить параметры поиска</div></div>`;
+        elements.artifactList.innerHTML = `<div class="artifacts-empty"><div class="artifacts-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="artifacts-empty__title">${t('calc.modal.noResults')}</div><div class="artifacts-empty__text">${t('calc.modal.tryOtherFilters')}</div></div>`;
         return;
     }
     
     const listHtml = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
-        const priceDisplay = artifact.price ? formatPrice(artifact.price) : (artifact.priceText || '—');
+        const priceDisplay = artifact.price ? formatPrice(artifact.price) : (getLocalizedField(artifact, 'priceText') || '—');
         
         const statsHtml = Object.entries(artifact.stats).map(([key, value]) => {
             const isInverted = INVERTED_STATS.includes(key);
             let displayValue, valueClass;
             if (value > 0) {
-                displayValue = `+${formatNumber(value)}${STAT_UNITS[key] || ''}`;
+                displayValue = `+${formatNumber(value)}${getStatUnit(key)}`;
                 valueClass = isInverted ? 'artifact-stat-row__value--negative' : 'artifact-stat-row__value--positive';
             } else {
-                displayValue = `${formatNumber(value)}${STAT_UNITS[key] || ''}`;
+                displayValue = `${formatNumber(value)}${getStatUnit(key)}`;
                 valueClass = isInverted ? 'artifact-stat-row__value--positive' : 'artifact-stat-row__value--negative';
             }
-            return `<div class="artifact-stat-row"><span class="artifact-stat-row__name">${STAT_NAMES[key] || key}</span><span class="artifact-stat-row__value ${valueClass}">${displayValue}</span></div>`;
+            return `<div class="artifact-stat-row"><span class="artifact-stat-row__name">${getStatName(key)}</span><span class="artifact-stat-row__value ${valueClass}">${displayValue}</span></div>`;
         }).join('');
         
-        return `<div class="artifact-card artifact-card--${artifact.category}" onclick="selectArtifact('${artifact.id}')"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${artifact.name}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${artifact.name}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
+        return `<div class="artifact-card artifact-card--${artifact.category}" onclick="selectArtifact('${artifact.id}')"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${getLocalizedName(artifact)}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
     }).join('');
     
     elements.artifactList.innerHTML = listHtml;
@@ -968,7 +1040,7 @@ function renderArtifactList(artifacts = ARTIFACTS) {
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
-    if (elements.modalSlotInfo) elements.modalSlotInfo.textContent = `Слот #${slotIndex + 1}`;
+    if (elements.modalSlotInfo) elements.modalSlotInfo.textContent = `${t('calc.modal.slot')} #${slotIndex + 1}`;
     
     state.filters.search = '';
     state.filters.category = 'all';
@@ -980,7 +1052,8 @@ function openArtifactModal(slotIndex) {
     elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
     if (elements.searchClear) elements.searchClear.style.display = 'none';
     
-    createStatFilters();
+    // Пересоздаём фильтры каждый раз для актуального языка
+    recreateStatFilters();
     
     const positiveSelect = document.getElementById('positiveEffectFilter');
     const negativeSelect = document.getElementById('negativeEffectFilter');
@@ -1040,7 +1113,7 @@ function updateStats() {
         if (element) {
             const prevValue = state.previousStats ? state.previousStats[key] : value;
             const { displayValue, colorClass } = formatStatValueWithChange(key, value, prevValue);
-            element.textContent = displayValue + (STAT_UNITS[key] || '');
+            element.textContent = displayValue + getStatUnit(key);
             element.className = 'stat-row__value ' + colorClass;
         }
     });
@@ -1060,7 +1133,7 @@ function updatePriorityStats(currentStats, previousStats) {
         const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
         const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
         
-        element.textContent = displayValue + (STAT_UNITS[statKey] || '');
+        element.textContent = displayValue + getStatUnit(statKey);
         element.className = 'priority-stat__value';
         if (colorClass) element.classList.add(colorClass);
         
@@ -1154,7 +1227,9 @@ function updateWarnings(totalStats) {
         if (config.inverted) value = Math.abs(value);
         
         if (isDangerous) {
-            warningsHtml.push(`<div class="warning-item warning-item--${config.color}"><div class="warning-item__icon">${getWarningIcon(statKey)}</div><div class="warning-item__content"><span class="warning-item__title">Внимание: ${config.title}!</span><span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${config.unit}</span></div></div>`);
+            const title = t(config.titleKey);
+            const unit = t(config.unitKey);
+            warningsHtml.push(`<div class="warning-item warning-item--${config.color}"><div class="warning-item__icon">${getWarningIcon(statKey)}</div><div class="warning-item__content"><span class="warning-item__title">${t('calc.warning.attention')}: ${title}!</span><span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${unit}</span></div></div>`);
         }
     });
     
@@ -1208,12 +1283,6 @@ function formatStatValue(statKey, value) {
     else if (value > 0) { displayValue = `+${formatNumber(value)}`; colorClass = isInverted ? 'stat-value--negative' : 'stat-value--positive'; }
     else { displayValue = formatNumber(value); colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative'; }
     return { displayValue, colorClass };
-}
-
-function getSlotWord(count) {
-    if (count === 1) return '';
-    if (count >= 2 && count <= 4) return 'а';
-    return 'ов';
 }
 
 window.openArtifactModal = openArtifactModal;
