@@ -7,6 +7,11 @@ if (burger && mobileMenu) {
     burger.addEventListener('click', () => {
         burger.classList.toggle('active');
         mobileMenu.classList.toggle('active');
+        
+        const langDropdown = document.getElementById('langDropdown');
+        if (langDropdown) {
+            langDropdown.classList.remove('active');
+        }
     });
 }
 
@@ -25,3 +30,12 @@ if (scrollTopBtn) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
+
+document.querySelectorAll('.mobile-menu__link').forEach(link => {
+    link.addEventListener('click', () => {
+        if (burger && mobileMenu) {
+            burger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+        }
+    });
+});
