@@ -168,11 +168,14 @@ function initMap() {
         minZoom: MAP_CONFIG.minZoom,
         maxZoom: MAP_CONFIG.maxZoom,
         zoomControl: false,
-        attributionControl: false
+        attributionControl: false,
+        maxBoundsViscosity: 1.0
     });
+
     const southWest = map.unproject([0, MAP_CONFIG.height], MAP_CONFIG.nativeZoom);
     const northEast = map.unproject([MAP_CONFIG.width, 0], MAP_CONFIG.nativeZoom);
     const bounds = new L.LatLngBounds(southWest, northEast);
+
     L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
         minZoom: MAP_CONFIG.minZoom,
         maxZoom: MAP_CONFIG.maxZoom,
@@ -181,14 +184,23 @@ function initMap() {
         tileSize: MAP_CONFIG.tileSize,
         errorTileUrl: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
     }).addTo(map);
+
     const center = map.unproject([MAP_CONFIG.width / 2, MAP_CONFIG.height / 2], MAP_CONFIG.nativeZoom);
     map.setView(center, MAP_CONFIG.defaultZoom);
-    map.setMaxBounds(bounds.pad(0.1));
+
+    map.setMaxBounds(bounds);
+
     map.on('mousemove', (e) => {
         const point = map.project(e.latlng, MAP_CONFIG.nativeZoom);
         document.getElementById('coordX').textContent = Math.round(point.x);
         document.getElementById('coordY').textContent = Math.round(point.y);
     });
+
+    setTimeout(() => {
+        if (window.Dynmap) {
+            Dynmap.init(map);
+        }
+    }, 500);
 }
 
 function initMarkers() {
@@ -211,12 +223,20 @@ function initMarkers() {
 }
 
 function createMarkerPopup(type, markerData) {
+    const typeName = getMarkerTypeName(type);
+    const desc = translateDescription(markerData.desc, type);
+    
     let popupContent = `<div class="marker-popup">`;
+
+    popupContent += `<div class="marker-popup__title">${typeName}</div>`;
+
     if (markerData.image) {
         popupContent += `<img src="${markerData.image}" alt="" style="max-width: 280px; border-radius: 8px; margin-bottom: 10px;">`;
     }
-    const desc = translateDescription(markerData.desc, type);
-    popupContent += `<div class="marker-popup__desc">${desc}</div></div>`;
+
+    popupContent += `<div class="marker-popup__desc">${desc}</div>`;
+    
+    popupContent += `</div>`;
     return popupContent;
 }
 
