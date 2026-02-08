@@ -12,7 +12,7 @@ const translations = {
         "nav.dpsCalculator": "Калькулятор DPS",
 
         // ========== ГЛАВНАЯ СТРАНИЦА ==========
-        "hero.desc": "Неофициальная база знаний по игре Project Cataclysm",
+        "hero.desc": "Официальная база знаний по игре Project Cataclysm",
         "cards.artifacts.title": "Артефакты",
         "cards.artifacts.desc": "Полный каталог с характеристиками и ценами",
         "cards.calculator.title": "Калькулятор сборок",
@@ -44,8 +44,6 @@ const translations = {
         "updates.update0_1": "Весь сайт был переведён на английский язык",
         "updates.update0_2": "Добавлена кнопка переключения языка",
         "updates.date1": "3 февраля 2026",
-        "updates.title": "Обновления",
-        "updates.date1": "3 февраля 2026",
         "updates.update1_1": "Добавлена интерактивная карта",
         "updates.update1_2": "Отмечены ящики, мутанты, торговцы и НПС",
         "updates.update1_3": "Реализована система фильтров",
@@ -72,10 +70,10 @@ const translations = {
 
         // О проекте
         "about.title": "О проекте",
-        "about.text": "<strong>Project Cataclysm Wiki</strong> — неофициальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, интерактивная карта и справочные данные.",
+        "about.text": "<strong>Project Cataclysm Wiki</strong> — официальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, интерактивная карта и справочные данные.",
 
         // Футер
-        "footer.copy": "© 2026 Project Cataclysm Wiki. Неофициальный фан-сайт.",
+        "footer.copy": "© 2026 Project Cataclysm Wiki. Официальный сайт.",
 
         // ========== СТРАНИЦА АРТЕФАКТОВ ==========
         "artifacts.pageTitle": "Артефакты",
@@ -560,7 +558,7 @@ const translations = {
         "nav.dpsCalculator": "DPS Calculator",
 
         // ========== ГЛАВНАЯ СТРАНИЦА ==========
-        "hero.desc": "Unofficial knowledge base for Project Cataclysm game",
+        "hero.desc": "Official knowledge base for Project Cataclysm game",
         "cards.artifacts.title": "Artifacts",
         "cards.artifacts.desc": "Complete catalog with stats and prices",
         "cards.calculator.title": "Build Calculator",
@@ -573,17 +571,17 @@ const translations = {
         // Частоты RF-ресивера
         "rf.title": "RF Receiver Frequencies",
         "rf.mhz": "MHz",
-        "rf.junkyard": "Garbage",
+        "rf.junkyard": "Dump",
         "rf.agroprom": "Agroprom",
-        "rf.darkHollow": "Darkscape",
+        "rf.darkHollow": "Dark Hollow",
         "rf.darkValley": "Dark Valley",
         "rf.redForest": "Thinwood",
         "rf.wildTerritory": "Wild Territory",
         "rf.yantar": "Yantar",
-        "rf.meadow": "Pole",
+        "rf.meadow": "Glade",
         "rf.anthill": "Anthill",
         "rf.polissya": "Polesskoye",
-        "rf.militaryWarehouses": "Military Warehouses",
+        "rf.militaryWarehouses": "Army Warehouses",
         "rf.crater": "Frost Hollow",
 
         // Обновления
@@ -591,8 +589,6 @@ const translations = {
         "updates.date0": "February 5, 2026",
         "updates.update0_1": "The entire website has been translated to English",
         "updates.update0_2": "Added language switch button",
-        "updates.date1": "February 3, 2026",
-        "updates.title": "Updates",
         "updates.date1": "February 3, 2026",
         "updates.update1_1": "Added interactive map",
         "updates.update1_2": "Marked crates, mutants, traders and NPCs",
@@ -620,10 +616,10 @@ const translations = {
 
         // О проекте
         "about.title": "About",
-        "about.text": "<strong>Project Cataclysm Wiki</strong> — an unofficial knowledge base for the game. Here you'll find up-to-date information: artifact tables, build calculator, interactive map and reference data.",
+        "about.text": "<strong>Project Cataclysm Wiki</strong> — an official knowledge base for the game. Here you'll find up-to-date information: artifact tables, build calculator, interactive map and reference data.",
 
         // Футер
-        "footer.copy": "© 2026 Project Cataclysm Wiki. Unofficial fan site.",
+        "footer.copy": "© 2026 Project Cataclysm Wiki. Official site.",
 
         // ========== СТРАНИЦА АРТЕФАКТОВ ==========
         "artifacts.pageTitle": "Artifacts",
