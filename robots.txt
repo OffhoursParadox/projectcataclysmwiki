@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://offhoursparadox.github.io/projectcataclysmwiki/sitemap.xml
