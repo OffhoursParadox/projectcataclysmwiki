@@ -40,6 +40,10 @@ const translations = {
 
         // Обновления
         "updates.title": "Обновления",
+        "updates.date_feb9": "9 февраля 2026",
+        "updates.update_feb9_1": "Оптимизирован код главной страницы сайта",
+        "updates.update_feb9_2": "Обновлены все характеристики снаряжения и артефактов",
+        "updates.update_feb9_3": "В список оружия был добавлен ППШ-41",
         "updates.date0": "5 февраля 2026",
         "updates.update0_1": "Весь сайт был переведён на английский язык",
         "updates.update0_2": "Добавлена кнопка переключения языка",
@@ -67,10 +71,6 @@ const translations = {
         "updates.date6": "11 января 2026",
         "updates.update6_1": "Добавлен калькулятор сборок артефактов",
         "updates.update6_2": "Обновлён дизайн сайта",
-
-        // О проекте
-        "about.title": "О проекте",
-        "about.text": "<strong>Project Cataclysm Wiki</strong> — официальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, интерактивная карта и справочные данные.",
 
         // Футер
         "footer.copy": "© 2026 Project Cataclysm Wiki. Официальный сайт.",
@@ -586,6 +586,10 @@ const translations = {
 
         // Обновления
         "updates.title": "Updates",
+        "updates.date_feb9": "February 9, 2026",
+        "updates.update_feb9_1": "Optimized main page code",
+        "updates.update_feb9_2": "Updated all equipment and artifact stats",
+        "updates.update_feb9_3": "Added PPSh-41 to the weapon list",
         "updates.date0": "February 5, 2026",
         "updates.update0_1": "The entire website has been translated to English",
         "updates.update0_2": "Added language switch button",
@@ -613,10 +617,6 @@ const translations = {
         "updates.date6": "January 11, 2026",
         "updates.update6_1": "Added artifact build calculator",
         "updates.update6_2": "Updated website design",
-
-        // О проекте
-        "about.title": "About",
-        "about.text": "<strong>Project Cataclysm Wiki</strong> — an official knowledge base for the game. Here you'll find up-to-date information: artifact tables, build calculator, interactive map and reference data.",
 
         // Футер
         "footer.copy": "© 2026 Project Cataclysm Wiki. Official site.",
