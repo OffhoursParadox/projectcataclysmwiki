@@ -3,13 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://offhoursparadox.github.io/projectcataclysmwiki/">
     <link rel="icon" href="favicon.png" type="image/png">
     <link rel="shortcut icon" href="favicon.png" type="image/png">
-    <title>Project Cataclysm Wiki</title>
-    <meta property="twitter:card" content="summary_large_image">
-    <meta name="keywords" content="Project Cataclysm вики. Project Cataclysm Википедия. Project Cataclysm карта. Аномалии Project Cataclysm. Мутанты Project Cataclysm. Project Cataclysm таблица артефактов. Project cataclysm артефакты.">
-    <meta name="description" content="Project Cataclysm Wiki (Beta) - база знаний игры Project Cataclysm. Здесь вы найдёте интерактивную карту проекта и таблицу артефактов с их свойствами и ценами.">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <title>Project Cataclysm Wiki — база знаний по игре</title>
+    <meta property="og:title" content="Project Cataclysm Wiki">
+    <meta property="og:description" content="База знаний игры Project Cataclysm — интерактивная карта, таблица артефактов, калькулятор сборок и DPS.">
+    <meta property="og:image" content="https://offhoursparadox.github.io/projectcataclysmwiki/images/og-image.png">
+    <meta property="og:url" content="https://offhoursparadox.github.io/projectcataclysmwiki/">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
+    <meta name="keywords" content="Project Cataclysm вики, Project Cataclysm карта, аномалии Project Cataclysm, мутанты Project Cataclysm, таблица артефактов Project Cataclysm, артефакты Project Cataclysm, калькулятор DPS Project Cataclysm">
+    <meta name="description" content="Project Cataclysm Wiki — база знаний по игре. Интерактивная карта локаций, таблица артефактов с ценами, калькулятор сборок и расчёт DPS оружия.">
+    <meta name="theme-color" content="#0a0a0b">
+    <link rel="preload" href="images/hero.png" as="image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
     <link href="main.css" rel="stylesheet">
 </head>
 <body>
@@ -17,10 +28,10 @@
 
     <header class="header">
         <div class="header__container">
-            <a href="index.html" class="header__logo">
+            <a href="./" class="header__logo">
                 <span class="header__logo-text">CATACLYSM<span class="header__logo-accent">WIKI</span></span>
             </a>
-            <nav class="header__nav">
+            <nav class="header__nav" aria-label="Основная навигация">
                 <a href="Map/map.html" class="nav-link">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
@@ -49,7 +60,10 @@
                 
                 <!-- Переключатель языка -->
                 <div class="lang-switcher">
-                    <button class="lang-switcher__btn" id="langSwitcher">
+                    <button class="lang-switcher__btn" id="langSwitcher" 
+                            aria-label="Выбор языка" 
+                            aria-expanded="false" 
+                            aria-haspopup="true">
                         <svg class="lang-switcher__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <path d="M2 12h20"/>
@@ -75,11 +89,16 @@
                     </div>
                 </div>
             </nav>
-            <button class="header__burger" id="burger"><span></span><span></span><span></span></button>
+            <button class="header__burger" id="burger" 
+                    aria-label="Открыть меню" 
+                    aria-expanded="false" 
+                    aria-controls="mobileMenu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </header>
 
-    <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Мобильная навигация">
         <nav class="mobile-menu__nav">
             <a href="Map/map.html" class="mobile-menu__link" data-i18n="nav.mapFull">Интерактивная карта</a>
             <a href="Table/table.html" class="mobile-menu__link" data-i18n="nav.artifactsTable">Таблица артефактов</a>
@@ -108,7 +127,7 @@
             </div>
         </section>
 
-        <section class="quick-nav">
+        <section class="quick-nav" aria-label="Навигация по разделам">
             <div class="container">
                 <div class="quick-nav__grid">
                     <a href="Table/table.html" class="quick-card">
@@ -178,14 +197,14 @@
         <section class="content-section">
             <div class="container">
                 <div class="content-grid">
-                    <div class="rf-frequencies">
+                    <div class="rf-frequencies" role="region" aria-labelledby="rf-title">
                         <div class="rf-frequencies__header">
                             <div class="rf-frequencies__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M12 20v-6M6 20V10M18 20V4"/>
                                 </svg>
                             </div>
-                            <h2 class="rf-frequencies__title" data-i18n="rf.title">Частоты RF-ресивера</h2>
+                            <h2 class="rf-frequencies__title" id="rf-title" data-i18n="rf.title">Частоты RF-ресивера</h2>
                         </div>
                         <div class="rf-frequencies__grid">
                             <div class="rf-item">
@@ -239,14 +258,14 @@
                         </div>
                     </div>
 
-                    <div class="updates-block">
+                    <div class="updates-block" role="region" aria-labelledby="updates-title">
                         <div class="updates-block__header">
                             <div class="updates-block__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
                                 </svg>
                             </div>
-                            <h2 class="updates-block__title" data-i18n="updates.title">Обновления</h2>
+                            <h2 class="updates-block__title" id="updates-title" data-i18n="updates.title">Обновления</h2>
                         </div>
                         <div class="updates-block__content">
                             <div class="update-entry">
@@ -309,22 +328,6 @@
                 </div>
             </div>
         </section>
-
-        <section class="about-section">
-            <div class="container">
-                <div class="about-card">
-                    <div class="about-card__icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
-                        </svg>
-                    </div>
-                    <div class="about-card__content">
-                        <h3 class="about-card__title" data-i18n="about.title">О проекте</h3>
-                        <p class="about-card__text" data-i18n="about.text"><strong>Project Cataclysm Wiki</strong> — официальная база знаний по игре. Здесь собрана актуальная информация: таблицы артефактов, калькулятор сборок, интерактивная карта и справочные данные.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer class="footer">
@@ -351,7 +354,7 @@
         </div>
     </footer>
 
-    <button class="scroll-top" id="scrollTop">
+    <button class="scroll-top" id="scrollTop" aria-label="Наверх">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
     </button>
 
