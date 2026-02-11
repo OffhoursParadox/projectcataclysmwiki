@@ -99,7 +99,7 @@ function isEnglish() {
  * Получить локализованное название категории оружия
  */
 function getCategoryName(categoryId) {
-    const categoryKey = `dps.cat.${categoryId}`;
+    const categoryKey = `ttk.cat.${categoryId}`;
     const translation = t(categoryKey);
     
     // Если перевод найден, используем его
@@ -120,7 +120,7 @@ function getCategoryName(categoryId) {
  */
 function getRarityName(rarity) {
     if (!rarity) return '';
-    const key = `dps.rarity.${rarity}`;
+    const key = `ttk.rarity.${rarity}`;
     return t(key, rarity);
 }
 
@@ -254,7 +254,7 @@ function removeSlot(index) {
     
     const nameEl = document.getElementById(`slotName${index}`);
     const dpsEl = document.getElementById(`slotDps${index}`);
-    if (nameEl) nameEl.textContent = t('dps.notSelected', 'Не выбрано');
+    if (nameEl) nameEl.textContent = t('ttk.notSelected', 'Не выбрано');
     if (dpsEl) dpsEl.textContent = '0';
     
     if (index < state.visibleSlots - 1) {
@@ -282,7 +282,7 @@ function removeSlot(index) {
 
 function clearSlot(index) {
     state.slots[index] = { weapon: null, ammo: null };
-    document.getElementById(`slotName${index}`).textContent = t('dps.notSelected', 'Не выбрано');
+    document.getElementById(`slotName${index}`).textContent = t('ttk.notSelected', 'Не выбрано');
     document.getElementById(`slotDps${index}`).textContent = '0';
     if (state.activeSlot === index) loadSlotData(index);
     calculateResults();
@@ -340,17 +340,17 @@ function loadSlotData(index) {
             renderAmmoStats();
         }
     } else {
-        valueElement.textContent = t('dps.selectWeapon', 'Выберите оружие...');
+        valueElement.textContent = t('ttk.selectWeapon', 'Выберите оружие...');
         valueElement.classList.remove('has-value');
         elements.weaponInfo.innerHTML = `
             <div class="weapon-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                <span>${t('dps.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
+                <span>${t('ttk.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
             </div>`;
         
         const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
         ammoTrigger.disabled = true;
-        ammoValueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
+        ammoValueElement.textContent = t('ttk.selectWeaponFirst', 'Сначала выберите оружие...');
         ammoValueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         elements.weaponStats.style.display = 'none';
@@ -372,7 +372,7 @@ function updateSlotUI(index) {
         const result = calculateSlotDPS(index);
         dpsEl.textContent = Math.round(result.dpsBody);
     } else {
-        nameEl.textContent = t('dps.notSelected', 'Не выбрано');
+        nameEl.textContent = t('ttk.notSelected', 'Не выбрано');
         dpsEl.textContent = '0';
     }
 }
@@ -449,7 +449,7 @@ function renderWeaponDropdownList(searchQuery = '') {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <span>${t('dps.weaponNotFound', 'Оружие не найдено')}</span>
+                <span>${t('ttk.weaponNotFound', 'Оружие не найдено')}</span>
             </div>`;
         return;
     }
@@ -523,11 +523,11 @@ function clearWeaponSelection() {
     state.slots[state.activeSlot].ammo = null;
     
     const valueElement = elements.weaponDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = t('dps.selectWeapon', 'Выберите оружие...');
+    valueElement.textContent = t('ttk.selectWeapon', 'Выберите оружие...');
     valueElement.classList.remove('has-value');
     
     const ammoValueElement = elements.ammoDropdown.querySelector('.custom-dropdown__value');
-    ammoValueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
+    ammoValueElement.textContent = t('ttk.selectWeaponFirst', 'Сначала выберите оружие...');
     ammoValueElement.classList.remove('has-value');
     
     closeWeaponDropdown();
@@ -554,7 +554,7 @@ function renderWeaponInfo() {
         elements.weaponInfo.innerHTML = `
             <div class="weapon-info__placeholder">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                <span>${t('dps.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
+                <span>${t('ttk.selectWeaponHint', 'Выберите оружие для расчёта')}</span>
             </div>`;
         return;
     }
@@ -575,19 +575,19 @@ function renderWeaponInfo() {
             </div>
             <div class="weapon-details__stats">
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">${t('dps.stat.damage', 'Урон')}</span>
+                    <span class="weapon-details__stat-name">${t('ttk.stat.damage', 'Урон')}</span>
                     <span class="weapon-details__stat-value weapon-details__stat-value--highlight">${weapon.damage}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">${t('dps.stat.rpm', 'Скорострельность')}</span>
+                    <span class="weapon-details__stat-name">${t('ttk.stat.rpm', 'Скорострельность')}</span>
                     <span class="weapon-details__stat-value">${weapon.rpm} ${rpmUnit}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">${t('dps.stat.headshotMult', 'Множитель в голову')}</span>
+                    <span class="weapon-details__stat-name">${t('ttk.stat.headshotMult', 'Множитель в голову')}</span>
                     <span class="weapon-details__stat-value">x${weapon.headshotMult}</span>
                 </div>
                 <div class="weapon-details__stat">
-                    <span class="weapon-details__stat-name">${t('dps.stat.range', 'Эфф. дистанция')}</span>
+                    <span class="weapon-details__stat-name">${t('ttk.stat.range', 'Эфф. дистанция')}</span>
                     <span class="weapon-details__stat-value">${weapon.effectiveRange} ${meterUnit}</span>
                 </div>
             </div>
@@ -607,12 +607,12 @@ function renderWeaponStats() {
     
     // Локализованные названия характеристик
     const statNames = {
-        verticalRecoil: t('dps.stat.verticalRecoil', 'Верт. отдача'),
-        horizontalRecoil: t('dps.stat.horizontalRecoil', 'Гориз. отдача'),
-        hipSpread: t('dps.stat.hipSpread', 'Разброс от бедра'),
-        adsSpread: t('dps.stat.adsSpread', 'Разброс в прицеле'),
-        moveSpeed: t('dps.stat.moveSpeed', 'Скорость бега'),
-        armorPenetration: t('dps.stat.armorPen', 'Бронебойность')
+        verticalRecoil: t('ttk.stat.verticalRecoil', 'Верт. отдача'),
+        horizontalRecoil: t('ttk.stat.horizontalRecoil', 'Гориз. отдача'),
+        hipSpread: t('ttk.stat.hipSpread', 'Разброс от бедра'),
+        adsSpread: t('ttk.stat.adsSpread', 'Разброс в прицеле'),
+        moveSpeed: t('ttk.stat.moveSpeed', 'Скорость бега'),
+        armorPenetration: t('ttk.stat.armorPen', 'Бронебойность')
     };
     
     const statUnits = {
@@ -673,7 +673,7 @@ function updateAmmoOptions(autoSelectFirst = false) {
     
     if (!weapon) {
         trigger.disabled = true;
-        valueElement.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
+        valueElement.textContent = t('ttk.selectWeaponFirst', 'Сначала выберите оружие...');
         valueElement.classList.remove('has-value');
         elements.ammoStats.style.display = 'none';
         return;
@@ -687,7 +687,7 @@ function updateAmmoOptions(autoSelectFirst = false) {
     // Локализованные единицы
     const dmgLabel = isEnglish() ? 'dmg' : 'урон';
     const apLabel = isEnglish() ? 'AP' : 'АП';
-    const standardLabel = t('dps.ammoType.standard', 'Стандарт');
+    const standardLabel = t('ttk.ammoType.standard', 'Стандарт');
     
     let html = '';
     
@@ -735,7 +735,7 @@ function updateAmmoOptions(autoSelectFirst = false) {
         valueElement.classList.add('has-value');
         renderAmmoStats();
     } else {
-        valueElement.textContent = t('dps.selectAmmo', 'Выберите патроны...');
+        valueElement.textContent = t('ttk.selectAmmo', 'Выберите патроны...');
         valueElement.classList.remove('has-value');
     }
 }
@@ -906,8 +906,8 @@ function calculateSlotDPS(slotIndex) {
 function calculateResults() {
     const result = calculateSlotDPS(state.activeSlot);
     
-    const secUnit = t('dps.sec', 'сек');
-    const shotsUnit = t('dps.shots', 'выстр.');
+    const secUnit = t('ttk.sec', 'сек');
+    const shotsUnit = t('ttk.shots', 'выстр.');
     
     elements.protectionPercent.textContent = (result.protection?.toFixed(2) || '0') + '%';
     elements.effectiveProtection.textContent = (result.effectiveProtection?.toFixed(2) || '0') + '%';
@@ -1425,7 +1425,7 @@ function initChartInteractivity() {
         
         const meterUnit = isEnglish() ? 'm' : 'м';
         const secUnit = isEnglish() ? 's' : 'с';
-        const shotsUnit = t('dps.shots', 'выстр.');
+        const shotsUnit = t('ttk.shots', 'выстр.');
         const modeLabel = isHeadMode 
             ? (isEnglish() ? '🎯 HEAD' : '🎯 ГОЛОВА')
             : (isEnglish() ? '👤 BODY' : '👤 ТЕЛО');
@@ -1565,9 +1565,9 @@ function updateComparisonTable() {
     
     // Локализованные заголовки таблицы
     const headers = {
-        weapon: t('dps.table.weapon', 'Оружие'),
-        ammo: t('dps.ammo', 'Патроны'),
-        dpsBody: t('dps.table.dpsBody', 'DPS (тело)'),
+        weapon: t('ttk.table.weapon', 'Оружие'),
+        ammo: t('ttk.ammo', 'Патроны'),
+        dpsBody: t('ttk.table.dpsBody', 'DPS (тело)'),
         damagePerShot: isEnglish() ? 'Dmg/shot' : 'Урон/выстрел',
         ttk: 'TTK',
         shots: isEnglish() ? 'Shots' : 'Выстрелов'
@@ -1638,7 +1638,7 @@ function resetCalculator() {
     for (let i = 0; i < 5; i++) {
         const nameEl = document.getElementById(`slotName${i}`);
         const dpsEl = document.getElementById(`slotDps${i}`);
-        if (nameEl) nameEl.textContent = t('dps.notSelected', 'Не выбрано');
+        if (nameEl) nameEl.textContent = t('ttk.notSelected', 'Не выбрано');
         if (dpsEl) dpsEl.textContent = '0';
     }
     
@@ -1657,11 +1657,11 @@ function resetCalculator() {
     }
     
     const weaponValue = elements.weaponDropdown.querySelector('.custom-dropdown__value');
-    weaponValue.textContent = t('dps.selectWeapon', 'Выберите оружие...');
+    weaponValue.textContent = t('ttk.selectWeapon', 'Выберите оружие...');
     weaponValue.classList.remove('has-value');
     
     const ammoValue = elements.ammoDropdown.querySelector('.custom-dropdown__value');
-    ammoValue.textContent = t('dps.selectWeaponFirst', 'Сначала выберите оружие...');
+    ammoValue.textContent = t('ttk.selectWeaponFirst', 'Сначала выберите оружие...');
     ammoValue.classList.remove('has-value');
     
     const ammoTrigger = elements.ammoDropdown.querySelector('.custom-dropdown__trigger');
