@@ -235,7 +235,7 @@ body{
 .quick-card__icon svg{width:24px;height:24px}
 .quick-card__icon--artifacts{background:rgba(139,92,246,0.15);color:#8b5cf6}
 .quick-card__icon--calculator{background:rgba(196,163,90,0.15);color:var(--color-accent)}
-.quick-card__icon--dps{background:rgba(239,68,68,0.15);color:#ef4444}
+.quick-card__icon--ttk{background:rgba(239,68,68,0.15);color:#ef4444}
 .quick-card__icon--map{background:rgba(59,130,246,0.15);color:#3b82f6}
 .quick-card__content{flex:1;min-width:0}
 .quick-card__title{
