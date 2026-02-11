@@ -1,46 +1,111 @@
-// ============================================================
-// TABLE PAGE — Dynamic artifact tables from data.js
-// ============================================================
+'use strict';
 
-const burger = document.getElementById('burger');
-const mobileMenu = document.getElementById('mobileMenu');
-const header = document.querySelector('.header');
-const scrollTopBtn = document.getElementById('scrollTop');
+document.addEventListener('DOMContentLoaded', () => {
+    initBurgerMenu();
+    initScrollEffects();
+    initCategoryNav();
+    renderAllArtifactTables();
+});
 
-if (burger && mobileMenu) {
+document.addEventListener('languageChanged', () => {
+    renderAllArtifactTables();
+});
+
+function initBurgerMenu() {
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (!burger || !mobileMenu) return;
+
     burger.addEventListener('click', () => {
-        burger.classList.toggle('active');
+        const isActive = burger.classList.toggle('active');
         mobileMenu.classList.toggle('active');
+        burger.setAttribute('aria-expanded', isActive);
+        document.body.style.overflow = isActive ? 'hidden' : '';
+    });
+
+    mobileMenu.querySelectorAll('.mobile-menu__link').forEach(link => {
+        link.addEventListener('click', () => {
+            burger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        });
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            burger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            burger.focus();
+        }
+    });
+
+    const mediaQuery = window.matchMedia('(min-width: 1025px)');
+    mediaQuery.addEventListener('change', (e) => {
+        if (e.matches && mobileMenu.classList.contains('active')) {
+            burger.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            burger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
     });
 }
 
-window.addEventListener('scroll', () => {
-    header.style.background = window.scrollY > 50
-        ? 'rgba(10, 10, 11, 0.98)'
-        : 'rgba(10, 10, 11, 0.9)';
-    scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
-});
+function initScrollEffects() {
+    const header = document.querySelector('.header');
+    const scrollTopBtn = document.getElementById('scrollTop');
 
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    if (!header) return;
 
-document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(btn.getAttribute('href'));
-        if (target) {
-            window.scrollTo({
-                top: target.offsetTop - 140,
-                behavior: 'smooth'
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+
+                header.style.background = scrollY > 50
+                    ? 'rgba(10, 10, 11, 0.98)'
+                    : 'rgba(10, 10, 11, 0.9)';
+
+                if (scrollTopBtn) {
+                    scrollTopBtn.classList.toggle('visible', scrollY > 500);
+                }
+
+                ticking = false;
             });
+            ticking = true;
         }
-    });
-});
+    }, { passive: true });
 
-// ============================================================
-// CATEGORY DEFINITIONS (order, icons, SVGs, i18n keys)
-// ============================================================
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+}
+
+function initCategoryNav() {
+    const headerHeight = 70;
+    const categoryNavHeight = 80;
+    const offset = headerHeight + categoryNavHeight;
+
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(btn.getAttribute('href'));
+            if (target) {
+                window.scrollTo({
+                    top: target.offsetTop - offset,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
 
 const TABLE_CATEGORIES = [
     {
@@ -117,10 +182,6 @@ const TABLE_CATEGORIES = [
     }
 ];
 
-// ============================================================
-// HELPER: get localized text with fallback
-// ============================================================
-
 function tbl_t(key, fallback) {
     if (window.i18n && typeof window.i18n.t === 'function') {
         const result = window.i18n.t(key);
@@ -128,10 +189,6 @@ function tbl_t(key, fallback) {
     }
     return fallback || key;
 }
-
-// ============================================================
-// BUILD PROPERTY HTML FOR A SINGLE STAT
-// ============================================================
 
 function buildPropertyHtml(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
@@ -148,21 +205,10 @@ function buildPropertyHtml(statKey, value) {
     }
 
     const cssClass = isPositive ? 'property--positive' : 'property--negative';
-
-    // Format display value
-    let displayValue;
-    if (value > 0) {
-        displayValue = `+${formatNumber(value)}`;
-    } else {
-        displayValue = formatNumber(value);
-    }
+    const displayValue = value > 0 ? `+${formatNumber(value)}` : formatNumber(value);
 
     return `<span class="property ${cssClass}">${statName}: ${displayValue}${unit}</span>`;
 }
-
-// ============================================================
-// BUILD PRICE HTML
-// ============================================================
 
 function buildPriceHtml(artifact) {
     if (artifact.price !== null && artifact.price !== undefined) {
@@ -171,20 +217,11 @@ function buildPriceHtml(artifact) {
 
     const priceText = getLocalizedField(artifact, 'priceText');
     if (priceText) {
-        // Determine CSS class based on text
-        const lowerText = priceText.toLowerCase();
-        if (lowerText.includes('ивент') || lowerText.includes('event')) {
-            return `<span class="price price--none">${priceText}</span>`;
-        }
         return `<span class="price price--none">${priceText}</span>`;
     }
 
     return `<span class="price">—</span>`;
 }
-
-// ============================================================
-// BUILD TIER BADGE
-// ============================================================
 
 function buildTierBadge(tier) {
     if (tier === 'unique') {
@@ -193,38 +230,27 @@ function buildTierBadge(tier) {
     return `<span class="tier-badge tier-badge--${tier}">${tier}</span>`;
 }
 
-// ============================================================
-// BUILD SINGLE ARTIFACT ROW
-// ============================================================
-
 function buildArtifactRow(artifact) {
     const tierHtml = buildTierBadge(artifact.tier);
     const imgPath = `${artifact.imageFolder}/${artifact.image}`;
     const nameRu = artifact.name;
     const nameEn = artifact.nameEn || '';
 
-    // Build properties
     const propsHtml = Object.entries(artifact.stats)
         .map(([key, value]) => buildPropertyHtml(key, value))
-        .join('\n                                        ');
+        .join('');
 
     const priceHtml = buildPriceHtml(artifact);
 
     return `
-                                <tr>
-                                    <td class="tier-cell">${tierHtml}</td>
-                                    <td class="artifact-image-cell"><img src="${imgPath}" alt="${nameRu}" class="artifact-image" onerror="this.src='../images/placeholder.png'"></td>
-                                    <td><div class="artifact-name"><span class="artifact-name__ru">${nameRu}</span><span class="artifact-name__en">${nameEn}</span></div></td>
-                                    <td><div class="properties-list">
-                                        ${propsHtml}
-                                    </div></td>
-                                    <td class="price-cell">${priceHtml}</td>
-                                </tr>`;
+        <tr>
+            <td class="tier-cell">${tierHtml}</td>
+            <td class="artifact-image-cell"><img src="${imgPath}" alt="${nameRu}" class="artifact-image" loading="lazy"></td>
+            <td><div class="artifact-name"><span class="artifact-name__ru">${nameRu}</span><span class="artifact-name__en">${nameEn}</span></div></td>
+            <td><div class="properties-list">${propsHtml}</div></td>
+            <td class="price-cell">${priceHtml}</td>
+        </tr>`;
 }
-
-// ============================================================
-// BUILD CATEGORY SECTION
-// ============================================================
 
 function buildCategorySection(categoryDef) {
     const artifacts = ARTIFACTS.filter(a => a.category === categoryDef.id);
@@ -234,58 +260,45 @@ function buildCategorySection(categoryDef) {
     const countWord = tbl_t(categoryDef.countKey, categoryDef.countFallback);
 
     const eventBadge = categoryDef.isEvent
-        ? `\n                        <span class="category-header__event" data-i18n="${categoryDef.eventKey}">${tbl_t(categoryDef.eventKey, categoryDef.eventFallback)}</span>`
+        ? `<span class="category-header__event" data-i18n="${categoryDef.eventKey}">${tbl_t(categoryDef.eventKey, categoryDef.eventFallback)}</span>`
         : '';
 
     const rowsHtml = artifacts.map(a => buildArtifactRow(a)).join('');
 
     return `
-                <div class="artifact-category" id="${categoryDef.id}">
-                    <div class="category-header category-header--${categoryDef.id}">
-                        <div class="category-header__icon">
-                            ${categoryDef.svgIcon}
-                        </div>
-                        <h2 class="category-header__title" data-i18n="${categoryDef.titleKey}">${title}</h2>
-                        <span class="category-header__count">${artifacts.length} <span data-i18n="${categoryDef.countKey}">${countWord}</span></span>${eventBadge}
-                    </div>
-                    <div class="artifacts-table-wrapper">
-                        <table class="artifacts-table">
-                            <thead>
-                                <tr>
-                                    <th class="th-tier" data-i18n="artifacts.th.tier">${tbl_t('artifacts.th.tier', 'Ур.')}</th>
-                                    <th class="th-image" data-i18n="artifacts.th.icon">${tbl_t('artifacts.th.icon', 'Иконка')}</th>
-                                    <th class="th-name" data-i18n="artifacts.th.name">${tbl_t('artifacts.th.name', 'Название')}</th>
-                                    <th class="th-properties" data-i18n="artifacts.th.properties">${tbl_t('artifacts.th.properties', 'Свойства')}</th>
-                                    <th class="th-price" data-i18n="artifacts.th.price">${tbl_t('artifacts.th.price', 'Цена')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rowsHtml}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>`;
+        <div class="artifact-category" id="${categoryDef.id}">
+            <div class="category-header category-header--${categoryDef.id}">
+                <div class="category-header__icon">${categoryDef.svgIcon}</div>
+                <h2 class="category-header__title" data-i18n="${categoryDef.titleKey}">${title}</h2>
+                <span class="category-header__count">${artifacts.length} <span data-i18n="${categoryDef.countKey}">${countWord}</span></span>
+                ${eventBadge}
+            </div>
+            <div class="artifacts-table-wrapper">
+                <table class="artifacts-table">
+                    <thead>
+                        <tr>
+                            <th class="th-tier" data-i18n="artifacts.th.tier">${tbl_t('artifacts.th.tier', 'Ур.')}</th>
+                            <th class="th-image" data-i18n="artifacts.th.icon">${tbl_t('artifacts.th.icon', 'Иконка')}</th>
+                            <th class="th-name" data-i18n="artifacts.th.name">${tbl_t('artifacts.th.name', 'Название')}</th>
+                            <th class="th-properties" data-i18n="artifacts.th.properties">${tbl_t('artifacts.th.properties', 'Свойства')}</th>
+                            <th class="th-price" data-i18n="artifacts.th.price">${tbl_t('artifacts.th.price', 'Цена')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+            </div>
+        </div>`;
 }
-
-// ============================================================
-// RENDER ALL TABLES
-// ============================================================
 
 function renderAllArtifactTables() {
     const container = document.getElementById('artifactsContainer');
     if (!container) return;
 
-    const html = TABLE_CATEGORIES.map(cat => buildCategorySection(cat)).join('\n');
-    container.innerHTML = html;
+    container.innerHTML = TABLE_CATEGORIES.map(cat => buildCategorySection(cat)).join('');
+
+    container.querySelectorAll('.artifact-image').forEach(img => {
+        img.addEventListener('error', function () {
+            this.src = '../images/placeholder.png';
+        }, { once: true });
+    });
 }
-
-// ============================================================
-// INIT & LANGUAGE CHANGE SUPPORT
-// ============================================================
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderAllArtifactTables();
-});
-
-document.addEventListener('languageChanged', () => {
-    renderAllArtifactTables();
-});
