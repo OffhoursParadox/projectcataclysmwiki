@@ -1,6 +1,34 @@
 [
     {
         "date": {
+            "ru": "14 февраля 2026",
+            "en": "February 14, 2026"
+        },
+        "items": [
+            {
+                "ru": "Улучшена интерактивная карта: исправлен переключатель языка, добавлено сохранение фильтров",
+                "en": "Improved interactive map: fixed language switcher, added filter saving"
+            },
+            {
+                "ru": "Карта запоминает состояние боковой панели и фильтров между сессиями",
+                "en": "Map remembers sidebar state and filters between sessions"
+            },
+            {
+                "ru": "Кнопка «Сбросить фильтры» теперь включает все метки обратно",
+                "en": "\"Reset filters\" button now turns all markers back on"
+            },
+            {
+                "ru": "Повышена безопасность пользовательских меток",
+                "en": "Improved security for user markers"
+            },
+            {
+                "ru": "Проведена оптимизация кода на других страницах сайта",
+                "en": "Code optimization performed on other site pages"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "9 февраля 2026",
             "en": "February 9, 2026"
         },
