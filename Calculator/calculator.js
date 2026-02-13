@@ -787,7 +787,6 @@ function initEventListeners() {
         if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
     });
 
-    // Делегирование кликов по слотам артефактов
     elements.artifactSlots.addEventListener('click', (e) => {
         const removeBtn = e.target.closest('.artifact-slot__remove');
         if (removeBtn) {
@@ -797,9 +796,15 @@ function initEventListeners() {
             return;
         }
 
-        const slot = e.target.closest('.artifact-slot--empty');
-        if (slot) {
-            openArtifactModal(parseInt(slot.dataset.index));
+        const filledSlot = e.target.closest('.artifact-slot:not(.artifact-slot--empty)');
+        if (filledSlot) {
+            openArtifactModal(parseInt(filledSlot.dataset.index));
+            return;
+        }
+
+        const emptySlot = e.target.closest('.artifact-slot--empty');
+        if (emptySlot) {
+            openArtifactModal(parseInt(emptySlot.dataset.index));
         }
     });
 
