@@ -108,9 +108,6 @@ function isDesktop() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initBurgerMenu();
-    initScrollEffects();
-    initLangDropdownClose();
     initComparisonSlots();
     initWeaponDropdown();
     initAmmoDropdown();
