@@ -1,3 +1,5 @@
+'use strict';
+
 const state = {
     selectedArmor: null,
     selectedContainer: null,
@@ -14,13 +16,14 @@ const state = {
     filtersExpanded: false
 };
 
+let elements = {};
+
 const STORAGE_KEY = 'cataclysmCalculatorState';
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
 const BULLET_RESISTANCE_CONSTANT = 166.67;
 const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
 const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
 
-// Ключи для i18n вместо захардкоженных строк
 const WARNING_STATS = {
     radiation: { threshold: 0, color: 'radiation', titleKey: 'calc.warning.radiation', unitKey: 'calc.unit.msvSec' },
     cold: { threshold: 0, color: 'cold', titleKey: 'calc.warning.cold', unitKey: 'calc.unit.perSec' },
@@ -52,53 +55,52 @@ const CONTAINER_TYPE_ICONS = {
     spacious: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><ellipse cx="12" cy="19" rx="9" ry="3"/></svg>`
 };
 
-// Вспомогательная функция для получения перевода
 function t(key, params = {}) {
     if (window.i18n && typeof window.i18n.t === 'function') {
         return window.i18n.t(key, params);
     }
-    // Fallback если i18n не загружен
     return key;
 }
 
-const elements = {
-    armorSelect: document.getElementById('armorSelect'),
-    armorInfo: document.getElementById('armorInfo'),
-    containerSelect: document.getElementById('containerSelect'),
-    containerInfo: document.getElementById('containerInfo'),
-    artifactSlots: document.getElementById('artifactSlots'),
-    artifactCounter: document.getElementById('artifactCounter'),
-    resetBtn: document.getElementById('resetBtn'),
-    modal: document.getElementById('artifactModal'),
-    modalClose: document.getElementById('modalClose'),
-    modalSlotInfo: document.getElementById('modalSlotInfo'),
-    artifactSearch: document.getElementById('artifactSearch'),
-    searchClear: document.getElementById('searchClear'),
-    artifactList: document.getElementById('artifactList'),
-    artifactCount: document.getElementById('artifactCount'),
-    categoryTabs: document.querySelectorAll('.category-tab'),
-    burger: document.getElementById('burger'),
-    mobileMenu: document.getElementById('mobileMenu'),
-    scrollTop: document.getElementById('scrollTop'),
-    warningsContainer: document.getElementById('warningsContainer'),
-    priorityStats: document.getElementById('priorityStats'),
-    enhancementBlock: document.getElementById('enhancementBlock'),
-    enhancementSlider: document.getElementById('enhancementSlider'),
-    enhancementValue: document.getElementById('enhancementValue'),
-    enhancementBonus: document.getElementById('enhancementBonus'),
-    armorDropdown: document.getElementById('armorDropdown'),
-    armorDropdownMenu: document.getElementById('armorDropdownMenu'),
-    armorDropdownList: document.getElementById('armorDropdownList'),
-    armorSearchInput: document.getElementById('armorSearchInput'),
-    armorClearWrapper: document.getElementById('armorClearWrapper'),
-    armorClearBtn: document.getElementById('armorClearBtn'),
-    containerDropdown: document.getElementById('containerDropdown'),
-    containerDropdownMenu: document.getElementById('containerDropdownMenu'),
-    containerDropdownList: document.getElementById('containerDropdownList'),
-    containerSearchInput: document.getElementById('containerSearchInput'),
-    containerClearWrapper: document.getElementById('containerClearWrapper'),
-    containerClearBtn: document.getElementById('containerClearBtn')
-};
+function initElements() {
+    elements = {
+        armorSelect: document.getElementById('armorSelect'),
+        armorInfo: document.getElementById('armorInfo'),
+        containerSelect: document.getElementById('containerSelect'),
+        containerInfo: document.getElementById('containerInfo'),
+        artifactSlots: document.getElementById('artifactSlots'),
+        artifactCounter: document.getElementById('artifactCounter'),
+        resetBtn: document.getElementById('resetBtn'),
+        modal: document.getElementById('artifactModal'),
+        modalClose: document.getElementById('modalClose'),
+        modalSlotInfo: document.getElementById('modalSlotInfo'),
+        artifactSearch: document.getElementById('artifactSearch'),
+        searchClear: document.getElementById('searchClear'),
+        artifactList: document.getElementById('artifactList'),
+        artifactCount: document.getElementById('artifactCount'),
+        categoryTabs: document.querySelectorAll('.category-tab'),
+        scrollTop: document.getElementById('scrollTop'),
+        warningsContainer: document.getElementById('warningsContainer'),
+        priorityStats: document.getElementById('priorityStats'),
+        enhancementBlock: document.getElementById('enhancementBlock'),
+        enhancementSlider: document.getElementById('enhancementSlider'),
+        enhancementValue: document.getElementById('enhancementValue'),
+        enhancementBonus: document.getElementById('enhancementBonus'),
+        armorDropdown: document.getElementById('armorDropdown'),
+        armorDropdownMenu: document.getElementById('armorDropdownMenu'),
+        armorDropdownList: document.getElementById('armorDropdownList'),
+        armorSearchInput: document.getElementById('armorSearchInput'),
+        armorClearWrapper: document.getElementById('armorClearWrapper'),
+        armorClearBtn: document.getElementById('armorClearBtn'),
+        containerDropdown: document.getElementById('containerDropdown'),
+        containerDropdownMenu: document.getElementById('containerDropdownMenu'),
+        containerDropdownList: document.getElementById('containerDropdownList'),
+        containerSearchInput: document.getElementById('containerSearchInput'),
+        containerClearWrapper: document.getElementById('containerClearWrapper'),
+        containerClearBtn: document.getElementById('containerClearBtn')
+    };
+}
+
 
 function saveStateToStorage() {
     try {
@@ -110,7 +112,7 @@ function saveStateToStorage() {
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (e) {
-        console.warn('Не удалось сохранить состояние:', e);
+        console.warn('Failed to save state:', e);
     }
 }
 
@@ -119,7 +121,7 @@ function loadStateFromStorage() {
         const saved = localStorage.getItem(STORAGE_KEY);
         return saved ? JSON.parse(saved) : null;
     } catch (e) {
-        console.warn('Не удалось загрузить состояние:', e);
+        console.warn('Failed to load state:', e);
         return null;
     }
 }
@@ -127,7 +129,7 @@ function loadStateFromStorage() {
 function restoreState() {
     const saved = loadStateFromStorage();
     if (!saved) return;
-    
+
     if (saved.armorId) {
         const armor = ARMORS.find(a => a.id === saved.armorId);
         if (armor) {
@@ -145,9 +147,9 @@ function restoreState() {
             renderArmorInfo();
         }
     }
-    
+
     updateContainerOptions();
-    
+
     if (saved.containerId) {
         const container = CONTAINERS.find(c => c.id === saved.containerId);
         if (container && isContainerAvailable(container)) {
@@ -169,26 +171,49 @@ function restoreState() {
             renderArtifactSlots();
         }
     }
-    
+
     renderArmorDropdownList();
     renderContainerDropdownList();
     updateStats();
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    if (typeof ARTIFACTS === 'undefined' || typeof ARMORS === 'undefined' || typeof CONTAINERS === 'undefined') {
+        const main = document.querySelector('main');
+        if (main) {
+            const lang = (window.i18n && window.i18n.getCurrentLang()) || localStorage.getItem('wiki-lang') || 'ru';
+            const errorMsg = lang === 'en' ? 'Failed to load game data' : 'Не удалось загрузить игровые данные';
+            const retryMsg = lang === 'en' ? 'Try again' : 'Попробовать снова';
+            main.innerHTML = `
+                <div class="calculator-error">
+                    <svg class="calculator-error__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p class="calculator-error__text">${errorMsg}</p>
+                    <button class="calculator-error__btn" onclick="location.reload()">${retryMsg}</button>
+                </div>`;
+        }
+        return;
+    }
+
+    initElements();
+    initBurgerMenu();
+    initScrollEffects();
+    initLangDropdownClose();
     injectStatFilterStyles();
     initArmorDropdown();
     initContainerDropdown();
     initContainerSelect();
     initEventListeners();
-    initScrollEffects();
     restoreState();
     updateStats();
 });
 
-// Подписка на смену языка для обновления интерфейса
+
 document.addEventListener('languageChanged', () => {
-    // Обновляем текст в выпадающих списках
     if (state.selectedArmor) {
         const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
         armorValueElement.textContent = getLocalizedName(state.selectedArmor);
@@ -196,7 +221,7 @@ document.addEventListener('languageChanged', () => {
         const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
         armorValueElement.textContent = t('calc.selectArmor');
     }
-    
+
     if (state.selectedContainer) {
         const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
         containerValueElement.textContent = `${getLocalizedName(state.selectedContainer)} (${getSlotsText(state.selectedContainer.slots)})`;
@@ -204,10 +229,8 @@ document.addEventListener('languageChanged', () => {
         const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
         containerValueElement.textContent = t('calc.selectContainer');
     }
-    
-    // Обновляем опции в select элементах
+
     initContainerSelect();
-    
     renderArmorDropdownList();
     renderContainerDropdownList();
     renderArmorInfo();
@@ -215,12 +238,59 @@ document.addEventListener('languageChanged', () => {
     renderArtifactSlots();
     renderEnhancementBonuses();
     updateStats();
-    
-    // Обновляем фильтры в модальном окне если оно открыто
+
     if (elements.modal.classList.contains('active')) {
         recreateStatFilters();
     }
 });
+
+
+function addStats(target, source) {
+    Object.entries(source).forEach(([key, value]) => {
+        if (target.hasOwnProperty(key)) target[key] += value;
+    });
+}
+
+function createEmptyStats() {
+    return {
+        radiationProtection: 0, bioProtection: 0, thermalProtection: 0, psiProtection: 0, frostProtection: 0,
+        heatResistance: 0, chemResistance: 0, electroResistance: 0,
+        impactResistance: 0, tearProtection: 0, bulletResistance: 0,
+        regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
+        maxStamina: 0, staminaRegen: 0, moveSpeed: 0, maxWeight: 0
+    };
+}
+
+function calculateTotalStats(options) {
+    const includeArtifacts = !options || options.includeArtifacts !== false;
+    const stats = createEmptyStats();
+
+    if (state.selectedArmor) {
+        addStats(stats, state.selectedArmor.stats);
+        addStats(stats, getEnhancementBonuses());
+    }
+    if (state.selectedContainer) {
+        addStats(stats, state.selectedContainer.stats);
+        addStats(stats, state.selectedContainer.shielding);
+    }
+    if (includeArtifacts) {
+        state.artifacts.forEach(artifact => {
+            if (artifact) addStats(stats, artifact.stats);
+        });
+    }
+    return stats;
+}
+
+function getEnhancementBonuses() {
+    const bonuses = {};
+    if (!state.selectedArmor?.enhancement || state.enhancementLevel === 0) return bonuses;
+    Object.entries(state.selectedArmor.enhancement.bonuses).forEach(([statKey, values]) => {
+        const bonusValue = values[state.enhancementLevel] || 0;
+        if (bonusValue !== 0) bonuses[statKey] = bonusValue;
+    });
+    return bonuses;
+}
+
 
 function recreateStatFilters() {
     const container = document.getElementById('statFiltersContainer');
@@ -269,6 +339,11 @@ function injectStatFilterStyles() {
 .stat-filters__reset-btn svg{width:14px;height:14px}
 .stat-filters__reset-btn:disabled{opacity:0.3;cursor:not-allowed}
 .stat-filters__reset-btn:disabled:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:var(--color-text-muted)}
+.calculator-error{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 20px 80px;text-align:center}
+.calculator-error__icon{width:48px;height:48px;color:var(--color-text-muted);margin-bottom:16px}
+.calculator-error__text{font-size:18px;color:var(--color-text-muted);margin-bottom:24px}
+.calculator-error__btn{color:var(--color-accent);background:none;border:1px solid var(--color-accent);padding:12px 28px;border-radius:10px;cursor:pointer;font-size:14px;font-family:var(--font-main);transition:var(--transition)}
+.calculator-error__btn:hover{background:rgba(196,163,90,0.15)}
 @media(max-width:768px){
 .filters-toggle{display:flex}
 .modal__toolbar{padding:10px 14px;gap:10px}
@@ -317,20 +392,20 @@ function injectStatFilterStyles() {
 function createStatFilters() {
     const toolbar = document.querySelector('.modal__toolbar');
     if (!toolbar || document.getElementById('statFiltersContainer')) return;
-    
+
     const positiveStats = new Map();
     const negativeStats = new Map();
-    
+
     ARTIFACTS.forEach(artifact => {
         Object.entries(artifact.stats).forEach(([statKey, value]) => {
             if (isPositiveEffect(statKey, value)) positiveStats.set(statKey, (positiveStats.get(statKey) || 0) + 1);
             if (isNegativeEffect(statKey, value)) negativeStats.set(statKey, (negativeStats.get(statKey) || 0) + 1);
         });
     });
-    
+
     const sortedPositive = [...positiveStats.entries()].sort((a, b) => b[1] - a[1]);
     const sortedNegative = [...negativeStats.entries()].sort((a, b) => b[1] - a[1]);
-    
+
     const createOptions = (statsMap) => {
         let options = `<option value="">${t('calc.filter.any')}</option>`;
         statsMap.forEach(([statKey, count]) => {
@@ -338,42 +413,42 @@ function createStatFilters() {
         });
         return options;
     };
-    
+
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'filtersToggle';
     toggleBtn.className = 'filters-toggle';
     toggleBtn.type = 'button';
     toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filters-toggle__text">${t('calc.filter.byProperties')}</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
-    
+
     const wrapper = document.createElement('div');
     wrapper.id = 'statFiltersWrapper';
     wrapper.className = 'stat-filters-wrapper collapsed';
-    
+
     const container = document.createElement('div');
     container.id = 'statFiltersContainer';
     container.className = 'stat-filters';
     container.innerHTML = `<div class="stat-filter stat-filter--positive"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>${t('calc.filter.positive')}</label><select class="stat-filter__select" id="positiveEffectFilter">${createOptions(sortedPositive)}</select></div><div class="stat-filter stat-filter--negative"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>${t('calc.filter.negative')}</label><select class="stat-filter__select" id="negativeEffectFilter">${createOptions(sortedNegative)}</select></div><div class="stat-filters__reset"><button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>${t('calc.filter.resetAll')}</button></div>`;
-    
+
     wrapper.appendChild(container);
     toolbar.appendChild(toggleBtn);
     toolbar.appendChild(wrapper);
-    
+
     toggleBtn.addEventListener('click', toggleFiltersPanel);
-    
+
     document.getElementById('positiveEffectFilter').addEventListener('change', (e) => {
         state.filters.positiveEffect = e.target.value;
         updateFiltersBadge();
         updateResetButtonState();
         applyFilters();
     });
-    
+
     document.getElementById('negativeEffectFilter').addEventListener('change', (e) => {
         state.filters.negativeEffect = e.target.value;
         updateFiltersBadge();
         updateResetButtonState();
         applyFilters();
     });
-    
+
     document.getElementById('resetFiltersBtn').addEventListener('click', resetAllFilters);
 }
 
@@ -381,7 +456,7 @@ function toggleFiltersPanel() {
     const toggle = document.getElementById('filtersToggle');
     const wrapper = document.getElementById('statFiltersWrapper');
     if (!toggle || !wrapper) return;
-    
+
     state.filtersExpanded = !state.filtersExpanded;
     toggle.classList.toggle('active', state.filtersExpanded);
     wrapper.classList.toggle('collapsed', !state.filtersExpanded);
@@ -410,16 +485,16 @@ function resetAllFilters() {
     state.filters.category = 'all';
     state.filters.positiveEffect = '';
     state.filters.negativeEffect = '';
-    
+
     elements.artifactSearch.value = '';
     if (elements.searchClear) elements.searchClear.style.display = 'none';
     elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
-    
+
     const positiveSelect = document.getElementById('positiveEffectFilter');
     const negativeSelect = document.getElementById('negativeEffectFilter');
     if (positiveSelect) positiveSelect.value = '';
     if (negativeSelect) negativeSelect.value = '';
-    
+
     updateFiltersBadge();
     updateResetButtonState();
     applyFilters();
@@ -434,6 +509,7 @@ function isNegativeEffect(statKey, value) {
     if (value === 0) return false;
     return INVERTED_STATS.includes(statKey) ? value > 0 : value < 0;
 }
+
 
 function initArmorDropdown() {
     renderArmorDropdownList();
@@ -462,23 +538,22 @@ function handleArmorListClick(e) {
 function renderArmorDropdownList(searchQuery = '') {
     const groupedArmors = {};
     ARMORS.forEach(armor => {
-        // Поиск по обоим языкам
         if (searchQuery) {
-            const nameMatch = armor.name.toLowerCase().includes(searchQuery) || 
+            const nameMatch = armor.name.toLowerCase().includes(searchQuery) ||
                               (armor.nameEn && armor.nameEn.toLowerCase().includes(searchQuery));
             if (!nameMatch) return;
         }
         if (!groupedArmors[armor.rarity]) groupedArmors[armor.rarity] = [];
         groupedArmors[armor.rarity].push(armor);
     });
-    
+
     if (elements.armorClearWrapper) elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
-    
+
     if (Object.keys(groupedArmors).length === 0) {
         elements.armorDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.armorNotFound')}</span></div>`;
         return;
     }
-    
+
     let html = '';
     RARITY_ORDER.forEach(rarity => {
         const armors = groupedArmors[rarity];
@@ -498,18 +573,18 @@ function selectArmorFromDropdown(armorId) {
     state.previousStats = calculateTotalStats();
     const armor = ARMORS.find(a => a.id === armorId);
     if (!armor) return;
-    
+
     state.selectedArmor = armor;
     state.enhancementLevel = 0;
-    
+
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = getLocalizedName(armor);
     valueElement.classList.add('has-value');
     elements.armorSelect.value = armorId;
-    
+
     closeArmorDropdown();
     if (elements.armorSearchInput) elements.armorSearchInput.value = '';
-    
+
     armor.enhancement ? showEnhancementBlock() : hideEnhancementBlock();
     renderArmorInfo();
     updateContainerOptions();
@@ -522,15 +597,15 @@ function clearArmorSelection() {
     state.previousStats = calculateTotalStats();
     state.selectedArmor = null;
     state.enhancementLevel = 0;
-    
+
     const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = t('calc.selectArmor');
     valueElement.classList.remove('has-value');
     elements.armorSelect.value = '';
-    
+
     closeArmorDropdown();
     if (elements.armorSearchInput) elements.armorSearchInput.value = '';
-    
+
     hideEnhancementBlock();
     renderArmorInfo();
     updateContainerOptions();
@@ -538,6 +613,7 @@ function clearArmorSelection() {
     renderArmorDropdownList();
     saveStateToStorage();
 }
+
 
 function initContainerDropdown() {
     renderContainerDropdownList();
@@ -582,23 +658,22 @@ function isContainerAvailable(container) {
 function renderContainerDropdownList(searchQuery = '') {
     const groupedContainers = {};
     CONTAINERS.forEach(container => {
-        // Поиск по обоим языкам
         if (searchQuery) {
-            const nameMatch = container.name.toLowerCase().includes(searchQuery) || 
+            const nameMatch = container.name.toLowerCase().includes(searchQuery) ||
                               (container.nameEn && container.nameEn.toLowerCase().includes(searchQuery));
             if (!nameMatch) return;
         }
         if (!groupedContainers[container.type]) groupedContainers[container.type] = [];
         groupedContainers[container.type].push(container);
     });
-    
+
     if (elements.containerClearWrapper) elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
-    
+
     if (Object.keys(groupedContainers).length === 0) {
         elements.containerDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.containerNotFound')}</span></div>`;
         return;
     }
-    
+
     let html = '';
     CONTAINER_TYPE_ORDER.forEach(type => {
         const containers = groupedContainers[type];
@@ -619,22 +694,22 @@ function selectContainerFromDropdown(containerId) {
     state.previousStats = calculateTotalStats();
     const container = CONTAINERS.find(c => c.id === containerId);
     if (!container) return;
-    
+
     const previousArtifacts = [...state.artifacts];
     state.selectedContainer = container;
     state.artifacts = new Array(container.slots).fill(null);
     for (let i = 0; i < Math.min(previousArtifacts.length, container.slots); i++) {
         state.artifacts[i] = previousArtifacts[i];
     }
-    
+
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
     valueElement.classList.add('has-value');
     elements.containerSelect.value = containerId;
-    
+
     closeContainerDropdown();
     if (elements.containerSearchInput) elements.containerSearchInput.value = '';
-    
+
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
@@ -646,15 +721,15 @@ function clearContainerSelection() {
     state.previousStats = calculateTotalStats();
     state.selectedContainer = null;
     state.artifacts = [];
-    
+
     const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     valueElement.textContent = t('calc.selectContainer');
     valueElement.classList.remove('has-value');
     elements.containerSelect.value = '';
-    
+
     closeContainerDropdown();
     if (elements.containerSearchInput) elements.containerSearchInput.value = '';
-    
+
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
@@ -673,19 +748,20 @@ function initContainerSelect() {
     elements.containerSelect.disabled = false;
 }
 
+
 function initEventListeners() {
     elements.containerSelect.addEventListener('change', handleContainerChange);
     elements.resetBtn.addEventListener('click', resetBuild);
     elements.modalClose.addEventListener('click', closeModal);
     elements.modal.querySelector('.modal__backdrop').addEventListener('click', closeModal);
     elements.artifactSearch.addEventListener('input', handleSearchChange);
-    
+
     if (elements.enhancementSlider) {
         elements.enhancementSlider.addEventListener('input', handleEnhancementChange);
         elements.enhancementSlider.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
         elements.enhancementSlider.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
     }
-    
+
     elements.categoryTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             elements.categoryTabs.forEach(t => t.classList.remove('category-tab--active'));
@@ -695,7 +771,7 @@ function initEventListeners() {
             applyFilters();
         });
     });
-    
+
     if (elements.searchClear) {
         elements.searchClear.addEventListener('click', () => {
             elements.artifactSearch.value = '';
@@ -706,16 +782,32 @@ function initEventListeners() {
             elements.artifactSearch.focus();
         });
     }
-    
-    if (elements.burger && elements.mobileMenu) {
-        elements.burger.addEventListener('click', () => {
-            elements.burger.classList.toggle('active');
-            elements.mobileMenu.classList.toggle('active');
-        });
-    }
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
+    });
+
+    // Делегирование кликов по слотам артефактов
+    elements.artifactSlots.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.artifact-slot__remove');
+        if (removeBtn) {
+            e.stopPropagation();
+            const slot = removeBtn.closest('.artifact-slot');
+            if (slot) removeArtifact(parseInt(slot.dataset.index));
+            return;
+        }
+
+        const slot = e.target.closest('.artifact-slot--empty');
+        if (slot) {
+            openArtifactModal(parseInt(slot.dataset.index));
+        }
+    });
+
+    elements.artifactList.addEventListener('click', (e) => {
+        const card = e.target.closest('.artifact-card');
+        if (card && card.dataset.artifactId) {
+            selectArtifact(card.dataset.artifactId);
+        }
     });
 }
 
@@ -728,17 +820,14 @@ function handleSearchChange(e) {
 
 function applyFilters() {
     let filtered = [...ARTIFACTS];
-    
+
     if (state.filters.category !== 'all') filtered = filtered.filter(a => a.category === state.filters.category);
-    
+
     if (state.filters.search) {
         const searchLower = state.filters.search.toLowerCase();
         filtered = filtered.filter(a => {
-            // Поиск по русскому названию
             if (a.name.toLowerCase().includes(searchLower)) return true;
-            // Поиск по английскому названию
             if (a.nameEn && a.nameEn.toLowerCase().includes(searchLower)) return true;
-            // Поиск по названиям статов (на обоих языках)
             for (const statKey of Object.keys(a.stats)) {
                 const statNameRu = STAT_NAMES[statKey];
                 const statNameEn = STAT_NAMES_EN[statKey];
@@ -748,45 +837,37 @@ function applyFilters() {
             return false;
         });
     }
-    
+
     if (state.filters.positiveEffect) {
         filtered = filtered.filter(a => {
             const value = a.stats[state.filters.positiveEffect];
             return value !== undefined && isPositiveEffect(state.filters.positiveEffect, value);
         });
     }
-    
+
     if (state.filters.negativeEffect) {
         filtered = filtered.filter(a => {
             const value = a.stats[state.filters.negativeEffect];
             return value !== undefined && isNegativeEffect(state.filters.negativeEffect, value);
         });
     }
-    
+
     renderArtifactList(filtered);
 }
 
-function initScrollEffects() {
-    const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        header.style.background = window.scrollY > 50 ? 'rgba(10, 10, 11, 0.98)' : 'rgba(10, 10, 11, 0.9)';
-        elements.scrollTop.classList.toggle('visible', window.scrollY > 500);
-    });
-    elements.scrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-}
 
 function updateContainerOptions() {
     const currentContainerId = state.selectedContainer?.id;
     elements.containerSelect.innerHTML = `<option value="">${t('calc.selectContainer')}</option>`;
     const availableContainers = getAvailableContainers();
-    
+
     availableContainers.forEach(container => {
         const option = document.createElement('option');
         option.value = container.id;
         option.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
         elements.containerSelect.appendChild(option);
     });
-    
+
     const currentStillAvailable = availableContainers.some(c => c.id === currentContainerId);
     if (currentStillAvailable && state.selectedContainer) {
         elements.containerSelect.value = currentContainerId;
@@ -800,10 +881,11 @@ function updateContainerOptions() {
         renderArtifactSlots();
         saveStateToStorage();
     }
-    
+
     renderContainerDropdownList();
     elements.containerSelect.disabled = false;
 }
+
 
 function handleEnhancementChange(e) {
     state.previousStats = calculateTotalStats();
@@ -834,15 +916,15 @@ function updateEnhancementDisplay() {
     if (!elements.enhancementBlock || !state.selectedArmor?.enhancement) return;
     const level = state.enhancementLevel;
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
-    
+
     elements.enhancementValue.textContent = level;
     elements.enhancementSlider.style.setProperty('--slider-progress', `${(level / maxLevel) * 100}%`);
     elements.enhancementBlock.setAttribute('data-level', level);
-    
+
     elements.enhancementBlock.classList.remove('enhancement-block--high', 'enhancement-block--max');
     if (level >= 10 && level < maxLevel) elements.enhancementBlock.classList.add('enhancement-block--high');
     else if (level === maxLevel) elements.enhancementBlock.classList.add('enhancement-block--max');
-    
+
     renderEnhancementBonuses();
 }
 
@@ -850,12 +932,12 @@ function renderEnhancementBonuses() {
     if (!elements.enhancementBonus || !state.selectedArmor?.enhancement) return;
     const level = state.enhancementLevel;
     const bonuses = state.selectedArmor.enhancement.bonuses;
-    
+
     if (level === 0) {
         elements.enhancementBonus.innerHTML = `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
         return;
     }
-    
+
     let html = '';
     Object.entries(bonuses).forEach(([statKey, values]) => {
         const bonusValue = values[level] || 0;
@@ -867,20 +949,11 @@ function renderEnhancementBonuses() {
     elements.enhancementBonus.innerHTML = html || `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
 }
 
-function getEnhancementBonuses() {
-    const bonuses = {};
-    if (!state.selectedArmor?.enhancement || state.enhancementLevel === 0) return bonuses;
-    Object.entries(state.selectedArmor.enhancement.bonuses).forEach(([statKey, values]) => {
-        const bonusValue = values[state.enhancementLevel] || 0;
-        if (bonusValue !== 0) bonuses[statKey] = bonusValue;
-    });
-    return bonuses;
-}
 
 function handleContainerChange(e) {
     const containerId = e.target.value;
     state.previousStats = calculateTotalStats();
-    
+
     if (!containerId) {
         state.selectedContainer = null;
         state.artifacts = [];
@@ -890,14 +963,14 @@ function handleContainerChange(e) {
         saveStateToStorage();
         return;
     }
-    
+
     const previousArtifacts = [...state.artifacts];
     state.selectedContainer = CONTAINERS.find(c => c.id === containerId);
     state.artifacts = new Array(state.selectedContainer.slots).fill(null);
     for (let i = 0; i < Math.min(previousArtifacts.length, state.selectedContainer.slots); i++) {
         state.artifacts[i] = previousArtifacts[i];
     }
-    
+
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
@@ -910,41 +983,42 @@ function resetBuild() {
     state.selectedContainer = null;
     state.artifacts = [];
     state.enhancementLevel = 0;
-    
+
     const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
     armorValueElement.textContent = t('calc.selectArmor');
     armorValueElement.classList.remove('has-value');
     if (elements.armorSearchInput) elements.armorSearchInput.value = '';
     renderArmorDropdownList();
-    
+
     const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
     containerValueElement.textContent = t('calc.selectContainer');
     containerValueElement.classList.remove('has-value');
     if (elements.containerSearchInput) elements.containerSearchInput.value = '';
     renderContainerDropdownList();
-    
+
     elements.armorSelect.value = '';
     elements.containerSelect.value = '';
-    
+
     hideEnhancementBlock();
     updateContainerOptions();
     renderArmorInfo();
     renderContainerInfo();
     renderArtifactSlots();
     updateStats();
-    
+
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
 }
+
 
 function renderArmorInfo() {
     if (!state.selectedArmor) {
         elements.armorInfo.innerHTML = `<div class="armor-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>${t('calc.selectArmorHint')}</span></div>`;
         return;
     }
-    
+
     const armor = state.selectedArmor;
     const enhancementBonuses = getEnhancementBonuses();
-    
+
     const statsHtml = Object.entries(armor.stats).map(([key, baseValue]) => {
         const enhancementBonus = enhancementBonuses[key] || 0;
         const totalValue = baseValue + enhancementBonus;
@@ -956,7 +1030,7 @@ function renderArmorInfo() {
         }
         return `<div class="armor-details__stat"><span class="armor-details__stat-name">${getStatName(key)}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)} ${enhancementHtml}</span></div>`;
     }).join('');
-    
+
     elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${getLocalizedName(armor)}</span><span class="armor-details__rarity rarity--${armor.rarity}">${getLocalizedRarity(armor)}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
 }
 
@@ -965,18 +1039,18 @@ function renderContainerInfo() {
         elements.containerInfo.innerHTML = `<div class="container-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
         return;
     }
-    
+
     const container = state.selectedContainer;
     const statsHtml = Object.entries(container.stats).map(([key, value]) => {
         const { displayValue, colorClass } = formatStatValue(key, value);
         return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
     }).join('');
-    
+
     const shieldingHtml = Object.entries(container.shielding).map(([key, value]) => {
         const { displayValue, colorClass } = formatStatValue(key, value);
         return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
     }).join('') || `<span class="container-details__stat-name">${t('calc.noShieldingFull')}</span>`;
-    
+
     elements.containerInfo.innerHTML = `<div class="container-details"><div class="container-details__header"><span class="container-details__name">${getLocalizedName(container)}</span><span class="container-details__rarity rarity--${container.rarity}">${getLocalizedRarity(container)}</span></div><div class="container-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>${getLocalizedType(container)} • ${getSlotsText(container.slots)}</div>${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}<div class="container-details__shielding"><div class="container-details__shielding-title">${t('calc.shieldingTitle')}:</div>${shieldingHtml}</div></div>`;
 }
 
@@ -986,18 +1060,18 @@ function renderArtifactSlots() {
         elements.artifactCounter.textContent = '0/0';
         return;
     }
-    
+
     const filledSlots = state.artifacts.filter(a => a !== null).length;
     elements.artifactCounter.textContent = `${filledSlots}/${state.selectedContainer.slots}`;
-    
+
     const slotsHtml = state.artifacts.map((artifact, index) => {
         if (artifact) {
             const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
-            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${getLocalizedName(artifact)}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • ${tierDisplay}</div></div><button class="artifact-slot__remove" onclick="removeArtifact(${index})" title="${t('calc.removeArtifact')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
+            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${getLocalizedName(artifact)}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • ${tierDisplay}</div></div><button class="artifact-slot__remove" data-action="remove" title="${t('calc.removeArtifact')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
         }
-        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}" onclick="openArtifactModal(${index})"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">${t('calc.slot.clickToAdd')}</span></div></div>`;
+        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">${t('calc.slot.clickToAdd')}</span></div></div>`;
     }).join('');
-    
+
     elements.artifactSlots.innerHTML = `<div class="artifact-slots__grid">${slotsHtml}</div>`;
 }
 
@@ -1005,19 +1079,20 @@ function updateArtifactCount(count) {
     if (elements.artifactCount) elements.artifactCount.textContent = count;
 }
 
-function renderArtifactList(artifacts = ARTIFACTS) {
+function renderArtifactList(artifacts) {
+    if (!artifacts) artifacts = ARTIFACTS;
     updateArtifactCount(artifacts.length);
-    
+
     if (artifacts.length === 0) {
         elements.artifactList.innerHTML = `<div class="artifacts-empty"><div class="artifacts-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="artifacts-empty__title">${t('calc.modal.noResults')}</div><div class="artifacts-empty__text">${t('calc.modal.tryOtherFilters')}</div></div>`;
         return;
     }
-    
+
     const listHtml = artifacts.map(artifact => {
         const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
         const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
         const priceDisplay = artifact.price ? formatPrice(artifact.price) : (getLocalizedField(artifact, 'priceText') || '—');
-        
+
         const statsHtml = Object.entries(artifact.stats).map(([key, value]) => {
             const isInverted = INVERTED_STATS.includes(key);
             let displayValue, valueClass;
@@ -1030,36 +1105,36 @@ function renderArtifactList(artifacts = ARTIFACTS) {
             }
             return `<div class="artifact-stat-row"><span class="artifact-stat-row__name">${getStatName(key)}</span><span class="artifact-stat-row__value ${valueClass}">${displayValue}</span></div>`;
         }).join('');
-        
-        return `<div class="artifact-card artifact-card--${artifact.category}" onclick="selectArtifact('${artifact.id}')"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${getLocalizedName(artifact)}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
+
+        return `<div class="artifact-card artifact-card--${artifact.category}" data-artifact-id="${artifact.id}"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${getLocalizedName(artifact)}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
     }).join('');
-    
+
     elements.artifactList.innerHTML = listHtml;
 }
+
 
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
     elements.modal.classList.add('active');
     if (elements.modalSlotInfo) elements.modalSlotInfo.textContent = `${t('calc.modal.slot')} #${slotIndex + 1}`;
-    
+
     state.filters.search = '';
     state.filters.category = 'all';
     state.filters.positiveEffect = '';
     state.filters.negativeEffect = '';
     state.filtersExpanded = false;
-    
+
     elements.artifactSearch.value = '';
     elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
     if (elements.searchClear) elements.searchClear.style.display = 'none';
-    
-    // Пересоздаём фильтры каждый раз для актуального языка
+
     recreateStatFilters();
-    
+
     const positiveSelect = document.getElementById('positiveEffectFilter');
     const negativeSelect = document.getElementById('negativeEffectFilter');
     const filtersToggle = document.getElementById('filtersToggle');
     const filtersWrapper = document.getElementById('statFiltersWrapper');
-    
+
     if (positiveSelect) positiveSelect.value = '';
     if (negativeSelect) negativeSelect.value = '';
     if (filtersToggle) filtersToggle.classList.remove('active');
@@ -1067,14 +1142,14 @@ function openArtifactModal(slotIndex) {
         filtersWrapper.classList.add('collapsed');
         filtersWrapper.style.maxHeight = '0';
     }
-    
+
     updateFiltersBadge();
     updateResetButtonState();
     renderArtifactList(ARTIFACTS);
-    
+
     const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
     if (!isMobile) elements.artifactSearch.focus();
-    
+
     document.body.style.overflow = 'hidden';
 }
 
@@ -1104,10 +1179,11 @@ function removeArtifact(index) {
     saveStateToStorage();
 }
 
+
 function updateStats() {
     const totalStats = calculateTotalStats();
     updatePriorityStats(totalStats, state.previousStats);
-    
+
     Object.entries(totalStats).forEach(([key, value]) => {
         const element = document.querySelector(`[data-stat="${key}"]`);
         if (element) {
@@ -1117,7 +1193,7 @@ function updateStats() {
             element.className = 'stat-row__value ' + colorClass;
         }
     });
-    
+
     updateEffectiveBulletResistance(totalStats.bulletResistance);
     updateWarnings(totalStats);
     state.previousStats = totalStats;
@@ -1128,15 +1204,15 @@ function updatePriorityStats(currentStats, previousStats) {
         const element = document.querySelector(`[data-priority-stat="${statKey}"]`);
         const cardElement = element?.closest('.priority-stat');
         if (!element || !cardElement) return;
-        
+
         const value = currentStats[statKey] || 0;
         const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
         const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
-        
+
         element.textContent = displayValue + getStatUnit(statKey);
         element.className = 'priority-stat__value';
         if (colorClass) element.classList.add(colorClass);
-        
+
         cardElement.classList.remove('priority-stat--danger', 'priority-stat--good');
         if (isDangerous) cardElement.classList.add('priority-stat--danger');
         else if (isGood) cardElement.classList.add('priority-stat--good');
@@ -1146,11 +1222,11 @@ function updatePriorityStats(currentStats, previousStats) {
 function formatPriorityStatValue(statKey, value, prevValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
     let displayValue = '', colorClass = '', isDangerous = false, isGood = false;
-    
+
     if (value === 0) displayValue = '0';
     else if (value > 0) displayValue = `+${formatNumber(value)}`;
     else displayValue = formatNumber(value);
-    
+
     if (isInverted) {
         if (value > 0) { isDangerous = true; colorClass = 'priority-stat__value--negative'; }
         else if (value < 0) { isGood = true; colorClass = 'priority-stat__value--positive'; }
@@ -1158,7 +1234,7 @@ function formatPriorityStatValue(statKey, value, prevValue) {
         if (value > 0) { isGood = true; colorClass = 'priority-stat__value--positive'; }
         else if (value < 0) { isDangerous = true; colorClass = 'priority-stat__value--negative'; }
     }
-    
+
     return { displayValue, colorClass, isDangerous, isGood };
 }
 
@@ -1166,57 +1242,18 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
     const diff = currentValue - previousValue;
     let displayValue = '', colorClass = '';
-    
+
     if (currentValue === 0) displayValue = '0';
     else if (currentValue > 0) displayValue = `+${formatNumber(currentValue)}`;
     else displayValue = formatNumber(currentValue);
-    
+
     if (diff !== 0) {
         colorClass = isInverted ? (diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
     } else if (currentValue !== 0) {
         colorClass = isInverted ? (currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
     }
-    
+
     return { displayValue, colorClass };
-}
-
-function calculateBaseStats() {
-    const stats = createEmptyStats();
-    if (state.selectedArmor) {
-        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-        Object.entries(getEnhancementBonuses()).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-    }
-    if (state.selectedContainer) {
-        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-    }
-    return stats;
-}
-
-function calculateTotalStats() {
-    const stats = createEmptyStats();
-    if (state.selectedArmor) {
-        Object.entries(state.selectedArmor.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-        Object.entries(getEnhancementBonuses()).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-    }
-    if (state.selectedContainer) {
-        Object.entries(state.selectedContainer.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-        Object.entries(state.selectedContainer.shielding).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-    }
-    state.artifacts.forEach(artifact => {
-        if (artifact) Object.entries(artifact.stats).forEach(([key, value]) => { if (stats.hasOwnProperty(key)) stats[key] += value; });
-    });
-    return stats;
-}
-
-function createEmptyStats() {
-    return {
-        radiationProtection: 0, bioProtection: 0, thermalProtection: 0, psiProtection: 0, frostProtection: 0,
-        heatResistance: 0, chemResistance: 0, electroResistance: 0,
-        impactResistance: 0, tearProtection: 0, bulletResistance: 0,
-        regeneration: 0, bleeding: 0, radiation: 0, saturation: 0, cold: 0,
-        maxStamina: 0, staminaRegen: 0, moveSpeed: 0, maxWeight: 0
-    };
 }
 
 function updateWarnings(totalStats) {
@@ -1225,14 +1262,14 @@ function updateWarnings(totalStats) {
         let value = totalStats[statKey] || 0;
         let isDangerous = config.inverted ? value < config.threshold : value > config.threshold;
         if (config.inverted) value = Math.abs(value);
-        
+
         if (isDangerous) {
             const title = t(config.titleKey);
             const unit = t(config.unitKey);
             warningsHtml.push(`<div class="warning-item warning-item--${config.color}"><div class="warning-item__icon">${getWarningIcon(statKey)}</div><div class="warning-item__content"><span class="warning-item__title">${t('calc.warning.attention')}: ${title}!</span><span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${unit}</span></div></div>`);
         }
     });
-    
+
     let warningsContainer = document.getElementById('warningsContainer');
     if (!warningsContainer) {
         const bulletResistance = document.querySelector('.bullet-resistance');
@@ -1259,18 +1296,18 @@ function updateEffectiveBulletResistance(bulletResistance) {
     const percentElement = document.getElementById('bulletResistancePercent');
     const barElement = document.getElementById('bulletResistanceBar');
     if (!effectiveElement) return;
-    
+
     let percent = 0;
     if (bulletResistance > 0) percent = (bulletResistance / (bulletResistance + BULLET_RESISTANCE_CONSTANT)) * 100;
     else if (bulletResistance < 0) percent = (bulletResistance / (Math.abs(bulletResistance) + BULLET_RESISTANCE_CONSTANT)) * 100;
-    
+
     const clampedPercent = Math.max(-100, Math.min(percent, 99.99));
     effectiveElement.textContent = formatNumber(bulletResistance);
     percentElement.textContent = `${clampedPercent.toFixed(2)}%`;
-    
+
     const barPercent = Math.max(0, Math.min(clampedPercent, 100));
     barElement.style.width = `${barPercent}%`;
-    
+
     if (clampedPercent >= 65) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
     else if (clampedPercent >= 45) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
     else barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
@@ -1284,11 +1321,3 @@ function formatStatValue(statKey, value) {
     else { displayValue = formatNumber(value); colorClass = isInverted ? 'stat-value--positive' : 'stat-value--negative'; }
     return { displayValue, colorClass };
 }
-
-window.openArtifactModal = openArtifactModal;
-window.selectArtifact = selectArtifact;
-window.removeArtifact = removeArtifact;
-window.selectArmorFromDropdown = selectArmorFromDropdown;
-window.clearArmorSelection = clearArmorSelection;
-window.selectContainerFromDropdown = selectContainerFromDropdown;
-window.clearContainerSelection = clearContainerSelection;
