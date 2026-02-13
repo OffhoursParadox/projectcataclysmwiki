@@ -3,6 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
+    initLangDropdownClose();
     initCategoryNav();
     renderAllArtifactTables();
 });
@@ -11,98 +12,23 @@ document.addEventListener('languageChanged', () => {
     renderAllArtifactTables();
 });
 
-function initBurgerMenu() {
-    const burger = document.getElementById('burger');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    if (!burger || !mobileMenu) return;
-
-    burger.addEventListener('click', () => {
-        const isActive = burger.classList.toggle('active');
-        mobileMenu.classList.toggle('active');
-        burger.setAttribute('aria-expanded', isActive);
-        document.body.style.overflow = isActive ? 'hidden' : '';
-    });
-
-    mobileMenu.querySelectorAll('.mobile-menu__link').forEach(link => {
-        link.addEventListener('click', () => {
-            burger.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            burger.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        });
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-            burger.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            burger.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-            burger.focus();
-        }
-    });
-
-    const mediaQuery = window.matchMedia('(min-width: 1025px)');
-    mediaQuery.addEventListener('change', (e) => {
-        if (e.matches && mobileMenu.classList.contains('active')) {
-            burger.classList.remove('active');
-            mobileMenu.classList.remove('active');
-            burger.setAttribute('aria-expanded', 'false');
-            document.body.style.overflow = '';
-        }
-    });
-}
-
-function initScrollEffects() {
-    const header = document.querySelector('.header');
-    const scrollTopBtn = document.getElementById('scrollTop');
-
-    if (!header) return;
-
-    let ticking = false;
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                const scrollY = window.scrollY;
-
-                header.style.background = scrollY > 50
-                    ? 'rgba(10, 10, 11, 0.98)'
-                    : 'rgba(10, 10, 11, 0.9)';
-
-                if (scrollTopBtn) {
-                    scrollTopBtn.classList.toggle('visible', scrollY > 500);
-                }
-
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-
-    if (scrollTopBtn) {
-        scrollTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-}
-
 function initCategoryNav() {
-    const headerHeight = 70;
-    const categoryNavHeight = 80;
-    const offset = headerHeight + categoryNavHeight;
-
     document.querySelectorAll('.category-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const target = document.querySelector(btn.getAttribute('href'));
-            if (target) {
-                window.scrollTo({
-                    top: target.offsetTop - offset,
-                    behavior: 'smooth'
-                });
-            }
+            if (!target) return;
+
+            const header = document.querySelector('.header');
+            const catNav = document.querySelector('.categories-nav');
+            const offset = (header ? header.offsetHeight : 70)
+                         + (catNav ? catNav.offsetHeight : 80)
+                         + 10;
+
+            window.scrollTo({
+                top: target.offsetTop - offset,
+                behavior: 'smooth'
+            });
         });
     });
 }
@@ -190,6 +116,13 @@ function tbl_t(key, fallback) {
     return fallback || key;
 }
 
+function getCurrentLang() {
+    if (window.i18n && typeof window.i18n.getCurrentLang === 'function') {
+        return window.i18n.getCurrentLang();
+    }
+    return localStorage.getItem('wiki-lang') || 'ru';
+}
+
 function buildPropertyHtml(statKey, value) {
     const isInverted = INVERTED_STATS.includes(statKey);
     const statName = getStatName(statKey);
@@ -231,10 +164,21 @@ function buildTierBadge(tier) {
 }
 
 function buildArtifactRow(artifact) {
+    const lang = getCurrentLang();
     const tierHtml = buildTierBadge(artifact.tier);
     const imgPath = `${artifact.imageFolder}/${artifact.image}`;
+
     const nameRu = artifact.name;
     const nameEn = artifact.nameEn || '';
+
+    let primaryName, secondaryName;
+    if (lang === 'en' && nameEn) {
+        primaryName = nameEn;
+        secondaryName = nameRu;
+    } else {
+        primaryName = nameRu;
+        secondaryName = nameEn;
+    }
 
     const propsHtml = Object.entries(artifact.stats)
         .map(([key, value]) => buildPropertyHtml(key, value))
@@ -242,11 +186,20 @@ function buildArtifactRow(artifact) {
 
     const priceHtml = buildPriceHtml(artifact);
 
+    const altText = lang === 'en' && nameEn ? nameEn : nameRu;
+
     return `
         <tr>
             <td class="tier-cell">${tierHtml}</td>
-            <td class="artifact-image-cell"><img src="${imgPath}" alt="${nameRu}" class="artifact-image" loading="lazy"></td>
-            <td><div class="artifact-name"><span class="artifact-name__ru">${nameRu}</span><span class="artifact-name__en">${nameEn}</span></div></td>
+            <td class="artifact-image-cell">
+                <img src="${imgPath}" alt="${altText}" class="artifact-image" loading="lazy">
+            </td>
+            <td>
+                <div class="artifact-name">
+                    <span class="artifact-name__ru">${primaryName}</span>
+                    ${secondaryName ? `<span class="artifact-name__en">${secondaryName}</span>` : ''}
+                </div>
+            </td>
             <td><div class="properties-list">${propsHtml}</div></td>
             <td class="price-cell">${priceHtml}</td>
         </tr>`;
@@ -293,6 +246,28 @@ function buildCategorySection(categoryDef) {
 function renderAllArtifactTables() {
     const container = document.getElementById('artifactsContainer');
     if (!container) return;
+
+    if (typeof ARTIFACTS === 'undefined' || !Array.isArray(ARTIFACTS)) {
+        const lang = getCurrentLang();
+        const errorMsg = lang === 'en'
+            ? 'Failed to load artifact data'
+            : 'Не удалось загрузить данные артефактов';
+        const retryMsg = lang === 'en'
+            ? 'Try again'
+            : 'Попробовать снова';
+
+        container.innerHTML = `
+            <div class="artifacts-error">
+                <svg class="artifacts-error__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p class="artifacts-error__text">${errorMsg}</p>
+                <button class="artifacts-error__btn" onclick="location.reload()">${retryMsg}</button>
+            </div>`;
+        return;
+    }
 
     container.innerHTML = TABLE_CATEGORIES.map(cat => buildCategorySection(cat)).join('');
 
