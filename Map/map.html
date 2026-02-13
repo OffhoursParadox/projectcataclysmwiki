@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <link rel="canonical" href="https://offhoursparadox.github.io/projectcataclysmwiki/Map/map.html">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../favicon.svg">
     <title>Интерактивная карта — Project Cataclysm Wiki</title>
-    <link rel="icon" href="../favicon.png" type="image/png">
+    <meta property="og:title" content="Интерактивная карта — Project Cataclysm Wiki">
+    <meta property="og:description" content="Интерактивная карта Project Cataclysm. Ящики с лутом, точки спавна мутантов, торговцы и другие метки.">
+    <meta property="og:image" content="https://offhoursparadox.github.io/projectcataclysmwiki/images/og-image.png">
+    <meta property="og:url" content="https://offhoursparadox.github.io/projectcataclysmwiki/Map/map.html">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
     <meta name="keywords" content="Project Cataclysm карта, интерактивная карта Project Cataclysm, ящики Project Cataclysm, мутанты Project Cataclysm">
     <meta name="description" content="Интерактивная карта Project Cataclysm. Ящики с лутом, точки спавна мутантов, торговцы и другие метки.">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="../main.css">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0a0a0b">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Roboto:wght@400;500&family=Roboto+Mono:wght@600&display=swap&subset=cyrillic" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../shared.css">
     <link rel="stylesheet" href="map.css">
 </head>
 <body>
@@ -18,7 +30,7 @@
             <a href="../index.html" class="header__logo">
                 <span class="header__logo-text">CATACLYSM<span class="header__logo-accent">WIKI</span></span>
             </a>
-            <nav class="header__nav">
+            <nav class="header__nav" aria-label="Основная навигация">
                 <span class="nav-link nav-link--current">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16"/><path d="M16 6v16"/>
@@ -44,10 +56,11 @@
                     </svg>
                     <span data-i18n="nav.ttk">ТТК</span>
                 </a>
-                
-                <!-- Переключатель языка -->
                 <div class="lang-switcher">
-                    <button class="lang-switcher__btn" id="langSwitcher">
+                    <button class="lang-switcher__btn" id="langSwitcher"
+                            aria-label="Выбор языка"
+                            aria-expanded="false"
+                            aria-haspopup="true">
                         <svg class="lang-switcher__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10"/>
                             <path d="M2 12h20"/>
@@ -73,18 +86,21 @@
                     </div>
                 </div>
             </nav>
-            <button class="header__burger" id="burger"><span></span><span></span><span></span></button>
+            <button class="header__burger" id="burger"
+                    aria-label="Открыть меню"
+                    aria-expanded="false"
+                    aria-controls="mobileMenu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </header>
 
-    <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu" id="mobileMenu" role="navigation" aria-label="Мобильная навигация">
         <nav class="mobile-menu__nav">
             <span class="mobile-menu__link mobile-menu__link--current" data-i18n="nav.mapFull">Интерактивная карта</span>
             <a href="../Table/table.html" class="mobile-menu__link" data-i18n="nav.artifactsTable">Таблица артефактов</a>
             <a href="../Calculator/calculator.html" class="mobile-menu__link" data-i18n="nav.buildsCalculator">Калькулятор сборок</a>
             <a href="../TTK/ttk.html" class="mobile-menu__link" data-i18n="nav.ttkCalculator">Калькулятор ТТК</a>
-            
-            <!-- Мобильный переключатель языка -->
             <div class="mobile-lang-switcher">
                 <button class="mobile-lang-btn" data-lang="ru">
                     <span class="lang-dropdown__flag">🇷🇺</span> Русский
@@ -96,14 +112,12 @@
         </nav>
     </div>
 
-    <!-- Боковая панель с фильтрами -->
     <aside class="sidebar" id="sidebar">
         <button class="sidebar__toggle" id="sidebarToggle" data-title-i18n="map.sidebar.toggle" title="Свернуть/развернуть">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M15 18l-6-6 6-6"/>
             </svg>
         </button>
-        
         <div class="sidebar__content">
             <div class="sidebar__header">
                 <h2 class="sidebar__title" data-i18n="map.filters.title">Фильтры</h2>
@@ -113,8 +127,6 @@
                     </svg>
                 </button>
             </div>
-
-            <!-- Категория: Контейнеры -->
             <div class="filter-group" data-category="containers">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--containers">
@@ -167,8 +179,6 @@
                     </label>
                 </div>
             </div>
-
-            <!-- Категория: Мутанты -->
             <div class="filter-group" data-category="mutants">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--mutants">
@@ -245,8 +255,6 @@
                     </label>
                 </div>
             </div>
-
-            <!-- Категория: Торговцы -->
             <div class="filter-group" data-category="traders">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--traders">
@@ -269,8 +277,6 @@
                     </label>
                 </div>
             </div>
-
-            <!-- Категория: НПС -->
             <div class="filter-group" data-category="npc">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--npc">
@@ -344,10 +350,8 @@
         </div>
     </aside>
 
-    <!-- Контейнер карты -->
     <div id="map" class="map-container"></div>
 
-    <!-- Координаты курсора -->
     <div class="coordinates" id="coordinates">
         <span class="coordinates__label">X:</span>
         <span class="coordinates__value" id="coordX">0</span>
@@ -355,7 +359,6 @@
         <span class="coordinates__value" id="coordY">0</span>
     </div>
 
-    <!-- Кнопки управления -->
     <div class="map-controls">
         <button class="map-control" id="zoomIn" data-title-i18n="map.controls.zoomIn" title="Приблизить">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -379,7 +382,6 @@
         </button>
     </div>
 
-    <!-- Кнопка режима добавления меток -->
     <button class="user-marker-toggle" id="userMarkerToggle" data-title-i18n="map.userMarkers.addMarker" title="Добавить свою метку">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 5v14M5 12h14"/>
@@ -387,7 +389,6 @@
         <span data-i18n="map.userMarkers.addMarker">Добавить метку</span>
     </button>
 
-    <!-- Панель пользовательских меток -->
     <div class="user-markers-panel" id="userMarkersPanel">
         <div class="user-markers-panel__header">
             <h3 data-i18n="map.userMarkers.yourMarkers">Ваши метки</h3>
@@ -422,30 +423,28 @@
         </div>
     </div>
 
-    <!-- Модальное окно добавления метки -->
-    <div class="marker-modal" id="markerModal">
+    <div class="marker-modal" id="markerModal" role="dialog" aria-modal="true" aria-labelledby="markerModalTitle">
         <div class="marker-modal__overlay" id="modalOverlay"></div>
         <div class="marker-modal__content">
             <div class="marker-modal__header">
-                <h3 data-i18n="map.modal.newMarker">Новая метка</h3>
-                <button class="marker-modal__close" id="closeModal">×</button>
+                <h3 id="markerModalTitle" data-i18n="map.modal.newMarker">Новая метка</h3>
+                <button class="marker-modal__close" id="closeModal" aria-label="Закрыть">×</button>
             </div>
             <div class="marker-modal__body">
                 <div class="marker-modal__coords">
                     <span data-i18n="map.modal.coordinates">Координаты:</span>
                     <span id="modalCoords">X: 0, Y: 0</span>
                 </div>
-                
                 <div class="marker-modal__field">
                     <label data-i18n="map.modal.category">Категория:</label>
                     <div class="custom-select" id="categorySelect">
-                        <div class="custom-select__trigger">
+                        <div class="custom-select__trigger" role="button" tabindex="0" aria-haspopup="listbox">
                             <span class="custom-select__placeholder" data-i18n="map.modal.selectCategory">Выберите категорию</span>
                             <svg class="custom-select__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M6 9l6 6 6-6"/>
                             </svg>
                         </div>
-                        <div class="custom-select__dropdown">
+                        <div class="custom-select__dropdown" role="listbox">
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -453,32 +452,31 @@
                                     </svg>
                                     <span data-i18n="map.category.containers">Контейнеры</span>
                                 </div>
-                                <div class="custom-select__option" data-value="ammo">
+                                <div class="custom-select__option" data-value="ammo" role="option">
                                     <img src="markers/ammo.png" alt="">
                                     <span data-i18n="map.marker.ammo">Патроны</span>
                                 </div>
-                                <div class="custom-select__option" data-value="supply">
+                                <div class="custom-select__option" data-value="supply" role="option">
                                     <img src="markers/supply.png" alt="">
                                     <span data-i18n="map.marker.supply">Припасы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="tools">
+                                <div class="custom-select__option" data-value="tools" role="option">
                                     <img src="markers/tool.svg" alt="">
                                     <span data-i18n="map.marker.tools">Инструменты</span>
                                 </div>
-                                <div class="custom-select__option" data-value="barrels">
+                                <div class="custom-select__option" data-value="barrels" role="option">
                                     <img src="markers/barrel.png" alt="">
                                     <span data-i18n="map.marker.barrels">Бочки</span>
                                 </div>
-                                <div class="custom-select__option" data-value="science">
+                                <div class="custom-select__option" data-value="science" role="option">
                                     <img src="markers/science.png" alt="">
                                     <span data-i18n="map.marker.science">Научное оборудование</span>
                                 </div>
-                                <div class="custom-select__option" data-value="stash">
+                                <div class="custom-select__option" data-value="stash" role="option">
                                     <img src="markers/stash.png" alt="">
                                     <span data-i18n="map.marker.stash">Тайник</span>
                                 </div>
                             </div>
-                            
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -486,48 +484,47 @@
                                     </svg>
                                     <span data-i18n="map.category.mutants">Мутанты</span>
                                 </div>
-                                <div class="custom-select__option" data-value="blind_dog">
+                                <div class="custom-select__option" data-value="blind_dog" role="option">
                                     <img src="markers/mutants/blinddog.png" alt="">
                                     <span data-i18n="map.marker.blind_dog">Слепые псы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="pseudodog">
+                                <div class="custom-select__option" data-value="pseudodog" role="option">
                                     <img src="markers/mutants/pseudodog.png" alt="">
                                     <span data-i18n="map.marker.pseudodog">Псевдособаки</span>
                                 </div>
-                                <div class="custom-select__option" data-value="flesh">
+                                <div class="custom-select__option" data-value="flesh" role="option">
                                     <img src="markers/mutants/flesh.png" alt="">
                                     <span data-i18n="map.marker.flesh">Плоти</span>
                                 </div>
-                                <div class="custom-select__option" data-value="boar">
+                                <div class="custom-select__option" data-value="boar" role="option">
                                     <img src="markers/mutants/boar.png" alt="">
                                     <span data-i18n="map.marker.boar">Кабаны</span>
                                 </div>
-                                <div class="custom-select__option" data-value="rat">
+                                <div class="custom-select__option" data-value="rat" role="option">
                                     <img src="markers/mutants/rat.png" alt="">
                                     <span data-i18n="map.marker.rat">Крысы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="snork">
+                                <div class="custom-select__option" data-value="snork" role="option">
                                     <img src="markers/mutants/snork.png" alt="">
                                     <span data-i18n="map.marker.snork">Снорки</span>
                                 </div>
-                                <div class="custom-select__option" data-value="zombie">
+                                <div class="custom-select__option" data-value="zombie" role="option">
                                     <img src="markers/mutants/zombie.png" alt="">
                                     <span data-i18n="map.marker.zombie">Зомби</span>
                                 </div>
-                                <div class="custom-select__option" data-value="bloodsucker">
+                                <div class="custom-select__option" data-value="bloodsucker" role="option">
                                     <img src="markers/mutants/bloodsucker.png" alt="">
                                     <span data-i18n="map.marker.bloodsucker">Кровосос</span>
                                 </div>
-                                <div class="custom-select__option" data-value="bloodsucker_strong">
+                                <div class="custom-select__option" data-value="bloodsucker_strong" role="option">
                                     <img src="markers/mutants/strongbloodsucker.png" alt="">
                                     <span data-i18n="map.marker.bloodsucker_strong">Матёрый кровосос</span>
                                 </div>
-                                <div class="custom-select__option" data-value="chimera">
+                                <div class="custom-select__option" data-value="chimera" role="option">
                                     <img src="markers/mutants/chimera.png" alt="">
                                     <span data-i18n="map.marker.chimera">Химера</span>
                                 </div>
                             </div>
-                            
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -535,12 +532,11 @@
                                     </svg>
                                     <span data-i18n="map.category.traders">Торговцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="trader">
+                                <div class="custom-select__option" data-value="trader" role="option">
                                     <img src="markers/dealer.png" alt="">
                                     <span data-i18n="map.marker.trader">Маклак</span>
                                 </div>
                             </div>
-                            
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -548,39 +544,39 @@
                                     </svg>
                                     <span data-i18n="map.category.npc">НПС</span>
                                 </div>
-                                <div class="custom-select__option" data-value="zombified">
+                                <div class="custom-select__option" data-value="zombified" role="option">
                                     <img src="markers/NPC/Zombified.png" alt="">
                                     <span data-i18n="map.marker.zombified">Зомбированные</span>
                                 </div>
-                                <div class="custom-select__option" data-value="bandits">
+                                <div class="custom-select__option" data-value="bandits" role="option">
                                     <img src="markers/NPC/Bandits.png" alt="">
                                     <span data-i18n="map.marker.bandits">Бандиты</span>
                                 </div>
-                                <div class="custom-select__option" data-value="military">
+                                <div class="custom-select__option" data-value="military" role="option">
                                     <img src="markers/NPC/military.png" alt="">
                                     <span data-i18n="map.marker.military">Военные</span>
                                 </div>
-                                <div class="custom-select__option" data-value="freedom">
+                                <div class="custom-select__option" data-value="freedom" role="option">
                                     <img src="markers/NPC/freedom.png" alt="">
                                     <span data-i18n="map.marker.freedom">Свободовцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="duty">
+                                <div class="custom-select__option" data-value="duty" role="option">
                                     <img src="markers/NPC/Duty.png" alt="">
                                     <span data-i18n="map.marker.duty">Долговцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="mercs">
+                                <div class="custom-select__option" data-value="mercs" role="option">
                                     <img src="markers/NPC/Mercs.png" alt="">
                                     <span data-i18n="map.marker.mercs">Наемники</span>
                                 </div>
-                                <div class="custom-select__option" data-value="sins">
+                                <div class="custom-select__option" data-value="sins" role="option">
                                     <img src="markers/NPC/Sin.png" alt="">
                                     <span data-i18n="map.marker.sins">Греховцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="monolith">
+                                <div class="custom-select__option" data-value="monolith" role="option">
                                     <img src="markers/NPC/Monolith.png" alt="">
                                     <span data-i18n="map.marker.monolith">Монолитовцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="obliterator">
+                                <div class="custom-select__option" data-value="obliterator" role="option">
                                     <img src="markers/NPC/Obliterator.png" alt="">
                                     <span data-i18n="map.marker.obliterator">Облитератор</span>
                                 </div>
@@ -589,15 +585,13 @@
                         <input type="hidden" id="markerCategory" value="">
                     </div>
                 </div>
-                
                 <div class="marker-modal__field">
-                    <label data-i18n="map.modal.description">Описание / Комментарий:</label>
-                    <textarea id="markerDescription" class="marker-modal__textarea" data-placeholder-i18n="map.modal.descriptionPlaceholder" placeholder="Например: На втором этаже, за ящиками..."></textarea>
+                    <label for="markerDescription" data-i18n="map.modal.description">Описание / Комментарий:</label>
+                    <textarea id="markerDescription" class="marker-modal__textarea" data-placeholder-i18n="map.modal.descriptionPlaceholder" placeholder="Например: На втором этаже, за ящиками..." maxlength="500"></textarea>
                 </div>
-                
                 <div class="marker-modal__field">
-                    <label data-i18n="map.modal.gameCoords">Игровые координаты (если знаете):</label>
-                    <input type="text" id="markerGameCoords" class="marker-modal__input" data-placeholder-i18n="map.modal.gameCoordsPlaceholder" placeholder="Например: -426, 69, -370">
+                    <label for="markerGameCoords" data-i18n="map.modal.gameCoords">Игровые координаты (если знаете):</label>
+                    <input type="text" id="markerGameCoords" class="marker-modal__input" data-placeholder-i18n="map.modal.gameCoordsPlaceholder" placeholder="Например: -426, 69, -370" maxlength="100">
                 </div>
             </div>
             <div class="marker-modal__footer">
@@ -607,8 +601,7 @@
         </div>
     </div>
 
-    <!-- Уведомление о копировании -->
-    <div class="copy-toast" id="copyToast">
+    <div class="copy-toast" id="copyToast" role="alert" aria-live="polite">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="20 6 9 17 4 12"/>
         </svg>
@@ -617,6 +610,7 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../i18n.js"></script>
+    <script src="../shared.js"></script>
     <script src="mapData.js"></script>
     <script src="map.js"></script>
 </body>
