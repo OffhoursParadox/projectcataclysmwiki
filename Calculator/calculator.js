@@ -208,8 +208,16 @@ document.addEventListener('DOMContentLoaded', () => {
     initContainerDropdown();
     initContainerSelect();
     initEventListeners();
-    restoreState();
-    updateStats();
+
+    if (window.i18n && typeof window.i18n.onReady === 'function') {
+        window.i18n.onReady(() => {
+            restoreState();
+            updateStats();
+        });
+    } else {
+        restoreState();
+        updateStats();
+    }
 });
 
 
