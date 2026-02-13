@@ -121,9 +121,24 @@
 
 .artifacts-table-wrapper{
     overflow-x:auto;
+    position:relative;
     background:var(--color-bg-table);
     border:1px solid var(--color-border);
     border-radius:0 0 16px 16px
+}
+.artifacts-table-wrapper::after{
+    content:'';
+    position:sticky;
+    right:0;
+    top:0;
+    bottom:0;
+    width:40px;
+    background:linear-gradient(to left,rgba(15,15,20,0.95),transparent);
+    pointer-events:none;
+    display:block;
+    float:right;
+    margin-top:-100%;
+    height:100%
 }
 .artifacts-table{width:100%;border-collapse:collapse;min-width:800px}
 .artifacts-table thead{background:rgba(0,0,0,0.3)}
@@ -192,6 +207,42 @@
 .price{font-weight:600;color:var(--color-accent);font-size:15px}
 .price--none{color:var(--color-text-muted);font-weight:400;font-size:13px}
 
+.artifacts-error{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:80px 20px;
+    text-align:center
+}
+.artifacts-error__icon{
+    width:48px;height:48px;
+    color:var(--color-text-muted);
+    margin-bottom:16px
+}
+.artifacts-error__text{
+    font-size:18px;
+    color:var(--color-text-muted);
+    margin-bottom:24px
+}
+.artifacts-error__btn{
+    color:var(--color-accent);
+    background:none;
+    border:1px solid var(--color-accent);
+    padding:12px 28px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+    font-family:var(--font-main);
+    transition:var(--transition)
+}
+.artifacts-error__btn:hover{
+    background:rgba(196,163,90,0.15)
+}
+
+@media(min-width:850px){
+    .artifacts-table-wrapper::after{display:none}
+}
 @media(max-width:1024px){
     .categories-nav__list{justify-content:flex-start;overflow-x:auto;padding-bottom:10px;flex-wrap:nowrap}
     .category-btn{white-space:nowrap;flex-shrink:0}
@@ -206,4 +257,9 @@
 @media(max-width:480px){
     .categories-nav{padding:16px 0 24px}
     .category-btn{padding:10px 16px;font-size:13px}
+    .artifacts-error{padding:60px 16px}
+    .artifacts-error__text{font-size:16px}
+}
+@media(hover:none){
+    .artifacts-table tbody tr:hover .artifact-image{transform:none}
 }
