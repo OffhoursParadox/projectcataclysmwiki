@@ -827,7 +827,13 @@
 @media(hover:none){
     .artifact-card:hover{transform:none;box-shadow:none}
     .artifact-card:hover .artifact-card__image{transform:none}
-    .artifact-slot:hover .artifact-slot__remove{opacity:1}
+    .artifact-slot:not(.artifact-slot--empty) .artifact-slot__remove{opacity:1}
+    .artifact-slot:hover{background:rgba(0,0,0,0.3);border-color:var(--color-border)}
+    .artifact-slot--empty:hover{border-color:var(--color-border)}
+    .artifact-slot:not(.artifact-slot--empty):hover{border-color:var(--color-border);background:rgba(0,0,0,0.3)}
+    .artifact-slot:active{background:rgba(0,0,0,0.4);border-color:rgba(255,255,255,0.15)}
+    .artifact-slot--empty:active{border-color:var(--color-accent)}
+    .artifact-slot:not(.artifact-slot--empty):active{border-color:var(--color-accent);background:rgba(196,163,90,0.08)}
 }
 
 :focus-visible{outline:2px solid var(--color-accent);outline-offset:2px}
