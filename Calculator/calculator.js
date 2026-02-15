@@ -795,26 +795,83 @@ function initEventListeners() {
         if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
     });
 
-    elements.artifactSlots.addEventListener('click', (e) => {
-        const removeBtn = e.target.closest('.artifact-slot__remove');
+    // Определяем, поддерживает ли устройство тач
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+if (isTouchDevice) {
+    // На тач-устройствах используем touchend для мгновенной реакции без ожидания hover
+    let touchStartTarget = null;
+    let touchMoved = false;
+
+    elements.artifactSlots.addEventListener('touchstart', (e) => {
+        touchStartTarget = e.target;
+        touchMoved = false;
+    }, { passive: true });
+
+    elements.artifactSlots.addEventListener('touchmove', () => {
+        touchMoved = true;
+    }, { passive: true });
+
+    elements.artifactSlots.addEventListener('touchend', (e) => {
+        // Если палец двигался — это скролл, не обрабатываем
+        if (touchMoved) return;
+
+        const target = e.target;
+
+        // Обработка кнопки удаления
+        const removeBtn = target.closest('.artifact-slot__remove');
         if (removeBtn) {
-            e.stopPropagation();
+            e.preventDefault();
             const slot = removeBtn.closest('.artifact-slot');
             if (slot) removeArtifact(parseInt(slot.dataset.index));
             return;
         }
 
-        const filledSlot = e.target.closest('.artifact-slot:not(.artifact-slot--empty)');
+        // Обработка заполненного слота
+        const filledSlot = target.closest('.artifact-slot:not(.artifact-slot--empty)');
         if (filledSlot) {
+            e.preventDefault();
             openArtifactModal(parseInt(filledSlot.dataset.index));
             return;
         }
 
-        const emptySlot = e.target.closest('.artifact-slot--empty');
+        // Обработка пустого слота
+        const emptySlot = target.closest('.artifact-slot--empty');
         if (emptySlot) {
+            e.preventDefault();
             openArtifactModal(parseInt(emptySlot.dataset.index));
         }
     });
+
+    elements.artifactSlots.addEventListener('click', (e) => {
+            const slot = e.target.closest('.artifact-slot');
+            if (slot) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    } else {
+        elements.artifactSlots.addEventListener('click', (e) => {
+            const removeBtn = e.target.closest('.artifact-slot__remove');
+            if (removeBtn) {
+                e.stopPropagation();
+                const slot = removeBtn.closest('.artifact-slot');
+                if (slot) removeArtifact(parseInt(slot.dataset.index));
+                return;
+            }
+
+            const filledSlot = e.target.closest('.artifact-slot:not(.artifact-slot--empty)');
+            if (filledSlot) {
+                openArtifactModal(parseInt(filledSlot.dataset.index));
+                return;
+            }
+
+            const emptySlot = e.target.closest('.artifact-slot--empty');
+            if (emptySlot) {
+                openArtifactModal(parseInt(emptySlot.dataset.index));
+            }
+        });
+    }
 
     elements.artifactList.addEventListener('click', (e) => {
         const card = e.target.closest('.artifact-card');
