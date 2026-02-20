@@ -9,6 +9,8 @@ body{font-size:14px;line-height:1.5}
     --color-mutants:#ef4444;
     --color-traders:#22c55e;
     --color-npc:#a855f7;
+    --color-astrolite:#06b6d4;
+    --color-bosses:#f59e0b;
     --sidebar-width:320px
 }
 
@@ -159,6 +161,7 @@ body{font-size:14px;line-height:1.5}
 
 .filter-group__icon svg{width:18px;height:18px}
 
+.filter-group__icon--astrolite{background:rgba(6,182,212,0.15);color:var(--color-astrolite)}
 .filter-group__icon--containers{background:rgba(59,130,246,0.15);color:var(--color-containers)}
 .filter-group__icon--mutants{background:rgba(239,68,68,0.15);color:var(--color-mutants)}
 .filter-group__icon--traders{background:rgba(34,197,94,0.15);color:var(--color-traders)}
@@ -884,12 +887,12 @@ body{font-size:14px;line-height:1.5}
 
 .custom-select__group-title svg{width:16px;height:16px}
 
-.custom-select__group:nth-child(1) .custom-select__group-title{color:var(--color-containers);background:rgba(59,130,246,0.05)}
-.custom-select__group:nth-child(1) .custom-select__group-title svg{color:var(--color-containers)}
-.custom-select__group:nth-child(2) .custom-select__group-title{color:var(--color-mutants);background:rgba(239,68,68,0.05)}
-.custom-select__group:nth-child(2) .custom-select__group-title svg{color:var(--color-mutants)}
-.custom-select__group:nth-child(3) .custom-select__group-title{color:var(--color-traders);background:rgba(34,197,94,0.05)}
-.custom-select__group:nth-child(3) .custom-select__group-title svg{color:var(--color-traders)}
+.custom-select__group:nth-child(1) .custom-select__group-title{color:var(--color-astrolite);background:rgba(6,182,212,0.05)}
+.custom-select__group:nth-child(1) .custom-select__group-title svg{color:var(--color-astrolite)}
+.custom-select__group:nth-child(2) .custom-select__group-title{color:var(--color-containers);background:rgba(59,130,246,0.05)}
+.custom-select__group:nth-child(2) .custom-select__group-title svg{color:var(--color-containers)}
+.custom-select__group:nth-child(3) .custom-select__group-title{color:var(--color-mutants);background:rgba(239,68,68,0.05)}
+.custom-select__group:nth-child(3) .custom-select__group-title svg{color:var(--color-mutants)}
 .custom-select__group:nth-child(4) .custom-select__group-title{color:var(--color-npc);background:rgba(168,85,247,0.05)}
 .custom-select__group:nth-child(4) .custom-select__group-title svg{color:var(--color-npc)}
 
