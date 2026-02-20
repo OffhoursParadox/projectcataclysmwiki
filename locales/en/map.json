@@ -94,5 +94,19 @@
   "map.npc.freedomBase": "Freedom Base",
   "map.npc.dutyBase": "Duty Base",
   "map.npc.mercsBase": "Mercenary Base",
-  "map.npc.militaryCheckpoint": "Military checkpoint"
+  "map.npc.militaryCheckpoint": "Military checkpoint",
+  "map.category.astrolite": "Astrolite",
+  "map.marker.catalyst": "Catalysts",
+  "map.marker.wormhole": "Wormholes",
+  "map.marker.psy_dog": "Psy Dog",
+  "map.marker.controller": "Controller",
+  "map.marker.wooden_crate": "Wooden Crates",
+  "map.marker.safe": "Safes",
+  "map.marker.zombified_cluster": "Zombified Cluster",
+  "map.marker.bandit_camp": "Bandit Camp",
+  "map.marker.monolith_outpost": "Monolith Outpost",
+  "map.marker.boss_prince": "Boss: Prince",
+  "map.marker.boss_invincible": "Boss: Invincible",
+  "map.marker.boss_illusionist": "Boss: Illusionist",
+  "map.toast.copyFailed": "Failed to copy"
 }
