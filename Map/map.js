@@ -15,13 +15,13 @@ const MARKER_ICONS = {
     catalyst: L.icon({ iconUrl: 'markers/astrolite/catalyst.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     wormhole: L.icon({ iconUrl: 'markers/astrolite/wormhole.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     // Контейнеры
-    ammo: L.icon({ iconUrl: 'markers/ammo.png', iconSize: [32, 24], iconAnchor: [16, 12], popupAnchor: [0, -12] }),
-    supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [34, 24], iconAnchor: [17, 12], popupAnchor: [0, -12] }),
-    tools: L.icon({ iconUrl: 'markers/tool.png', iconSize: [26, 24], iconAnchor: [13, 12], popupAnchor: [0, -12] }),
-    barrels: L.icon({ iconUrl: 'markers/barrel.png', iconSize: [16, 26], iconAnchor: [8, 13], popupAnchor: [0, -13] }),
+    ammo:   L.icon({ iconUrl: 'markers/ammo.png',   iconSize: [24, 18], iconAnchor: [12, 9], popupAnchor: [0, -9] }),
+    supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [25, 18], iconAnchor: [13, 9], popupAnchor: [0, -9] }),
+    tools:  L.icon({ iconUrl: 'markers/tool.png',   iconSize: [20, 18], iconAnchor: [10, 9], popupAnchor: [0, -9] }),
+    barrels: L.icon({ iconUrl: 'markers/barrel.png', iconSize: [14, 24], iconAnchor: [7, 12], popupAnchor: [0, -12] }),
     science: L.icon({ iconUrl: 'markers/science.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     stash: L.icon({ iconUrl: 'markers/stash.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    wooden_crate: L.icon({ iconUrl: 'markers/wooden_crate.png', iconSize: [26, 22], iconAnchor: [12, 10], popupAnchor: [0, -10] }),
+    wooden_crate: L.icon({ iconUrl: 'markers/wooden_crate.png', iconSize: [21, 18], iconAnchor: [11, 9],  popupAnchor: [0, -9] }),
     safe: L.icon({ iconUrl: 'markers/safe.png', iconSize: [17, 24], iconAnchor: [9, 12], popupAnchor: [0, -12] }),
     // Мутанты
     blind_dog: L.icon({ iconUrl: 'markers/mutants/blinddog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
