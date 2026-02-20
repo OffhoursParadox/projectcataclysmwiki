@@ -11,10 +11,10 @@ const MAP_CONFIG = {
 };
 
 const MARKER_ICONS = {
-    ammo: L.icon({ iconUrl: 'markers/ammo.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    tools: L.icon({ iconUrl: 'markers/tool.svg', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    barrels: L.icon({ iconUrl: 'markers/barrel.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
+    ammo: L.icon({ iconUrl: 'markers/ammo.png', iconSize: [32, 24], iconAnchor: [16, 12], popupAnchor: [0, -12] }),
+    supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [34, 24], iconAnchor: [17, 12], popupAnchor: [0, -12] }),
+    tools: L.icon({ iconUrl: 'markers/tool.png', iconSize: [26, 24], iconAnchor: [13, 12], popupAnchor: [0, -12] }),
+    barrels: L.icon({ iconUrl: 'markers/barrel.png', iconSize: [16, 26], iconAnchor: [8, 13], popupAnchor: [0, -13] }),
     science: L.icon({ iconUrl: 'markers/science.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     stash: L.icon({ iconUrl: 'markers/stash.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     blind_dog: L.icon({ iconUrl: 'markers/mutants/blinddog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
