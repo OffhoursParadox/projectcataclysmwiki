@@ -127,6 +127,38 @@
                     </svg>
                 </button>
             </div>
+
+            <!-- ===== АСТРОЛИТ ===== -->
+            <div class="filter-group" data-category="astrolite">
+                <button class="filter-group__header">
+                    <div class="filter-group__icon filter-group__icon--astrolite">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </div>
+                    <span class="filter-group__title" data-i18n="map.category.astrolite">Астролит</span>
+                    <span class="filter-group__count" id="countAstrolite">0</span>
+                    <svg class="filter-group__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+                <div class="filter-group__content">
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="catalyst" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.catalyst">Катализаторы</span>
+                        <span class="filter-item__count" data-count="catalyst">0</span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="wormhole" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.wormhole">Червоточины</span>
+                        <span class="filter-item__count" data-count="wormhole">0</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ===== КОНТЕЙНЕРЫ ===== -->
             <div class="filter-group" data-category="containers">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--containers">
@@ -177,8 +209,22 @@
                         <span class="filter-item__label" data-i18n="map.marker.stash">Тайники</span>
                         <span class="filter-item__count" data-count="stash">0</span>
                     </label>
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="wooden_crate" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.wooden_crate">Деревянные ящики</span>
+                        <span class="filter-item__count" data-count="wooden_crate">0</span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="safe" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.safe">Сейфы</span>
+                        <span class="filter-item__count" data-count="safe">0</span>
+                    </label>
                 </div>
             </div>
+
+            <!-- ===== МУТАНТЫ ===== -->
             <div class="filter-group" data-category="mutants">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--mutants">
@@ -204,6 +250,12 @@
                         <span class="filter-item__checkmark"></span>
                         <span class="filter-item__label" data-i18n="map.marker.pseudodog">Псевдособаки</span>
                         <span class="filter-item__count" data-count="pseudodog">0</span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="psy_dog" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.psy_dog">Пси-собака</span>
+                        <span class="filter-item__count" data-count="psy_dog">0</span>
                     </label>
                     <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="flesh" checked>
@@ -253,30 +305,16 @@
                         <span class="filter-item__label" data-i18n="map.marker.chimera">Химера</span>
                         <span class="filter-item__count" data-count="chimera">0</span>
                     </label>
-                </div>
-            </div>
-            <div class="filter-group" data-category="traders">
-                <button class="filter-group__header">
-                    <div class="filter-group__icon filter-group__icon--traders">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                        </svg>
-                    </div>
-                    <span class="filter-group__title" data-i18n="map.category.traders">Торговцы</span>
-                    <span class="filter-group__count" id="countTraders">0</span>
-                    <svg class="filter-group__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M6 9l6 6 6-6"/>
-                    </svg>
-                </button>
-                <div class="filter-group__content">
                     <label class="filter-item">
-                        <input type="checkbox" class="filter-checkbox" data-filter="trader" checked>
+                        <input type="checkbox" class="filter-checkbox" data-filter="controller" checked>
                         <span class="filter-item__checkmark"></span>
-                        <span class="filter-item__label" data-i18n="map.marker.trader">Маклак</span>
-                        <span class="filter-item__count" data-count="trader">0</span>
+                        <span class="filter-item__label" data-i18n="map.marker.controller">Контролёр</span>
+                        <span class="filter-item__count" data-count="controller">0</span>
                     </label>
                 </div>
             </div>
+
+            <!-- ===== НПС ===== -->
             <div class="filter-group" data-category="npc">
                 <button class="filter-group__header">
                     <div class="filter-group__icon filter-group__icon--npc">
@@ -298,16 +336,34 @@
                         <span class="filter-item__count" data-count="zombified">0</span>
                     </label>
                     <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="zombified_cluster" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.zombified_cluster">Скопление зомбированных</span>
+                        <span class="filter-item__count" data-count="zombified_cluster">0</span>
+                    </label>
+                    <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="bandits" checked>
                         <span class="filter-item__checkmark"></span>
                         <span class="filter-item__label" data-i18n="map.marker.bandits">Бандиты</span>
                         <span class="filter-item__count" data-count="bandits">0</span>
                     </label>
                     <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="bandit_camp" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.bandit_camp">Стоянка бандитов</span>
+                        <span class="filter-item__count" data-count="bandit_camp">0</span>
+                    </label>
+                    <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="military" checked>
                         <span class="filter-item__checkmark"></span>
                         <span class="filter-item__label" data-i18n="map.marker.military">Военные</span>
                         <span class="filter-item__count" data-count="military">0</span>
+                    </label>
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="monolith_outpost" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.monolith_outpost">Аванпост монолита</span>
+                        <span class="filter-item__count" data-count="monolith_outpost">0</span>
                     </label>
                     <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="freedom" checked>
@@ -322,28 +378,22 @@
                         <span class="filter-item__count" data-count="duty">0</span>
                     </label>
                     <label class="filter-item">
-                        <input type="checkbox" class="filter-checkbox" data-filter="mercs" checked>
+                        <input type="checkbox" class="filter-checkbox" data-filter="boss_prince" checked>
                         <span class="filter-item__checkmark"></span>
-                        <span class="filter-item__label" data-i18n="map.marker.mercs">Наемники</span>
-                        <span class="filter-item__count" data-count="mercs">0</span>
+                        <span class="filter-item__label" data-i18n="map.marker.boss_prince">Босс: Князь</span>
+                        <span class="filter-item__count" data-count="boss_prince">0</span>
                     </label>
                     <label class="filter-item">
-                        <input type="checkbox" class="filter-checkbox" data-filter="sins" checked>
+                        <input type="checkbox" class="filter-checkbox" data-filter="boss_invincible" checked>
                         <span class="filter-item__checkmark"></span>
-                        <span class="filter-item__label" data-i18n="map.marker.sins">Греховцы</span>
-                        <span class="filter-item__count" data-count="sins">0</span>
+                        <span class="filter-item__label" data-i18n="map.marker.boss_invincible">Босс: Непробиваемый</span>
+                        <span class="filter-item__count" data-count="boss_invincible">0</span>
                     </label>
                     <label class="filter-item">
-                        <input type="checkbox" class="filter-checkbox" data-filter="monolith" checked>
+                        <input type="checkbox" class="filter-checkbox" data-filter="boss_illusionist" checked>
                         <span class="filter-item__checkmark"></span>
-                        <span class="filter-item__label" data-i18n="map.marker.monolith">Монолитовцы</span>
-                        <span class="filter-item__count" data-count="monolith">0</span>
-                    </label>
-                    <label class="filter-item">
-                        <input type="checkbox" class="filter-checkbox" data-filter="obliterator" checked>
-                        <span class="filter-item__checkmark"></span>
-                        <span class="filter-item__label" data-i18n="map.marker.obliterator">Облитератор</span>
-                        <span class="filter-item__count" data-count="obliterator">0</span>
+                        <span class="filter-item__label" data-i18n="map.marker.boss_illusionist">Босс: Иллюзионист</span>
+                        <span class="filter-item__count" data-count="boss_illusionist">0</span>
                     </label>
                 </div>
             </div>
@@ -445,6 +495,24 @@
                             </svg>
                         </div>
                         <div class="custom-select__dropdown" role="listbox">
+                            <!-- Астролит -->
+                            <div class="custom-select__group">
+                                <div class="custom-select__group-title">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                    </svg>
+                                    <span data-i18n="map.category.astrolite">Астролит</span>
+                                </div>
+                                <div class="custom-select__option" data-value="catalyst" role="option">
+                                    <img src="markers/astrolite/catalyst.png" alt="">
+                                    <span data-i18n="map.marker.catalyst">Катализаторы</span>
+                                </div>
+                                <div class="custom-select__option" data-value="wormhole" role="option">
+                                    <img src="markers/astrolite/wormhole.png" alt="">
+                                    <span data-i18n="map.marker.wormhole">Червоточины</span>
+                                </div>
+                            </div>
+                            <!-- Контейнеры -->
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -476,7 +544,16 @@
                                     <img src="markers/stash.png" alt="">
                                     <span data-i18n="map.marker.stash">Тайник</span>
                                 </div>
+                                <div class="custom-select__option" data-value="wooden_crate" role="option">
+                                    <img src="markers/wooden_crate.png" alt="">
+                                    <span data-i18n="map.marker.wooden_crate">Деревянные ящики</span>
+                                </div>
+                                <div class="custom-select__option" data-value="safe" role="option">
+                                    <img src="markers/safe.png" alt="">
+                                    <span data-i18n="map.marker.safe">Сейфы</span>
+                                </div>
                             </div>
+                            <!-- Мутанты -->
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -491,6 +568,10 @@
                                 <div class="custom-select__option" data-value="pseudodog" role="option">
                                     <img src="markers/mutants/pseudodog.png" alt="">
                                     <span data-i18n="map.marker.pseudodog">Псевдособаки</span>
+                                </div>
+                                <div class="custom-select__option" data-value="psy_dog" role="option">
+                                    <img src="markers/mutants/psydog.png" alt="">
+                                    <span data-i18n="map.marker.psy_dog">Пси-собака</span>
                                 </div>
                                 <div class="custom-select__option" data-value="flesh" role="option">
                                     <img src="markers/mutants/flesh.png" alt="">
@@ -524,19 +605,12 @@
                                     <img src="markers/mutants/chimera.png" alt="">
                                     <span data-i18n="map.marker.chimera">Химера</span>
                                 </div>
-                            </div>
-                            <div class="custom-select__group">
-                                <div class="custom-select__group-title">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                                    </svg>
-                                    <span data-i18n="map.category.traders">Торговцы</span>
-                                </div>
-                                <div class="custom-select__option" data-value="trader" role="option">
-                                    <img src="markers/dealer.png" alt="">
-                                    <span data-i18n="map.marker.trader">Маклак</span>
+                                <div class="custom-select__option" data-value="controller" role="option">
+                                    <img src="markers/mutants/controller.png" alt="">
+                                    <span data-i18n="map.marker.controller">Контролёр</span>
                                 </div>
                             </div>
+                            <!-- НПС -->
                             <div class="custom-select__group">
                                 <div class="custom-select__group-title">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -548,13 +622,25 @@
                                     <img src="markers/NPC/Zombified.png" alt="">
                                     <span data-i18n="map.marker.zombified">Зомбированные</span>
                                 </div>
+                                <div class="custom-select__option" data-value="zombified_cluster" role="option">
+                                    <img src="markers/NPC/zombified_cluster.png" alt="">
+                                    <span data-i18n="map.marker.zombified_cluster">Скопление зомбированных</span>
+                                </div>
                                 <div class="custom-select__option" data-value="bandits" role="option">
                                     <img src="markers/NPC/Bandits.png" alt="">
                                     <span data-i18n="map.marker.bandits">Бандиты</span>
                                 </div>
+                                <div class="custom-select__option" data-value="bandit_camp" role="option">
+                                    <img src="markers/NPC/bandit_camp.png" alt="">
+                                    <span data-i18n="map.marker.bandit_camp">Стоянка бандитов</span>
+                                </div>
                                 <div class="custom-select__option" data-value="military" role="option">
                                     <img src="markers/NPC/military.png" alt="">
                                     <span data-i18n="map.marker.military">Военные</span>
+                                </div>
+                                <div class="custom-select__option" data-value="monolith_outpost" role="option">
+                                    <img src="markers/NPC/monolith_outpost.png" alt="">
+                                    <span data-i18n="map.marker.monolith_outpost">Аванпост монолита</span>
                                 </div>
                                 <div class="custom-select__option" data-value="freedom" role="option">
                                     <img src="markers/NPC/freedom.png" alt="">
@@ -564,21 +650,17 @@
                                     <img src="markers/NPC/Duty.png" alt="">
                                     <span data-i18n="map.marker.duty">Долговцы</span>
                                 </div>
-                                <div class="custom-select__option" data-value="mercs" role="option">
-                                    <img src="markers/NPC/Mercs.png" alt="">
-                                    <span data-i18n="map.marker.mercs">Наемники</span>
+                                <div class="custom-select__option" data-value="boss_prince" role="option">
+                                    <img src="markers/NPC/boss.png" alt="">
+                                    <span data-i18n="map.marker.boss_prince">Босс: Князь</span>
                                 </div>
-                                <div class="custom-select__option" data-value="sins" role="option">
-                                    <img src="markers/NPC/Sin.png" alt="">
-                                    <span data-i18n="map.marker.sins">Греховцы</span>
+                                <div class="custom-select__option" data-value="boss_invincible" role="option">
+                                    <img src="markers/NPC/boss.png" alt="">
+                                    <span data-i18n="map.marker.boss_invincible">Босс: Непробиваемый</span>
                                 </div>
-                                <div class="custom-select__option" data-value="monolith" role="option">
-                                    <img src="markers/NPC/Monolith.png" alt="">
-                                    <span data-i18n="map.marker.monolith">Монолитовцы</span>
-                                </div>
-                                <div class="custom-select__option" data-value="obliterator" role="option">
-                                    <img src="markers/NPC/Obliterator.png" alt="">
-                                    <span data-i18n="map.marker.obliterator">Облитератор</span>
+                                <div class="custom-select__option" data-value="boss_illusionist" role="option">
+                                    <img src="markers/NPC/boss_illusionist.png" alt="">
+                                    <span data-i18n="map.marker.boss_illusionist">Босс: Иллюзионист</span>
                                 </div>
                             </div>
                         </div>
