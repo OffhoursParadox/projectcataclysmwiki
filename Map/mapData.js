@@ -155,7 +155,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(3706, 3035), desc: "Координаты: -587, 89, -5876" },
         { coords: convertCoords(3486, 2965), desc: "Координаты: -726, 90, -5437" },
         { coords: convertCoords(3646, 2736), desc: "Координаты: -1183, 88, -5756" },
-        { coords: convertCoords(3498, 2997), desc: "Координаты: -661, 90, -5460<br>Предмет с багом" },
+        { coords: convertCoords(3498, 2997), desc: "Координаты: -661, 90, -5460" },
         { coords: convertCoords(3626, 2710), desc: "Координаты: -1236, 88, -5717" },
         { coords: convertCoords(3684, 2912), desc: "Координаты: -833, 80, -5833" },
         { coords: convertCoords(3666, 3065), desc: "Координаты: -525, 92, -5797" },
@@ -163,15 +163,15 @@ const MARKERS_DATA = {
         { coords: convertCoords(3521, 3088), desc: "Координаты: -479, 90, -5506" },
         { coords: convertCoords(3669, 2735), desc: "Координаты: -1185, 88, -5801" },
         { coords: convertCoords(3423, 2427), desc: "Координаты: -1803, 91, -5310" },
-        { coords: convertCoords(3491, 2960), desc: "Координаты: -735, 90, -5445<br>Предмет с багом" },
+        { coords: convertCoords(3491, 2960), desc: "Координаты: -735, 90, -5445" },
         { coords: convertCoords(3662, 2977), desc: "Координаты: -701, 79, -5788" },
-        { coords: convertCoords(3520, 2438), desc: "Координаты: -1781, 92, -5503<br>Предмет с багом" },
+        { coords: convertCoords(3520, 2438), desc: "Координаты: -1781, 92, -5503" },
         { coords: convertCoords(3509, 2747), desc: "Координаты: -1163, 81, -5483" },
         { coords: convertCoords(3497, 3112), desc: "Координаты: -432, 90, -5459" },
         { coords: convertCoords(3599, 2573), desc: "Координаты: -1509, 83, -5663" },
         { coords: convertCoords(3745, 2873), desc: "Координаты: -910, 91, -5954" },
         { coords: convertCoords(3763, 3094), desc: "Координаты: -469, 94, -5990" },
-        { coords: convertCoords(3523, 3138), desc: "Координаты: -380, 89, -5510<br>Предмет с багом" },
+        { coords: convertCoords(3523, 3138), desc: "Координаты: -380, 89, -5510" },
         // ТЛ
         { coords: convertCoords(1797, 3700), desc: "Координаты: 745, 77, -2056" },
         { coords: convertCoords(1595, 3482), desc: "Координаты: 312, 89, -1655" },
@@ -328,13 +328,13 @@ const MARKERS_DATA = {
     barrels: [
         // Армейские склады
         { coords: convertCoords(3496, 2958), desc: "Координаты: -741, 90, -5457" },
-        { coords: convertCoords(3570, 3084), desc: "Координаты: -488, 89, -5603<br>Бочка с багом" },
+        { coords: convertCoords(3570, 3084), desc: "Координаты: -488, 89, -5603" },
         { coords: convertCoords(3553, 2642), desc: "Координаты: -1372, 86, -5571" },
         { coords: convertCoords(3619, 3159), desc: "Координаты: -338, 85, -5702" },
         { coords: convertCoords(3509, 2996), desc: "Координаты: -664, 85, -5482" },
         { coords: convertCoords(3664, 2944), desc: "Координаты: -767, 76, -5793" },
         { coords: convertCoords(3491, 2995), desc: "Координаты: -666, 90, -5447" },
-        { coords: convertCoords(3496, 3137), desc: "Координаты: -382, 90, -5456<br>Бочка с багом" },
+        { coords: convertCoords(3496, 3137), desc: "Координаты: -382, 90, -5456" },
         { coords: convertCoords(3723, 3065), desc: "Координаты: -526, 88, -5909" },
         { coords: convertCoords(3649, 2716), desc: "Координаты: -1224, 88, -5763" },
         { coords: convertCoords(3536, 2493), desc: "Координаты: -1669, 87, -5536" },
@@ -349,7 +349,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(3700, 3044), desc: "Координаты: -568, 88, -5864" },
         { coords: convertCoords(3493, 3129), desc: "Координаты: -399, 90, -5450" },
         { coords: convertCoords(3657, 2590), desc: "Координаты: -1475, 95, -5779" },
-        { coords: convertCoords(3753, 2926), desc: "Координаты: -803, 88, -5971<br>Бочка с багом" },
+        { coords: convertCoords(3753, 2926), desc: "Координаты: -803, 88, -5971" },
         // ТЛ
         { coords: convertCoords(1856, 3675), desc: "Координаты: 698, 79, -2170" },
         { coords: convertCoords(1714, 3574), desc: "Координаты: 493, 79, -1894" },
@@ -491,11 +491,11 @@ const MARKERS_DATA = {
         // Армейские склады
         { coords: convertCoords(3760, 2867), desc: "Координаты: -922, 95, -5984" },
         { coords: convertCoords(3652, 2735), desc: "Координаты: -1185, 95, -5768" },
-        { coords: convertCoords(3493, 3168), desc: "Координаты: -320, 94, -5450<br>Предмет с багом" },
+        { coords: convertCoords(3493, 3168), desc: "Координаты: -320, 94, -5450" },
         { coords: convertCoords(3672, 2942), desc: "Координаты: -773, 80, -5809" },
-        { coords: convertCoords(3750, 3155), desc: "Координаты: -346, 95, -5965<br>Предмет с багом" },
+        { coords: convertCoords(3750, 3155), desc: "Координаты: -346, 95, -5965" },
         { coords: convertCoords(3462, 2436), desc: "Координаты: -1785, 91, -5389" },
-        { coords: convertCoords(3704, 2634), desc: "Координаты: -1387, 94, -5873<br>Предмет с багом" },
+        { coords: convertCoords(3704, 2634), desc: "Координаты: -1387, 94, -5873" },
         { coords: convertCoords(3519, 2419), desc: "Координаты: -1819, 96, -5501" },
         { coords: convertCoords(3475, 2430), desc: "Координаты: -1796, 92, -5414" },
         { coords: convertCoords(3428, 2433), desc: "Координаты: -1790, 91, -5320" },
@@ -511,8 +511,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(3686, 3029), desc: "Координаты: -599, 88, -5836" },
         { coords: convertCoords(3515, 3113), desc: "Координаты: -430, 91, -5494" },
         { coords: convertCoords(3672, 2916), desc: "Координаты: -824, 80, -5808" },
-        { coords: convertCoords(3528, 2580), desc: "Координаты: -1496, 85, -5521<br>Предмет с багом" },
-        { coords: convertCoords(3646, 2919), desc: "Координаты: -819, 80, -5757<br>Предмет с багом" },
+        { coords: convertCoords(3528, 2580), desc: "Координаты: -1496, 85, -5521" },
+        { coords: convertCoords(3646, 2919), desc: "Координаты: -819, 80, -5757" },
         { coords: convertCoords(3699, 2926), desc: "Координаты: -804, 97, -5862" },
         { coords: convertCoords(3515, 2762), desc: "Координаты: -1131, 82, -5495" },
         { coords: convertCoords(3676, 2960), desc: "Координаты: -737, 80, -5816" },
@@ -522,7 +522,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(3552, 2634), desc: "Координаты: -1388, 86, -5569" },
         { coords: convertCoords(3497, 2988), desc: "Координаты: -681, 97, -5459" },
         { coords: convertCoords(3520, 2415), desc: "Координаты: -1827, 91, -5504" },
-        { coords: convertCoords(3643, 2745), desc: "Координаты: -1165, 88, -5751<br>Предмет с багом" },
+        { coords: convertCoords(3643, 2745), desc: "Координаты: -1165, 88, -5751" },
         { coords: convertCoords(3520, 3127), desc: "Координаты: -401, 89, -5505" },
         { coords: convertCoords(3527, 2585), desc: "Координаты: -1487, 86, -5518" },
         { coords: convertCoords(3540, 3137), desc: "Координаты: -382, 89, -5544" },
@@ -1299,17 +1299,17 @@ const MARKERS_DATA = {
 
     // ==================== НПС: БОСС КНЯЗЬ ====================
     boss_prince: [
-        { coords: convertCoords(2150, 3050), desc: "Босс: Князь" },
+        { coords: convertCoords(3517, 3090), desc: "Босс: Князь" }
     ],
 
     // ==================== НПС: БОСС НЕПРОБИВАЕМЫЙ ====================
     boss_invincible: [
-        { coords: convertCoords(2780, 2600), desc: "Босс: Непробиваемый" },
+        
     ],
 
     // ==================== НПС: БОСС ИЛЛЮЗИОНИСТ ====================
     boss_illusionist: [
-        { coords: convertCoords(2640, 2100), desc: "Босс: Иллюзионист" },
+        
     ],
 };
 
