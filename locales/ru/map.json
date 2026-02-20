@@ -94,5 +94,19 @@
   "map.npc.freedomBase": "База Свободы",
   "map.npc.dutyBase": "База Долга",
   "map.npc.mercsBase": "База Наемников",
-  "map.npc.militaryCheckpoint": "Военный блокпост"
+  "map.npc.militaryCheckpoint": "Военный блокпост",
+  "map.category.astrolite": "Астролит",
+  "map.marker.catalyst": "Катализаторы",
+  "map.marker.wormhole": "Червоточины",
+  "map.marker.psy_dog": "Пси-собака",
+  "map.marker.controller": "Контролёр",
+  "map.marker.wooden_crate": "Деревянные ящики",
+  "map.marker.safe": "Сейфы",
+  "map.marker.zombified_cluster": "Скопление зомбированных",
+  "map.marker.bandit_camp": "Стоянка бандитов",
+  "map.marker.monolith_outpost": "Аванпост монолита",
+  "map.marker.boss_prince": "Босс: Князь",
+  "map.marker.boss_invincible": "Босс: Непробиваемый",
+  "map.marker.boss_illusionist": "Босс: Иллюзионист",
+  "map.toast.copyFailed": "Не удалось скопировать"
 }
