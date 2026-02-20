@@ -45,7 +45,7 @@ const MARKER_ICONS = {
     monolith_outpost:  L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     freedom: L.icon({ iconUrl: 'markers/NPC/freedom.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     duty: L.icon({ iconUrl: 'markers/NPC/Duty.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    boss_prince: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
+    boss_prince: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_invincible: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     boss_illusionist: L.icon({ iconUrl: 'markers/NPC/boss_illusionist.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] })
 };
