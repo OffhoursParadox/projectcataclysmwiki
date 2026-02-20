@@ -11,14 +11,22 @@ const MAP_CONFIG = {
 };
 
 const MARKER_ICONS = {
+    // Астролит
+    catalyst: L.icon({ iconUrl: 'markers/astrolite/catalyst.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    wormhole: L.icon({ iconUrl: 'markers/astrolite/wormhole.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    // Контейнеры
     ammo: L.icon({ iconUrl: 'markers/ammo.png', iconSize: [32, 24], iconAnchor: [16, 12], popupAnchor: [0, -12] }),
     supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [34, 24], iconAnchor: [17, 12], popupAnchor: [0, -12] }),
     tools: L.icon({ iconUrl: 'markers/tool.png', iconSize: [26, 24], iconAnchor: [13, 12], popupAnchor: [0, -12] }),
     barrels: L.icon({ iconUrl: 'markers/barrel.png', iconSize: [16, 26], iconAnchor: [8, 13], popupAnchor: [0, -13] }),
     science: L.icon({ iconUrl: 'markers/science.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     stash: L.icon({ iconUrl: 'markers/stash.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
+    wooden_crate: L.icon({ iconUrl: 'markers/wooden_crate.png', iconSize: [28, 24], iconAnchor: [14, 12], popupAnchor: [0, -12] }),
+    safe: L.icon({ iconUrl: 'markers/safe.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
+    // Мутанты
     blind_dog: L.icon({ iconUrl: 'markers/mutants/blinddog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     pseudodog: L.icon({ iconUrl: 'markers/mutants/pseudodog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    psy_dog: L.icon({ iconUrl: 'markers/mutants/psydog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     flesh: L.icon({ iconUrl: 'markers/mutants/flesh.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     boar: L.icon({ iconUrl: 'markers/mutants/boar.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     rat: L.icon({ iconUrl: 'markers/mutants/rat.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
@@ -27,25 +35,30 @@ const MARKER_ICONS = {
     bloodsucker: L.icon({ iconUrl: 'markers/mutants/bloodsucker.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     bloodsucker_strong: L.icon({ iconUrl: 'markers/mutants/strongbloodsucker.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     chimera: L.icon({ iconUrl: 'markers/mutants/chimera.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    trader: L.icon({ iconUrl: 'markers/dealer.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    controller: L.icon({ iconUrl: 'markers/mutants/controller.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    // НПС
     zombified: L.icon({ iconUrl: 'markers/NPC/Zombified.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    zombified_cluster: L.icon({ iconUrl: 'markers/NPC/zombified_cluster.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     bandits: L.icon({ iconUrl: 'markers/NPC/Bandits.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    bandit_camp: L.icon({ iconUrl: 'markers/NPC/bandit_camp.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     military: L.icon({ iconUrl: 'markers/NPC/military.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    monolith_outpost: L.icon({ iconUrl: 'markers/NPC/monolith_outpost.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     freedom: L.icon({ iconUrl: 'markers/NPC/freedom.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     duty: L.icon({ iconUrl: 'markers/NPC/Duty.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    mercs: L.icon({ iconUrl: 'markers/NPC/Mercs.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    sins: L.icon({ iconUrl: 'markers/NPC/Sin.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    monolith: L.icon({ iconUrl: 'markers/NPC/Monolith.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    obliterator: L.icon({ iconUrl: 'markers/NPC/Obliterator.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] })
+    boss_prince: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
+    boss_invincible: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
+    boss_illusionist: L.icon({ iconUrl: 'markers/NPC/boss_illusionist.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] })
 };
 
-const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera'];
-const NPC_TYPES = ['zombified', 'bandits', 'military', 'freedom', 'duty', 'mercs', 'sins', 'monolith', 'obliterator'];
-const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash'];
+const ASTROLITE_TYPES = ['catalyst', 'wormhole'];
+const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe'];
+const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'];
+const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'freedom', 'duty', 'boss_prince', 'boss_invincible', 'boss_illusionist'];
 
 const RUSSIAN_MUTANT_NAMES = {
     'Слепые собаки': 'blind_dog',
     'Псевдособаки': 'pseudodog',
+    'Пси-собака': 'psy_dog',
     'Плоти': 'flesh',
     'Кабаны': 'boar',
     'Крысы': 'rat',
@@ -53,7 +66,8 @@ const RUSSIAN_MUTANT_NAMES = {
     'Зомби': 'zombie',
     'Кровосос': 'bloodsucker',
     'Матёрый кровосос': 'bloodsucker_strong',
-    'Химера': 'chimera'
+    'Химера': 'chimera',
+    'Контролёр': 'controller'
 };
 
 const DESC_TRANSLATIONS = {
@@ -68,16 +82,11 @@ const DESC_TRANSLATIONS = {
     'Лаборатория X-18': 'Laboratory X-18',
     '-1 этаж': '-1 floor',
     '-2 этаж': '-2 floor',
-    'Появляется на третьем этаже': 'Appears on the third floor',
-    'Появляется на верхнем ярусе крыши': 'Appears on the upper level of the roof',
-    'Появляется на втором этаже бойлерной': 'Appears on the second floor of the boiler room',
-    'Появляется на втором этаже в крайней комнате': 'Appears on the second floor in the far room',
-    'Появляется на втором этаже в коридоре': 'Appears on the second floor in the corridor',
-    'Время:': 'Time:',
-    'конец дождя': 'end of rain',
     'Зомбированные': 'Zombified',
     'Зомбированный': 'Zombified',
+    'Скопление зомбированных': 'Zombified cluster',
     'Бандиты': 'Bandits',
+    'Стоянка бандитов': 'Bandit camp',
     'Мародеры': 'Marauders',
     'Очень сильные': 'Very strong',
     'Военные': 'Military',
@@ -86,11 +95,16 @@ const DESC_TRANSLATIONS = {
     'База Свободы': 'Freedom Base',
     'Долговцы': 'Duty',
     'База Долга': 'Duty Base',
-    'Наемники': 'Mercenaries',
-    'База Наемников': 'Mercenary Base',
-    'Грех': 'Sin',
-    'Монолитовцы': 'Monolith',
-    'Облитератор': 'Obliterator',
+    'Аванпост монолита': 'Monolith outpost',
+    'Монолит': 'Monolith',
+    'Князь': 'Prince',
+    'Непробиваемый': 'Invincible',
+    'Иллюзионист': 'Illusionist',
+    'Босс': 'Boss',
+    'Катализатор': 'Catalyst',
+    'Червоточина': 'Wormhole',
+    'Контролёр': 'Controller',
+    'Пси-собака': 'Psy-dog',
     'Также лежит': 'Also contains',
     'Трек:': 'Track:',
     'Координаты:': 'Coordinates:'
