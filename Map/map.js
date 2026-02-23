@@ -11,10 +11,8 @@ const MAP_CONFIG = {
 };
 
 const MARKER_ICONS = {
-    // Астролит
     catalyst: L.icon({ iconUrl: 'markers/astrolite/catalyst.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     wormhole: L.icon({ iconUrl: 'markers/astrolite/wormhole.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    // Контейнеры
     ammo:   L.icon({ iconUrl: 'markers/ammo.png',   iconSize: [24, 18], iconAnchor: [12, 9], popupAnchor: [0, -9] }),
     supply: L.icon({ iconUrl: 'markers/supply.png', iconSize: [25, 18], iconAnchor: [13, 9], popupAnchor: [0, -9] }),
     tools:  L.icon({ iconUrl: 'markers/tool.png',   iconSize: [20, 18], iconAnchor: [10, 9], popupAnchor: [0, -9] }),
@@ -23,7 +21,6 @@ const MARKER_ICONS = {
     stash: L.icon({ iconUrl: 'markers/stash.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     wooden_crate: L.icon({ iconUrl: 'markers/wooden_crate.png', iconSize: [21, 18], iconAnchor: [11, 9],  popupAnchor: [0, -9] }),
     safe: L.icon({ iconUrl: 'markers/safe.png', iconSize: [17, 24], iconAnchor: [9, 12], popupAnchor: [0, -12] }),
-    // Мутанты
     blind_dog: L.icon({ iconUrl: 'markers/mutants/blinddog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     pseudodog: L.icon({ iconUrl: 'markers/mutants/pseudodog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     psy_dog: L.icon({ iconUrl: 'markers/mutants/pseudodog.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
@@ -36,13 +33,12 @@ const MARKER_ICONS = {
     bloodsucker_strong: L.icon({ iconUrl: 'markers/mutants/strongbloodsucker.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     chimera: L.icon({ iconUrl: 'markers/mutants/chimera.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     controller: L.icon({ iconUrl: 'markers/mutants/controller.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    // НПС
     zombified: L.icon({ iconUrl: 'markers/NPC/Zombified.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     zombified_cluster: L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     bandits: L.icon({ iconUrl: 'markers/NPC/Bandits.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    bandit_camp:       L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    bandit_camp: L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     military: L.icon({ iconUrl: 'markers/NPC/military.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
-    monolith_outpost:  L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    monolith_outpost: L.icon({ iconUrl: 'markers/NPC/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     freedom: L.icon({ iconUrl: 'markers/NPC/freedom.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     duty: L.icon({ iconUrl: 'markers/NPC/Duty.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     boss_prince: L.icon({ iconUrl: 'markers/NPC/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
@@ -127,12 +123,16 @@ function t(key, params = {}) {
     return key;
 }
 
+function isEnglish() {
+    return window.i18n?.isEnglish?.() || false;
+}
+
 function getMarkerTypeName(type) {
     return t(`map.marker.${type}`);
 }
 
 function translateDescription(desc, type) {
-    if (!window.i18n?.isEnglish()) return desc;
+    if (!isEnglish()) return desc;
 
     let translated = desc;
 
@@ -149,6 +149,246 @@ function translateDescription(desc, type) {
     });
 
     return translated;
+}
+
+function extractCoords(desc) {
+    const coordsRegex = /Координаты:\s*([^\n<]+)/;
+    const match = desc.match(coordsRegex);
+    if (match) {
+        const coords = match[1].trim();
+        let cleanDesc = desc.replace(coordsRegex, '').trim();
+        cleanDesc = cleanDesc.replace(/^(<br\s*\/?>)+/gi, '').replace(/(<br\s*\/?>)+$/gi, '').trim();
+        return { coords, cleanDesc };
+    }
+    return { coords: null, cleanDesc: desc };
+}
+
+const INFO_LABELS = {
+    respawn: {
+        ru: 'Респавн',
+        en: 'Respawn',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+    },
+    count: {
+        ru: 'Кол-во',
+        en: 'Count',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>'
+    },
+    level: {
+        ru: 'Уровень',
+        en: 'Level',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+    },
+    danger: {
+        ru: 'Опасность',
+        en: 'Danger',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    },
+    hp: {
+        ru: 'Здоровье',
+        en: 'Health',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+    }
+};
+
+function createMarkerPopup(type, markerData) {
+    const typeName = getMarkerTypeName(type);
+    const ext = markerData.extended;
+
+    if (ext) {
+        return createExtendedPopup(type, markerData, typeName, ext);
+    }
+
+    return createSimplePopup(type, markerData, typeName);
+}
+
+function createSimplePopup(type, markerData, typeName) {
+    const { coords, cleanDesc } = extractCoords(markerData.desc);
+    const desc = translateDescription(cleanDesc, type);
+    const descStripped = desc.replace(/<br\s*\/?>/gi, '').trim();
+
+    let html = `<div class="marker-popup marker-popup--simple">`;
+    html += `<div class="marker-popup__title">${escapeHtml(typeName)}</div>`;
+
+    if (markerData.image || descStripped) {
+        html += `<div class="marker-popup__body">`;
+
+        if (markerData.image) {
+            html += `<div class="marker-popup__image-wrapper">
+                <img class="marker-popup__image" src="${markerData.image}" alt="${escapeHtml(typeName)}"
+                     onclick="openLightbox(this.src)" loading="lazy">
+            </div>`;
+        }
+
+        if (descStripped) {
+            html += `<div class="marker-popup__desc">${desc}</div>`;
+        }
+
+        html += `</div>`;
+    }
+
+    if (coords) {
+        html += createCoordsFooter(coords);
+    }
+
+    html += `</div>`;
+    return html;
+}
+
+function createExtendedPopup(type, markerData, typeName, ext) {
+    const en = isEnglish();
+    const descLabel = en ? 'Description' : 'Описание';
+    const rewardsLabel = en ? 'Rewards' : 'Награды';
+    const { coords } = extractCoords(markerData.desc);
+
+    let html = `<div class="marker-popup">`;
+    html += `<div class="marker-popup__title">${escapeHtml(typeName)}</div>`;
+    html += `<div class="marker-popup__body">`;
+
+    html += `<div class="marker-popup__top">`;
+
+    html += `<div class="marker-popup__left">`;
+
+    const image = ext.image || markerData.image;
+    if (image) {
+        html += `<div class="marker-popup__image-wrapper">
+            <img class="marker-popup__image" src="${image}" alt="${escapeHtml(typeName)}"
+                 onclick="openLightbox(this.src)" loading="lazy">
+        </div>`;
+    } else {
+        html += `<div class="marker-popup__image-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+            </svg>
+        </div>`;
+    }
+
+    if (ext.info) {
+        html += `<div class="marker-popup__info">`;
+        Object.entries(ext.info).forEach(([key, val]) => {
+            const label = INFO_LABELS[key];
+            if (!label) return;
+
+            const labelText = en ? label.en : label.ru;
+            const value = typeof val === 'object' ? (en ? val.en : val.ru) : val;
+
+            html += `<div class="marker-popup__info-row">
+                <span class="marker-popup__info-icon">${label.icon}</span>
+                <span class="marker-popup__info-label">${escapeHtml(labelText)}</span>
+                <span class="marker-popup__info-value">${escapeHtml(value)}</span>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+
+    html += `</div>`;
+
+    html += `<div class="marker-popup__right">`;
+
+    if (ext.description) {
+        const descText = typeof ext.description === 'object'
+            ? (en ? ext.description.en : ext.description.ru)
+            : ext.description;
+
+        html += `<div class="marker-popup__desc">
+            <span class="marker-popup__desc-label">${escapeHtml(descLabel)}</span>
+            ${escapeHtml(descText)}
+        </div>`;
+    } else {
+        const { cleanDesc } = extractCoords(markerData.desc);
+        const desc = translateDescription(cleanDesc, type);
+        if (desc) {
+            html += `<div class="marker-popup__desc">${desc}</div>`;
+        }
+    }
+
+    html += `</div>`;
+    html += `</div>`;
+
+    if (ext.rewards && ext.rewards.length > 0 && typeof REWARD_ICONS !== 'undefined') {
+        html += `<div class="marker-popup__rewards">
+            <span class="marker-popup__rewards-label">${escapeHtml(rewardsLabel)}</span>
+            <div class="marker-popup__rewards-list">`;
+
+        ext.rewards.forEach(rewardKey => {
+            const reward = REWARD_ICONS[rewardKey];
+            if (!reward) return;
+
+            const name = en ? reward.name.en : reward.name.ru;
+            const rarityClass = reward.rarity ? ` marker-popup__reward--${reward.rarity}` : '';
+
+            html += `<div class="marker-popup__reward${rarityClass}">
+                <img src="${reward.icon}" alt="${escapeHtml(name)}" loading="lazy">
+                <span class="marker-popup__reward-tooltip">${escapeHtml(name)}</span>
+            </div>`;
+        });
+
+        html += `</div></div>`;
+    }
+
+    html += `</div>`;
+
+    if (coords) {
+        html += createCoordsFooter(coords);
+    }
+
+    html += `</div>`;
+    return html;
+}
+
+function createCoordsFooter(coordsText) {
+    const copyLabel = isEnglish() ? 'Copy' : 'Скопировать';
+    return `<div class="marker-popup__footer">
+        <svg class="marker-popup__footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="marker-popup__footer-coords"
+              onclick="copyCoords('${escapeHtml(coordsText)}')"
+              title="${escapeHtml(copyLabel)}">${escapeHtml(coordsText)}</span>
+        <button class="marker-popup__footer-copy"
+                onclick="copyCoords('${escapeHtml(coordsText)}')">${escapeHtml(copyLabel)}</button>
+    </div>`;
+}
+
+function copyCoords(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        showMapToast(isEnglish() ? 'Coordinates copied!' : 'Координаты скопированы!');
+    }).catch(() => {
+        showMapToast(isEnglish() ? 'Copy failed' : 'Ошибка копирования');
+    });
+}
+
+function showMapToast(message) {
+    const toast = document.getElementById('copyToast');
+    if (!toast) return;
+    const span = toast.querySelector('span');
+    if (span) span.textContent = message;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2500);
+}
+
+function openLightbox(src) {
+    let lightbox = document.getElementById('markerLightbox');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'markerLightbox';
+        lightbox.className = 'marker-lightbox';
+        lightbox.innerHTML = '<img src="" alt="">';
+        lightbox.addEventListener('click', () => lightbox.classList.remove('visible'));
+        document.body.appendChild(lightbox);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('visible')) {
+                lightbox.classList.remove('visible');
+            }
+        });
+    }
+
+    lightbox.querySelector('img').src = src;
+    lightbox.classList.add('visible');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -205,9 +445,7 @@ function initMap() {
     });
 
     setTimeout(() => {
-        if (window.Dynmap) {
-            Dynmap.init(map);
-        }
+        if (window.Dynmap) Dynmap.init(map);
     }, 500);
 }
 
@@ -222,32 +460,20 @@ function initMarkers() {
             const icon = MARKER_ICONS[type];
             if (!icon) return;
 
+            const popupOptions = markerData.extended
+                ? { maxWidth: 560, minWidth: 360, className: 'extended-popup' }
+                : { maxWidth: 320 };
+
             const marker = L.marker(latLng, { icon });
             marker.markerType = type;
             marker.markerData = markerData;
-            marker.bindPopup(() => createMarkerPopup(type, markerData));
+            marker.bindPopup(() => createMarkerPopup(type, markerData), popupOptions);
             markerLayers[type].addLayer(marker);
         });
 
         markerLayers[type].addTo(map);
         activeFilters.add(type);
     });
-}
-
-function createMarkerPopup(type, markerData) {
-    const typeName = getMarkerTypeName(type);
-    const desc = translateDescription(markerData.desc, type);
-
-    let popupContent = '<div class="marker-popup">';
-    popupContent += `<div class="marker-popup__title">${typeName}</div>`;
-
-    if (markerData.image) {
-        popupContent += `<img src="${markerData.image}" alt="" style="max-width:280px;border-radius:8px;margin-bottom:10px;">`;
-    }
-
-    popupContent += `<div class="marker-popup__desc">${desc}</div>`;
-    popupContent += '</div>';
-    return popupContent;
 }
 
 function refreshMarkersPopups() {
@@ -635,18 +861,28 @@ const UserMarkerTool = {
         const categoryName = escapeHtml(this.getCategoryName(marker.category));
         const yourMarker = escapeHtml(t('map.popup.yourMarker'));
 
-        let popupContent = `<div class="marker-popup">
-            <div class="marker-popup__title">${categoryName} (${yourMarker})</div>`;
+        let popupContent = `<div class="marker-popup marker-popup--simple">
+            <div class="marker-popup__title">${categoryName} (${yourMarker})</div>
+            <div class="marker-popup__body">`;
 
         if (marker.description) {
             popupContent += `<div class="marker-popup__desc">${escapeHtml(marker.description)}</div>`;
         }
 
         if (marker.gameCoords) {
-            popupContent += `<div class="marker-popup__coords">${escapeHtml(t('map.popup.gameCoords'))}: ${escapeHtml(marker.gameCoords)}</div>`;
+            popupContent += `<div class="marker-popup__desc" style="margin-top:8px;font-size:12px;color:var(--color-text-muted);font-family:'Roboto Mono',monospace;">
+                ${escapeHtml(isEnglish() ? 'Game coords' : 'Игровые коорд.')}: ${escapeHtml(marker.gameCoords)}</div>`;
         }
 
-        popupContent += `<div class="marker-popup__coords">${escapeHtml(t('map.popup.pixels'))}: X: ${marker.pixelX}, Y: ${marker.pixelY}</div>`;
+        popupContent += `</div>`;
+        popupContent += `<div class="marker-popup__footer">
+            <svg class="marker-popup__footer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="marker-popup__footer-coords">X: ${marker.pixelX}, Y: ${marker.pixelY}</span>
+        </div>`;
+
         popupContent += '</div>';
         return popupContent;
     },
@@ -731,46 +967,46 @@ const UserMarkerTool = {
     generateExportText() {
         if (this.userMarkers.length === 0) return '';
 
-        const isEn = window.i18n?.isEnglish();
-        let text = isEn
+        const en = isEnglish();
+        let text = en
             ? '🗺️ NEW MARKERS FOR PROJECT CATACLYSM MAP\n'
             : '🗺️ НОВЫЕ МЕТКИ ДЛЯ КАРТЫ PROJECT CATACLYSM\n';
-        text += isEn
+        text += en
             ? `📅 Date: ${new Date().toLocaleDateString('en-US')}\n`
             : `📅 Дата: ${new Date().toLocaleDateString('ru-RU')}\n`;
-        text += isEn
+        text += en
             ? `📍 Markers count: ${this.userMarkers.length}\n`
             : `📍 Количество меток: ${this.userMarkers.length}\n`;
         text += `${'─'.repeat(40)}\n\n`;
 
         this.userMarkers.forEach((marker, index) => {
-            text += isEn ? `【 Marker ${index + 1} 】\n` : `【 Метка ${index + 1} 】\n`;
-            text += isEn
+            text += en ? `【 Marker ${index + 1} 】\n` : `【 Метка ${index + 1} 】\n`;
+            text += en
                 ? `• Type: ${this.getCategoryName(marker.category)}\n`
                 : `• Тип: ${this.getCategoryName(marker.category)}\n`;
-            text += isEn
+            text += en
                 ? `• Category (code): ${marker.category}\n`
                 : `• Категория (код): ${marker.category}\n`;
-            text += isEn
+            text += en
                 ? `• Map coordinates: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`
                 : `• Координаты на карте: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`;
 
             if (marker.gameCoords) {
-                text += isEn
+                text += en
                     ? `• Game coordinates: ${marker.gameCoords}\n`
                     : `• Игровые координаты: ${marker.gameCoords}\n`;
             }
 
             if (marker.description) {
-                text += isEn
+                text += en
                     ? `• Description: ${marker.description}\n`
                     : `• Описание: ${marker.description}\n`;
             }
 
-            text += isEn ? '\n📋 Code for adding:\n' : '\n📋 Код для добавления:\n';
+            text += en ? '\n📋 Code for adding:\n' : '\n📋 Код для добавления:\n';
 
             const desc = marker.gameCoords
-                ? (isEn ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
+                ? (en ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
                 : (marker.description || this.getCategoryName(marker.category));
             text += `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },\n\n`;
         });
@@ -782,9 +1018,9 @@ const UserMarkerTool = {
         const marker = this.userMarkers.find(m => m.id === id);
         if (!marker) return;
 
-        const isEn = window.i18n?.isEnglish();
+        const en = isEnglish();
         const desc = marker.gameCoords
-            ? (isEn ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
+            ? (en ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
             : (marker.description || this.getCategoryName(marker.category));
         const code = `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },`;
 
@@ -844,11 +1080,6 @@ const UserMarkerTool = {
     },
 
     showToast(message) {
-        const toast = document.getElementById('copyToast');
-        if (!toast) return;
-        const span = toast.querySelector('span');
-        if (span) span.textContent = message;
-        toast.classList.add('visible');
-        setTimeout(() => toast.classList.remove('visible'), 2500);
+        showMapToast(message);
     }
 };
