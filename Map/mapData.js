@@ -1,3 +1,4 @@
+// mapData.js
 // ============================================================
 // ДАННЫЕ МАРКЕРОВ - Project Cataclysm Map
 // ============================================================
@@ -13,6 +14,18 @@ function convertCoords(oldY, oldX) {
     const newY = Math.round(MAP_CONFIG_DATA.height - (oldY * 2.0));
     return [newY, newX];
 }
+
+// ============================================================
+// ИЗОБРАЖЕНИЯ НАГРАД (лут)
+// ============================================================
+const REWARD_ICONS = {
+    anomaly_filter: { icon: 'images/rewards/anomaly_filter.png', name: { ru: 'Аномальный фильтр', en: 'Anomaly Filter' } },
+    black_box: { icon: 'images/rewards/black_box.png', name: { ru: 'Черный ящик', en: 'Black Box' } },
+    converter: { icon: 'images/rewards/converter.png', name: { ru: 'Преобразователь', en: 'Converter' } },
+    titanium_frame: { icon: 'images/rewards/titanium_frame.png', name: { ru: 'Титановый каркас', en: 'Titanium Frame' } },
+    advanced_upgrade_tools: { icon: 'images/rewards/advanced_upgrade_tools.png', name: { ru: 'Инструменты улучшения экипировки (продвинутые)', en: 'Advanced Equipment Upgrade Tools' } },
+    spare_parts: { icon: 'images/rewards/spare_parts.png', name: { ru: 'Запасные детали для улучшения экипировки', en: 'Spare Parts for Equipment Upgrade' } },
+};
 
 // ============================================================
 // ВСЕ МАРКЕРЫ
@@ -1086,8 +1099,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(3409, 2421), desc: "Зомби" },
         { coords: convertCoords(3396, 2404), desc: "Зомби" },
         { coords: convertCoords(3766, 3091), desc: "Зомби" },
-        { coords: convertCoords(3550, 2633), desc: "Зомби" },
-        { coords: convertCoords(3512, 2754), desc: "Зомби" },
+        
+        
 
         { coords: convertCoords(1561, 2946), desc: "Зомби<br>Лаборатория в тоннеле" },
         { coords: convertCoords(1473, 3327), desc: "Зомби<br>Мини лаборатория в тоннеле" },
@@ -1134,6 +1147,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(3531, 2531), desc: "Кровосос" },
         { coords: convertCoords(3529, 3149), desc: "Кровосос" },
         { coords: convertCoords(3785, 2739), desc: "Кровосос" },
+        { coords: convertCoords(3624, 2680), desc: "Кровосос" },
 
         { coords: convertCoords(968, 2677), desc: "Кровосос<br>Находится в лаборатории" },
         { coords: convertCoords(605, 2393), desc: "Кровосос" },
@@ -1212,6 +1226,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(3698, 2926), desc: "Контролёр" },
         { coords: convertCoords(3476, 2413), desc: "Контролёр" },
         { coords: convertCoords(3762, 3088), desc: "Контролёр" },
+        { coords: convertCoords(3676, 2705), desc: "Контролёр" },
     ],
 
     // ==================== НПС: ЗОМБИРОВАННЫЕ ====================
@@ -1241,13 +1256,123 @@ const MARKERS_DATA = {
     // ==================== НПС: СКОПЛЕНИЕ ЗОМБИРОВАННЫХ ====================
     zombified_cluster: [
         // Армейские склады
-        { coords: convertCoords(3633, 2708), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3648, 2733), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3567, 3088), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3493, 2428), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3418, 2423), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3528, 2878), desc: "Скопление зомбированных" },
-        { coords: convertCoords(3498, 3168), desc: "Скопление зомбированных" },
+        {
+            coords: convertCoords(3633, 2708),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_1.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_1.jpg",
+                description: {
+                    ru: "Скопление зомбированных в автотранспортном цехе.",
+                    en: "Cluster of zombified stalkers in the vehicle workshop."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3648, 2733),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_2.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_2.jpg",
+                description: {
+                    ru: "Скопление зомбированных в административно-бытовом корпусе.",
+                    en: "Cluster of zombified stalkers in the administrative building."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3567, 3088),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_3.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_3.jpg",
+                description: {
+                    ru: "Скопление зомбированных у КПП военной базы.",
+                    en: "Cluster of zombified stalkers near the military base checkpoint."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3493, 2428),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_4.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_4.jpg",
+                description: {
+                    ru: "Скопление зомбированных в центре деревни.",
+                    en: "Cluster of zombified stalkers in the village center."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3418, 2423),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_5.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_5.jpg",
+                description: {
+                    ru: "Скопление зомбированных в южном доме.",
+                    en: "Cluster of zombified stalkers in the southern house."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3528, 2878),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_6.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_6.jpg",
+                description: {
+                    ru: "Скопление зомбированных у вагонов.",
+                    en: "Cluster of zombified stalkers near the train cars."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3498, 3168),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_7.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_7.jpg",
+                description: {
+                    ru: "Скопление зомбированных у перехода на Муравейник.",
+                    en: "Cluster of zombified stalkers near the passage to the Anthill."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3512, 2754),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_8.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_8.jpg",
+                description: {
+                    ru: "Скопление зомбированных в ангаре.",
+                    en: "Cluster of zombified stalkers in the hangar."
+                },
+                rewards: ['anomaly_filter']
+            }
+        },
+        {
+            coords: convertCoords(3550, 2633),
+            desc: "Скопление зомбированных",
+            image: "images/NPC/zombified_cluster/zombified_cluster_9.jpg",
+            extended: {
+                image: "images/NPC/zombified_cluster/zombified_cluster_9.jpg",
+                description: {
+                    ru: "Скопление зомбированных на заправке.",
+                    en: "Cluster of zombified stalkers at the gas station."
+                },
+                rewards: ['anomaly_filter']
+            }
+        }
     ],
 
     // ==================== НПС: БАНДИТЫ ====================
@@ -1280,7 +1405,19 @@ const MARKERS_DATA = {
     // ==================== НПС: АВАНПОСТ МОНОЛИТА ====================
     monolith_outpost: [
         // Армейские склады
-        { coords: convertCoords(3713, 3068), desc: "Аванпост монолита" },
+        {
+            coords: convertCoords(3713, 3068),
+            desc: "Аванпост монолита",
+            image: "images/NPC/monolith_outpost/monolith_outpost_1.jpg",
+            extended: {
+                image: "images/NPC/monolith_outpost/monolith_outpost_1.jpg",
+                description: {
+                    ru: "Аванпост монолита в северной деревне.",
+                    en: "Monolith outpost in the northern village."
+                },
+                rewards: ['anomaly_filter', 'black_box']
+            }
+        }
     ],
 
     // ==================== НПС: СВОБОДОВЦЫ ====================
@@ -1299,17 +1436,35 @@ const MARKERS_DATA = {
 
     // ==================== НПС: БОСС КНЯЗЬ ====================
     boss_prince: [
-        { coords: convertCoords(3517, 3090), desc: "Босс: Князь" }
+        {
+            coords: convertCoords(3517, 3090),
+            desc: "Босс: Князь",
+            image: "images/NPC/boss_prince.jpg",
+            extended: {
+                image: "images/NPC/boss_prince.jpg",
+                description: {
+                    ru: "Это база босса, за зачистку которого вы получите припасы.",
+                    en: "This is the boss base. You will receive supplies for clearing it."
+                },
+                info: {
+                    respawn: {
+                        ru: '2.5 — 3 ч',
+                        en: '2.5 — 3 h'
+                    }
+                },
+                rewards: ['anomaly_filter', 'converter', 'black_box', 'titanium_frame', 'advanced_upgrade_tools', 'spare_parts']
+            }
+        }
     ],
 
     // ==================== НПС: БОСС НЕПРОБИВАЕМЫЙ ====================
     boss_invincible: [
-        
+
     ],
 
     // ==================== НПС: БОСС ИЛЛЮЗИОНИСТ ====================
     boss_illusionist: [
-        
+
     ],
 };
 
