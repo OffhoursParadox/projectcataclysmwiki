@@ -1,6 +1,34 @@
 [
     {
         "date": {
+            "ru": "23 февраля 2026",
+            "en": "February 23, 2026"
+        },
+        "items": [
+            {
+                "ru": "Была обновлена интерактивная карта:",
+                "en": "Interactive map has been updated:"
+            },
+            {
+                "ru": "Добавлена кнопка копирования координат для меток, связанных с лутом",
+                "en": "Added coordinate copy button for loot-related markers"
+            },
+            {
+                "ru": "Добавлено подробное описание для спотов боссов и НПС",
+                "en": "Added detailed descriptions for boss and NPC spots"
+            },
+            {
+                "ru": "Добавлены недостающие метки на Армейских складах",
+                "en": "Added missing markers on Army Warehouses"
+            },
+            {
+                "ru": "Оптимизирован код страницы",
+                "en": "Page code optimized"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "14 февраля 2026",
             "en": "February 14, 2026"
         },
