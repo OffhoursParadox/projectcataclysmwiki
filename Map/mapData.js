@@ -890,6 +890,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(2830, 3365), desc: "Слепые собаки" },
         { coords: convertCoords(2863, 3376), desc: "Слепые собаки" },
         { coords: convertCoords(2709, 3294), desc: "Слепые собаки" },
+        { coords: convertCoords(2663, 3277), desc: "Слепые собаки" },
+        { coords: convertCoords(2958, 3162), desc: "Слепые собаки" },
         
         { coords: convertCoords(1476, 2961), desc: "Слепые собаки" },
         { coords: convertCoords(1554, 3000), desc: "Слепые собаки" },
@@ -1162,6 +1164,25 @@ const MARKERS_DATA = {
         { coords: convertCoords(3409, 2560), desc: "Снорки" },
         { coords: convertCoords(3569, 2525), desc: "Снорки" },
         { coords: convertCoords(3358, 2340), desc: "Снорки" },
+        // Муравейник
+        { coords: convertCoords(2713, 3475), desc: "Снорки" },
+        { coords: convertCoords(2730, 3343), desc: "Снорки" },
+        { coords: convertCoords(3004, 3379), desc: "Снорки" },
+        { coords: convertCoords(2787, 3288), desc: "Снорки" },
+        { coords: convertCoords(2945, 3362), desc: "Снорки" },
+        { coords: convertCoords(2946, 3338), desc: "Снорки" },
+        { coords: convertCoords(2947, 3491), desc: "Снорки" },
+        { coords: convertCoords(2885, 3476), desc: "Снорки" },
+        { coords: convertCoords(2791, 3498), desc: "Снорки" },
+        { coords: convertCoords(3018, 3459), desc: "Снорки" },
+        { coords: convertCoords(3017, 3488), desc: "Снорки" },
+        { coords: convertCoords(2934, 3288), desc: "Снорки" },
+        { coords: convertCoords(2702, 3369), desc: "Снорки" },
+        { coords: convertCoords(2899, 3239), desc: "Снорки" },
+        { coords: convertCoords(2746, 3450), desc: "Снорки" },
+        { coords: convertCoords(2903, 3453), desc: "Снорки" },
+        { coords: convertCoords(2865, 3282), desc: "Снорки" },
+        { coords: convertCoords(2973, 3161), desc: "Снорки" },
 
         { coords: convertCoords(1558, 2927), desc: "Снорки<br>Лаборатория в тоннеле" },
         { coords: convertCoords(875, 2605), desc: "Снорки" },
@@ -1236,6 +1257,16 @@ const MARKERS_DATA = {
         { coords: convertCoords(3409, 2421), desc: "Зомби" },
         { coords: convertCoords(3396, 2404), desc: "Зомби" },
         { coords: convertCoords(3766, 3091), desc: "Зомби" },
+        // Муравейник
+        { coords: convertCoords(2765, 3237), desc: "Зомби" },
+        { coords: convertCoords(2838, 3527), desc: "Зомби" },
+        { coords: convertCoords(2738, 3192), desc: "Зомби" },
+        { coords: convertCoords(2715, 3213), desc: "Зомби" },
+        { coords: convertCoords(3061, 3414), desc: "Зомби" },
+        { coords: convertCoords(2769, 3372), desc: "Зомби" },
+        { coords: convertCoords(3066, 3452), desc: "Зомби" },
+        { coords: convertCoords(3080, 3450), desc: "Зомби" },
+        { coords: convertCoords(2745, 3229), desc: "Зомби" },
         
         
 
@@ -1285,6 +1316,17 @@ const MARKERS_DATA = {
         { coords: convertCoords(3529, 3149), desc: "Кровосос" },
         { coords: convertCoords(3785, 2739), desc: "Кровосос" },
         { coords: convertCoords(3624, 2680), desc: "Кровосос" },
+        // Муравейник
+        { coords: convertCoords(2711, 3544), desc: "Кровосос" },
+        { coords: convertCoords(2698, 3560), desc: "Кровосос" },
+        { coords: convertCoords(3053, 3363), desc: "Кровосос" },
+        { coords: convertCoords(2891, 3506), desc: "Кровосос" },
+        { coords: convertCoords(2725, 3538), desc: "Кровосос" },
+        { coords: convertCoords(2718, 3562), desc: "Кровосос" },
+        { coords: convertCoords(2730, 3563), desc: "Кровосос" },
+        { coords: convertCoords(2833, 3539), desc: "Кровосос" },
+        { coords: convertCoords(2944, 3187), desc: "Кровосос" },
+        { coords: convertCoords(2966, 3225), desc: "Кровосос" },
 
         { coords: convertCoords(968, 2677), desc: "Кровосос<br>Находится в лаборатории" },
         { coords: convertCoords(605, 2393), desc: "Кровосос" },
@@ -1326,6 +1368,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(3788, 2741), desc: "Матёрый кровосос" },
         { coords: convertCoords(3727, 2633), desc: "Матёрый кровосос" },
         { coords: convertCoords(3631, 2717), desc: "Матёрый кровосос" },
+        // Муравейник
+        { coords: convertCoords(2853, 3410), desc: "Матёрый кровосос" },
+        { coords: convertCoords(2691, 3550), desc: "Матёрый кровосос" },
+        { coords: convertCoords(2750, 3419), desc: "Матёрый кровосос" },
 
         { coords: convertCoords(2242, 2873), desc: "Матёрый кровосос<br>Находится в тоннеле" },
         { coords: convertCoords(1772, 2508), desc: "Матёрый кровосос" },
@@ -1349,6 +1395,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(3763, 2969), desc: "Химера" },
         { coords: convertCoords(3730, 2690), desc: "Химера" },
         { coords: convertCoords(3770, 3161), desc: "Химера" },
+        // Муравейник
+        { coords: convertCoords(2712, 3247), desc: "Химера" },
+        { coords: convertCoords(2925, 3547), desc: "Химера" },
 
         { coords: convertCoords(2543, 2200), desc: "Химера" },
         { coords: convertCoords(2831, 2383), desc: "Химера" },
@@ -1364,10 +1413,44 @@ const MARKERS_DATA = {
         { coords: convertCoords(3476, 2413), desc: "Контролёр" },
         { coords: convertCoords(3762, 3088), desc: "Контролёр" },
         { coords: convertCoords(3676, 2705), desc: "Контролёр" },
+        // Муравейник
+        { coords: convertCoords(2771, 3372), desc: "Контролёр" },
+        { coords: convertCoords(2847, 3523), desc: "Контролёр" },
+        { coords: convertCoords(3063, 3438), desc: "Контролёр" },
     ],
 
     // ==================== НПС: ЗОМБИРОВАННЫЕ ====================
     zombified: [
+        // Муравейник
+        { coords: convertCoords(2832, 3422), desc: "Зомбированный" },
+        { coords: convertCoords(2841, 3418), desc: "Зомбированный" },
+        { coords: convertCoords(2842, 3544), desc: "Зомбированный" },
+        { coords: convertCoords(2832, 3419), desc: "Зомбированный" },
+        { coords: convertCoords(2832, 3542), desc: "Зомбированный" },
+        { coords: convertCoords(2834, 3413), desc: "Зомбированный" },
+        { coords: convertCoords(2836, 3421), desc: "Зомбированный" },
+        { coords: convertCoords(2833, 3537), desc: "Зомбированный" },
+        { coords: convertCoords(2844, 3413), desc: "Зомбированный" },
+        { coords: convertCoords(2852, 3527), desc: "Зомбированный" },
+        { coords: convertCoords(2828, 3543), desc: "Зомбированный" },
+        { coords: convertCoords(2842, 3532), desc: "Зомбированный" },
+        { coords: convertCoords(2836, 3417), desc: "Зомбированный" },
+        { coords: convertCoords(2856, 3529), desc: "Зомбированный" },
+        { coords: convertCoords(3052, 3435), desc: "Зомбированный" },
+        { coords: convertCoords(2839, 3523), desc: "Зомбированный" },
+        { coords: convertCoords(2837, 3416), desc: "Зомбированный" },
+        { coords: convertCoords(2843, 3404), desc: "Зомбированный" },
+        { coords: convertCoords(2827, 3520), desc: "Зомбированный" },
+        { coords: convertCoords(2846, 3417), desc: "Зомбированный" },
+        { coords: convertCoords(2856, 3528), desc: "Зомбированный" },
+        { coords: convertCoords(2844, 3526), desc: "Зомбированный" },
+        { coords: convertCoords(2841, 3404), desc: "Зомбированный" },
+        { coords: convertCoords(2854, 3524), desc: "Зомбированный" },
+        { coords: convertCoords(2856, 3530), desc: "Зомбированный" },
+        { coords: convertCoords(3057, 3428), desc: "Зомбированный" },
+        { coords: convertCoords(3057, 3444), desc: "Зомбированный" },
+        { coords: convertCoords(2835, 3516), desc: "Зомбированный" },
+
         { coords: convertCoords(1563, 2999), desc: "Зомбированные<br>Лаборатория в тоннеле" },
         { coords: convertCoords(2338, 2924), desc: "Зомбированные" },
         { coords: convertCoords(2613, 2242), desc: "Зомбированные" },
@@ -1559,6 +1642,9 @@ const MARKERS_DATA = {
 
     // ==================== НПС: СВОБОДОВЦЫ ====================
     freedom: [
+        // Муравейник
+        { coords: convertCoords(2785, 3558), desc: "Свободовцы/Долговцы: 4 чел." },
+
         { coords: convertCoords(2550, 3763), desc: "Свободовцы" },
         { coords: convertCoords(2464, 3714), desc: "База Свободы" },
         { coords: convertCoords(2351, 3604), desc: "Свободовцы" },
