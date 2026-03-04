@@ -55,7 +55,7 @@ const MARKER_ICONS = {
     base_spawn:   L.icon({ iconUrl: 'images/locations/base-spawn.png',   iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     base_nospawn: L.icon({ iconUrl: 'images/locations/base-nospawn.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     base_hostile: L.icon({ iconUrl: 'images/locations/base-hostile.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    monolith: L.icon({ iconUrl: 'images/NPC/icons/monolith.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    monolith: L.icon({ iconUrl: 'images/NPC/icons/Monolith.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     mercenary: L.icon({ iconUrl: 'images/NPC/icons/Mercs.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_pharaoh: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
 };
