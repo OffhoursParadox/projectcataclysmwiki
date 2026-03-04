@@ -371,6 +371,20 @@
                         <span class="filter-item__label" data-i18n="map.marker.monolith_outpost">Аванпост монолита</span>
                         <span class="filter-item__count" data-count="monolith_outpost">0</span>
                     </label>
+                    <!-- ДОБАВЛЕНО: Монолит / Апостаты -->
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="monolith" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.monolith">Монолит / Апостаты</span>
+                        <span class="filter-item__count" data-count="monolith">0</span>
+                    </label>
+                    <!-- ДОБАВЛЕНО: Наёмники / ЧВК «Асгард» -->
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="mercenary" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.mercenary">Наёмники / ЧВК «Асгард»</span>
+                        <span class="filter-item__count" data-count="mercenary">0</span>
+                    </label>
                     <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="freedom" checked>
                         <span class="filter-item__checkmark"></span>
@@ -406,6 +420,13 @@
                         <span class="filter-item__checkmark"></span>
                         <span class="filter-item__label" data-i18n="map.marker.boss_prince">Босс: Князь</span>
                         <span class="filter-item__count" data-count="boss_prince">0</span>
+                    </label>
+                    <!-- ДОБАВЛЕНО: Босс Фараон -->
+                    <label class="filter-item">
+                        <input type="checkbox" class="filter-checkbox" data-filter="boss_pharaoh" checked>
+                        <span class="filter-item__checkmark"></span>
+                        <span class="filter-item__label" data-i18n="map.marker.boss_pharaoh">Босс: Банда Фараона</span>
+                        <span class="filter-item__count" data-count="boss_pharaoh">0</span>
                     </label>
                     <label class="filter-item">
                         <input type="checkbox" class="filter-checkbox" data-filter="boss_invincible" checked>
@@ -730,6 +751,14 @@
                                     <img src="markers/NPC/monolith_outpost.png" alt="">
                                     <span data-i18n="map.marker.monolith_outpost">Аванпост монолита</span>
                                 </div>
+                                <div class="custom-select__option" data-value="monolith" role="option">
+                                    <img src="markers/NPC/monolith.png" alt="">
+                                    <span data-i18n="map.marker.monolith">Монолит / Апостаты</span>
+                                </div>
+                                <div class="custom-select__option" data-value="mercenary" role="option">
+                                    <img src="markers/NPC/Mercs.png" alt="">
+                                    <span data-i18n="map.marker.mercenary">Наёмники / ЧВК «Асгард»</span>
+                                </div>
                                 <div class="custom-select__option" data-value="freedom" role="option">
                                     <img src="markers/NPC/freedom.png" alt="">
                                     <span data-i18n="map.marker.freedom">Свободовцы</span>
@@ -753,6 +782,10 @@
                                 <div class="custom-select__option" data-value="boss_prince" role="option">
                                     <img src="markers/NPC/boss.png" alt="">
                                     <span data-i18n="map.marker.boss_prince">Босс: Князь</span>
+                                </div>
+                                <div class="custom-select__option" data-value="boss_pharaoh" role="option">
+                                    <img src="markers/NPC/boss.png" alt="">
+                                    <span data-i18n="map.marker.boss_pharaoh">Босс: Банда Фараона</span>
                                 </div>
                                 <div class="custom-select__option" data-value="boss_invincible" role="option">
                                     <img src="markers/NPC/boss.png" alt="">
