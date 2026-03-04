@@ -120,5 +120,7 @@
   "map.npc.freedomBase": "База Свободы",
   "map.npc.dutyBase": "База Долга",
   "map.npc.mercsBase": "База Наемников",
-  "map.npc.militaryCheckpoint": "Военный блокпост"
+  "map.npc.militaryCheckpoint": "Военный блокпост",
+  "map.marker.mercenary": "Наёмники",
+  "map.marker.boss_pharaoh": "Босс: Банда Фараона"
 }
