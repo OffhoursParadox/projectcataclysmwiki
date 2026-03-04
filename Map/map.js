@@ -291,83 +291,108 @@ function createExtendedPopup(type, markerData, typeName, ext) {
     html += `<div class="marker-popup__title">${escapeHtml(typeName)}</div>`;
     html += `<div class="marker-popup__body">`;
 
-    html += `<div class="marker-popup__top">`;
-
-    html += `<div class="marker-popup__left">`;
-
     const image = ext.image || markerData.image;
-    if (image) {
-        html += `<div class="marker-popup__image-wrapper">
-            <img class="marker-popup__image" src="${image}" alt="${escapeHtml(typeName)}"
-                 onclick="openLightbox(this.src)" loading="lazy">
-        </div>`;
-    } else {
-        html += `<div class="marker-popup__image-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-            </svg>
-        </div>`;
-    }
+    const hasInfo = ext.info && Object.keys(ext.info).length > 0;
+    const hasLeft = image || hasInfo;
 
-    if (ext.info) {
-        html += `<div class="marker-popup__info">`;
-        Object.entries(ext.info).forEach(([key, val]) => {
-            const label = INFO_LABELS[key];
-            if (!label) return;
+    if (hasLeft) {
+        html += `<div class="marker-popup__top">`;
+        html += `<div class="marker-popup__left">`;
 
-            const labelText = en ? label.en : label.ru;
-            const value = typeof val === 'object' ? (en ? val.en : val.ru) : val;
-
-            html += `<div class="marker-popup__info-row">
-                <span class="marker-popup__info-icon">${label.icon}</span>
-                <span class="marker-popup__info-label">${escapeHtml(labelText)}</span>
-                <span class="marker-popup__info-value">${escapeHtml(value)}</span>
+        if (image) {
+            html += `<div class="marker-popup__image-wrapper">
+                <img class="marker-popup__image" src="${image}" alt="${escapeHtml(typeName)}"
+                     onclick="openLightbox(this.src)" loading="lazy">
             </div>`;
-        });
+        }
+
+        if (hasInfo) {
+            html += `<div class="marker-popup__info">`;
+            Object.entries(ext.info).forEach(([key, val]) => {
+                const label = INFO_LABELS[key];
+                if (!label) return;
+
+                const labelText = en ? label.en : label.ru;
+                const value = typeof val === 'object' ? (en ? val.en : val.ru) : val;
+
+                html += `<div class="marker-popup__info-row">
+                    <span class="marker-popup__info-icon">${label.icon}</span>
+                    <span class="marker-popup__info-label">${escapeHtml(labelText)}</span>
+                    <span class="marker-popup__info-value">${escapeHtml(value)}</span>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+
         html += `</div>`;
-    }
 
-    html += `</div>`;
+        html += `<div class="marker-popup__right">`;
 
-    html += `<div class="marker-popup__right">`;
+        if (ext.description) {
+            const descText = typeof ext.description === 'object'
+                ? (en ? ext.description.en : ext.description.ru)
+                : ext.description;
 
-    if (ext.description) {
-        const descText = typeof ext.description === 'object'
-            ? (en ? ext.description.en : ext.description.ru)
-            : ext.description;
+            html += `<div class="marker-popup__desc">
+                <span class="marker-popup__desc-label">${escapeHtml(descLabel)}</span>
+                ${escapeHtml(descText)}
+            </div>`;
+        } else {
+            const { cleanDesc } = extractCoords(markerData.desc);
+            const desc = translateDescription(cleanDesc, type);
+            if (desc) {
+                html += `<div class="marker-popup__desc">${desc}</div>`;
+            }
+        }
 
-        html += `<div class="marker-popup__desc">
-            <span class="marker-popup__desc-label">${escapeHtml(descLabel)}</span>
-            ${escapeHtml(descText)}
-        </div>`;
+        html += `</div>`;
+        html += `</div>`;
     } else {
-        const { cleanDesc } = extractCoords(markerData.desc);
-        const desc = translateDescription(cleanDesc, type);
-        if (desc) {
-            html += `<div class="marker-popup__desc">${desc}</div>`;
+        if (ext.description) {
+            const descText = typeof ext.description === 'object'
+                ? (en ? ext.description.en : ext.description.ru)
+                : ext.description;
+
+            html += `<div class="marker-popup__desc">
+                <span class="marker-popup__desc-label">${escapeHtml(descLabel)}</span>
+                ${escapeHtml(descText)}
+            </div>`;
+        } else {
+            const { cleanDesc } = extractCoords(markerData.desc);
+            const desc = translateDescription(cleanDesc, type);
+            if (desc) {
+                html += `<div class="marker-popup__desc">${desc}</div>`;
+            }
         }
     }
-
-    html += `</div>`;
-    html += `</div>`;
 
     if (ext.rewards && ext.rewards.length > 0 && typeof REWARD_ICONS !== 'undefined') {
         html += `<div class="marker-popup__rewards">
             <span class="marker-popup__rewards-label">${escapeHtml(rewardsLabel)}</span>
             <div class="marker-popup__rewards-list">`;
 
-        ext.rewards.forEach(rewardKey => {
-            const reward = REWARD_ICONS[rewardKey];
-            if (!reward) return;
+        ext.rewards.forEach(reward => {
+            let rewardKey, count;
 
-            const name = en ? reward.name.en : reward.name.ru;
-            const rarityClass = reward.rarity ? ` marker-popup__reward--${reward.rarity}` : '';
+            if (typeof reward === 'object' && reward.key) {
+                rewardKey = reward.key;
+                count = reward.count || 1;
+            } else {
+                rewardKey = reward;
+                count = 1;
+            }
+
+            const rewardData = REWARD_ICONS[rewardKey];
+            if (!rewardData) return;
+
+            const name = en ? rewardData.name.en : rewardData.name.ru;
+            const rarityClass = rewardData.rarity ? ` marker-popup__reward--${rewardData.rarity}` : '';
+            const countBadge = count > 1 ? `<span class="marker-popup__reward-count">×${count}</span>` : '';
 
             html += `<div class="marker-popup__reward${rarityClass}">
-                <img src="${reward.icon}" alt="${escapeHtml(name)}" loading="lazy">
-                <span class="marker-popup__reward-tooltip">${escapeHtml(name)}</span>
+                <img src="${rewardData.icon}" alt="${escapeHtml(name)}" loading="lazy">
+                ${countBadge}
+                <span class="marker-popup__reward-tooltip">${escapeHtml(name)}${count > 1 ? ` (×${count})` : ''}</span>
             </div>`;
         });
 
