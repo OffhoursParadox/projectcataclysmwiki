@@ -9,6 +9,7 @@ body{font-size:14px;line-height:1.5}
     --color-npc:#a855f7;
     --color-astrolite:#06b6d4;
     --color-bosses:#f59e0b;
+    --color-locations:#f59e0b;
     --sidebar-width:320px
 }
 
@@ -139,6 +140,7 @@ body{font-size:14px;line-height:1.5}
 .filter-group__icon--mutants{background:rgba(239,68,68,0.15);color:var(--color-mutants)}
 .filter-group__icon--traders{background:rgba(34,197,94,0.15);color:var(--color-traders)}
 .filter-group__icon--npc{background:rgba(168,85,247,0.15);color:var(--color-npc)}
+.filter-group__icon--locations{background:rgba(245,158,11,0.15);color:var(--color-locations)}
 
 .filter-group__title{flex:1;font-size:14px;font-weight:500;text-align:left}
 .filter-group__count{font-size:12px;font-weight:600;padding:2px 8px;background:rgba(255,255,255,0.1);border-radius:10px;color:var(--color-text-muted)}
@@ -835,6 +837,8 @@ body{font-size:14px;line-height:1.5}
 .custom-select__group:nth-child(3) .custom-select__group-title svg{color:var(--color-mutants)}
 .custom-select__group:nth-child(4) .custom-select__group-title{color:var(--color-npc);background:rgba(168,85,247,0.05)}
 .custom-select__group:nth-child(4) .custom-select__group-title svg{color:var(--color-npc)}
+.custom-select__group:nth-child(5) .custom-select__group-title{color:var(--color-locations);background:rgba(245,158,11,0.05)}
+.custom-select__group:nth-child(5) .custom-select__group-title svg{color:var(--color-locations)}
 
 .custom-select__option{display:flex;align-items:center;gap:12px;padding:10px 16px 10px 42px;cursor:pointer;transition:var(--transition)}
 .custom-select__option:hover{background:rgba(255,255,255,0.05)}
