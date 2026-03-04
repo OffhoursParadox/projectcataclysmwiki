@@ -54,13 +54,16 @@ const MARKER_ICONS = {
     base_freedom: L.icon({ iconUrl: 'images/locations/base-freedom.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     base_spawn:   L.icon({ iconUrl: 'images/locations/base-spawn.png',   iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     base_nospawn: L.icon({ iconUrl: 'images/locations/base-nospawn.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
-    base_hostile: L.icon({ iconUrl: 'images/locations/base-hostile.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] })
+    base_hostile: L.icon({ iconUrl: 'images/locations/base-hostile.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
+    monolith: L.icon({ iconUrl: 'images/NPC/icons/monolith.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    mercenary: L.icon({ iconUrl: 'images/NPC/icons/Mercs.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    boss_pharaoh: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
 };
 
 const ASTROLITE_TYPES = ['catalyst', 'wormhole'];
 const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe', 'stash_hidden'];
 const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'];
-const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist'];
+const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh'];
 const LOCATION_TYPES = ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile'];
 
 const RUSSIAN_MUTANT_NAMES = {
@@ -149,7 +152,15 @@ const DESC_TRANSLATIONS = {
     'Бар «100 рентген»': 'Bar "100 Rads"',
     'Точка сохранения доступна': 'Spawn save available',
     'Точка сохранения недоступна': 'Spawn save not available',
-    'Враждебная территория': 'Hostile territory'
+    'Враждебная территория': 'Hostile territory',
+    'Апостат': 'Apostle',
+    'Архонт': 'Archon',
+    'Наёмники': 'Mercenaries',
+    'ЧВК «Асгард»': 'PMC "Asgard"',
+    'Акбар': 'Akbar',
+    'Ренегаты': 'Renegades',
+    'Ренегат': 'Renegade',
+    'Банда Фараона': 'Pharaoh\'s Gang'
 };
 
 let map;
