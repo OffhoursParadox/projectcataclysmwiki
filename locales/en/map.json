@@ -120,5 +120,7 @@
   "map.npc.freedomBase": "Freedom Base",
   "map.npc.dutyBase": "Duty Base",
   "map.npc.mercsBase": "Mercenary Base",
-  "map.npc.militaryCheckpoint": "Military checkpoint"
+  "map.npc.militaryCheckpoint": "Military checkpoint",
+  "map.marker.mercenary": "Mercenaries",
+  "map.marker.boss_pharaoh": "Boss: Pharaoh's Gang"
 }
