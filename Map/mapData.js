@@ -32,6 +32,9 @@ const REWARD_ICONS = {
     compromat_flash: { icon: 'images/rewards/compromat_flash.png', name: { ru: 'Флешка с компроматом', en: 'Flash Drive with Compromat' } },
     coded_notebook: { icon: 'images/rewards/coded_notebook.png', name: { ru: 'Кодированный блокнот', en: 'Coded Notebook' } },
     large_battery: { icon: 'images/rewards/large_battery.png', name: { ru: 'Большая батарея', en: 'Large Battery' } },
+    prima_cigarettes: { icon: 'images/rewards/prima_cigarettes.png', name: { ru: 'Пачка сигарет "Прима"', en: '"Prima" Cigarettes Pack' } },
+    lead: { icon: 'images/rewards/lead.png', name: { ru: 'Свинец', en: 'Lead' } },
+    vodka_kazaki: { icon: 'images/rewards/vodka_kazaki.png', name: { ru: 'Водка "Казаки"', en: '"Cossacks" Vodka' } },
 };
 
 // ============================================================
@@ -329,7 +332,6 @@ const MARKERS_DATA = {
         { coords: convertCoords(3124, 2857), desc: "Координаты: -942, 86, -4711" },
         { coords: convertCoords(3145, 2816), desc: "Координаты: -1024, 74, -4755" },
         { coords: convertCoords(2982, 2767), desc: "Координаты: -1124, 100, -4428" },
-        // Полесское (багнутые — добавлены без приписки)
         { coords: convertCoords(3114, 2711), desc: "Координаты: -1233, 87, -4691" },
     ],
 
@@ -418,7 +420,6 @@ const MARKERS_DATA = {
         { coords: convertCoords(3313, 2538), desc: "Координаты: -1580, 87, -5091" },
         { coords: convertCoords(3364, 2766), desc: "Координаты: -1124, 85, -5192" },
         { coords: convertCoords(3330, 2861), desc: "Координаты: -935, 78, -5125" },
-        // Полесское (багнутые — добавлены без приписки)
         { coords: convertCoords(3253, 2844), desc: "Координаты: -967, 73, -4969" },
         { coords: convertCoords(3220, 2580), desc: "Координаты: -1496, 97, -4904" },
     ],
@@ -522,7 +523,6 @@ const MARKERS_DATA = {
         { coords: convertCoords(3320, 2516), desc: "Координаты: -1624, 84, -5105" },
         { coords: convertCoords(3032, 2751), desc: "Координаты: -1155, 78, -4529" },
         { coords: convertCoords(3038, 2793), desc: "Координаты: -1071, 85, -4539" },
-        // Полесское (багнутые — добавлены без приписки)
         { coords: convertCoords(3144, 2781), desc: "Координаты: -1095, 85, -4753" },
         { coords: convertCoords(3117, 2716), desc: "Координаты: -1223, 79, -4699" },
         { coords: convertCoords(3235, 2733), desc: "Координаты: -1190, 73, -4934" },
@@ -538,21 +538,13 @@ const MARKERS_DATA = {
         // Полесское
         {
             coords: convertCoords(3267, 2763),
-            desc: "Тайник",
-            image: "images/containers/stash_polesye.jpg",
+            desc: "Координаты: -1130, 84, -4997",
             extended: {
-                image: "images/containers/stash_polesye.jpg",
-                description: {
-                    ru: "Тайник в Полесском. Координаты: -1130, 84, -4997",
-                    en: "Stash in Polesye. Coordinates: -1130, 84, -4997"
-                },
-                info: {
-                    respawn: {
-                        ru: 'Неизвестно',
-                        en: 'Unknown'
-                    }
-                },
-                rewards: ['anomaly_filter', 'converter', 'black_box', 'titanium_frame', 'spare_parts']
+                rewards: [
+                { key: 'prima_cigarettes', count: 4 },
+                { key: 'lead', count: 1 },
+                { key: 'vodka_kazaki', count: 5 }
+                ]
             }
         },
     ],
