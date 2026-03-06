@@ -32,6 +32,7 @@
   "map.marker.chimera": "Chimera",
   "map.marker.controller": "Controller",
   "map.marker.trader": "Dealer",
+  "map.marker.stalkers": "Stalkers",
   "map.marker.zombified": "Zombified",
   "map.marker.zombified_cluster": "Zombified Cluster",
   "map.marker.bandits": "Bandits",
