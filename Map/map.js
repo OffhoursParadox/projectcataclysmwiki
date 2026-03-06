@@ -38,9 +38,9 @@ const MARKER_ICONS = {
     zombified_cluster: L.icon({ iconUrl: 'images/NPC/icons/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     bandits: L.icon({ iconUrl: 'images/NPC/icons/Bandits.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     bandit_camp: L.icon({ iconUrl: 'images/NPC/icons/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    military: L.icon({ iconUrl: 'images/NPC/icons/military.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    military: L.icon({ iconUrl: 'images/NPC/icons/military.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     monolith_outpost: L.icon({ iconUrl: 'images/NPC/icons/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    freedom: L.icon({ iconUrl: 'images/NPC/icons/freedom.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    freedom: L.icon({ iconUrl: 'images/NPC/icons/freedom.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     duty: L.icon({ iconUrl: 'images/NPC/icons/Duty.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
     sinner: L.icon({ iconUrl: 'images/NPC/icons/sinner.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     duty_freedom_spawn: L.icon({ iconUrl: 'images/NPC/icons/duty_freedom_spawn.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
@@ -57,13 +57,14 @@ const MARKER_ICONS = {
     base_hostile: L.icon({ iconUrl: 'images/locations/base-hostile.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] }),
     monolith: L.icon({ iconUrl: 'images/NPC/icons/Monolith.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     mercenary: L.icon({ iconUrl: 'images/NPC/icons/Mercs.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    stalkers: L.icon({ iconUrl: 'images/NPC/icons/stalker.webp', iconSize: [22, 24], iconAnchor: [11, 12], popupAnchor: [0, -12] }),
     boss_pharaoh: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
 };
 
 const ASTROLITE_TYPES = ['catalyst', 'wormhole'];
 const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe', 'stash_hidden'];
 const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'];
-const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh'];
+const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh'];
 const LOCATION_TYPES = ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile'];
 
 const RUSSIAN_MUTANT_NAMES = {
@@ -160,6 +161,9 @@ const DESC_TRANSLATIONS = {
     'Акбар': 'Akbar',
     'Ренегаты': 'Renegades',
     'Ренегат': 'Renegade',
+    'Сталкеры': 'Stalkers',
+    'Одиночки': 'Loners',
+    'Маклак': 'Maklak',
     'Банда Фараона': 'Pharaoh\'s Gang'
 };
 
