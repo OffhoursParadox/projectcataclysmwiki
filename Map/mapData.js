@@ -917,6 +917,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2760, 2732), desc: "Слепые псы" },
         { coords: convertCoords(2816, 2654), desc: "Слепые псы" },
         { coords: convertCoords(2815, 2829), desc: "Слепые псы" },
+        // Бар
+        { coords: convertCoords(2586, 3110), desc: "Слепые псы" },
+        { coords: convertCoords(2638, 3021), desc: "Слепые псы" },
+        { coords: convertCoords(2531, 3115), desc: "Слепые псы" },
     ],
 
     // ==================== МУТАНТЫ: ПСЕВДОСОБАКИ ====================
@@ -952,6 +956,9 @@ const MARKERS_DATA = {
         // Дикая территория
         { coords: convertCoords(2737, 2736), desc: "Пси-собака" },
         { coords: convertCoords(2687, 2794), desc: "Пси-собака" },
+        // Бар
+        { coords: convertCoords(2590, 3110), desc: "Пси-собака" },
+        { coords: convertCoords(2663, 3042), desc: "Пси-собака" },
     ],
 
     // ==================== МУТАНТЫ: ПЛОТИ ====================
@@ -985,6 +992,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(2815, 2288), desc: "Плоти" },
         // Дикая территория
         { coords: convertCoords(2650, 2827), desc: "Плоти" },
+        // Бар
+        { coords: convertCoords(2547, 3150), desc: "Плоти" },
     ],
 
     // ==================== МУТАНТЫ: КАБАНЫ ====================
@@ -1185,6 +1194,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(2740, 2767), desc: "Кровосос" },
         { coords: convertCoords(2754, 2860), desc: "Кровосос" },
         { coords: convertCoords(2774, 2842), desc: "Кровосос" },
+        // Бар
+        { coords: convertCoords(2504, 3194), desc: "Кровосос" },
     ],
 
     // ==================== МУТАНТЫ: МАТЁРЫЕ КРОВОСОСЫ ====================
