@@ -123,5 +123,15 @@
   "map.npc.mercsBase": "Mercenary Base",
   "map.npc.militaryCheckpoint": "Military checkpoint",
   "map.marker.mercenary": "Mercenaries",
-  "map.marker.boss_pharaoh": "Boss: Pharaoh's Gang"
+  "map.marker.boss_pharaoh": "Boss: Pharaoh's Gang",
+  "map.marker.boss_sumrak": "Boss: Sumrak Depot",
+  "map.marker.boss_iskatel": "Boss: Seeker",
+  "map.reward.zombie_hand": "Zombie Hand",
+  "map.reward.controller_hand": "Controller Hand",
+  "map.reward.toy_airplane": "Toy Airplane",
+  "map.reward.snork_hand": "Snork Hand",
+  "map.reward.toy_car": "Toy Car",
+  "map.reward.toy_doll": "Toy Doll",
+  "map.reward.bandit_token": "Bandit Token",
+  "map.reward.stash_pda": "PDA with Stash Coordinates"
 }
