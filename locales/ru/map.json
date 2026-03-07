@@ -123,5 +123,15 @@
   "map.npc.mercsBase": "База Наемников",
   "map.npc.militaryCheckpoint": "Военный блокпост",
   "map.marker.mercenary": "Наёмники",
-  "map.marker.boss_pharaoh": "Босс: Банда Фараона"
+  "map.marker.boss_pharaoh": "Босс: Банда Фараона",
+    "map.marker.boss_sumrak": "Босс: Депо Сумрака",
+  "map.marker.boss_iskatel": "Босс: Искатель",
+  "map.reward.zombie_hand": "Рука зомби",
+  "map.reward.controller_hand": "Рука контролёра",
+  "map.reward.toy_airplane": "Игрушечный самолет",
+  "map.reward.snork_hand": "Рука снорка",
+  "map.reward.toy_car": "Игрушечная машина",
+  "map.reward.toy_doll": "Игрушечная кукла",
+  "map.reward.bandit_token": "Бандитский жетон",
+  "map.reward.stash_pda": "КПК с координатами общака"
 }
