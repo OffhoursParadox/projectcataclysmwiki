@@ -338,7 +338,15 @@ const MARKERS_DATA = {
         { coords: convertCoords(2145, 2160), desc: "Координаты: -2335, 83, -2754" },
         { coords: convertCoords(2015, 2054), desc: "Координаты: -2546, 79, -2494" },
         // Подземелья Агропрома
-        { coords: convertCoords(2200, 2347), desc: "Координаты: -1960, 58, -2865", level: "underground" }
+        { coords: convertCoords(2200, 2347), desc: "Координаты: -1960, 58, -2865", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1578, 2209), desc: "Координаты: -2238, 85, -1617" },
+        { coords: convertCoords(1730, 2519), desc: "Координаты: -1617, 85, -1922" },
+        { coords: convertCoords(1473, 2311), desc: "Координаты: -2035, 87, -1408" },
+        { coords: convertCoords(1571, 2188), desc: "Координаты: -2279, 85, -1604" },
+        { coords: convertCoords(1552, 2211), desc: "Координаты: -2233, 85, -1567" },
+        { coords: convertCoords(1887, 2374), desc: "Координаты: -1909, 91, -2237" },
+        { coords: convertCoords(1579, 2191), desc: "Координаты: -2274, 85, -1621" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ПРИПАСЫ ====================
@@ -514,7 +522,20 @@ const MARKERS_DATA = {
         { coords: convertCoords(2192, 2005), desc: "Координаты: -2645, 88, -2848" },
         { coords: convertCoords(2185, 2013), desc: "Координаты: -2628, 83, -2834" },
         // Подземелья Агропрома
-        { coords: convertCoords(2209, 2339), desc: "Координаты: -1978, 58, -2882", level: "underground" }
+        { coords: convertCoords(2209, 2339), desc: "Координаты: -1978, 58, -2882", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1746, 2451), desc: "Координаты: -1753, 85, -1954" },
+        { coords: convertCoords(1792, 2416), desc: "Координаты: -1823, 83, -2046" },
+        { coords: convertCoords(1631, 2264), desc: "Координаты: -2129, 83, -1724" },
+        { coords: convertCoords(1549, 2190), desc: "Координаты: -2275, 85, -1561" },
+        { coords: convertCoords(1582, 2197), desc: "Координаты: -2263, 81, -1626" },
+        { coords: convertCoords(1551, 2215), desc: "Координаты: -2226, 86, -1564" },
+        { coords: convertCoords(1772, 2514), desc: "Координаты: -1629, 86, -2007" },
+        { coords: convertCoords(1876, 2526), desc: "Координаты: -1603, 91, -2214" },
+        { coords: convertCoords(1473, 2308), desc: "Координаты: -2040, 86, -1409" },
+        { coords: convertCoords(1561, 2209), desc: "Координаты: -2239, 86, -1584" },
+        { coords: convertCoords(1887, 2368), desc: "Координаты: -1921, 90, -2236" },
+        { coords: convertCoords(1483, 2293), desc: "Координаты: -2071, 90, -1427" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: БОЧКИ ====================
@@ -736,7 +757,23 @@ const MARKERS_DATA = {
         { coords: convertCoords(2209, 2338), desc: "Координаты: -1979, 58, -2882", level: "underground" },
         { coords: convertCoords(2141, 2315), desc: "Координаты: -2024, 71, -2746", level: "underground" },
         { coords: convertCoords(2139, 2316), desc: "Координаты: -2024, 71, -2742", level: "underground" },
-        { coords: convertCoords(2149, 2342), desc: "Координаты: -1971, 79, -2761", level: "underground" }
+        { coords: convertCoords(2149, 2342), desc: "Координаты: -1971, 79, -2761", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1650, 2210), desc: "Координаты: -2236, 88, -1762" },
+        { coords: convertCoords(1768, 2508), desc: "Координаты: -1640, 85, -1998" },
+        { coords: convertCoords(1870, 2524), desc: "Координаты: -1607, 91, -2202" },
+        { coords: convertCoords(1786, 2411), desc: "Координаты: -1834, 83, -2033" },
+        { coords: convertCoords(1786, 2509), desc: "Координаты: -1638, 85, -2033" },
+        { coords: convertCoords(1582, 2197), desc: "Координаты: -2262, 84, -1625" },
+        { coords: convertCoords(1579, 2195), desc: "Координаты: -2266, 85, -1621" },
+        { coords: convertCoords(1468, 2298), desc: "Координаты: -2060, 86, -1397" },
+        { coords: convertCoords(1547, 2214), desc: "Координаты: -2229, 85, -1556" },
+        { coords: convertCoords(1736, 2528), desc: "Координаты: -1600, 85, -1935" },
+        { coords: convertCoords(1741, 2452), desc: "Координаты: -1752, 85, -1944" },
+        { coords: convertCoords(1549, 2198), desc: "Координаты: -2260, 85, -1560" },
+        { coords: convertCoords(1580, 2212), desc: "Координаты: -2233, 85, -1623" },
+        { coords: convertCoords(1489, 2293), desc: "Координаты: -2070, 86, -1441" },
+        { coords: convertCoords(1876, 2515), desc: "Координаты: -1625, 91, -2215" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ИНСТРУМЕНТЫ ====================
@@ -924,7 +961,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2143, 2155), desc: "Координаты: -2345, 78, -2751" },
         // Подземелья Агропрома
         { coords: convertCoords(2212, 2347), desc: "Координаты: -1960, 58, -2888", level: "underground" },
-        { coords: convertCoords(2143, 2342), desc: "Координаты: -1971, 72, -2751", level: "underground" }
+        { coords: convertCoords(2143, 2342), desc: "Координаты: -1971, 72, -2751", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1563, 2217), desc: "Координаты: -2222, 85, -1587" },
+        { coords: convertCoords(1879, 2372), desc: "Координаты: -1911, 91, -2219" },
+        { coords: convertCoords(1552, 2193), desc: "Координаты: -2269, 84, -1566" },
+        { coords: convertCoords(1743, 2510), desc: "Координаты: -1637, 85, -1947" },
+        { coords: convertCoords(1572, 2189), desc: "Координаты: -2278, 86, -1606" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: НАУЧНОЕ ОБОРУДОВАНИЕ ====================
@@ -1252,7 +1295,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2295, 2484), desc: "Слепые псы" },
         { coords: convertCoords(2098, 2348), desc: "Слепые псы" },
         { coords: convertCoords(2263, 2160), desc: "Слепые псы" },
-        { coords: convertCoords(2062, 2128), desc: "Слепые псы" }
+        { coords: convertCoords(2062, 2128), desc: "Слепые псы" },
+        // Редколесье
+        { coords: convertCoords(1635, 2597), desc: "Слепые псы" },
+        { coords: convertCoords(1523, 2426), desc: "Слепые псы" },
+        { coords: convertCoords(1634, 2172), desc: "Слепые псы" },
+        { coords: convertCoords(1836, 2524), desc: "Слепые псы" },
+        { coords: convertCoords(1947, 2521), desc: "Слепые псы" },
     ],
 
     // ==================== МУТАНТЫ: ПСЕВДОСОБАКИ ====================
@@ -1322,7 +1371,10 @@ const MARKERS_DATA = {
         // Агропром
         { coords: convertCoords(2195, 2136), desc: "Пси-собака" },
         { coords: convertCoords(2175, 2410), desc: "Пси-собака" },
-        { coords: convertCoords(2374, 2328), desc: "Пси-собака" }
+        { coords: convertCoords(2374, 2328), desc: "Пси-собака" },
+        // Редколесье
+        { coords: convertCoords(1946, 2519), desc: "Пси-собака" },
+        { coords: convertCoords(1634, 2170), desc: "Пси-собака" },
     ],
 
     // ==================== МУТАНТЫ: ПЛОТИ ====================
@@ -1376,7 +1428,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2273, 2297), desc: "Плоти" },
         { coords: convertCoords(2241, 2284), desc: "Плоти" },
         { coords: convertCoords(2199, 2248), desc: "Плоти" },
-        { coords: convertCoords(2032, 2280), desc: "Плоти" }
+        { coords: convertCoords(2032, 2280), desc: "Плоти" },
+        // Редколесье
+        { coords: convertCoords(1565, 2468), desc: "Плоти" },
+        { coords: convertCoords(1747, 2165), desc: "Плоти" },
+        { coords: convertCoords(1918, 2519), desc: "Плоти" },
+        { coords: convertCoords(1789, 2500), desc: "Плоти" },
+        { coords: convertCoords(1578, 2277), desc: "Плоти" },
     ],
 
     // ==================== МУТАНТЫ: КАБАНЫ ====================
@@ -1425,7 +1483,14 @@ const MARKERS_DATA = {
         { coords: convertCoords(2384, 2014), desc: "Кабаны" },
         { coords: convertCoords(1986, 2185), desc: "Кабаны" },
         { coords: convertCoords(2090, 2194), desc: "Кабаны" },
-        { coords: convertCoords(2260, 2107), desc: "Кабаны" }
+        { coords: convertCoords(2260, 2107), desc: "Кабаны" },
+        // Редколесье
+        { coords: convertCoords(1881, 2413), desc: "Кабаны" },
+        { coords: convertCoords(1561, 2502), desc: "Кабаны" },
+        { coords: convertCoords(1662, 2245), desc: "Кабаны" },
+        { coords: convertCoords(1800, 2363), desc: "Кабаны" },
+        { coords: convertCoords(1726, 2161), desc: "Кабаны" },
+        { coords: convertCoords(1869, 2319), desc: "Кабаны" },
     ],
 
     // ==================== МУТАНТЫ: КРЫСЫ ====================
@@ -1543,7 +1608,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2228, 1985), desc: "Снорки" },
         { coords: convertCoords(2339, 2047), desc: "Снорки" },
         // Подземелья Агропрома
-        { coords: convertCoords(2048, 2407), desc: "Снорки", level: "underground" }
+        { coords: convertCoords(2048, 2407), desc: "Снорки", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1878, 2490), desc: "Снорки" },
+        { coords: convertCoords(1578, 2309), desc: "Снорки" },
     ],
 
     // ==================== МУТАНТЫ: ЗОМБИ ====================
@@ -1613,7 +1681,9 @@ const MARKERS_DATA = {
         // Подземелья Агропрома
         { coords: convertCoords(2132, 2408), desc: "Зомби", level: "underground" },
         { coords: convertCoords(2195, 2320), desc: "Зомби", level: "underground" },
-        { coords: convertCoords(2133, 2370), desc: "Зомби", level: "underground" }
+        { coords: convertCoords(2133, 2370), desc: "Зомби", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1884, 2375), desc: "Зомби" },
     ],
 
     // ==================== МУТАНТЫ: КРОВОСОСЫ ====================
@@ -1685,7 +1755,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2206, 2450), desc: "Кровосос" },
         { coords: convertCoords(2200, 2246), desc: "Кровосос" },
         // Подземелья Агропрома
-        { coords: convertCoords(2107, 2393), desc: "Кровосос", level: "underground" }
+        { coords: convertCoords(2107, 2393), desc: "Кровосос", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1866, 2373), desc: "Кровосос" },
+        { coords: convertCoords(1592, 2616), desc: "Кровосос" },
     ],
 
     // ==================== МУТАНТЫ: МАТЁРЫЕ КРОВОСОСЫ ====================
@@ -1719,7 +1792,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2274, 2239), desc: "Матёрый кровосос" },
         // Подземелья Агропрома
         { coords: convertCoords(2221, 2414), desc: "Матёрый кровосос", level: "underground" },
-        { coords: convertCoords(2217, 2314), desc: "Матёрый кровосос", level: "underground" }
+        { coords: convertCoords(2217, 2314), desc: "Матёрый кровосос", level: "underground" },
+        // Редколесье
+        { coords: convertCoords(1798, 2363), desc: "Матёрый кровосос" },
+        { coords: convertCoords(1772, 2510), desc: "Матёрый кровосос" },
     ],
 
     // ==================== МУТАНТЫ: ХИМЕРЫ ====================
