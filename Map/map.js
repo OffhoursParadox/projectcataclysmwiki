@@ -41,7 +41,7 @@ const MARKER_ICONS = {
     military: L.icon({ iconUrl: 'images/NPC/icons/military.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     monolith_outpost: L.icon({ iconUrl: 'images/NPC/icons/npc_outpost.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     freedom: L.icon({ iconUrl: 'images/NPC/icons/freedom.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    duty: L.icon({ iconUrl: 'images/NPC/icons/Duty.png', iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14] }),
+    duty: L.icon({ iconUrl: 'images/NPC/icons/Duty.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     sinner: L.icon({ iconUrl: 'images/NPC/icons/sinner.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     duty_freedom_spawn: L.icon({ iconUrl: 'images/NPC/icons/duty_freedom_spawn.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_prince: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
@@ -150,7 +150,7 @@ const DESC_TRANSLATIONS = {
     'Тёмная долина': 'Dark Valley',
     'Кордон': 'Cordon',
     'Топи': 'Marshes',
-    'Росстань': 'Rosstань',
+    'Росстань': 'Rosstan',
     'Свалка': 'Garbage',
     'Бар «100 рентген»': 'Bar "100 Rads"',
     'Точка сохранения доступна': 'Spawn save available',
@@ -172,8 +172,9 @@ const DESC_TRANSLATIONS = {
 };
 
 let map;
-let markerLayers = {};
+let markerLayers = {};          // { type: { surface: L.layerGroup, underground: L.layerGroup } }
 let activeFilters = new Set();
+let currentLevel = 'surface';   // 'surface' | 'underground'
 
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -253,6 +254,11 @@ const INFO_LABELS = {
         ru: 'Здоровье',
         en: 'Health',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+    },
+    location: {
+        ru: 'Расположение',
+        en: 'Location',
+        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
     }
 };
 
@@ -272,8 +278,12 @@ function createSimplePopup(type, markerData, typeName) {
     const desc = translateDescription(cleanDesc, type);
     const descStripped = desc.replace(/<br\s*\/?>/gi, '').trim();
 
+    const levelLabel = markerData.level === 'underground'
+        ? `<span style="color:#a78bfa;font-size:11px;font-weight:600;margin-left:8px;">${isEnglish() ? '⛏ Underground' : '⛏ Подземелье'}</span>`
+        : '';
+
     let html = `<div class="marker-popup marker-popup--simple">`;
-    html += `<div class="marker-popup__title">${escapeHtml(typeName)}</div>`;
+    html += `<div class="marker-popup__title">${escapeHtml(typeName)}${levelLabel}</div>`;
 
     if (markerData.image || descStripped) {
         html += `<div class="marker-popup__body">`;
@@ -306,8 +316,12 @@ function createExtendedPopup(type, markerData, typeName, ext) {
     const rewardsLabel = en ? 'Rewards' : 'Награды';
     const { coords } = extractCoords(markerData.desc);
 
+    const levelLabel = markerData.level === 'underground'
+        ? `<span style="color:#a78bfa;font-size:11px;font-weight:600;margin-left:8px;">${en ? '⛏ Underground' : '⛏ Подземелье'}</span>`
+        : '';
+
     let html = `<div class="marker-popup">`;
-    html += `<div class="marker-popup__title">${escapeHtml(typeName)}</div>`;
+    html += `<div class="marker-popup__title">${escapeHtml(typeName)}${levelLabel}</div>`;
     html += `<div class="marker-popup__body">`;
 
     const image = ext.image || markerData.image;
@@ -340,6 +354,16 @@ function createExtendedPopup(type, markerData, typeName, ext) {
                     <span class="marker-popup__info-value">${escapeHtml(value)}</span>
                 </div>`;
             });
+
+            if (markerData.level === 'underground') {
+                const locLabel = INFO_LABELS.location;
+                html += `<div class="marker-popup__info-row" style="border-color:rgba(167,139,250,0.3);">
+                    <span class="marker-popup__info-icon" style="color:#a78bfa;">${locLabel.icon}</span>
+                    <span class="marker-popup__info-label">${escapeHtml(en ? locLabel.en : locLabel.ru)}</span>
+                    <span class="marker-popup__info-value" style="color:#a78bfa;">${escapeHtml(en ? 'Underground' : 'Подземелье')}</span>
+                </div>`;
+            }
+
             html += `</div>`;
         }
 
@@ -489,6 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFilters();
     initSidebar();
     initControls();
+    initLevelSwitcher();
     updateMarkerCounts();
     setTimeout(() => UserMarkerTool.init(), 100);
 });
@@ -499,6 +524,7 @@ document.addEventListener('languageChanged', () => {
     UserMarkerTool.renderMarkersList();
     UserMarkerTool.updateToggleButtonText();
     UserMarkerTool.updateSelectedCategory();
+    updateLevelSwitcherText();
 });
 
 function initMap() {
@@ -543,9 +569,13 @@ function initMarkers() {
     if (typeof MARKERS_DATA === 'undefined') return console.error('MARKERS_DATA not loaded!');
 
     Object.keys(MARKERS_DATA).forEach(type => {
-        markerLayers[type] = L.layerGroup();
+        markerLayers[type] = {
+            surface: L.layerGroup(),
+            underground: L.layerGroup()
+        };
 
         MARKERS_DATA[type].forEach(markerData => {
+            const level = markerData.level || 'surface';
             const latLng = map.unproject([markerData.coords[1], markerData.coords[0]], MAP_CONFIG.nativeZoom);
             const icon = MARKER_ICONS[type];
             if (!icon) return;
@@ -557,24 +587,112 @@ function initMarkers() {
             const marker = L.marker(latLng, { icon });
             marker.markerType = type;
             marker.markerData = markerData;
+            marker.markerLevel = level;
             marker.bindPopup(() => createMarkerPopup(type, markerData), popupOptions);
-            markerLayers[type].addLayer(marker);
+
+            markerLayers[type][level].addLayer(marker);
         });
 
-        markerLayers[type].addTo(map);
+        // Add only the current level's layer group to the map
+        markerLayers[type][currentLevel].addTo(map);
         activeFilters.add(type);
     });
 }
 
 function refreshMarkersPopups() {
-    Object.values(markerLayers).forEach(layerGroup => {
-        layerGroup.eachLayer(marker => {
-            if (marker.markerType && marker.markerData) {
-                marker.setPopupContent(createMarkerPopup(marker.markerType, marker.markerData));
-            }
+    Object.values(markerLayers).forEach(levelGroups => {
+        ['surface', 'underground'].forEach(level => {
+            levelGroups[level].eachLayer(marker => {
+                if (marker.markerType && marker.markerData) {
+                    marker.setPopupContent(createMarkerPopup(marker.markerType, marker.markerData));
+                }
+            });
         });
     });
 }
+
+// ==================== LEVEL SWITCHER ====================
+
+function initLevelSwitcher() {
+    const savedLevel = localStorage.getItem('mapLevel');
+    if (savedLevel === 'underground') {
+        switchLevel('underground', false);
+    }
+
+    document.getElementById('levelSurface')?.addEventListener('click', () => switchLevel('surface'));
+    document.getElementById('levelUnderground')?.addEventListener('click', () => switchLevel('underground'));
+
+    // Keyboard shortcut: Tab to toggle levels
+    document.addEventListener('keydown', (e) => {
+        // Only if no modals/inputs are focused
+        if (e.key === '`' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+            const active = document.activeElement;
+            if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) return;
+            e.preventDefault();
+            switchLevel(currentLevel === 'surface' ? 'underground' : 'surface');
+        }
+    });
+}
+
+function switchLevel(newLevel, animate = true) {
+    if (newLevel === currentLevel && document.querySelector('.level-switcher__btn--active')) return;
+
+    const oldLevel = currentLevel;
+    currentLevel = newLevel;
+    localStorage.setItem('mapLevel', newLevel);
+
+    // Update UI buttons
+    document.querySelectorAll('.level-switcher__btn').forEach(btn => {
+        btn.classList.remove('level-switcher__btn--active', 'level-switcher__btn--underground-active');
+    });
+
+    const activeBtn = document.getElementById(newLevel === 'surface' ? 'levelSurface' : 'levelUnderground');
+    if (activeBtn) {
+        activeBtn.classList.add('level-switcher__btn--active');
+        if (newLevel === 'underground') {
+            activeBtn.classList.add('level-switcher__btn--underground-active');
+        }
+    }
+
+    // Update map container class for visual effect
+    const mapContainer = document.getElementById('map');
+    if (newLevel === 'underground') {
+        mapContainer?.classList.add('underground-active');
+    } else {
+        mapContainer?.classList.remove('underground-active');
+    }
+
+    // Swap marker layers
+    Object.keys(markerLayers).forEach(type => {
+        if (!activeFilters.has(type)) return;
+
+        const layers = markerLayers[type];
+        if (layers[oldLevel]) map.removeLayer(layers[oldLevel]);
+        if (layers[newLevel]) layers[newLevel].addTo(map);
+    });
+
+    // Close any open popups
+    map.closePopup();
+
+    // Update counts
+    updateMarkerCounts();
+}
+
+function updateLevelSwitcherText() {
+    const surfaceBtn = document.getElementById('levelSurface');
+    const undergroundBtn = document.getElementById('levelUnderground');
+
+    if (surfaceBtn) {
+        const span = surfaceBtn.querySelector('span');
+        if (span) span.textContent = t('map.level.surface');
+    }
+    if (undergroundBtn) {
+        const span = undergroundBtn.querySelector('span');
+        if (span) span.textContent = t('map.level.underground');
+    }
+}
+
+// ==================== FILTERS ====================
 
 function initFilters() {
     const saved = JSON.parse(localStorage.getItem('mapFilters') || '{}');
@@ -586,7 +704,9 @@ function initFilters() {
             checkbox.checked = saved[filter];
             if (!saved[filter]) {
                 activeFilters.delete(filter);
-                if (markerLayers[filter]) map.removeLayer(markerLayers[filter]);
+                if (markerLayers[filter]) {
+                    map.removeLayer(markerLayers[filter][currentLevel]);
+                }
             }
         }
 
@@ -606,10 +726,14 @@ function initFilters() {
 function toggleFilter(filterType, isActive) {
     if (isActive) {
         activeFilters.add(filterType);
-        markerLayers[filterType]?.addTo(map);
+        if (markerLayers[filterType]) {
+            markerLayers[filterType][currentLevel].addTo(map);
+        }
     } else {
         activeFilters.delete(filterType);
-        if (markerLayers[filterType]) map.removeLayer(markerLayers[filterType]);
+        if (markerLayers[filterType]) {
+            map.removeLayer(markerLayers[filterType][currentLevel]);
+        }
     }
     updateMarkerCounts();
 }
@@ -627,14 +751,39 @@ function updateMarkerCounts() {
 
     Object.keys(MARKERS_DATA).forEach(type => {
         const el = document.querySelector(`[data-count="${type}"]`);
-        if (el) el.textContent = MARKERS_DATA[type].length;
+        if (el) {
+            const total = MARKERS_DATA[type].length;
+            const currentCount = MARKERS_DATA[type].filter(m => (m.level || 'surface') === currentLevel).length;
+            const otherCount = total - currentCount;
+
+            if (otherCount > 0) {
+                el.innerHTML = `${currentCount} <span class="filter-item__underground-count" title="${
+                    currentLevel === 'surface'
+                        ? (isEnglish() ? 'Underground' : 'Подземелье')
+                        : (isEnglish() ? 'Surface' : 'Поверхность')
+                }">+${otherCount}</span>`;
+            } else {
+                el.textContent = currentCount;
+            }
+        }
     });
 
     if (typeof FILTER_CATEGORIES !== 'undefined') {
         Object.entries(FILTER_CATEGORIES).forEach(([cat, types]) => {
-            const total = types.reduce((sum, t) => sum + (MARKERS_DATA[t]?.length || 0), 0);
+            const currentCount = types.reduce((sum, t) => {
+                return sum + (MARKERS_DATA[t]?.filter(m => (m.level || 'surface') === currentLevel).length || 0);
+            }, 0);
+            const totalCount = types.reduce((sum, t) => sum + (MARKERS_DATA[t]?.length || 0), 0);
+            const otherCount = totalCount - currentCount;
+
             const el = document.getElementById(`count${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
-            if (el) el.textContent = total;
+            if (el) {
+                if (otherCount > 0) {
+                    el.innerHTML = `${currentCount} <span class="filter-item__underground-count">+${otherCount}</span>`;
+                } else {
+                    el.textContent = currentCount;
+                }
+            }
         });
     }
 }
@@ -862,7 +1011,11 @@ const UserMarkerTool = {
         const pixelY = Math.round(point.y);
         this.currentCoords = { latlng, pixelX, pixelY };
 
-        document.getElementById('modalCoords').textContent = `X: ${pixelX}, Y: ${pixelY}`;
+        const levelText = currentLevel === 'underground'
+            ? (isEnglish() ? ' (Underground)' : ' (Подземелье)')
+            : '';
+
+        document.getElementById('modalCoords').textContent = `X: ${pixelX}, Y: ${pixelY}${levelText}`;
         document.getElementById('markerCategory').value = '';
         document.getElementById('markerDescription').value = '';
         document.getElementById('markerGameCoords').value = '';
@@ -911,6 +1064,7 @@ const UserMarkerTool = {
         const marker = {
             id: Date.now(),
             category,
+            level: currentLevel,
             pixelX: this.currentCoords.pixelX,
             pixelY: this.currentCoords.pixelY,
             latlng: this.currentCoords.latlng,
@@ -931,10 +1085,20 @@ const UserMarkerTool = {
         const icon = MARKER_ICONS[marker.category];
         if (!icon) return;
 
+        const isUnderground = marker.level === 'underground';
+        const badgeHtml = isUnderground
+            ? `<div class="level-badge" title="${isEnglish() ? 'Underground' : 'Подземелье'}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+               </div>`
+            : '';
+
         const customIcon = L.divIcon({
             className: 'user-marker-wrapper',
             html: `<div class="user-marker-icon">
                 <img src="${icon.options.iconUrl}" style="width:${icon.options.iconSize[0]}px;height:${icon.options.iconSize[1]}px;">
+                ${badgeHtml}
             </div>`,
             iconSize: icon.options.iconSize,
             iconAnchor: icon.options.iconAnchor
@@ -944,15 +1108,35 @@ const UserMarkerTool = {
         leafletMarker.userMarkerData = marker;
         leafletMarker.bindPopup(() => this.createUserMarkerPopup(marker));
         leafletMarker.markerId = marker.id;
+        leafletMarker.markerLevel = marker.level || 'surface';
         this.markerLayerGroup.addLayer(leafletMarker);
+
+        // Show/hide based on current level
+        this.updateUserMarkerVisibility();
+    },
+
+    updateUserMarkerVisibility() {
+        this.markerLayerGroup.eachLayer(layer => {
+            if (!layer.userMarkerData) return;
+            const markerLevel = layer.markerLevel || 'surface';
+            const el = layer.getElement?.();
+            if (el) {
+                el.style.display = markerLevel === currentLevel ? '' : 'none';
+            }
+        });
     },
 
     createUserMarkerPopup(marker) {
         const categoryName = escapeHtml(this.getCategoryName(marker.category));
         const yourMarker = escapeHtml(t('map.popup.yourMarker'));
+        const isUnderground = marker.level === 'underground';
+
+        const levelLabel = isUnderground
+            ? `<span style="color:#a78bfa;font-size:11px;font-weight:600;margin-left:8px;">${isEnglish() ? '⛏ Underground' : '⛏ Подземелье'}</span>`
+            : '';
 
         let popupContent = `<div class="marker-popup marker-popup--simple">
-            <div class="marker-popup__title">${categoryName} (${yourMarker})</div>
+            <div class="marker-popup__title">${categoryName} (${yourMarker})${levelLabel}</div>
             <div class="marker-popup__body">`;
 
         if (marker.description) {
@@ -997,6 +1181,10 @@ const UserMarkerTool = {
     focusMarker(id) {
         const marker = this.userMarkers.find(m => m.id === id);
         if (marker) {
+            // Switch to the marker's level if needed
+            if (marker.level && marker.level !== currentLevel) {
+                switchLevel(marker.level);
+            }
             map.setView(marker.latlng, MAP_CONFIG.maxZoom - 1);
             this.markerLayerGroup.eachLayer(layer => {
                 if (layer.markerId === id) layer.openPopup();
@@ -1024,11 +1212,16 @@ const UserMarkerTool = {
             const copyTitle = escapeHtml(t('map.userMarkers.copy'));
             const deleteTitle = escapeHtml(t('map.userMarkers.delete'));
 
+            const isUnderground = marker.level === 'underground';
+            const levelBadge = isUnderground
+                ? `<span style="color:#a78bfa;font-size:10px;margin-left:4px;">⛏</span>`
+                : '';
+
             return `<div class="user-marker-item" data-id="${marker.id}">
                 <div class="user-marker-item__header">
                     <div class="user-marker-item__type">
                         <img src="${iconUrl}" class="user-marker-item__type-icon" alt="">
-                        ${categoryName}
+                        ${categoryName}${levelBadge}
                     </div>
                     <div class="user-marker-item__actions">
                         <button class="user-marker-item__btn" onclick="UserMarkerTool.focusMarker(${marker.id})" title="${showOnMap}">
@@ -1078,6 +1271,9 @@ const UserMarkerTool = {
                 ? `• Category (code): ${marker.category}\n`
                 : `• Категория (код): ${marker.category}\n`;
             text += en
+                ? `• Level: ${marker.level === 'underground' ? 'Underground' : 'Surface'}\n`
+                : `• Уровень: ${marker.level === 'underground' ? 'Подземелье' : 'Поверхность'}\n`;
+            text += en
                 ? `• Map coordinates: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`
                 : `• Координаты на карте: X: ${marker.pixelX}, Y: ${marker.pixelY}\n`;
 
@@ -1098,7 +1294,8 @@ const UserMarkerTool = {
             const desc = marker.gameCoords
                 ? (en ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
                 : (marker.description || this.getCategoryName(marker.category));
-            text += `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },\n\n`;
+            const levelProp = marker.level === 'underground' ? `, level: "underground"` : '';
+            text += `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}"${levelProp} },\n\n`;
         });
 
         return text;
@@ -1112,7 +1309,8 @@ const UserMarkerTool = {
         const desc = marker.gameCoords
             ? (en ? `Coordinates: ${marker.gameCoords}` : `Координаты: ${marker.gameCoords}`)
             : (marker.description || this.getCategoryName(marker.category));
-        const code = `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}" },`;
+        const levelProp = marker.level === 'underground' ? `, level: "underground"` : '';
+        const code = `{ coords: convertCoords(${marker.pixelY}, ${marker.pixelX}), desc: "${desc}"${levelProp} },`;
 
         navigator.clipboard.writeText(code)
             .then(() => this.showToast(t('map.toast.markerCodeCopied')))
@@ -1160,6 +1358,7 @@ const UserMarkerTool = {
             if (data) {
                 JSON.parse(data).forEach(m => {
                     m.latlng = L.latLng(m.latlng.lat, m.latlng.lng);
+                    if (!m.level) m.level = 'surface';
                     this.userMarkers.push(m);
                     this.addMarkerToMap(m);
                 });
