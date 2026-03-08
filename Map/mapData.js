@@ -56,6 +56,13 @@ const REWARD_ICONS = {
     toy_car: { icon: 'images/rewards/toy_car.png', name: { ru: 'Игрушечная машина', en: 'Toy Car' } },
     toy_doll: { icon: 'images/rewards/toy_doll.png', name: { ru: 'Игрушечная кукла', en: 'Toy Doll' } },
     hazy_pollen: { icon: 'images/rewards/hazy_pollen.png', name: { ru: 'Мглистая пыльца', en: 'Hazy Pollen' } },
+    ammo_9x39_sp6: { icon: 'images/rewards/ammo_9x39_sp6.png', name: { ru: 'Патроны 9x39 мм СП-6', en: '9x39 mm SP-6 Ammo' } },
+    medkit: { icon: 'images/rewards/medkit.png', name: { ru: 'Индивидуальная аптечка', en: 'Individual First Aid Kit' } },
+    tourist_breakfast: { icon: 'images/rewards/tourist_breakfast.png', name: { ru: 'Консервы "Завтрак туриста"', en: '"Tourist\'s Breakfast" Canned Food' } },
+    morphine: { icon: 'images/rewards/morphine.png', name: { ru: 'Морфин', en: 'Morphine' } },
+    ammo_45_acp: { icon: 'images/rewards/ammo_45_acp.png', name: { ru: 'Патроны .45 ACP', en: '.45 ACP Ammo' } },
+    belomorkanal: { icon: 'images/rewards/belomorkanal.png', name: { ru: 'Пачка сигарет "Беломорканал"', en: '"Belomorkanal" Cigarettes' } },
+    tarpaulin: { icon: 'images/rewards/tarpaulin.png', name: { ru: 'Брезент', en: 'Tarpaulin' } },
 };
 
 // ============================================================
@@ -318,6 +325,20 @@ const MARKERS_DATA = {
         { coords: convertCoords(2239, 4055), desc: "Координаты: 1454, 78, -2940" },
         { coords: convertCoords(2236, 4081), desc: "Координаты: 1506, 87, -2934" },
         { coords: convertCoords(2376, 4060), desc: "Координаты: 1464, 79, -3214" },
+        // Агропром
+        { coords: convertCoords(2142, 2155), desc: "Координаты: -2345, 75, -2748" },
+        { coords: convertCoords(2188, 2024), desc: "Координаты: -2608, 83, -2840" },
+        { coords: convertCoords(2190, 2006), desc: "Координаты: -2644, 80, -2845" },
+        { coords: convertCoords(2199, 1979), desc: "Координаты: -2696, 89, -2863" },
+        { coords: convertCoords(2023, 2098), desc: "Координаты: -2458, 81, -2510" },
+        { coords: convertCoords(2224, 1984), desc: "Координаты: -2686, 83, -2912" },
+        { coords: convertCoords(2206, 2021), desc: "Координаты: -2613, 85, -2876" },
+        { coords: convertCoords(2127, 2160), desc: "Координаты: -2335, 81, -2717" },
+        { coords: convertCoords(2222, 2037), desc: "Координаты: -2582, 85, -2908" },
+        { coords: convertCoords(2145, 2160), desc: "Координаты: -2335, 83, -2754" },
+        { coords: convertCoords(2015, 2054), desc: "Координаты: -2546, 79, -2494" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2200, 2347), desc: "Координаты: -1960, 58, -2865", level: "underground" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ПРИПАСЫ ====================
@@ -483,6 +504,17 @@ const MARKERS_DATA = {
         { coords: convertCoords(2226, 4076), desc: "Координаты: 1495, 88, -2913" },
         { coords: convertCoords(2258, 4050), desc: "Координаты: 1444, 79, -2977" },
         { coords: convertCoords(2353, 4057), desc: "Координаты: 1459, 79, -3167" },
+        // Агропром
+        { coords: convertCoords(2218, 2037), desc: "Координаты: -2582, 83, -2900" },
+        { coords: convertCoords(2187, 1984), desc: "Координаты: -2688, 89, -2837" },
+        { coords: convertCoords(2187, 1982), desc: "Координаты: -2690, 89, -2837" },
+        { coords: convertCoords(2145, 2159), desc: "Координаты: -2337, 79, -2754" },
+        { coords: convertCoords(2193, 1980), desc: "Координаты: -2695, 94, -2849" },
+        { coords: convertCoords(2425, 2335), desc: "Координаты: -1985, 85, -3315" },
+        { coords: convertCoords(2192, 2005), desc: "Координаты: -2645, 88, -2848" },
+        { coords: convertCoords(2185, 2013), desc: "Координаты: -2628, 83, -2834" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2209, 2339), desc: "Координаты: -1978, 58, -2882", level: "underground" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: БОЧКИ ====================
@@ -690,6 +722,21 @@ const MARKERS_DATA = {
         { coords: convertCoords(2269, 4081), desc: "Координаты: 1506, 79, -3000" },
         { coords: convertCoords(2326, 3832), desc: "Координаты: 1008, 76, -3113" },
         { coords: convertCoords(2360, 3845), desc: "Координаты: 1034, 86, -3181" },
+        // Агропром
+        { coords: convertCoords(2373, 1983), desc: "Координаты: -2689, 78, -3210" },
+        { coords: convertCoords(2097, 2164), desc: "Координаты: -2327, 82, -2658" },
+        { coords: convertCoords(2187, 1978), desc: "Координаты: -2699, 84, -2837" },
+        { coords: convertCoords(2124, 2160), desc: "Координаты: -2335, 79, -2712" },
+        { coords: convertCoords(2023, 2065), desc: "Координаты: -2524, 80, -2510" },
+        { coords: convertCoords(2229, 2030), desc: "Координаты: -2595, 84, -2923" },
+        { coords: convertCoords(2124, 2018), desc: "Координаты: -2619, 78, -2712" },
+        { coords: convertCoords(2011, 2056), desc: "Координаты: -2543, 82, -2486" },
+        { coords: convertCoords(2128, 2160), desc: "Координаты: -2336, 79, -2720" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2209, 2338), desc: "Координаты: -1979, 58, -2882", level: "underground" },
+        { coords: convertCoords(2141, 2315), desc: "Координаты: -2024, 71, -2746", level: "underground" },
+        { coords: convertCoords(2139, 2316), desc: "Координаты: -2024, 71, -2742", level: "underground" },
+        { coords: convertCoords(2149, 2342), desc: "Координаты: -1971, 79, -2761", level: "underground" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ИНСТРУМЕНТЫ ====================
@@ -866,6 +913,18 @@ const MARKERS_DATA = {
         { coords: convertCoords(2383, 4109), desc: "Координаты: 1561, 80, -3227" },
         { coords: convertCoords(2346, 4086), desc: "Координаты: 1516, 78, -3154" },
         { coords: convertCoords(2267, 4051), desc: "Координаты: 1445, 79, -2997" },
+        // Агропром
+        { coords: convertCoords(2187, 2008), desc: "Координаты: -2639, 82, -2838" },
+        { coords: convertCoords(2184, 2027), desc: "Координаты: -2601, 83, -2831" },
+        { coords: convertCoords(2246, 2006), desc: "Координаты: -2643, 83, -2957" },
+        { coords: convertCoords(2233, 2000), desc: "Координаты: -2656, 83, -2929" },
+        { coords: convertCoords(2007, 2097), desc: "Координаты: -2460, 80, -2478" },
+        { coords: convertCoords(2125, 2148), desc: "Координаты: -2359, 79, -2714" },
+        { coords: convertCoords(2145, 2159), desc: "Координаты: -2338, 82, -2754" },
+        { coords: convertCoords(2143, 2155), desc: "Координаты: -2345, 78, -2751" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2212, 2347), desc: "Координаты: -1960, 58, -2888", level: "underground" },
+        { coords: convertCoords(2143, 2342), desc: "Координаты: -1971, 72, -2751", level: "underground" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: НАУЧНОЕ ОБОРУДОВАНИЕ ====================
@@ -883,6 +942,9 @@ const MARKERS_DATA = {
         // Тёмная долина
         { coords: convertCoords(2204, 3768), desc: "Координаты: 880, 82, -2871" },
         { coords: convertCoords(2233, 3923), desc: "Координаты: 1191, 81, -2927" },
+        // Агропром
+        { coords: convertCoords(2011, 2064), desc: "Координаты: -2527, 80, -2486" },
+        { coords: convertCoords(2358, 1981), desc: "Координаты: -2693, 79, -3181" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ТАЙНИКИ ====================
@@ -950,6 +1012,23 @@ const MARKERS_DATA = {
                     { key: 'snork_hand', count: 1 },
                     { key: 'toy_car', count: 1 },
                     { key: 'toy_doll', count: 1 }
+                ]
+            }
+        },
+        // Подземелья Агропрома
+        { 
+            coords: convertCoords(2221, 2353), 
+            desc: "Координаты: -1950, 19, -2907", 
+            level: "underground",
+            extended: {
+                rewards: [
+                    { key: 'ammo_9x39_sp6', count: 20 },
+                    { key: 'medkit', count: 1 },
+                    { key: 'tourist_breakfast', count: 5 },
+                    { key: 'morphine', count: 1 },
+                    { key: 'ammo_45_acp', count: 50 },
+                    { key: 'belomorkanal', count: 2 },
+                    { key: 'tarpaulin', count: 1 }
                 ]
             }
         }
@@ -1071,6 +1150,18 @@ const MARKERS_DATA = {
         { coords: convertCoords(2228, 4076), desc: "Координаты: 1496, 88, -2917" },
         { coords: convertCoords(2346, 4087), desc: "Координаты: 1518, 79, -3154" },
         { coords: convertCoords(2368, 3862), desc: "Координаты: 1069, 91, -3199" },
+        // Агропром
+        { coords: convertCoords(2246, 2003), desc: "Координаты: -2650, 83, -2956" },
+        { coords: convertCoords(2382, 1982), desc: "Координаты: -2691, 79, -3228" },
+        { coords: convertCoords(2194, 1980), desc: "Координаты: -2695, 84, -2852" },
+        { coords: convertCoords(2427, 2330), desc: "Координаты: -1996, 84, -3318" },
+        { coords: convertCoords(2271, 2538), desc: "Координаты: -1579, 77, -3005" },
+        { coords: convertCoords(2143, 2156), desc: "Координаты: -2342, 82, -2750" },
+        { coords: convertCoords(2012, 2055), desc: "Координаты: -2546, 82, -2489" },
+        { coords: convertCoords(2124, 2159), desc: "Координаты: -2337, 78, -2713" },
+        { coords: convertCoords(2216, 2026), desc: "Координаты: -2604, 83, -2897" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2216, 2333), desc: "Координаты: -1990, 53, -2897", level: "underground" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СХРОНЫ ====================
@@ -1152,6 +1243,16 @@ const MARKERS_DATA = {
         { coords: convertCoords(2342, 3912), desc: "Слепые псы" },
         { coords: convertCoords(2192, 4185), desc: "Слепые псы" },
         { coords: convertCoords(2377, 3872), desc: "Слепые псы" },
+        // Агропром
+        { coords: convertCoords(2307, 2376), desc: "Слепые псы" },
+        { coords: convertCoords(2195, 2133), desc: "Слепые псы" },
+        { coords: convertCoords(2225, 2441), desc: "Слепые псы" },
+        { coords: convertCoords(2150, 2203), desc: "Слепые псы" },
+        { coords: convertCoords(2170, 2366), desc: "Слепые псы" },
+        { coords: convertCoords(2295, 2484), desc: "Слепые псы" },
+        { coords: convertCoords(2098, 2348), desc: "Слепые псы" },
+        { coords: convertCoords(2263, 2160), desc: "Слепые псы" },
+        { coords: convertCoords(2062, 2128), desc: "Слепые псы" }
     ],
 
     // ==================== МУТАНТЫ: ПСЕВДОСОБАКИ ====================
@@ -1170,6 +1271,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2230, 3711), desc: "Псевдособаки" },
         { coords: convertCoords(2484, 3841), desc: "Псевдособаки" },
         { coords: convertCoords(2543, 3723), desc: "Псевдособаки" },
+        // Агропром
+        { coords: convertCoords(2076, 2334), desc: "Псевдособаки" },
+        { coords: convertCoords(2098, 2019), desc: "Псевдособаки" },
+        { coords: convertCoords(2361, 2467), desc: "Псевдособаки" },
+        { coords: convertCoords(2275, 2041), desc: "Псевдособаки" },
+        { coords: convertCoords(2133, 2435), desc: "Псевдособаки" },
+        { coords: convertCoords(2059, 2120), desc: "Псевдособаки" }
     ],
 
     // ==================== МУТАНТЫ: ПСИ-СОБАКА ====================
@@ -1211,6 +1319,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2376, 3866), desc: "Пси-собака" },
         { coords: convertCoords(2336, 4089), desc: "Пси-собака" },
         { coords: convertCoords(2498, 3620), desc: "Пси-собака" },
+        // Агропром
+        { coords: convertCoords(2195, 2136), desc: "Пси-собака" },
+        { coords: convertCoords(2175, 2410), desc: "Пси-собака" },
+        { coords: convertCoords(2374, 2328), desc: "Пси-собака" }
     ],
 
     // ==================== МУТАНТЫ: ПЛОТИ ====================
@@ -1258,6 +1370,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2494, 3975), desc: "Плоти" },
         { coords: convertCoords(2290, 4014), desc: "Плоти" },
         { coords: convertCoords(2330, 3710), desc: "Плоти" },
+        // Агропром
+        { coords: convertCoords(2121, 2051), desc: "Плоти" },
+        { coords: convertCoords(2379, 2406), desc: "Плоти" },
+        { coords: convertCoords(2273, 2297), desc: "Плоти" },
+        { coords: convertCoords(2241, 2284), desc: "Плоти" },
+        { coords: convertCoords(2199, 2248), desc: "Плоти" },
+        { coords: convertCoords(2032, 2280), desc: "Плоти" }
     ],
 
     // ==================== МУТАНТЫ: КАБАНЫ ====================
@@ -1299,11 +1418,20 @@ const MARKERS_DATA = {
         { coords: convertCoords(2469, 4106), desc: "Кабаны" },
         { coords: convertCoords(2255, 3836), desc: "Кабаны" },
         { coords: convertCoords(2268, 3649), desc: "Кабаны" },
+        // Агропром
+        { coords: convertCoords(2296, 1971), desc: "Кабаны" },
+        { coords: convertCoords(2391, 2474), desc: "Кабаны" },
+        { coords: convertCoords(2099, 2409), desc: "Кабаны" },
+        { coords: convertCoords(2384, 2014), desc: "Кабаны" },
+        { coords: convertCoords(1986, 2185), desc: "Кабаны" },
+        { coords: convertCoords(2090, 2194), desc: "Кабаны" },
+        { coords: convertCoords(2260, 2107), desc: "Кабаны" }
     ],
 
     // ==================== МУТАНТЫ: КРЫСЫ ====================
     rat: [
-
+        // Подземелья Агропрома
+        { coords: convertCoords(2240, 2312), desc: "Крысы", level: "underground" }
     ],
 
     // ==================== МУТАНТЫ: СНОРКИ ====================
@@ -1408,6 +1536,14 @@ const MARKERS_DATA = {
         { coords: convertCoords(2264, 3754), desc: "Снорки" },
         { coords: convertCoords(2455, 3835), desc: "Снорки" },
         { coords: convertCoords(2355, 3898), desc: "Снорки" },
+        // Агропром
+        { coords: convertCoords(2085, 2045), desc: "Снорки" },
+        { coords: convertCoords(2350, 2144), desc: "Снорки" },
+        { coords: convertCoords(2351, 1998), desc: "Снорки" },
+        { coords: convertCoords(2228, 1985), desc: "Снорки" },
+        { coords: convertCoords(2339, 2047), desc: "Снорки" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2048, 2407), desc: "Снорки", level: "underground" }
     ],
 
     // ==================== МУТАНТЫ: ЗОМБИ ====================
@@ -1472,6 +1608,12 @@ const MARKERS_DATA = {
         { coords: convertCoords(2236, 4052), desc: "Зомби" },
         { coords: convertCoords(2243, 4062), desc: "Зомби" },
         { coords: convertCoords(2494, 3820), desc: "Зомби" },
+        // Агропром
+        { coords: convertCoords(2186, 2016), desc: "Зомби" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2132, 2408), desc: "Зомби", level: "underground" },
+        { coords: convertCoords(2195, 2320), desc: "Зомби", level: "underground" },
+        { coords: convertCoords(2133, 2370), desc: "Зомби", level: "underground" }
     ],
 
     // ==================== МУТАНТЫ: КРОВОСОСЫ ====================
@@ -1538,6 +1680,12 @@ const MARKERS_DATA = {
         { coords: convertCoords(2356, 3860), desc: "Кровосос" },
         { coords: convertCoords(2237, 4049), desc: "Кровосос" },
         { coords: convertCoords(2227, 4046), desc: "Кровосос" },
+        // Агропром
+        { coords: convertCoords(2217, 2034), desc: "Кровосос" },
+        { coords: convertCoords(2206, 2450), desc: "Кровосос" },
+        { coords: convertCoords(2200, 2246), desc: "Кровосос" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2107, 2393), desc: "Кровосос", level: "underground" }
     ],
 
     // ==================== МУТАНТЫ: МАТЁРЫЕ КРОВОСОСЫ ====================
@@ -1566,6 +1714,12 @@ const MARKERS_DATA = {
         { coords: convertCoords(2370, 3861), desc: "Матёрый кровосос" },
         { coords: convertCoords(2433, 3835), desc: "Матёрый кровосос" },
         { coords: convertCoords(2267, 4083), desc: "Матёрый кровосос" },
+        // Агропром
+        { coords: convertCoords(2239, 2005), desc: "Матёрый кровосос" },
+        { coords: convertCoords(2274, 2239), desc: "Матёрый кровосос" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2221, 2414), desc: "Матёрый кровосос", level: "underground" },
+        { coords: convertCoords(2217, 2314), desc: "Матёрый кровосос", level: "underground" }
     ],
 
     // ==================== МУТАНТЫ: ХИМЕРЫ ====================
@@ -1718,6 +1872,13 @@ const MARKERS_DATA = {
         { coords: convertCoords(2496, 3841), desc: "Зомбированный" },
         { coords: convertCoords(2467, 3827), desc: "Зомбированный" },
         { coords: convertCoords(2466, 3829), desc: "Зомбированный" },
+        // Агропром
+        { coords: convertCoords(2029, 2080), desc: "Зомбированный" },
+        { coords: convertCoords(2029, 2081), desc: "Зомбированный" },
+        { coords: convertCoords(2032, 2081), desc: "Зомбированный" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2219, 2333), desc: "Зомбированный", level: "underground" },
+        { coords: convertCoords(2217, 2332), desc: "Зомбированный", level: "underground" }
     ],
 
     // ==================== НПС: СКОПЛЕНИЕ ЗОМБИРОВАННЫХ ====================
@@ -1967,6 +2128,33 @@ const MARKERS_DATA = {
         { coords: convertCoords(2225, 2939), desc: "Бандит" },
         { coords: convertCoords(2057, 3091), desc: "Бандит" },
         { coords: convertCoords(2010, 2689), desc: "Бандит" },
+        // Агропром
+        { coords: convertCoords(2206, 1985), desc: "Бандит" },
+        { coords: convertCoords(2201, 2032), desc: "Бандит" },
+        { coords: convertCoords(2204, 2029), desc: "Бандит" },
+        { coords: convertCoords(2207, 2021), desc: "Бандит" },
+        { coords: convertCoords(2187, 2000), desc: "Бандит" },
+        { coords: convertCoords(2190, 2007), desc: "Бандит" },
+        { coords: convertCoords(2189, 2006), desc: "Бандит" },
+        { coords: convertCoords(2213, 2017), desc: "Бандиты" },
+        { coords: convertCoords(2342, 2451), desc: "Бандит" },
+        { coords: convertCoords(2182, 1996), desc: "Бандит" },
+        { coords: convertCoords(2199, 1983), desc: "Бандит" },
+        { coords: convertCoords(2200, 1982), desc: "Окунь" },
+        { coords: convertCoords(2343, 2448), desc: "Бандит" },
+        { coords: convertCoords(2185, 2006), desc: "Бандит" },
+        { coords: convertCoords(2199, 1982), desc: "Бандит" },
+        { coords: convertCoords(2209, 2023), desc: "Бандит" },
+        { coords: convertCoords(2210, 1984), desc: "Бандит" },
+        { coords: convertCoords(2341, 2448), desc: "Бандит" },
+        { coords: convertCoords(2187, 2004), desc: "Бандит" },
+        { coords: convertCoords(2190, 2006), desc: "Бандит" },
+        // Подземелья Агропрома
+        { coords: convertCoords(2251, 2348), desc: "Бандит", level: "underground" },
+        { coords: convertCoords(2248, 2336), desc: "Бандит", level: "underground" },
+        { coords: convertCoords(2248, 2343), desc: "Бандит", level: "underground" },
+        { coords: convertCoords(2244, 2349), desc: "Бандит", level: "underground" },
+        { coords: convertCoords(2247, 2346), desc: "Бандит", level: "underground" }
     ],
 
     // ==================== НПС: МОНОЛИТ / АПОСТАТЫ ====================
@@ -2298,7 +2486,26 @@ const MARKERS_DATA = {
 
     // ==================== НПС: ДОЛГОВЦЫ ====================
     duty: [
-
+        // Агропром
+        { coords: convertCoords(2177, 2323), desc: "Долговец" },
+        { coords: convertCoords(2232, 2521), desc: "Долговец" },
+        { coords: convertCoords(2082, 2509), desc: "Долговец" },
+        { coords: convertCoords(2236, 2533), desc: "Долговец" },
+        { coords: convertCoords(2073, 2514), desc: "Долговец" },
+        { coords: convertCoords(2141, 2398), desc: "Долговец" },
+        { coords: convertCoords(2143, 2401), desc: "Долговец" },
+        { coords: convertCoords(2081, 2510), desc: "Долговец" },
+        { coords: convertCoords(2075, 2507), desc: "Долговец" },
+        { coords: convertCoords(2236, 2521), desc: "Долговец" },
+        { coords: convertCoords(2177, 2317), desc: "Долговец" },
+        { coords: convertCoords(2080, 2516), desc: "Долговец" },
+        { coords: convertCoords(2140, 2397), desc: "Долговец" },
+        { coords: convertCoords(2229, 2524), desc: "Капитан Краснов" },
+        { coords: convertCoords(2175, 2321), desc: "Долговец" },
+        { coords: convertCoords(2145, 2398), desc: "Долговец" },
+        { coords: convertCoords(2231, 2533), desc: "Долговец" },
+        { coords: convertCoords(2145, 2397), desc: "Долговец" },
+        { coords: convertCoords(2145, 2392), desc: "Долговец" }
     ],
 
     // ==================== НПС: СПАВН ДОЛГА/СВОБОДЫ ====================
