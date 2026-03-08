@@ -1031,3 +1031,149 @@ body{font-size:14px;line-height:1.5}
     .map-container{position:static;left:0;top:0}
     body{overflow:visible}
 }
+
+/* ===== Level Switcher ===== */
+.level-switcher{
+    position:fixed;
+    top:calc(var(--header-height) + 20px);
+    left:calc(var(--sidebar-width) + 20px);
+    display:flex;
+    background:var(--color-bg-card);
+    border:1px solid var(--color-border);
+    border-radius:12px;
+    overflow:hidden;
+    z-index:450;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    transition:left 0.3s ease
+}
+.sidebar.collapsed~.level-switcher{left:20px}
+
+.level-switcher__btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    background:none;
+    border:none;
+    color:var(--color-text-muted);
+    font-family:var(--font-main);
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.25s ease;
+    position:relative;
+    white-space:nowrap
+}
+.level-switcher__btn:not(:last-child)::after{
+    content:'';
+    position:absolute;
+    right:0;
+    top:20%;
+    height:60%;
+    width:1px;
+    background:var(--color-border)
+}
+.level-switcher__btn:hover{
+    color:var(--color-text);
+    background:rgba(255,255,255,0.03)
+}
+.level-switcher__btn--active{
+    color:var(--color-accent);
+    background:rgba(196,163,90,0.1)
+}
+.level-switcher__btn--active .level-switcher__icon{
+    filter:drop-shadow(0 0 4px rgba(196,163,90,0.4))
+}
+.level-switcher__icon{
+    width:18px;
+    height:18px;
+    flex-shrink:0
+}
+
+.level-switcher__btn--underground-active{
+    color:#a78bfa;
+    background:rgba(167,139,250,0.1)
+}
+.level-switcher__btn--underground-active .level-switcher__icon{
+    filter:drop-shadow(0 0 4px rgba(167,139,250,0.4))
+}
+
+/* Underground visual indicator on map */
+.map-container.underground-active{
+    border-top:2px solid rgba(167,139,250,0.4)
+}
+.map-container.underground-active::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:rgba(30,20,50,0.15);
+    pointer-events:none;
+    z-index:399;
+    transition:background 0.3s ease
+}
+
+/* Level badge on markers */
+.level-badge{
+    position:absolute;
+    bottom:-3px;
+    left:-3px;
+    width:14px;
+    height:14px;
+    background:#7c3aed;
+    border:2px solid var(--color-bg);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:5
+}
+.level-badge svg{
+    width:8px;
+    height:8px;
+    color:#fff
+}
+
+/* Underground marker count styling */
+.filter-item__underground-count{
+    font-size:10px;
+    color:#a78bfa;
+    padding:1px 5px;
+    background:rgba(167,139,250,0.1);
+    border-radius:4px;
+    margin-left:2px;
+    font-family:'Roboto Mono',monospace
+}
+
+@media(max-width:1024px){
+    .level-switcher{
+        left:300px
+    }
+    .sidebar.collapsed~.level-switcher{left:20px}
+}
+
+@media(max-width:768px){
+    .level-switcher{
+        left:10px;
+        top:calc(var(--header-height) + 10px);
+        border-radius:10px
+    }
+    .sidebar.collapsed~.level-switcher{left:10px}
+    .level-switcher__btn{
+        padding:8px 12px;
+        font-size:12px;
+        gap:6px
+    }
+    .level-switcher__icon{
+        width:16px;
+        height:16px
+    }
+    .level-switcher__btn span{
+        display:none
+    }
+}
+
+@media(max-width:480px){
+    .level-switcher__btn{
+        padding:8px 10px
+    }
+}
