@@ -802,7 +802,7 @@ const ARTIFACTS = [
     { id: 'proto_snowflake', name: 'Прото-снежинка', nameEn: 'Proto-snowflake', category: 'frost', tier: 1, image: 'ProtoSnow.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { frostProtection: 50, tearProtection: 30, cold: -20.00, impactResistance: -20, saturation: -0.05, moveSpeed: -1.00 } },
     { id: 'frostbiter', name: 'Обморожник', nameEn: 'Frostbiter', category: 'frost', tier: 1, image: 'Frostbite.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { saturation: 1.00, heatResistance: 20, chemResistance: 20, frostProtection: -35, bulletResistance: -12, cold: 10.00 } },
     { id: 'ice_crystal', name: 'Ледяной кристалл', nameEn: 'Ice Crystal', category: 'frost', tier: 1, image: 'IceCrystal.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { frostProtection: 40, cold: -15.00, radiation: 0.50 } },
-    { id: 'polar_star', name: 'Полярная звезда', nameEn: 'Polar Star', category: 'frost', tier: 2, image: 'PolarStar.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { staminaRegen: 1.00, moveSpeed: 3.00, frostProtection: 100, maxStamina: 10.00, cold: -35.00, psiProtection: -100, radiation: 1.00 } },
+    { id: 'polar_star', name: 'Полярная звезда', nameEn: 'Polar Star', category: 'frost', tier: 2, image: 'PolarStar.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { staminaRegen: 1.00, moveSpeed: 3.00, frostProtection: 100, maxStamina: 10.00, cold: -40.00, psiProtection: -100, radiation: 1.00 } },
     { id: 'purple_tear', name: 'Пурпурная слеза', nameEn: 'Purple Tear', category: 'frost', tier: 2, image: 'PurpleTear.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { staminaRegen: 3.00, thermalProtection: 30, bleeding: -4.00, maxStamina: 30.00, moveSpeed: 5.00, heatResistance: 20, frostProtection: -50, saturation: -0.25, radiation: 2.00, cold: 20.00 } },
     { id: 'ice_flower', name: 'Ледоцвет', nameEn: 'Ice Flower', category: 'frost', tier: 3, image: 'IceFlower.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { frostProtection: 200, bleeding: -7.00, maxWeight: 25.00, cold: -60.00, bulletResistance: -8, thermalProtection: -30, radiation: 1.50, heatResistance: -40 } },
     { id: 'tesseract', name: 'Тессеракт', nameEn: 'Tesseract', category: 'frost', tier: 3, image: 'Tesseract.jpg', imageFolder: 'Artifacts/Frost', price: null, priceText: 'Ивент', priceTextEn: 'Event', stats: { staminaRegen: 2.00, maxStamina: 20.00, bulletResistance: 40, moveSpeed: 4.00, radiation: 4.00, cold: 30.00 } }
@@ -1113,6 +1113,5 @@ function getWeaponCategoryName(categoryId) {
     const cat = WEAPON_CATEGORIES[categoryId];
     return cat ? getLocalizedField(cat, 'name') : categoryId;
 }
-
 
 
