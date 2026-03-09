@@ -2290,6 +2290,17 @@ const MARKERS_DATA = {
         { coords: convertCoords(2836, 2790), desc: "Наёмник" },
         { coords: convertCoords(2719, 2818), desc: "Наёмник" },
         { coords: convertCoords(2835, 2790), desc: "Наёмник" },
+        // Редколесье
+        { coords: convertCoords(1472, 2312), desc: "Наёмник" },
+        { coords: convertCoords(1479, 2312), desc: "Наёмник" },
+        { coords: convertCoords(1468, 2297), desc: "Наёмник" },
+        { coords: convertCoords(1470, 2303), desc: "Наёмник" },
+        { coords: convertCoords(1490, 2295), desc: "Наёмник" },
+        { coords: convertCoords(1480, 2297), desc: "Наёмник" },
+        { coords: convertCoords(1482, 2293), desc: "Наёмник" },
+        { coords: convertCoords(1469, 2312), desc: "Наёмник" },
+        { coords: convertCoords(1480, 2300), desc: "Наёмник" },
+        { coords: convertCoords(1487, 2293), desc: "Наёмник" }
     ],
 
     // ==================== НПС: СТОЯНКА БАНДИТОВ ====================
