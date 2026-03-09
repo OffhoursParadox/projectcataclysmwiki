@@ -45,7 +45,7 @@ const MARKER_ICONS = {
     sinner: L.icon({ iconUrl: 'images/NPC/icons/sinner.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     duty_freedom_spawn: L.icon({ iconUrl: 'images/NPC/icons/duty_freedom_spawn.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_prince: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    boss_invincible: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
+    boss_invincible: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_illusionist: L.icon({ iconUrl: 'images/NPC/icons/boss_mutant.png', iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
     boss_foxtrot: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     base_orden:   L.icon({ iconUrl: 'images/locations/base-orden.png',   iconSize: [32, 32], iconAnchor: [16, 16], popupAnchor: [0, -16] }),
