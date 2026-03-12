@@ -3397,7 +3397,9 @@ const MARKERS_DATA = {
         {
             coords: convertCoords(1716, 3391),
             desc: "Босс: Король и Свита",
+            image: "images/NPC/bosses/boss_king.jpg",
             extended: {
+                image: "images/NPC/bosses/boss_king.jpg",
                 description: {
                     ru: "Это база босса, за зачистку которого вы получите припасы.",
                     en: "This is the boss base. You will receive supplies for clearing it."
