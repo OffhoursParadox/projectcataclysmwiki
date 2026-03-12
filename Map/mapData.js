@@ -65,6 +65,9 @@ const REWARD_ICONS = {
     tarpaulin: { icon: 'images/rewards/tarpaulin.png', name: { ru: 'Брезент', en: 'Tarpaulin' } },
     servomotors: { icon: 'images/rewards/servomotors.png', name: { ru: 'Сервоприводы', en: 'Servomotors' } },
     yantar_fragments: { icon: 'images/rewards/yantar_fragments.png', name: { ru: 'Фрагменты "Янтаря"', en: 'Yantar Fragments' } },
+    rubles_1000: { icon: 'images/rewards/rubles.png', name: { ru: '1 000 рублей', en: '1,000 rubles' } },
+    antirad: { icon: 'images/rewards/antirad.png', name: { ru: 'Противорадиационные препараты', en: 'Anti-radiation drugs' } },
+    radioprotector: { icon: 'images/rewards/radioprotector.png', name: { ru: 'Радиопротектор', en: 'Radioprotector' } },
 };
 
 // ============================================================
@@ -318,6 +321,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(2198, 2860), desc: "Координаты: -936, 88, -2860" },
         { coords: convertCoords(2333, 3053), desc: "Координаты: -550, 80, -3129" },
         { coords: convertCoords(2141, 2937), desc: "Координаты: -782, 78, -2745" },
+        { coords: convertCoords(1922, 3447), desc: "Координаты: 237, 81, -2308" },
+        { coords: convertCoords(1927, 3535), desc: "Координаты: 414, 79, -2317" },
+        { coords: convertCoords(1751, 3280), desc: "Координаты: -96, 100, -1965" },
         // Тёмная долина
         { coords: convertCoords(2337, 3829), desc: "Координаты: 1002, 79, -3136" },
         { coords: convertCoords(2360, 4057), desc: "Координаты: 1459, 79, -3182" },
@@ -514,6 +520,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(2095, 2707), desc: "Координаты: -1241, 101, -2653" },
         { coords: convertCoords(2141, 2767), desc: "Координаты: -1121, 84, -2746" },
         { coords: convertCoords(2044, 2753), desc: "Координаты: -1148, 86, -2551" },
+        { coords: convertCoords(1880, 3612), desc: "Координаты: 568, 80, -2224" },
+        { coords: convertCoords(1849, 3380), desc: "Координаты: 102, 93, -2162" },
+        { coords: convertCoords(1830, 3389), desc: "Координаты: 122, 93, -2124" },
+        { coords: convertCoords(1906, 3521), desc: "Координаты: 386, 80, -2276" },
+        { coords: convertCoords(1965, 3442), desc: "Координаты: 228, 84, -2393" },
         // Тёмная долина
         { coords: convertCoords(2282, 4111), desc: "Координаты: 1565, 78, -3027" },
         { coords: convertCoords(2223, 4082), desc: "Координаты: 1508, 92, -2909" },
@@ -781,6 +792,14 @@ const MARKERS_DATA = {
         { coords: convertCoords(2236, 3385), desc: "Координаты: 115, 84, -2935" },
         { coords: convertCoords(2049, 2654), desc: "Координаты: -1348, 81, -2560" },
         { coords: convertCoords(2138, 2795), desc: "Координаты: -1065, 83, -2738" },
+        { coords: convertCoords(1902, 3532), desc: "Координаты: 408, 79, -2266" },
+        { coords: convertCoords(1883, 3500), desc: "Координаты: 344, 80, -2230" },
+        { coords: convertCoords(1891, 3324), desc: "Координаты: -9, 90, -2244" },
+        { coords: convertCoords(1826, 3363), desc: "Координаты: 68, 93, -2114" },
+        { coords: convertCoords(1746, 3284), desc: "Координаты: -90, 101, -1956" },
+        { coords: convertCoords(1926, 3453), desc: "Координаты: 248, 81, -2315" },
+        { coords: convertCoords(1892, 3321), desc: "Координаты: -15, 90, -2247" },
+        { coords: convertCoords(1853, 3382), desc: "Координаты: 108, 93, -2169" },
         // Тёмная долина
         { coords: convertCoords(2345, 4078), desc: "Координаты: 1501, 79, -3151" },
         { coords: convertCoords(2367, 3884), desc: "Координаты: 1112, 85, -3196" },
@@ -1016,6 +1035,39 @@ const MARKERS_DATA = {
         { coords: convertCoords(2118, 3039), desc: "Координаты: -578, 76, -2699" },
         { coords: convertCoords(2144, 2932), desc: "Координаты: -791, 78, -2752" },
         { coords: convertCoords(2087, 2782), desc: "Координаты: -1092, 84, -2636" },
+        { coords: convertCoords(1945, 3516), desc: "Координаты: 376, 80, -2353" },
+        { coords: convertCoords(1842, 3365), desc: "Координаты: 74, 93, -2146" },
+        { coords: convertCoords(1838, 3369), desc: "Координаты: 81, 92, -2139" },
+        { coords: convertCoords(1891, 3559), desc: "Координаты: 462, 80, -2246" },
+        { coords: convertCoords(1982, 3433), desc: "Координаты: 210, 84, -2427" },
+        { coords: convertCoords(1831, 3355), desc: "Координаты: 53, 92, -2125" },
+        { coords: convertCoords(1925, 3489), desc: "Координаты: 322, 80, -2313" },
+        { coords: convertCoords(1910, 3588), desc: "Координаты: 518, 78, -2284" },
+        { coords: convertCoords(1920, 3469), desc: "Координаты: 281, 82, -2303" },
+        { coords: convertCoords(1691, 3133), desc: "Координаты: -391, 85, -1845" },
+        { coords: convertCoords(1975, 3501), desc: "Координаты: 346, 81, -2413" },
+        { coords: convertCoords(1865, 3607), desc: "Координаты: 557, 80, -2192" },
+        { coords: convertCoords(1870, 3648), desc: "Координаты: 640, 80, -2202" },
+        { coords: convertCoords(1989, 3462), desc: "Координаты: 268, 83, -2440" },
+        { coords: convertCoords(1920, 3505), desc: "Координаты: 354, 78, -2303" },
+        { coords: convertCoords(1908, 3543), desc: "Координаты: 429, 80, -2279" },
+        { coords: convertCoords(1889, 3580), desc: "Координаты: 502, 80, -2240" },
+        { coords: convertCoords(1893, 3466), desc: "Координаты: 276, 81, -2249" },
+        { coords: convertCoords(1964, 3480), desc: "Координаты: 303, 81, -2391" },
+        { coords: convertCoords(1936, 3477), desc: "Координаты: 298, 83, -2336" },
+        { coords: convertCoords(1837, 3379), desc: "Координаты: 102, 93, -2137" },
+        { coords: convertCoords(1890, 3646), desc: "Координаты: 636, 80, -2243" },
+        { coords: convertCoords(1911, 3490), desc: "Координаты: 324, 81, -2285" },
+        { coords: convertCoords(1839, 3365), desc: "Координаты: 73, 93, -2141" },
+        { coords: convertCoords(1894, 3635), desc: "Координаты: 613, 80, -2250" },
+        { coords: convertCoords(1939, 3520), desc: "Координаты: 384, 81, -2340" },
+        { coords: convertCoords(1973, 3464), desc: "Координаты: 271, 82, -2410" },
+        { coords: convertCoords(1913, 3541), desc: "Координаты: 426, 79, -2289" },
+        { coords: convertCoords(1905, 3601), desc: "Координаты: 545, 80, -2273" },
+        { coords: convertCoords(1869, 3626), desc: "Координаты: 594, 79, -2202" },
+        { coords: convertCoords(1842, 3391), desc: "Координаты: 124, 93, -2147" },
+        { coords: convertCoords(1890, 3593), desc: "Координаты: 530, 83, -2244" },
+        { coords: convertCoords(1966, 3523), desc: "Координаты: 389, 81, -2396" },
         // Тёмная долина
         { coords: convertCoords(2376, 3878), desc: "Координаты: 1101, 79, -3215" },
         { coords: convertCoords(2274, 4076), desc: "Координаты: 1496, 80, -3010" },
@@ -1130,6 +1182,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(1898, 3079), desc: "Координаты: -499, 77, -2261" },
         { coords: convertCoords(1784, 2885), desc: "Координаты: -885, 82, -2032" },
         { coords: convertCoords(1800, 2837), desc: "Координаты: -982, 76, -2063" },
+        { coords: convertCoords(1886, 3491), desc: "Координаты: 325, 81, -2234" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: НАУЧНОЕ ОБОРУДОВАНИЕ ====================
@@ -1238,8 +1291,29 @@ const MARKERS_DATA = {
             }
         },
         // Кордон
-        { coords: convertCoords(1348, 3050), desc: "Координаты: -556, 62, -1160" },
-        { coords: convertCoords(1491, 3257), desc: "Координаты: -143, 79, -1446" },
+        { 
+            coords: convertCoords(1348, 3050), 
+            desc: "Координаты: -556, 62, -1160",
+            extended: {
+                rewards: [
+                    { key: 'medkit', count: 2 },
+                    { key: 'antirad', count: 2 },
+                    { key: 'radioprotector', count: 3 },
+                    { key: 'mre_b', count: 1 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(1491, 3257), 
+            desc: "Координаты: -143, 79, -1446",
+            extended: {
+                rewards: [
+                    { key: 'medkit', count: 3 },
+                    { key: 'bandage', count: 3 },
+                    { key: 'rubles_1000', count: 1 }
+                ]
+            }
+        },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ДЕРЕВЯННЫЕ ЯЩИКИ ====================
@@ -1264,6 +1338,18 @@ const MARKERS_DATA = {
         { coords: convertCoords(2768, 2799), desc: "Координаты: -1056, 79, -4001" },
         // Свалка
         { coords: convertCoords(2019, 2712), desc: "Координаты: -1232, 96, -2501" },
+        { coords: convertCoords(1904, 3557), desc: "Координаты: 458, 82, -2271" },
+        { coords: convertCoords(1942, 3535), desc: "Координаты: 413, 81, -2348" },
+        { coords: convertCoords(1939, 3458), desc: "Координаты: 258, 81, -2342" },
+        { coords: convertCoords(1751, 3271), desc: "Координаты: -116, 100, -1965" },
+        { coords: convertCoords(1898, 3624), desc: "Координаты: 592, 78, -2259" },
+        { coords: convertCoords(1925, 3544), desc: "Координаты: 432, 83, -2312" },
+        { coords: convertCoords(1991, 3459), desc: "Координаты: 261, 88, -2446" },
+        { coords: convertCoords(1955, 3498), desc: "Координаты: 339, 80, -2374" },
+        { coords: convertCoords(1914, 3574), desc: "Координаты: 490, 80, -2291" },
+        { coords: convertCoords(1960, 3464), desc: "Координаты: 271, 83, -2383" },
+        { coords: convertCoords(1985, 3480), desc: "Координаты: 304, 83, -2433" },
+        { coords: convertCoords(1963, 3533), desc: "Координаты: 409, 81, -2390" },
         // Кордон
         { coords: convertCoords(1814, 2828), desc: "Координаты: -1001, 80, -2091" },
         { coords: convertCoords(1796, 2866), desc: "Координаты: -924, 86, -2056" },
@@ -1362,6 +1448,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(2007, 2693), desc: "Координаты: -1269, 97, -2478" },
         { coords: convertCoords(1948, 2815), desc: "Координаты: -1026, 83, -2359" },
         { coords: convertCoords(2106, 2706), desc: "Координаты: -1242, 108, -2675" },
+        { coords: convertCoords(1887, 3648), desc: "Координаты: 639, 79, -2238" },
+        { coords: convertCoords(1751, 3279), desc: "Координаты: -100, 100, -1966" },
+        { coords: convertCoords(1893, 3597), desc: "Координаты: 536, 83, -2249" },
+        { coords: convertCoords(1933, 3475), desc: "Координаты: 294, 80, -2329" },
+        { coords: convertCoords(1978, 3500), desc: "Координаты: 343, 85, -2419" },
         // Тёмная долина
         { coords: convertCoords(2275, 4101), desc: "Координаты: 1547, 73, -3013" },
         { coords: convertCoords(2508, 3826), desc: "Координаты: 996, 75, -3478" },
@@ -1461,6 +1552,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(2139, 2659), desc: "Слепые собаки" },
         { coords: convertCoords(2200, 3133), desc: "Слепые собаки" },
         { coords: convertCoords(1933, 2740), desc: "Слепые собаки" },
+        { coords: convertCoords(1950, 3300), desc: "Слепые псы" },
+        { coords: convertCoords(1828, 3490), desc: "Слепые псы" },
+        { coords: convertCoords(1958, 3513), desc: "Слепые псы" },
         // Тёмная долина
         { coords: convertCoords(2232, 3701), desc: "Слепые псы" },
         { coords: convertCoords(2266, 4059), desc: "Слепые псы" },
@@ -1569,6 +1663,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(2109, 2799), desc: "Пси-собака" },
         { coords: convertCoords(2250, 2686), desc: "Пси-собака" },
         { coords: convertCoords(2203, 3133), desc: "Пси-собака" },
+        { coords: convertCoords(1958, 3515), desc: "Пси-собака" },
+        { coords: convertCoords(1828, 3488), desc: "Пси-собака" },
         // Тёмная долина
         { coords: convertCoords(2376, 3866), desc: "Пси-собака" },
         { coords: convertCoords(2336, 4089), desc: "Пси-собака" },
@@ -1629,6 +1725,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(2346, 2974), desc: "Плоти" },
         { coords: convertCoords(2199, 2724), desc: "Плоти" },
         { coords: convertCoords(2086, 3121), desc: "Плоти" },
+        { coords: convertCoords(1949, 3340), desc: "Плоти" },
+        { coords: convertCoords(1872, 3531), desc: "Плоти" },
         // Тёмная долина
         { coords: convertCoords(2202, 4000), desc: "Плоти" },
         { coords: convertCoords(2526, 3826), desc: "Плоти" },
@@ -1694,6 +1792,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(2066, 2720), desc: "Кабаны" },
         { coords: convertCoords(1948, 2694), desc: "Кабаны" },
         { coords: convertCoords(2381, 3178), desc: "Кабаны" },
+        { coords: convertCoords(1872, 3433), desc: "Кабаны" },
+        { coords: convertCoords(1855, 3268), desc: "Кабаны" },
+        { coords: convertCoords(1966, 3563), desc: "Кабаны" },
         // Тёмная долина
         { coords: convertCoords(2469, 4106), desc: "Кабаны" },
         { coords: convertCoords(2255, 3836), desc: "Кабаны" },
@@ -1831,6 +1932,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(2078, 2787), desc: "Снорки" },
         { coords: convertCoords(2074, 3487), desc: "Снорки" },
         { coords: convertCoords(2038, 2740), desc: "Снорки" },
+        { coords: convertCoords(2011, 3455), desc: "Снорки" },
         // Тёмная долина
         { coords: convertCoords(2362, 4079), desc: "Снорки" },
         { coords: convertCoords(2446, 3860), desc: "Снорки" },
@@ -1927,6 +2029,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(2078, 3387), desc: "Зомби" },
         { coords: convertCoords(2087, 3461), desc: "Зомби" },
         { coords: convertCoords(2135, 3468), desc: "Зомби" },
+        { coords: convertCoords(1925, 3480), desc: "Зомби" },
+        { coords: convertCoords(1955, 3454), desc: "Зомби" },
+        { coords: convertCoords(1942, 3466), desc: "Зомби" },
         // Тёмная долина
         { coords: convertCoords(2273, 4067), desc: "Зомби" },
         { coords: convertCoords(2236, 4052), desc: "Зомби" },
@@ -2010,6 +2115,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2291, 2907), desc: "Кровосос" },
         { coords: convertCoords(2141, 2769), desc: "Кровосос" },
         { coords: convertCoords(2109, 3477), desc: "Кровосос" },
+        { coords: convertCoords(1915, 3399), desc: "Кровосос" },
+        { coords: convertCoords(1892, 3578), desc: "Кровосос" },
+        { coords: convertCoords(1990, 3464), desc: "Кровосос" },
+        { coords: convertCoords(1963, 3540), desc: "Кровосос" },
         // Тёмная долина
         { coords: convertCoords(2356, 3860), desc: "Кровосос" },
         { coords: convertCoords(2237, 4049), desc: "Кровосос" },
@@ -2483,6 +2592,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(2225, 2939), desc: "Бандит" },
         { coords: convertCoords(2057, 3091), desc: "Бандит" },
         { coords: convertCoords(2010, 2689), desc: "Бандит" },
+        { coords: convertCoords(1891, 3323), desc: "Бандит" },
+        { coords: convertCoords(1891, 3321), desc: "Бандит" },
+        { coords: convertCoords(1891, 3322), desc: "Бандит" },
         // Агропром
         { coords: convertCoords(2206, 1985), desc: "Бандит" },
         { coords: convertCoords(2201, 2032), desc: "Бандит" },
@@ -2837,6 +2949,59 @@ const MARKERS_DATA = {
                 rewards: ['hazy_pollen']
             }
         },
+        // Свалка
+        {
+            coords: convertCoords(1968, 3444),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/g_camp_1.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/g_camp_1.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['hazy_pollen']
+            }
+        },
+        {
+            coords: convertCoords(1891, 3629),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/g_camp_2.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/g_camp_2.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['hazy_pollen']
+            }
+        },
+        {
+            coords: convertCoords(1843, 3381),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/g_camp_3.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/g_camp_3.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['hazy_pollen']
+            }
+        },
+        {
+            coords: convertCoords(1911, 3524),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/g_camp_4.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/g_camp_4.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['hazy_pollen']
+            }
+        },
         // Кордон
         {
             coords: convertCoords(1797, 2882),
@@ -2922,6 +3087,32 @@ const MARKERS_DATA = {
             image: "images/NPC/bandit_camp/cordon_camp_7.jpg",
             extended: {
                 image: "images/NPC/bandit_camp/cordon_camp_7.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['yantar_fragments']
+            }
+        },
+        {
+            coords: convertCoords(1670, 3134),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/cordon_camp_8.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/cordon_camp_8.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['yantar_fragments']
+            }
+        },
+        {
+            coords: convertCoords(1742, 3276),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/cordon_camp_9.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/cordon_camp_9.jpg",
                 description: {
                     ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
                     en: "This is a cluster of enemies, for clearing which you will receive supplies."
@@ -3201,6 +3392,27 @@ const MARKERS_DATA = {
         }
     ],
 
+    // ==================== НПС: БОСС КОРОЛЬ И СВИТА ====================
+    boss_king: [
+        {
+            coords: convertCoords(1716, 3391),
+            desc: "Босс: Король и Свита",
+            extended: {
+                description: {
+                    ru: "Это база босса, за зачистку которого вы получите припасы.",
+                    en: "This is the boss base. You will receive supplies for clearing it."
+                },
+                info: {
+                    respawn: {
+                        ru: "2 - 2.5 ч",
+                        en: "2 - 2.5 h"
+                    }
+                },
+                rewards: ['basic_upgrade_tools', 'advanced_upgrade_tools', 'spare_parts']
+            }
+        }
+    ],
+
     // ==================== НПС: БОСС ИЛЛЮЗИОНИСТ ====================
     boss_illusionist: [
 
@@ -3341,6 +3553,6 @@ const FILTER_CATEGORIES = {
     astrolite: ['catalyst', 'wormhole'],
     containers: ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe', 'stash_hidden'],
     mutants: ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'],
-    npc: ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel'],
+    npc: ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel', 'boss_king'],
     locations: ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile']
 };
