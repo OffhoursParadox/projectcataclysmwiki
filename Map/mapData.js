@@ -691,6 +691,21 @@ const MARKERS_DATA = {
         { coords: convertCoords(797, 3281), desc: "Координаты: -95, 85, -59" },
         { coords: convertCoords(718, 3212), desc: "Координаты: -233, 92, 100" },
         { coords: convertCoords(773, 3302), desc: "Координаты: -53, 84, -10" },
+        { coords: convertCoords(561, 3154), desc: "Координаты: -349, 87, 413" },
+        { coords: convertCoords(764, 3400), desc: "Координаты: 143, 90, 7" },
+        { coords: convertCoords(620, 3120), desc: "Координаты: -417, 84, 294" },
+        { coords: convertCoords(545, 3191), desc: "Координаты: -274, 95, 444" },
+        { coords: convertCoords(595, 3194), desc: "Координаты: -269, 84, 346" },
+        { coords: convertCoords(553, 3562), desc: "Координаты: 467, 86, 429" },
+        { coords: convertCoords(544, 3200), desc: "Координаты: -256, 87, 446" },
+        { coords: convertCoords(717, 3439), desc: "Координаты: 222, 90, 101" },
+        { coords: convertCoords(787, 3384), desc: "Координаты: 112, 90, -40" },
+        { coords: convertCoords(788, 3382), desc: "Координаты: 107, 95, -40" },
+        { coords: convertCoords(526, 3250), desc: "Координаты: -156, 84, 483" },
+        { coords: convertCoords(766, 3434), desc: "Координаты: 211, 90, 2" },
+        { coords: convertCoords(770, 3413), desc: "Координаты: 169, 90, -4" },
+        { coords: convertCoords(720, 3404), desc: "Координаты: 150, 90, 95" },
+        { coords: convertCoords(585, 358), desc: "Координаты: -16, 89, 364" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: БОЧКИ ====================
@@ -1035,6 +1050,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(978, 2930), desc: "Координаты: -798, 74, -421" },
         { coords: convertCoords(1014, 2996), desc: "Координаты: -665, 84, -492" },
         { coords: convertCoords(943, 2981), desc: "Координаты: -696, 73, -351" },
+        { coords: convertCoords(748, 3448), desc: "Координаты: 239, 89, 39" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ИНСТРУМЕНТЫ ====================
@@ -1391,6 +1407,7 @@ const MARKERS_DATA = {
         // Росстань
         { coords: convertCoords(914, 3142), desc: "Координаты: -373, 76, -293" },
         { coords: convertCoords(673, 3397), desc: "Координаты: 136, 88, 189" },
+        { coords: convertCoords(593, 3557), desc: "Координаты: 456, 83, 350" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: НАУЧНОЕ ОБОРУДОВАНИЕ ====================
@@ -1702,6 +1719,92 @@ const MARKERS_DATA = {
         { coords: convertCoords(726, 3212), desc: "Координаты: -233, 98, 82" },
         { coords: convertCoords(672, 3178), desc: "Координаты: -301, 92, 192" },
         { coords: convertCoords(726, 3211), desc: "Координаты: -234, 92, 82" },
+        { coords: convertCoords(605, 3206), desc: "Координаты: -246, 85, 325" },
+        { coords: convertCoords(723, 3462), desc: "Координаты: 267, 89, 88" },
+        { coords: convertCoords(728, 3478), desc: "Координаты: 300, 106, 80" },
+        { coords: convertCoords(553, 3576), desc: "Координаты: 494, 85, 428" },
+        { coords: convertCoords(542, 3248), desc: "Координаты: -162, 83, 451" },
+        { coords: convertCoords(574, 3200), desc: "Координаты: -257, 87, 387" },
+        { coords: convertCoords(573, 3163), desc: "Координаты: -331, 86, 389" },
+        { coords: convertCoords(735, 3453), desc: "Координаты: 249, 89, 65" },
+        { coords: convertCoords(733, 3436), desc: "Координаты: 216, 90, 69" },
+        { coords: convertCoords(783, 3383), desc: "Координаты: 108, 90, -32" },
+        { coords: convertCoords(731, 3478), desc: "Координаты: 300, 89, 74" },
+        { coords: convertCoords(580, 3569), desc: "Координаты: 481, 82, 376" },
+        { coords: convertCoords(723, 3415), desc: "Координаты: 174, 89, 89" },
+        { coords: convertCoords(601, 3107), desc: "Координаты: -443, 84, 332" },
+        { coords: convertCoords(617, 3140), desc: "Координаты: -377, 84, 301" },
+        { coords: convertCoords(593, 3205), desc: "Координаты: -247, 84, 350" },
+        { coords: convertCoords(562, 3141), desc: "Координаты: -376, 84, 411" },
+        { coords: convertCoords(804, 3447), desc: "Координаты: 236, 88, -73" },
+        { coords: convertCoords(721, 3461), desc: "Координаты: 266, 89, 93" },
+        { coords: convertCoords(609, 3224), desc: "Координаты: -208, 92, 318" },
+        { coords: convertCoords(592, 3558), desc: "Координаты: 460, 82, 352" },
+        { coords: convertCoords(721, 3409), desc: "Координаты: 161, 90, 93" },
+        { coords: convertCoords(717, 3432), desc: "Координаты: 206, 90, 101" },
+        { coords: convertCoords(602, 3539), desc: "Координаты: 421, 82, 331" },
+        { coords: convertCoords(761, 3433), desc: "Координаты: 210, 94, 14" },
+        { coords: convertCoords(521, 3221), desc: "Координаты: -216, 83, 493" },
+        { coords: convertCoords(739, 3453), desc: "Координаты: 249, 88, 56" },
+        { coords: convertCoords(569, 3119), desc: "Координаты: -418, 84, 397" },
+        { coords: convertCoords(782, 3389), desc: "Координаты: 122, 94, -28" },
+        { coords: convertCoords(800, 3435), desc: "Координаты: 212, 88, -66" },
+        { coords: convertCoords(607, 3219), desc: "Координаты: -218, 85, 322" },
+        { coords: convertCoords(617, 3130), desc: "Координаты: -398, 83, 300" },
+        { coords: convertCoords(629, 3267), desc: "Координаты: -122, 105, 277" },
+        { coords: convertCoords(785, 3461), desc: "Координаты: 265, 88, -35" },
+        { coords: convertCoords(752, 3459), desc: "Координаты: 261, 88, 30" },
+        { coords: convertCoords(522, 3215), desc: "Координаты: -227, 84, 491" },
+        { coords: convertCoords(586, 3564), desc: "Координаты: 472, 82, 363" },
+        { coords: convertCoords(545, 3191), desc: "Координаты: -275, 88, 445" },
+        { coords: convertCoords(570, 3572), desc: "Координаты: 488, 82, 396" },
+        { coords: convertCoords(628, 3272), desc: "Координаты: -113, 104, 279" },
+        { coords: convertCoords(606, 3225), desc: "Координаты: -207, 101, 323" },
+        { coords: convertCoords(607, 3224), desc: "Координаты: -208, 88, 322" },
+        { coords: convertCoords(552, 3117), desc: "Координаты: -424, 90, 431" },
+        { coords: convertCoords(727, 3430), desc: "Координаты: 204, 90, 80" },
+        { coords: convertCoords(579, 3321), desc: "Координаты: -15, 85, 377" },
+        { coords: convertCoords(550, 3561), desc: "Координаты: 466, 91, 434" },
+        { coords: convertCoords(589, 3213), desc: "Координаты: -231, 84, 357" },
+        { coords: convertCoords(523, 3232), desc: "Координаты: -193, 84, 488" },
+        { coords: convertCoords(560, 3181), desc: "Координаты: -295, 87, 414" },
+        { coords: convertCoords(706, 3439), desc: "Координаты: 222, 88, 141" },
+        { coords: convertCoords(742, 3401), desc: "Координаты: 145, 89, 51" },
+        { coords: convertCoords(702, 3446), desc: "Координаты: 235, 88, 130" },
+        { coords: convertCoords(772, 3420), desc: "Координаты: 183, 90, -9" },
+        { coords: convertCoords(619, 3113), desc: "Координаты: -431, 82, 297" },
+        { coords: convertCoords(550, 3099), desc: "Координаты: -457, 84, 436" },
+        { coords: convertCoords(535, 3191), desc: "Координаты: -275, 95, 466" },
+        { coords: convertCoords(748, 3419), desc: "Координаты: 180, 90, 38" },
+        { coords: convertCoords(728, 3458), desc: "Координаты: 259, 90, 80" },
+        { coords: convertCoords(543, 3104), desc: "Координаты: -449, 89, 449" },
+        { coords: convertCoords(601, 3202), desc: "Координаты: -252, 85, 333" },
+        { coords: convertCoords(591, 3217), desc: "Координаты: -224, 85, 353" },
+        { coords: convertCoords(755, 3390), desc: "Координаты: 123, 89, 26" },
+        { coords: convertCoords(772, 3452), desc: "Координаты: 248, 88, -9" },
+        { coords: convertCoords(586, 3220), desc: "Координаты: -216, 84, 364" },
+        { coords: convertCoords(605, 3534), desc: "Координаты: 412, 82, 326" },
+        { coords: convertCoords(714, 3437), desc: "Координаты: 217, 90, 106" },
+        { coords: convertCoords(738, 3402), desc: "Координаты: 147, 89, 59" },
+        { coords: convertCoords(552, 3561), desc: "Координаты: 465, 87, 431" },
+        { coords: convertCoords(607, 3220), desc: "Координаты: -217, 92, 320" },
+        { coords: convertCoords(592, 3209), desc: "Координаты: -239, 85, 350" },
+        { coords: convertCoords(628, 3266), desc: "Координаты: -126, 85, 279" },
+        { coords: convertCoords(540, 3118), desc: "Координаты: -422, 91, 455" },
+        { coords: convertCoords(582, 3094), desc: "Координаты: -470, 83, 371" },
+        { coords: convertCoords(617, 3101), desc: "Координаты: -454, 83, 302" },
+        { coords: convertCoords(574, 3094), desc: "Координаты: -468, 84, 387" },
+        { coords: convertCoords(587, 3217), desc: "Координаты: -223, 85, 360" },
+        { coords: convertCoords(580, 3210), desc: "Координаты: -238, 85, 374" },
+        { coords: convertCoords(775, 3433), desc: "Координаты: 210, 88, -15" },
+        { coords: convertCoords(601, 3543), desc: "Координаты: 429, 82, 332" },
+        { coords: convertCoords(535, 3210), desc: "Координаты: -238, 87, 465" },
+        { coords: convertCoords(558, 3166), desc: "Координаты: -324, 87, 420" },
+        { coords: convertCoords(704, 3453), desc: "Координаты: 249, 89, 128" },
+        { coords: convertCoords(581, 3133), desc: "Координаты: -392, 84, 373" },
+        { coords: convertCoords(543, 3119), desc: "Координаты: -420, 84, 449" },
+        { coords: convertCoords(553, 3106), desc: "Координаты: -444, 84, 430" },
+        { coords: convertCoords(606, 3226), desc: "Координаты: -204, 89, 322" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СЕЙФЫ ====================
@@ -1842,6 +1945,14 @@ const MARKERS_DATA = {
         { coords: convertCoords(674, 3397), desc: "Координаты: 136, 89, 188" },
         { coords: convertCoords(756, 3304), desc: "Координаты: -49, 88, 23" },
         { coords: convertCoords(960, 2971), desc: "Координаты: -716, 72, -385" },
+        { coords: convertCoords(766, 3435), desc: "Координаты: 212, 92, 3" },
+        { coords: convertCoords(465, 3221), desc: "Координаты: -215, 74, 606" },
+        { coords: convertCoords(607, 3227), desc: "Координаты: -203, 97, 321" },
+        { coords: convertCoords(620, 3136), desc: "Координаты: -385, 84, 295" },
+        { coords: convertCoords(728, 3462), desc: "Координаты: 268, 91, 78" },
+        { coords: convertCoords(794, 3442), desc: "Координаты: 107, 95, -53" },
+        { coords: convertCoords(787, 3432), desc: "Координаты: 207, 88, -39" },
+        { coords: convertCoords(606, 3206), desc: "Координаты: -246, 85, 323" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СХРОНЫ ====================
@@ -2011,6 +2122,17 @@ const MARKERS_DATA = {
         { coords: convertCoords(796, 3292), desc: "Слепые псы" },
         { coords: convertCoords(770, 3072), desc: "Слепые псы" },
         { coords: convertCoords(610, 3043), desc: "Слепые псы" },
+        { coords: convertCoords(545, 3221), desc: "Слепые псы" },
+        { coords: convertCoords(596, 3491), desc: "Слепые псы" },
+        { coords: convertCoords(479, 3236), desc: "Слепые псы" },
+        { coords: convertCoords(618, 3405), desc: "Слепые псы" },
+        { coords: convertCoords(638, 3317), desc: "Слепые псы" },
+        { coords: convertCoords(813, 3432), desc: "Слепые псы" },
+        { coords: convertCoords(595, 3134), desc: "Слепые псы" },
+        { coords: convertCoords(563, 3115), desc: "Слепые псы" },
+        { coords: convertCoords(593, 3225), desc: "Слепые псы" },
+        { coords: convertCoords(551, 3167), desc: "Слепые псы" },
+        { coords: convertCoords(577, 3562), desc: "Слепые псы" },
     ],
 
     // ==================== МУТАНТЫ: ПСЕВДОСОБАКИ ====================
@@ -2059,6 +2181,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(904, 3213), desc: "Псевдособаки" },
         { coords: convertCoords(918, 2919), desc: "Псевдособаки" },
         { coords: convertCoords(718, 3287), desc: "Псевдособаки" },
+        { coords: convertCoords(572, 3186), desc: "Псевдособаки" },
+        { coords: convertCoords(531, 3028), desc: "Псевдособаки" },
+        { coords: convertCoords(548, 3313), desc: "Псевдособаки" },
+        { coords: convertCoords(482, 3090), desc: "Псевдособаки" },
     ],
 
     // ==================== МУТАНТЫ: ПСИ-СОБАКА ====================
@@ -2131,6 +2257,7 @@ const MARKERS_DATA = {
         // Росстань
         { coords: convertCoords(1325, 3886), desc: "Пси-собака" },
         { coords: convertCoords(749, 3062), desc: "Пси-собака" },
+        { coords: convertCoords(473, 3093), desc: "Пси-собака" },
     ],
 
     // ==================== МУТАНТЫ: ПЛОТИ ====================
@@ -2233,6 +2360,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(1297, 3660), desc: "Плоти" },
         { coords: convertCoords(1277, 3846), desc: "Плоти" },
         { coords: convertCoords(997, 3047), desc: "Плоти" },
+        { coords: convertCoords(715, 3341), desc: "Плоти" },
+        { coords: convertCoords(538, 3411), desc: "Плоти" },
+        { coords: convertCoords(649, 3473), desc: "Плоти" },
+        { coords: convertCoords(363, 3264), desc: "Плоти" },
+        { coords: convertCoords(452, 3070), desc: "Плоти" },
     ],
 
     // ==================== МУТАНТЫ: КАБАНЫ ====================
@@ -2340,6 +2472,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(1077, 3327), desc: "Кабаны" },
         { coords: convertCoords(934, 3061), desc: "Кабаны" },
         { coords: convertCoords(804, 2954), desc: "Кабаны" },
+        { coords: convertCoords(369, 3041), desc: "Кабаны" },
+        { coords: convertCoords(568, 3380), desc: "Кабаны" },
+        { coords: convertCoords(493, 3053), desc: "Кабаны" },
+        { coords: convertCoords(455, 3278), desc: "Кабаны" },
+        { coords: convertCoords(573, 3123), desc: "Кабаны" },
     ],
 
     // ==================== МУТАНТЫ: КРЫСЫ ====================
@@ -3913,6 +4050,97 @@ const MARKERS_DATA = {
                 rewards: ['mandrake_root']
             }
         },
+        {
+            coords: convertCoords(787, 3434),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_11.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_11.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(572, 3159),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_12.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_12.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(712, 3434),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_13.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_13.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(542, 3109),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_14.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_14.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(617, 3119),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_15.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_15.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(577, 3094),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_16.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_16.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
+        {
+            coords: convertCoords(607, 3219),
+            desc: "Стоянка бандитов",
+            image: "images/NPC/bandit_camp/rs_camp_17.jpg",
+            extended: {
+                image: "images/NPC/bandit_camp/rs_camp_17.jpg",
+                description: {
+                    ru: "Это скопление врагов, за зачистку которого вы получите припасы.",
+                    en: "This is a cluster of enemies, for clearing which you will receive supplies."
+                },
+                rewards: ['mandrake_root']
+            }
+        },
     ],
 
     // ==================== НПС: ВОЕННЫЕ ====================
@@ -4248,6 +4476,25 @@ const MARKERS_DATA = {
             image: "images/NPC/bosses/boss_kastet.jpg",
             extended: {
                 image: "images/NPC/bosses/boss_kastet.jpg",
+                description: {
+                    ru: "Это база босса, за зачистку которого вы получите припасы.",
+                    en: "This is the boss base. You will receive supplies for clearing it."
+                },
+                info: {
+                    respawn: {
+                        ru: "2 - 2.5 ч",
+                        en: "2 - 2.5 h"
+                    }
+                },
+                rewards: ['mandrake_root', 'mutated_tissue_sample', 'scan_flash_drive', 'expedition_reports_disk']
+            }
+        },
+        {
+            coords: convertCoords(857, 3141),
+            desc: "Босс: Банда Кастета",
+            image: "images/NPC/bosses/boss_kastet2.jpg",
+            extended: {
+                image: "images/NPC/bosses/boss_kastet2.jpg",
                 description: {
                     ru: "Это база босса, за зачистку которого вы получите припасы.",
                     en: "This is the boss base. You will receive supplies for clearing it."
