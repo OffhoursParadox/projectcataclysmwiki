@@ -383,6 +383,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(1444, 3613), desc: "Координаты: 570, 79, -1351" },
         { coords: convertCoords(1479, 4076), desc: "Координаты: 1496, 71, -1422" },
         { coords: convertCoords(1796, 3679), desc: "Координаты: 703, 78, -2057" },
+        // Сортировка
+        { coords: convertCoords(1711, 4454), desc: "Координаты: 2251, 101, -1886" },
+        { coords: convertCoords(1810, 4373), desc: "Координаты: 2089, 104, -2083" },
+        { coords: convertCoords(1905, 4373), desc: "Координаты: 2090, 101, -2274" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ПРИПАСЫ ====================
@@ -624,6 +628,20 @@ const MARKERS_DATA = {
         { coords: convertCoords(1622, 3878), desc: "Координаты: 1100, 75, -1708" },
         { coords: convertCoords(1595, 3484), desc: "Координаты: 313, 90, -1654" },
         { coords: convertCoords(1495, 3920), desc: "Координаты: 1184, 80, -1455" },
+        // Сортировка
+        { coords: convertCoords(1737, 4444), desc: "Координаты: 2232, 106, -1937" },
+        { coords: convertCoords(1924, 4369), desc: "Координаты: 2081, 100, -2312" },
+        { coords: convertCoords(1767, 4394), desc: "Координаты: 2133, 101, -1999" },
+        { coords: convertCoords(1632, 4364), desc: "Координаты: 2072, 100, -1728" },
+        { coords: convertCoords(1716, 4470), desc: "Координаты: 2283, 99, -1897" },
+        { coords: convertCoords(1709, 4359), desc: "Координаты: 2061, 107, -1882" },
+        { coords: convertCoords(1714, 4339), desc: "Координаты: 2023, 95, -1892" },
+        { coords: convertCoords(1830, 4454), desc: "Координаты: 2251, 107, -2124" },
+        { coords: convertCoords(1748, 4511), desc: "Координаты: 2366, 77, -1959" },
+        { coords: convertCoords(1836, 4399), desc: "Координаты: 2143, 113, -2135" },
+        { coords: convertCoords(1724, 4489), desc: "Координаты: 2321, 100, -1913" },
+        { coords: convertCoords(1703, 4401), desc: "Координаты: 2146, 102, -1871" },
+        { coords: convertCoords(1697, 4384), desc: "Координаты: 2113, 95, -1859" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: БОЧКИ ====================
@@ -919,6 +937,21 @@ const MARKERS_DATA = {
         { coords: convertCoords(1667, 3934), desc: "Координаты: 1212, 101, -1797" },
         { coords: convertCoords(1853, 3677), desc: "Координаты: 698, 79, -2170" },
         { coords: convertCoords(1715, 3575), desc: "Координаты: 493, 80, -1893" },
+        // Сортировка
+        { coords: convertCoords(1914, 4340), desc: "Координаты: 2023, 100, -2292" },
+        { coords: convertCoords(1688, 4336), desc: "Координаты: 2016, 100, -1841" },
+        { coords: convertCoords(1774, 4509), desc: "Координаты: 2363, 77, -2013" },
+        { coords: convertCoords(1746, 4387), desc: "Координаты: 2119, 100, -1956" },
+        { coords: convertCoords(1850, 4374), desc: "Координаты: 2091, 101, -2165" },
+        { coords: convertCoords(1720, 4345), desc: "Координаты: 2034, 100, -1903" },
+        { coords: convertCoords(1769, 4424), desc: "Координаты: 2191, 101, -2003" },
+        { coords: convertCoords(1665, 4382), desc: "Координаты: 2108, 100, -1795" },
+        { coords: convertCoords(1706, 4519), desc: "Координаты: 2383, 77, -1876" },
+        { coords: convertCoords(1669, 4345), desc: "Координаты: 2035, 100, -1801" },
+        { coords: convertCoords(1888, 4359), desc: "Координаты: 2062, 100, -2241" },
+        { coords: convertCoords(1849, 4358), desc: "Координаты: 2061, 100, -2162" },
+        { coords: convertCoords(1726, 4417), desc: "Координаты: 2179, 106, -1915" },
+        { coords: convertCoords(1777, 4496), desc: "Координаты: 2336, 100, -2018" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ИНСТРУМЕНТЫ ====================
@@ -1253,6 +1286,17 @@ const MARKERS_DATA = {
         { coords: convertCoords(1776, 3950), desc: "Координаты: 1245, 68, -2016" },
         { coords: convertCoords(1473, 4029), desc: "Координаты: 1402, 78, -1409" },
         { coords: convertCoords(1671, 3872), desc: "Координаты: 1088, 103, -1806" },
+        // Сортировка
+        { coords: convertCoords(1648, 4378), desc: "Координаты: 2101, 100, -1760" },
+        { coords: convertCoords(1747, 4350), desc: "Координаты: 2043, 100, -1958" },
+        { coords: convertCoords(1818, 4413), desc: "Координаты: 2169, 101, -2101" },
+        { coords: convertCoords(1802, 4359), desc: "Координаты: 2061, 100, -2069" },
+        { coords: convertCoords(1782, 4431), desc: "Координаты: 2206, 101, -2027" },
+        { coords: convertCoords(1746, 4358), desc: "Координаты: 2060, 108, -1956" },
+        { coords: convertCoords(1661, 4358), desc: "Координаты: 2060, 101, -1785" },
+        { coords: convertCoords(1863, 4405), desc: "Координаты: 2153, 103, -2191" },
+        { coords: convertCoords(1694, 4370), desc: "Координаты: 2083, 101, -1853" },
+        { coords: convertCoords(1810, 4451), desc: "Координаты: 2245, 104, -2083" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: НАУЧНОЕ ОБОРУДОВАНИЕ ====================
@@ -1441,6 +1485,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(1540, 3971), desc: "Координаты: 1286, 79, -1545" },
         { coords: convertCoords(1545, 3972), desc: "Координаты: 1289, 80, -1554" },
         { coords: convertCoords(1677, 3528), desc: "Координаты: 400, 80, -1819" },
+        // Сортировка
+        { coords: convertCoords(1783, 4339), desc: "Координаты: 2022, 100, -2030" },
+        { coords: convertCoords(1733, 4395), desc: "Координаты: 2134, 101, -1931" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СЕЙФЫ ====================
@@ -1692,6 +1739,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(2041, 3699), desc: "Слепые псы" },
         { coords: convertCoords(1407, 3740), desc: "Слепые псы" },
         { coords: convertCoords(1535, 4013), desc: "Слепые псы" },
+        // Сортировка
+        { coords: convertCoords(1647, 4438), desc: "Слепые псы" },
+        { coords: convertCoords(1731, 4362), desc: "Слепые псы" },
+        { coords: convertCoords(1915, 4443), desc: "Слепые псы" },
     ],
 
     // ==================== МУТАНТЫ: ПСЕВДОСОБАКИ ====================
@@ -1723,6 +1774,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(1476, 3880), desc: "Псевдособаки" },
         { coords: convertCoords(1409, 3742), desc: "Псевдособаки" },
         { coords: convertCoords(1426, 3939), desc: "Псевдособаки" },
+        // Сортировка
+        { coords: convertCoords(1856, 4419), desc: "Псевдособаки" },
     ],
 
     // ==================== МУТАНТЫ: ПСИ-СОБАКА ====================
@@ -1861,6 +1914,10 @@ const MARKERS_DATA = {
         { coords: convertCoords(1975, 3714), desc: "Плоти" },
         { coords: convertCoords(1747, 3710), desc: "Плоти" },
         { coords: convertCoords(1892, 3678), desc: "Плоти" },
+        // Сортировка
+        { coords: convertCoords(1801, 4389), desc: "Плоти" },
+        { coords: convertCoords(1648, 4338), desc: "Плоти" },
+        { coords: convertCoords(1852, 4461), desc: "Плоти" },
     ],
 
     // ==================== МУТАНТЫ: КАБАНЫ ====================
@@ -1937,6 +1994,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(1492, 3822), desc: "Кабаны" },
         { coords: convertCoords(1918, 3748), desc: "Кабаны" },
         { coords: convertCoords(1713, 3818), desc: "Кабаны" },
+        // Сортировка
+        { coords: convertCoords(1855, 4459), desc: "Кабаны" },
     ],
 
     // ==================== МУТАНТЫ: КРЫСЫ ====================
@@ -1946,7 +2005,9 @@ const MARKERS_DATA = {
         // Стройплощадка
         { coords: convertCoords(1458, 1738), desc: "Крысы" },
         // Тёмная лощина
-        { coords: convertCoords(1643, 3883), desc: "Крысы" }
+        { coords: convertCoords(1643, 3883), desc: "Крысы" },
+        // Сортировка
+        { coords: convertCoords(1697, 4388), desc: "Крысы" },
     ],
 
     // ==================== МУТАНТЫ: СНОРКИ ====================
@@ -2090,6 +2151,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(1669, 3884), desc: "Снорки" },
         { coords: convertCoords(1550, 3819), desc: "Снорки" },
         { coords: convertCoords(1767, 3523), desc: "Снорки" },
+        // Сортировка
+        { coords: convertCoords(1781, 4447), desc: "Снорки" },
+        { coords: convertCoords(1761, 4501), desc: "Снорки" },
+        { coords: convertCoords(1766, 4515), desc: "Снорки" },
+        { coords: convertCoords(1785, 4426), desc: "Снорки" },
     ],
 
     // ==================== МУТАНТЫ: ЗОМБИ ====================
@@ -2176,6 +2242,9 @@ const MARKERS_DATA = {
         // Тёмная лощина
         { coords: convertCoords(1611, 3885), desc: "Зомби" },
         { coords: convertCoords(1634, 3928), desc: "Зомби" },
+        // Сортировка
+        { coords: convertCoords(1694, 4365), desc: "Зомби" },
+        { coords: convertCoords(1662, 4371), desc: "Зомби" },
     ],
 
     // ==================== МУТАНТЫ: КРОВОСОСЫ ====================
@@ -2262,6 +2331,9 @@ const MARKERS_DATA = {
         // Тёмная лощина
         { coords: convertCoords(1851, 3693), desc: "Кровосос" },
         { coords: convertCoords(1421, 4020), desc: "Кровосос" },
+        // Сортировка
+        { coords: convertCoords(1742, 4385), desc: "Кровосос" },
+        { coords: convertCoords(1694, 4451), desc: "Кровосос" },
     ],
 
     // ==================== МУТАНТЫ: МАТЁРЫЕ КРОВОСОСЫ ====================
@@ -2322,6 +2394,8 @@ const MARKERS_DATA = {
         // Стройплощадка
         { coords: convertCoords(1438, 1671), desc: "Химера" },
         { coords: convertCoords(1400, 1819), desc: "Химера" },
+        // Сортировка
+        { coords: convertCoords(1647, 4385), desc: "Химера" },
     ],
 
     // ==================== МУТАНТЫ: КОНТРОЛЁР ====================
@@ -2336,6 +2410,11 @@ const MARKERS_DATA = {
         { coords: convertCoords(2847, 3523), desc: "Контролёр" },
         { coords: convertCoords(3063, 3438), desc: "Контролёр" },
         { coords: convertCoords(2747, 3234), desc: "Контролёр" },
+        // Сортировка
+        { coords: convertCoords(1787, 4511), desc: "Контролёр" },
+        { coords: convertCoords(1789, 4518), desc: "Контролёр" },
+        { coords: convertCoords(1798, 4518), desc: "Контролёр" },
+        { coords: convertCoords(1799, 4507), desc: "Контролёр" },
     ],
 
     // ==================== НПС: ЗОМБИРОВАННЫЕ ====================
@@ -2469,6 +2548,14 @@ const MARKERS_DATA = {
         { coords: convertCoords(1547, 2931), desc: "Зомбированный", level: "underground" },
         { coords: convertCoords(1560, 3003), desc: "Зомбированный", level: "underground" },
         { coords: convertCoords(1563, 2958), desc: "Зомбированный", level: "underground" },
+        // Сортировка
+        { coords: convertCoords(1779, 4501), desc: "Зомбированный" },
+        { coords: convertCoords(1794, 4496), desc: "Зомбированный" },
+        { coords: convertCoords(1800, 4493), desc: "Зомбированный" },
+        { coords: convertCoords(1800, 4495), desc: "Зомбированный" },
+        { coords: convertCoords(1791, 4496), desc: "Зомбированный" },
+        { coords: convertCoords(1789, 4491), desc: "Зомбированный" },
+        { coords: convertCoords(1784, 4496), desc: "Зомбированный" },
     ],
 
     // ==================== НПС: СКОПЛЕНИЕ ЗОМБИРОВАННЫХ ====================
@@ -3583,7 +3670,34 @@ const MARKERS_DATA = {
 
     // ==================== НПС: БОСС ИЛЛЮЗИОНИСТ ====================
     boss_illusionist: [
-
+        {
+            coords: convertCoords(1801, 4514),
+            desc: "Босс: Иллюзионист",
+            image: "images/NPC/bosses/boss_illusionist.jpg",
+            extended: {
+                image: "images/NPC/bosses/boss_illusionist.jpg",
+                description: {
+                    ru: "Это база босса, за зачистку которого вы получите припасы.",
+                    en: "This is the boss base. You will receive supplies for clearing it."
+                },
+                info: {
+                    respawn: {
+                        ru: '2.5 — 3 ч',
+                        en: '2.5 — 3 h'
+                    }
+                },
+                rewards: [
+                    'converter', 
+                    'black_box', 
+                    'large_battery', 
+                    'titanium_frame', 
+                    'servomotors', 
+                    'basic_upgrade_tools', 
+                    'advanced_upgrade_tools', 
+                    'spare_parts'
+                ]
+            }
+        },
     ],
 
     // ==================== ЛОКАЦИИ: БАЗА ОРДЕНА ====================
