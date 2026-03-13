@@ -705,7 +705,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(766, 3434), desc: "Координаты: 211, 90, 2" },
         { coords: convertCoords(770, 3413), desc: "Координаты: 169, 90, -4" },
         { coords: convertCoords(720, 3404), desc: "Координаты: 150, 90, 95" },
-        { coords: convertCoords(585, 358), desc: "Координаты: -16, 89, 364" },
+        { coords: convertCoords(585, 3320), desc: "Координаты: -16, 89, 364" },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: БОЧКИ ====================
