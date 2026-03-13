@@ -61,13 +61,14 @@ const MARKER_ICONS = {
     boss_pharaoh: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_sumrak: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_iskatel: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    boss_king: L.icon({ iconUrl: 'images/NPC/icons/boss_mutant.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
+    boss_king: L.icon({ iconUrl: 'images/NPC/icons/boss_mutant.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    boss_kastet: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
 };
 
 const ASTROLITE_TYPES = ['catalyst', 'wormhole'];
 const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe', 'stash_hidden'];
 const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'];
-const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel', 'boss_king'];
+const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel', 'boss_king', 'boss_kastet'];
 const LOCATION_TYPES = ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile'];
 
 const RUSSIAN_MUTANT_NAMES = {
@@ -171,7 +172,9 @@ const DESC_TRANSLATIONS = {
     'Искатель': 'Seeker',
     'Банда Фараона': 'Pharaoh\'s Gang',
     'Король и Свита': 'King and Retinue',
-    'Босс: Король и Свита': 'Boss: King and Retinue'
+    'Босс: Король и Свита': 'Boss: King and Retinue',
+    'Банда Кастета': 'Kastet\'s Gang',
+    'Босс: Банда Кастета': 'Boss: Kastet\'s Gang'
 };
 
 let map;
