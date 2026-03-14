@@ -12,6 +12,10 @@
             {
                 "ru": "На карту добавлена полноценная система уровней локаций (Поверхность / Подземелье)",
                 "en": "A full-fledged system of location levels has been added to the map (Surface / Dungeon)"
+            },
+            {
+                "ru": "Удалён функционал пользовательских меток",
+                "en": "Custom tag functionality has been removed"
             }
         ]
     },
