@@ -81,6 +81,22 @@ const REWARD_ICONS = {
     stone_blood: { icon: 'images/rewards/stone_blood.png', name: { ru: 'Кровь камня', en: 'Stone Blood' } },
     medkit_science: { icon: 'images/rewards/medkit_science.png', name: { ru: 'Научная аптечка', en: 'Scientific First Aid Kit' } },
     hercules: { icon: 'images/rewards/hercules.png', name: { ru: 'Геркулес', en: 'Hercules' } },
+        sparkler: { icon: 'images/rewards/sparkler.png', name: { ru: 'Бенгальский огонь', en: 'Sparkler' } },
+    old_bread: { icon: 'images/rewards/old_bread.png', name: { ru: 'Старый хлеб', en: 'Old Bread' } },
+    glucose_injection: { icon: 'images/rewards/glucose_injection.png', name: { ru: 'Инъекция глюкозы', en: 'Glucose Injection' } },
+    ammo_9x19_ps: { icon: 'images/rewards/ammo_9x19_ps.png', name: { ru: 'Патроны 9x19 мм ПС', en: '9x19 mm PS Ammo' } },
+    practical_sausage: { icon: 'images/rewards/practical_sausage.png', name: { ru: 'Колбаса "Практическая"', en: '"Practical" Sausage' } },
+    grenade_f1: { icon: 'images/rewards/grenade_f1.png', name: { ru: 'Граната Ф-1', en: 'F-1 Grenade' } },
+    slime: { icon: 'images/rewards/slime.png', name: { ru: 'Слизь', en: 'Slime' } },
+    blind_dog_tail: { icon: 'images/rewards/blind_dog_tail.png', name: { ru: 'Хвост слепого пса', en: 'Blind Dog Tail' } },
+    ammo_12x70_buckshot: { icon: 'images/rewards/ammo_12x70.png', name: { ru: 'Патроны 12x70 Картечь', en: '12x70 Buckshot' } },
+    adrenaline: { icon: 'images/rewards/adrenaline.png', name: { ru: 'Адреналин', en: 'Adrenaline' } },
+    copper_wire_coil: { icon: 'images/rewards/copper_wire_coil.png', name: { ru: 'Моток медной проволоки', en: 'Coil of Copper Wire' } },
+    flash: { icon: 'images/rewards/flash.png', name: { ru: 'Вспышка', en: 'Flash' } },
+    table_clock: { icon: 'images/rewards/table_clock.png', name: { ru: 'Настольные часы', en: 'Table Clock' } },
+    thorn: { icon: 'images/rewards/thorn.png', name: { ru: 'Колючка', en: 'Thorn' } },
+    solder: { icon: 'images/rewards/solder.png', name: { ru: 'Припой', en: 'Solder' } },
+    kevlar_tape: { icon: 'images/rewards/kevlar_tape.png', name: { ru: 'Кевларовая лента', en: 'Kevlar Tape' } },
 };
 
 // ============================================================
@@ -1705,6 +1721,140 @@ const MARKERS_DATA = {
                     { key: 'energy_drink', count: 4 },
                     { key: 'medkit_science', count: 1 },
                     { key: 'hercules', count: 1 }
+                ]
+            }
+        },
+                { 
+            coords: convertCoords(571, 3140), 
+            desc: "Координаты: -378, 100, 393",
+            extended: {
+                rewards: [
+                    { key: 'bandage', count: 6 },
+                    { key: 'sparkler', count: 1 },
+                    { key: 'medkit', count: 4 },
+                    { key: 'tourist_breakfast', count: 2 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(971, 2930), 
+            desc: "Координаты: -798, 74, -407",
+            extended: {
+                rewards: [
+                    { key: 'old_bread', count: 2 },
+                    { key: 'glucose_injection', count: 1 },
+                    { key: 'ammo_12x70', count: 20 },
+                    { key: 'ammo_9x19_ps', count: 60 },
+                    { key: 'mre_b', count: 1 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(1076, 3116), 
+            desc: "Координаты: -426, 86, -616",
+            extended: {
+                rewards: [
+                    { key: 'vodka_kazaki', count: 4 },
+                    { key: 'practical_sausage', count: 2 },
+                    { key: 'medkit_science', count: 4 },
+                    { key: 'antirad', count: 2 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(1227, 3791), 
+            desc: "Координаты: 925, 101, -919",
+            extended: {
+                rewards: [
+                    { key: 'grenade_f1', count: 2 },
+                    { key: 'tourist_breakfast', count: 3 },
+                    { key: 'medkit', count: 2 },
+                    { key: 'antirad', count: 1 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(704, 3776), 
+            desc: "Координаты: 895, 87, 127",
+            extended: {
+                rewards: [
+                    { key: 'slime', count: 1 },
+                    { key: 'medkit', count: 2 },
+                    { key: 'energy_drink', count: 2 },
+                    { key: 'blind_dog_tail', count: 4 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(758, 3274), 
+            desc: "Координаты: -109, 88, 19",
+            extended: {
+                rewards: [
+                    { key: 'vitamins', count: 6 },
+                    { key: 'ammo_12x70_buckshot', count: 40 },
+                    { key: 'medkit', count: 2 },
+                    { key: 'bandage', count: 4 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(535, 3161), 
+            desc: "Координаты: -336, 120, 465",
+            extended: {
+                rewards: [
+                    { key: 'ammo_12x70', count: 40 },
+                    { key: 'adrenaline', count: 1 },
+                    { key: 'toy_doll', count: 1 },
+                    { key: 'medkit_army', count: 3 },
+                    { key: 'copper_wire_coil', count: 2 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(622, 3103), 
+            desc: "Координаты: -451, 89, 292",
+            extended: {
+                rewards: [
+                    { key: 'hercules', count: 2 },
+                    { key: 'medkit', count: 4 },
+                    { key: 'prima_cigarettes', count: 2 },
+                    { key: 'vitamins', count: 4 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(993, 2997), 
+            desc: "Координаты: -664, 91, -451",
+            extended: {
+                rewards: [
+                    { key: 'flash', count: 1 },
+                    { key: 'tourist_breakfast', count: 4 },
+                    { key: 'table_clock', count: 1 },
+                    { key: 'ammo_9x18', count: 60 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(865, 3346), 
+            desc: "Координаты: 34, 88, -195",
+            extended: {
+                rewards: [
+                    { key: 'thorn', count: 1 },
+                    { key: 'belomorkanal', count: 1 },
+                    { key: 'vodka_kazaki', count: 2 },
+                    { key: 'radioprotector', count: 4 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(541, 3029), 
+            desc: "Координаты: -599, 77, 453",
+            extended: {
+                rewards: [
+                    { key: 'solder', count: 4 },
+                    { key: 'kevlar_tape', count: 2 },
+                    { key: 'medkit', count: 2 },
+                    { key: 'mre_b', count: 1 }
                 ]
             }
         },
