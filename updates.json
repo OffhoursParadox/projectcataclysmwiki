@@ -1,6 +1,22 @@
 [
     {
         "date": {
+            "ru": "14 марта 2026",
+            "en": "March 14, 2026"
+        },
+        "items": [
+            {
+                "ru": "Завершена работа над заполнением интерактивной карты",
+                "en": "Completed work on populating the interactive map"
+            },
+            {
+                "ru": "На карту добавлена полноценная система уровней локаций (Поверхность / Подземелье)",
+                "en": "A full-fledged system of location levels has been added to the map (Surface / Dungeon)"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "23 февраля 2026",
             "en": "February 23, 2026"
         },
