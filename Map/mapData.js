@@ -2372,7 +2372,7 @@ const MARKERS_DATA = {
         { coords: convertCoords(607, 3227), desc: "Координаты: -203, 97, 321" },
         { coords: convertCoords(620, 3136), desc: "Координаты: -385, 84, 295" },
         { coords: convertCoords(728, 3462), desc: "Координаты: 268, 91, 78" },
-        { coords: convertCoords(794, 3442), desc: "Координаты: 107, 95, -53" },
+        { coords: convertCoords(794, 3383), desc: "Координаты: 107, 95, -53" },
         { coords: convertCoords(787, 3432), desc: "Координаты: 207, 88, -39" },
         { coords: convertCoords(606, 3206), desc: "Координаты: -246, 85, 323" },
         { coords: convertCoords(906, 3735), desc: "Координаты: 814, 86, -278" },
@@ -2382,7 +2382,9 @@ const MARKERS_DATA = {
         { coords: convertCoords(858, 3742), desc: "Координаты: 826, 83, -181" },
         { coords: convertCoords(798, 3712), desc: "Координаты: 768, 79, -60" },
         { coords: convertCoords(1205, 3872), desc: "Координаты: 1087, 80, -875" },
-        { coords: convertCoords(763, 3775), desc: "Координаты: 893, 77, 9" }
+        { coords: convertCoords(763, 3775), desc: "Координаты: 893, 77, 9" },
+        { coords: convertCoords(803, 3656), desc: "Координаты: 655, 85, -71" },
+        { coords: convertCoords(907, 3388), desc: "Координаты: 120, 85, -279" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СХРОНЫ ====================
