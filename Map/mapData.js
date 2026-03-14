@@ -74,6 +74,13 @@ const REWARD_ICONS = {
     mutated_tissue_sample: { icon: 'images/rewards/mutated_tissue_sample.png', name: { ru: 'Мутировавший образец ткани', en: 'Mutated Tissue Sample' } },
     scan_flash_drive: { icon: 'images/rewards/scan_flash_drive.png', name: { ru: 'Флеш-диск с результатами сканирования', en: 'Scan Results Flash Drive' } },
     expedition_reports_disk: { icon: 'images/rewards/expedition_reports_disk.png', name: { ru: 'Диск с отчётами экспедиции', en: 'Expedition Reports Disk' } },
+    ammo_12x70: { icon: 'images/rewards/ammo_12x70.png', name: { ru: 'Патроны 12x70 Дробь', en: '12x70 Shotgun Shells' } },
+    bread: { icon: 'images/rewards/bread.png', name: { ru: 'Хлеб', en: 'Bread' } },
+    ammo_5_45x39_ps: { icon: 'images/rewards/ammo_5_45x39.png', name: { ru: 'Патроны 5,45x39 мм ПС', en: '5.45x39 mm PS Ammo' } },
+    medkit_army: { icon: 'images/rewards/medkit_army.png', name: { ru: 'Армейская аптечка', en: 'Army First Aid Kit' } },
+    stone_blood: { icon: 'images/rewards/stone_blood.png', name: { ru: 'Кровь камня', en: 'Stone Blood' } },
+    medkit_science: { icon: 'images/rewards/medkit_science.png', name: { ru: 'Научная аптечка', en: 'Scientific First Aid Kit' } },
+    hercules: { icon: 'images/rewards/hercules.png', name: { ru: 'Геркулес', en: 'Hercules' } },
 };
 
 // ============================================================
@@ -1126,7 +1133,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(883, 3475), desc: "Координаты: 294, 77, -231" },
         { coords: convertCoords(818, 3679), desc: "Координаты: 701, 82, -101" },
         { coords: convertCoords(828, 3591), desc: "Координаты: 525, 74, -121" },
-        { coords: convertCoords(879, 3535), desc: "Координаты: 412, 75, -223" }
+        { coords: convertCoords(879, 3535), desc: "Координаты: 412, 75, -223" },
+        { coords: convertCoords(841, 3388), desc: "Координаты: 119, 77, -147" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ИНСТРУМЕНТЫ ====================
@@ -1652,6 +1660,54 @@ const MARKERS_DATA = {
                 ]
             }
         },
+        // Росстань
+        { 
+            coords: convertCoords(666, 3402), 
+            desc: "Координаты: 147, 94, 203",
+            extended: {
+                rewards: [
+                    { key: 'ammo_9x18', count: 60 },
+                    { key: 'medkit', count: 4 },
+                    { key: 'tourist_breakfast', count: 2 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(844, 3376), 
+            desc: "Координаты: 95, 77, -154",
+            extended: {
+                rewards: [
+                    { key: 'medkit', count: 2 },
+                    { key: 'ammo_12x70', count: 30 },
+                    { key: 'vodka_kazaki', count: 2 },
+                    { key: 'bread', count: 3 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(874, 3206), 
+            desc: "Координаты: -245, 90, -213",
+            extended: {
+                rewards: [
+                    { key: 'ammo_5_45x39_ps', count: 120 },
+                    { key: 'medkit_army', count: 2 },
+                    { key: 'bandage', count: 2 },
+                    { key: 'tourist_breakfast', count: 4 }
+                ]
+            }
+        },
+        { 
+            coords: convertCoords(931, 3780), 
+            desc: "Координаты: 903, 78, -327",
+            extended: {
+                rewards: [
+                    { key: 'stone_blood', count: 1 },
+                    { key: 'energy_drink', count: 4 },
+                    { key: 'medkit_science', count: 1 },
+                    { key: 'hercules', count: 1 }
+                ]
+            }
+        },
     ],
 
     // ==================== КОНТЕЙНЕРЫ: ДЕРЕВЯННЫЕ ЯЩИКИ ====================
@@ -2019,7 +2075,8 @@ const MARKERS_DATA = {
         { coords: convertCoords(793, 3787), desc: "Координаты: 917, 75, -52" },
         { coords: convertCoords(831, 3370), desc: "Координаты: 83, 87, -127" },
         { coords: convertCoords(814, 3416), desc: "Координаты: 176, 91, -93" },
-        { coords: convertCoords(864, 3410), desc: "Координаты: 164, 84, -193" }
+        { coords: convertCoords(864, 3410), desc: "Координаты: 164, 84, -193" },
+        { coords: convertCoords(854, 3364), desc: "Координаты: 71, 77, -174" }
     ],
 
     // ==================== КОНТЕЙНЕРЫ: СЕЙФЫ ====================
