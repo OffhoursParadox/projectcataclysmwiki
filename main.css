@@ -68,11 +68,29 @@
   transform:translateY(-2px);
   box-shadow:0 8px 24px rgba(0,0,0,0.3)
 }
-.quick-card--featured{
-  background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(18,18,26,0.9) 100%);
-  border-color:rgba(59,130,246,0.3)
+
+.quick-card--artifacts:hover{
+  background:linear-gradient(135deg,rgba(139,92,246,0.1) 0%,rgba(18,18,26,1) 100%);
+  border-color:#8b5cf6;
+  box-shadow:0 8px 32px rgba(139,92,246,0.2)
 }
+.quick-card--artifacts .quick-card__arrow{color:#8b5cf6}
+
+.quick-card--calculator:hover{
+  background:linear-gradient(135deg,rgba(196,163,90,0.1) 0%,rgba(18,18,26,1) 100%);
+  border-color:var(--color-accent);
+  box-shadow:0 8px 32px rgba(196,163,90,0.2)
+}
+
+.quick-card--ttk:hover{
+  background:linear-gradient(135deg,rgba(239,68,68,0.1) 0%,rgba(18,18,26,1) 100%);
+  border-color:#ef4444;
+  box-shadow:0 8px 32px rgba(239,68,68,0.2)
+}
+.quick-card--ttk .quick-card__arrow{color:#ef4444}
+
 .quick-card--featured:hover{
+  background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(18,18,26,1) 100%);
   border-color:#3b82f6;
   box-shadow:0 8px 32px rgba(59,130,246,0.2)
 }
@@ -143,7 +161,11 @@
   font-weight:500;
   letter-spacing:1px
 }
-.rf-frequencies__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.rf-frequencies__grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px
+}
 .rf-item{
   display:flex;
   justify-content:space-between;
@@ -152,15 +174,57 @@
   background:rgba(0,0,0,0.25);
   border-radius:8px;
   border:1px solid transparent;
-  transition:var(--transition)
+  transition:var(--transition);
+  cursor:pointer;
+  position:relative;
+  user-select:none
 }
 .rf-item:hover{border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.05)}
+.rf-item:active{background:rgba(16,185,129,0.1)}
 .rf-item__location{font-size:13px;color:var(--color-text-muted)}
 .rf-item__freq{
   font-size:14px;
   font-weight:600;
   color:#10b981;
   font-family:'Roboto Mono',monospace
+}
+.rf-item--copied{
+  border-color:rgba(16,185,129,0.5);
+  background:rgba(16,185,129,0.08)
+}
+.rf-copied-tooltip{
+  position:absolute;
+  bottom:calc(100% + 6px);
+  left:50%;
+  transform:translateX(-50%) translateY(4px);
+  padding:5px 14px;
+  background:rgba(10,10,11,0.95);
+  border:1px solid rgba(16,185,129,0.5);
+  border-radius:8px;
+  color:#10b981;
+  font-size:12px;
+  font-weight:600;
+  font-family:'Roboto Mono',monospace;
+  letter-spacing:0.5px;
+  white-space:nowrap;
+  pointer-events:none;
+  z-index:10;
+  animation:rfCopiedFade 1.5s ease-out forwards
+}
+.rf-copied-tooltip::after{
+  content:'';
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform:translateX(-50%);
+  border:5px solid transparent;
+  border-top-color:rgba(16,185,129,0.5)
+}
+@keyframes rfCopiedFade{
+  0%{opacity:0;transform:translateX(-50%) translateY(4px)}
+  15%{opacity:1;transform:translateX(-50%) translateY(0)}
+  70%{opacity:1;transform:translateX(-50%) translateY(0)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-4px)}
 }
 
 .updates-block{
@@ -253,6 +317,9 @@
   .quick-card:hover{transform:none;box-shadow:none}
   .quick-card:hover .quick-card__arrow{opacity:0}
   .quick-card:active{background:rgba(18,18,26,1);border-color:var(--color-accent)}
+  .quick-card--artifacts:active{border-color:#8b5cf6}
+  .quick-card--ttk:active{border-color:#ef4444}
+  .quick-card--featured:active{border-color:#3b82f6}
 }
 @media print{
   .hero-compact{padding-top:20px}
