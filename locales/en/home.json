@@ -22,5 +22,9 @@
   "rf.polissya": "Polesskoye",
   "rf.militaryWarehouses": "Army Warehouses",
   "rf.crater": "Frost Hollow",
-  "updates.title": "Updates"
+  "updates.title": "Updates",
+  "error.signal": "SIGNAL LOST — FREQUENCY NOT FOUND",
+  "error.subtitle": "The anomaly consumed the page",
+  "error.desc": "The requested page does not exist or has been moved. It may have been consumed by an anomaly. Use the navigation below to return to a safe zone.",
+  "error.home": "Back to home"
 }
