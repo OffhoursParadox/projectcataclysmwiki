@@ -4,8 +4,61 @@ document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
+    initRfCopy();
     loadUpdates();
 });
+
+function initRfCopy() {
+    document.querySelectorAll('.rf-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const freqEl = item.querySelector('.rf-item__freq');
+            if (!freqEl) return;
+
+            const match = freqEl.textContent.trim().match(/\d+/);
+            if (!match) return;
+
+            const freq = match[0];
+
+            const showFeedback = () => {
+                const existing = item.querySelector('.rf-copied-tooltip');
+                if (existing) existing.remove();
+
+                item.classList.add('rf-item--copied');
+
+                const tooltip = document.createElement('span');
+                tooltip.className = 'rf-copied-tooltip';
+                const lang = localStorage.getItem('wiki-lang') || 'ru';
+                tooltip.textContent = lang === 'en' ? 'Copied!' : 'Скопировано!';
+                item.appendChild(tooltip);
+
+                setTimeout(() => {
+                    item.classList.remove('rf-item--copied');
+                    if (tooltip.parentNode) tooltip.remove();
+                }, 1500);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(freq).then(showFeedback).catch(() => {
+                    fallbackCopy(freq);
+                    showFeedback();
+                });
+            } else {
+                fallbackCopy(freq);
+                showFeedback();
+            }
+        });
+    });
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0;left:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignored */ }
+    document.body.removeChild(ta);
+}
 
 function loadUpdates() {
     const container = document.getElementById('updatesContent');
