@@ -70,6 +70,7 @@
   "calc.rarity.collection": "Collection",
   "calc.rarity.uncommon": "Uncommon",
   "calc.rarity.common": "Common",
+  "calc.rarity.none": "No Rarity",
   "calc.containerType.standard": "Standard",
   "calc.containerType.bulky": "Bulky",
   "calc.containerType.compact": "Compact",
