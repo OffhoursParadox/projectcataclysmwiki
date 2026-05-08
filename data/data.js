@@ -13,7 +13,10 @@ function getLocalizedField(obj, field) {
 }
 
 function getLocalizedName(obj) { return getLocalizedField(obj, 'name'); }
-function getLocalizedRarity(obj) { return getLocalizedField(obj, 'rarityName'); }
+function getLocalizedRarity(obj) {
+    if (!obj.rarity) return getRarityName('none');
+    return getLocalizedField(obj, 'rarityName');
+}
 function getLocalizedType(obj) { return getLocalizedField(obj, 'typeName'); }
 
 // ============== ENHANCEMENT PRESETS ==============
@@ -28,7 +31,7 @@ const ENHANCEMENT_PRESETS = {
     },
     exoskeleton: {
         maxLevel: 15,
-        bonuses: { bulletResistance: [0, 2.1, 4.2, 6.3, 8.4, 14.7, 18.2, 21, 24.5, 28, 37.1, 42, 46.2, 51.1, 56, 70] }
+        bonuses: { bulletResistance: [0, 1.8, 3.6, 5.4, 7.2, 12.6, 15.6, 18, 21, 24, 31.8, 36, 39.6, 43.8, 48, 60] }
     },
     superHeavy: {
         maxLevel: 15,
@@ -170,8 +173,8 @@ const INVERTED_STATS = ['radiation', 'bleeding', 'cold'];
 const CONTAINER_TYPES = { standard: 'Стандартный', bulky: 'Громоздкий', compact: 'Компактный', spacious: 'Вместительный' };
 const CONTAINER_TYPES_EN = { standard: 'Standard', bulky: 'Bulky', compact: 'Compact', spacious: 'Spacious' };
 
-const RARITY_NAMES = { legendary: 'Легендарное', unique: 'Уникальное', rare: 'Раритетное', collection: 'Коллекционное', uncommon: 'Необычное', common: 'Распространённое' };
-const RARITY_NAMES_EN = { legendary: 'Legendary', unique: 'Unique', rare: 'Rare', collection: 'Collection', uncommon: 'Uncommon', common: 'Common' };
+const RARITY_NAMES = { legendary: 'Легендарное', unique: 'Уникальное', rare: 'Раритетное', collection: 'Коллекционное', uncommon: 'Необычное', common: 'Распространённое', none: 'Без редкости' };
+const RARITY_NAMES_EN = { legendary: 'Legendary', unique: 'Unique', rare: 'Rare', collection: 'Collection', uncommon: 'Uncommon', common: 'Common', none: 'No Rarity' };
 
 const ARMOR_TYPES = { light: 'Лёгкие', scientific: 'Научные', combat: 'Боевые', combined: 'Комбинированные' };
 const ARMOR_TYPES_EN = { light: 'Light', scientific: 'Scientific', combat: 'Combat', combined: 'Combined' };
@@ -181,9 +184,13 @@ function getContainerTypeName(typeKey) {
     return lang === 'en' ? (CONTAINER_TYPES_EN[typeKey] || typeKey) : (CONTAINER_TYPES[typeKey] || typeKey);
 }
 
-function getRarityName(rarityKey) {
+window.getRarityName = function(rarityKey) {
     const lang = window.i18n?.getCurrentLang() || 'ru';
     return lang === 'en' ? (RARITY_NAMES_EN[rarityKey] || rarityKey) : (RARITY_NAMES[rarityKey] || rarityKey);
+}
+
+function getRarityName(rarityKey) {
+    return window.getRarityName(rarityKey);
 }
 
 function getArmorTypeName(typeValue) {
@@ -262,7 +269,6 @@ const ARMORS = [
     {
         id: 'leather_jacket',
         name: 'Кожаная куртка', nameEn: 'Leather Jacket',
-        rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common',
         type: 'Лёгкие', typeEn: 'Light',
         containerTypes: ['all'],
         stats: { radiationProtection: 20, bioProtection: 20, heatResistance: 14, chemResistance: 14, electroResistance: 14, impactResistance: 12, tearProtection: 16, bulletResistance: 24, maxWeight: 5.00 },
@@ -290,7 +296,6 @@ const ARMORS = [
     {
         id: 'otmychka',
         name: 'Кожаная куртка «Отмычка»', nameEn: 'Leather Jacket "Lockpick"',
-        rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common',
         type: 'Научные', typeEn: 'Scientific',
         containerTypes: ['all'],
         stats: { radiationProtection: 100, bioProtection: 60, thermalProtection: 20, heatResistance: 20, chemResistance: 20, electroResistance: 20, impactResistance: 12, tearProtection: 16, bulletResistance: 24, maxStamina: -3.00, maxWeight: 10.00 },
@@ -417,7 +422,6 @@ const ARMORS = [
     {
         id: 'shakal',
         name: 'Бронекостюм «Шакал»', nameEn: 'Body Armor "Jackal"',
-        rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common',
         type: 'Боевые', typeEn: 'Combat',
         containerTypes: ['all'],
         stats: { impactResistance: 68, tearProtection: 84, bulletResistance: 72, maxWeight: 8.00 },
@@ -537,7 +541,7 @@ const ARMORS = [
         rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique',
         type: 'Боевые', typeEn: 'Combat',
         containerTypes: ['standard', 'spacious', 'compact'],
-        stats: { radiationProtection: 200, bioProtection: 200, thermalProtection: 100, psiProtection: 200, heatResistance: 80, chemResistance: 80, electroResistance: 80, impactResistance: 214, tearProtection: 252, bulletResistance: 348, maxStamina: 10.00, moveSpeed: -5.00, maxWeight: 60.00 },
+        stats: { radiationProtection: 200, bioProtection: 200, thermalProtection: 100, psiProtection: 200, heatResistance: 80, chemResistance: 80, electroResistance: 80, impactResistance: 214, tearProtection: 252, bulletResistance: 372, maxStamina: 10.00, moveSpeed: -5.00, maxWeight: 60.00 },
         enhancement: ENHANCEMENT_PRESETS.exoskeleton
     },
     {
@@ -546,7 +550,7 @@ const ARMORS = [
         rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique',
         type: 'Боевые', typeEn: 'Combat',
         containerTypes: ['standard', 'spacious', 'compact'],
-        stats: { radiationProtection: 200, bioProtection: 200, thermalProtection: 100, psiProtection: 200, heatResistance: 100, chemResistance: 100, electroResistance: 100, impactResistance: 242, tearProtection: 312, bulletResistance: 356, maxStamina: 10.00, maxWeight: 70.00 },
+        stats: { radiationProtection: 200, bioProtection: 200, thermalProtection: 100, psiProtection: 200, heatResistance: 100, chemResistance: 100, electroResistance: 100, impactResistance: 242, tearProtection: 312, bulletResistance: 372, maxStamina: 10.00, maxWeight: 70.00 },
         enhancement: ENHANCEMENT_PRESETS.exoskeleton
     },
     // COMBINED
@@ -709,7 +713,7 @@ const ARMORS = [
         rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique',
         type: 'Комбинированные', typeEn: 'Combined',
         containerTypes: ['all'],
-        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 300, psiProtection: 300, heatResistance: 180, chemResistance: 210, electroResistance: 180, impactResistance: 106, tearProtection: 118, bulletResistance: 272, bleeding: -1.00, maxWeight: 50.00 },
+        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 300, psiProtection: 300, heatResistance: 180, chemResistance: 210, electroResistance: 180, impactResistance: 168, tearProtection: 188, bulletResistance: 292, bleeding: -1.00, maxWeight: 50.00 },
         enhancement: ENHANCEMENT_PRESETS.combined
     },
     {
@@ -722,12 +726,21 @@ const ARMORS = [
         enhancement: ENHANCEMENT_PRESETS.combined
     },
     {
+        id: 'chn3m',
+        name: 'Бронежилет ЧН-3м', nameEn: 'Body Armor CHN-3m',
+        rarity: 'rare', rarityName: 'Раритетное', rarityNameEn: 'Rare',
+        type: 'Комбинированные', typeEn: 'Combined',
+        containerTypes: ['all'],
+        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 240, psiProtection: 200, heatResistance: 120, chemResistance: 120, electroResistance: 120, impactResistance: 122, tearProtection: 138, bulletResistance: 282, moveSpeed: 1.00, maxWeight: 26.00 },
+        enhancement: ENHANCEMENT_PRESETS.combined
+    },
+    {
         id: 'yggdrasil',
         name: 'Экзоскелет «Иггдрасиль»', nameEn: 'Exoskeleton "Yggdrasil"',
         rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique',
         type: 'Комбинированные', typeEn: 'Combined',
         containerTypes: ['standard', 'spacious', 'compact'],
-        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 160, frostProtection: 200, psiProtection: 200, heatResistance: 104, chemResistance: 96, electroResistance: 84, impactResistance: 142, tearProtection: 214, bulletResistance: 318, bleeding: -2.00, maxStamina: 10.00, regeneration: 1.00, cold: -20.00, moveSpeed: -3.00, maxWeight: 50.00 },
+        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 160, frostProtection: 200, psiProtection: 200, heatResistance: 104, chemResistance: 96, electroResistance: 84, impactResistance: 142, tearProtection: 214, bulletResistance: 318, bleeding: -2.00, maxStamina: 10.00, saturation: 0.50, regeneration: 1.00, cold: -20.00, moveSpeed: -1.00, maxWeight: 50.00 },
         enhancement: ENHANCEMENT_PRESETS.combined
     },
     {
@@ -736,7 +749,7 @@ const ARMORS = [
         rarity: 'legendary', rarityName: 'Легендарное', rarityNameEn: 'Legendary',
         type: 'Комбинированные', typeEn: 'Combined',
         containerTypes: ['standard', 'spacious', 'compact'],
-        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 200, psiProtection: 300, heatResistance: 120, chemResistance: 120, electroResistance: 120, impactResistance: 252, tearProtection: 324, bulletResistance: 362, bleeding: -1.00, maxStamina: 20.00, maxWeight: 80.00 },
+        stats: { radiationProtection: 300, bioProtection: 300, thermalProtection: 200, psiProtection: 300, heatResistance: 120, chemResistance: 120, electroResistance: 120, impactResistance: 252, tearProtection: 324, bulletResistance: 382, bleeding: -1.00, maxStamina: 20.00, maxWeight: 80.00 },
         enhancement: ENHANCEMENT_PRESETS.legendary
     }
 ];
