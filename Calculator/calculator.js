@@ -21,7 +21,7 @@ let elements = {};
 const STORAGE_KEY = 'cataclysmCalculatorState';
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
 const BULLET_RESISTANCE_CONSTANT = 166.67;
-const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common'];
+const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common', 'none'];
 const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
 
 const WARNING_STATS = {
@@ -38,7 +38,8 @@ const RARITY_KEYS = {
     rare: 'calc.rarity.rare',
     collection: 'calc.rarity.collection',
     uncommon: 'calc.rarity.uncommon',
-    common: 'calc.rarity.common'
+    common: 'calc.rarity.common',
+    none: 'calc.rarity.none'
 };
 
 const CONTAINER_TYPE_KEYS = {
@@ -551,8 +552,9 @@ function renderArmorDropdownList(searchQuery = '') {
                               (armor.nameEn && armor.nameEn.toLowerCase().includes(searchQuery));
             if (!nameMatch) return;
         }
-        if (!groupedArmors[armor.rarity]) groupedArmors[armor.rarity] = [];
-        groupedArmors[armor.rarity].push(armor);
+        const rarityKey = armor.rarity || 'none';
+        if (!groupedArmors[rarityKey]) groupedArmors[rarityKey] = [];
+        groupedArmors[rarityKey].push(armor);
     });
 
     if (elements.armorClearWrapper) elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
@@ -570,7 +572,8 @@ function renderArmorDropdownList(searchQuery = '') {
         armors.forEach(armor => {
             const isSelected = state.selectedArmor?.id === armor.id;
             const bulletRes = armor.stats.bulletResistance || 0;
-            html += `<div class="custom-dropdown__item custom-dropdown__item--${armor.rarity} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(armor)}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(armor)}</span></div>`;
+            const rarityClass = armor.rarity || 'none';
+            html += `<div class="custom-dropdown__item custom-dropdown__item--${rarityClass} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(armor)}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(armor)}</span></div>`;
         });
         html += '</div>';
     });
@@ -1101,7 +1104,8 @@ function renderArmorInfo() {
         return `<div class="armor-details__stat"><span class="armor-details__stat-name">${getStatName(key)}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)} ${enhancementHtml}</span></div>`;
     }).join('');
 
-    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${getLocalizedName(armor)}</span><span class="armor-details__rarity rarity--${armor.rarity}">${getLocalizedRarity(armor)}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
+    const rarityClass = armor.rarity || 'none';
+    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${getLocalizedName(armor)}</span><span class="armor-details__rarity rarity--${rarityClass}">${getLocalizedRarity(armor)}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
 }
 
 function renderContainerInfo() {
