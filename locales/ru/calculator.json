@@ -70,6 +70,7 @@
   "calc.rarity.collection": "Коллекционный",
   "calc.rarity.uncommon": "Необычный",
   "calc.rarity.common": "Обычный",
+  "calc.rarity.none": "Без редкости",
   "calc.containerType.standard": "Стандартный",
   "calc.containerType.bulky": "Громоздкий",
   "calc.containerType.compact": "Компактный",
