@@ -1,55 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="64" height="64" viewBox="0 0 64 64"
-     role="img" aria-labelledby="title desc">
-  <title id="title">Project Cataclysm Wiki — favicon</title>
-  <desc id="desc">Стилизованный знак радиации в цветах Project Cataclysm</desc>
-
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#12121a"/>
-      <stop offset="60%" stop-color="#050506"/>
-      <stop offset="100%" stop-color="#000000"/>
-    </radialGradient>
-
-    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d4b86a"/>
-      <stop offset="100%" stop-color="#c4a35a"/>
-    </linearGradient>
-
-    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f5e3a4"/>
-      <stop offset="100%" stop-color="#8b7a4a"/>
-    </linearGradient>
-
-    <path id="blade" d="
-      M24.5 19
-      L19 9.5
-      A26 26 0 0 1 45 9.5
-      L39.5 19
-      A15 15 0 0 0 24.5 19
-      Z" />
-  </defs>
-
-  <circle cx="32" cy="32" r="30"
-          fill="url(#bg)"
-          stroke="url(#ring)"
-          stroke-width="2.5" />
-
-  <g fill="url(#accent)" stroke="#000000" stroke-width="1">
-    <use href="#blade" />
-    <use href="#blade" transform="rotate(120 32 32)" />
-    <use href="#blade" transform="rotate(240 32 32)" />
-  </g>
-
-  <circle cx="32" cy="32" r="5.5"
-          fill="url(#accent)"
-          stroke="#000000"
-          stroke-width="1" />
-
-  <circle cx="32" cy="32" r="22"
-          fill="none"
-          stroke="#000000"
-          stroke-opacity="0.6"
-          stroke-width="1" />
+<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 2L3 10v16l15 8 15-8V10L18 2z" stroke="#c89030" stroke-width="2.5" fill="none"/>
+    <path d="M18 6L7 12v12l11 6 11-6V12L18 6z" stroke="#c89030" stroke-width="1.5" opacity="0.7" fill="none"/>
+    <circle cx="18" cy="18" r="3.5" fill="#c89030" opacity="1"/>
+    <line x1="18" y1="2" x2="18" y2="15" stroke="#c89030" stroke-width="1.5" opacity="0.6"/>
+    <line x1="18" y1="21" x2="18" y2="34" stroke="#c89030" stroke-width="1.5" opacity="0.6"/>
+    <line x1="3" y1="10" x2="15" y2="18" stroke="#c89030" stroke-width="1.5" opacity="0.6"/>
+    <line x1="21" y1="18" x2="33" y2="10" stroke="#c89030" stroke-width="1.5" opacity="0.6"/>
 </svg>
