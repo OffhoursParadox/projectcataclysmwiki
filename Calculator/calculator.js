@@ -8,28 +8,64 @@ const state = {
     previousStats: null,
     enhancementLevel: 0,
     filters: {
-        category: 'all',
         search: '',
-        positiveEffect: '',
-        negativeEffect: ''
+        positiveEffects: [],
+        negativeEffects: []
     },
-    filtersExpanded: false
+    filtersExpanded: false,
+    armorModalPreviewId: null,
+    containerModalPreviewId: null,
+    artifactModalPreviewId: null,
+    selectedArtifactSlotIndex: null,
+    artifactCopyMode: false,
 };
 
+let armorModalSearchTimer = null;
+let pickerGridLayoutTimer = null;
+const PICKER_GRID_GAP = 8;
+const ARTIFACT_GRID_ROW_STRIDE = 92 + PICKER_GRID_GAP;
+let lastArmorDetailId = null;
+let lastContainerDetailId = null;
+let lastArtifactDetailId = null;
+let artifactSlotsSortable = null;
+let artifactSlotDragJustFinished = false;
+
 let elements = {};
+let statFilterOptions = { positive: [], negative: [] };
 
 const STORAGE_KEY = 'cataclysmCalculatorState';
+const DEFAULT_CONTAINER_ID = 'container_radiy';
 const PRIORITY_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation', 'cold'];
+const HERO_STATS = ['regeneration', 'bleeding', 'radiation', 'saturation'];
+const ARMOR_REGULAR_STAT_KEYS = [
+    'radiationProtection', 'bioProtection', 'thermalProtection', 'psiProtection', 'frostProtection',
+    'heatResistance', 'chemResistance', 'electroResistance',
+    'impactResistance', 'tearProtection'
+];
+const ARMOR_EXTRA_STAT_KEYS = [
+    'regeneration', 'bleeding', 'radiation', 'saturation', 'cold',
+    'maxStamina', 'staminaRegen', 'moveSpeed', 'maxWeight'
+];
 const BULLET_RESISTANCE_CONSTANT = 166.67;
 const RARITY_ORDER = ['legendary', 'unique', 'rare', 'collection', 'uncommon', 'common', 'none'];
-const CONTAINER_TYPE_ORDER = ['standard', 'bulky', 'compact', 'spacious'];
 
 const WARNING_STATS = {
-    radiation: { threshold: 0, color: 'radiation', titleKey: 'calc.warning.radiation', unitKey: 'calc.unit.msvSec' },
-    cold: { threshold: 0, color: 'cold', titleKey: 'calc.warning.cold', unitKey: 'calc.unit.perSec' },
-    bleeding: { threshold: 0, color: 'bleeding', titleKey: 'calc.warning.bleeding', unitKey: 'calc.unit.perSec' },
-    regeneration: { threshold: 0, color: 'regeneration', titleKey: 'calc.warning.healthLoss', unitKey: 'calc.unit.percentSec', inverted: true },
-    saturation: { threshold: 0, color: 'saturation', titleKey: 'calc.warning.saturation', unitKey: 'calc.unit.percentSec', inverted: true }
+    radiation: { threshold: 0, titleKey: 'calc.warning.radiationDamage', unitKey: 'calc.unit.msvSec' },
+    cold: { threshold: 0, titleKey: 'calc.warning.coldDamage', unitKey: 'calc.unit.perSec' },
+    bleeding: { threshold: 0, titleKey: 'calc.warning.bleedingDamage', unitKey: 'calc.unit.perSec' },
+    regeneration: { threshold: 0, titleKey: 'calc.warning.healthLossDamage', unitKey: 'calc.unit.percentSec', inverted: true },
+    saturation: { threshold: 0, titleKey: 'calc.warning.saturationDamage', unitKey: 'calc.unit.percentSec', inverted: true }
+};
+
+const WARNING_ICON_FILES = {
+    radiation: '../images/icons/warnings/radiation.svg',
+    cold: '../images/icons/warnings/cold.svg',
+    bleeding: '../images/icons/warnings/bleeding.svg'
+};
+
+const WARNING_ICON_INLINE = {
+    regeneration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-6.5-4.35-8.5-8.5C1.5 8.5 4.5 4 8.5 4c2 0 3.5 1.5 3.5 1.5S13.5 4 15.5 4C19.5 4 22.5 8.5 20.5 12.5 18.5 16.65 12 21 12 21z" fill="currentColor" fill-opacity="0.15"/><path d="M5 13h3l2-4 3 8 2-5 2 1h3"/></svg>',
+    saturation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'
 };
 
 const RARITY_KEYS = {
@@ -40,13 +76,6 @@ const RARITY_KEYS = {
     uncommon: 'calc.rarity.uncommon',
     common: 'calc.rarity.common',
     none: 'calc.rarity.none'
-};
-
-const CONTAINER_TYPE_KEYS = {
-    standard: 'calc.containerType.standard',
-    bulky: 'calc.containerType.bulky',
-    compact: 'calc.containerType.compact',
-    spacious: 'calc.containerType.spacious'
 };
 
 const CONTAINER_TYPE_ICONS = {
@@ -63,43 +92,380 @@ function t(key, params = {}) {
     return key;
 }
 
+function getArtifactTierDisplay(tier) {
+    if (tier === 'unique') return '★';
+    return t('calc.artifactModal.tierLevel', { level: tier });
+}
+
+const STAT_ICONS = {
+    radiationProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>',
+    bioProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/></svg>',
+    thermalProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10l3 3"/><circle cx="12" cy="14" r="8"/></svg>',
+    psiProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M12 12l8-8"/></svg>',
+    frostProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>',
+    heatResistance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"/></svg>',
+    chemResistance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/></svg>',
+    electroResistance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    impactResistance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+    tearProtection: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+    bulletResistance: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+    regeneration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+    bleeding: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
+    radiation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/></svg>',
+    saturation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>',
+    cold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>',
+    maxStamina: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+    staminaRegen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>',
+    moveSpeed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    maxWeight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>'
+};
+
+function getStatIcon(statKey) {
+    return STAT_ICONS[statKey] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>';
+}
+
+const ARMOR_DEFAULT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+const ARMOR_EMPTY_IMAGE = `../${ITEMS_IMAGES_DIR}Armors/empty.png`;
+
+function getArmorCardIcon(armor, iconClass = 'armor-card__icon', imgClass = 'armor-card__img', fallbackClass = 'armor-card__icon-fallback') {
+    const imagePath = getArmorImagePath(armor);
+    if (!imagePath) {
+        return `<span class="${iconClass}">${ARMOR_DEFAULT_ICON}</span>`;
+    }
+    return `<span class="${iconClass}"><img class="${imgClass}" src="${imagePath}" alt="" loading="lazy" decoding="async"><span class="${fallbackClass}" hidden>${ARMOR_DEFAULT_ICON}</span></span>`;
+}
+
+function bindArmorCardFallbacks(listElement, imgClass = 'armor-card__img', fallbackClass = 'armor-card__icon-fallback') {
+    if (!listElement) return;
+    listElement.querySelectorAll(`.${imgClass}`).forEach(img => {
+        img.onerror = () => {
+            img.remove();
+            const fallback = img.parentElement?.querySelector(`.${fallbackClass}`);
+            if (fallback) fallback.hidden = false;
+        };
+    });
+}
+
+function getContainerDropdownIcon(container) {
+    const imagePath = getContainerImagePath(container);
+    const typeIcon = CONTAINER_TYPE_ICONS[container.type] || CONTAINER_TYPE_ICONS.standard;
+
+    if (!imagePath) return `<span class="container-card__icon">${typeIcon}</span>`;
+
+    return `<img class="container-card__img" src="${imagePath}" alt=""><span class="container-card__icon-fallback" hidden>${typeIcon}</span>`;
+}
+
+function bindContainerIconFallbacks(listElement) {
+    if (!listElement) return;
+    listElement.querySelectorAll('.container-card__img').forEach(img => {
+        img.onerror = () => {
+            img.remove();
+            const fallback = img.parentElement?.querySelector('.container-card__icon-fallback');
+            if (fallback) fallback.hidden = false;
+        };
+    });
+}
+
+const CONTAINER_BAR_DEFAULT_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`;
+
+function renderContainerBarPreviewContent(container) {
+    const imagePath = getContainerImagePath(container);
+    const typeIcon = CONTAINER_TYPE_ICONS[container.type] || CONTAINER_TYPE_ICONS.standard;
+
+    if (imagePath) {
+        return `<img class="container-bar__img" src="${imagePath}" alt="${getLocalizedName(container)}"><span class="container-bar__fallback" hidden>${typeIcon}</span>`;
+    }
+
+    return `<span class="container-bar__icon">${typeIcon}</span>`;
+}
+
+function renderContainerSlotDots(slots) {
+    const count = Math.max(0, slots || 0);
+    if (!count) return '';
+    const dots = Array.from({ length: count }, () => '<span class="container-card__slot-dot"></span>').join('');
+    return `<div class="container-card__slots" title="${getSlotsText(count)}" aria-label="${getSlotsText(count)}">${dots}</div>`;
+}
+
+function bindContainerBarPreviewFallbacks() {
+    if (!elements.containerPickerPreview) return;
+    const img = elements.containerPickerPreview.querySelector('.container-bar__img');
+    const fallback = elements.containerPickerPreview.querySelector('.container-bar__fallback');
+    if (img && fallback) {
+        img.onerror = () => {
+            img.remove();
+            fallback.hidden = false;
+        };
+    }
+}
+
+function getRaritySortIndex(rarity) {
+    const idx = RARITY_ORDER.indexOf(rarity || 'none');
+    return idx === -1 ? RARITY_ORDER.length : idx;
+}
+
+function sortArmorsByRarity(armors) {
+    return [...armors].sort((a, b) => {
+        const diff = getRaritySortIndex(a.rarity) - getRaritySortIndex(b.rarity);
+        if (diff !== 0) return diff;
+        return getLocalizedName(a).localeCompare(getLocalizedName(b), undefined, { sensitivity: 'base' });
+    });
+}
+
+function updateArmorBar() {
+    if (!elements.armorPanelName) return;
+
+    RARITY_ORDER.forEach(r => elements.armorPanelName.classList.remove(`rarity--${r}`));
+
+    if (!state.selectedArmor) {
+        elements.armorPanelName.textContent = t('calc.selectArmor');
+        elements.armorPanelName.classList.remove('has-value');
+        elements.armorPanel?.classList.remove('armor-panel--has-armor');
+        if (elements.armorPanelActionsEmpty) elements.armorPanelActionsEmpty.hidden = false;
+        if (elements.armorPanelActionsSelected) elements.armorPanelActionsSelected.hidden = true;
+        return;
+    }
+
+    elements.armorPanelName.textContent = getLocalizedName(state.selectedArmor);
+    elements.armorPanelName.classList.add('has-value');
+    elements.armorPanelName.classList.add(`rarity--${state.selectedArmor.rarity || 'none'}`);
+    elements.armorPanel?.classList.add('armor-panel--has-armor');
+    if (elements.armorPanelActionsEmpty) elements.armorPanelActionsEmpty.hidden = true;
+    if (elements.armorPanelActionsSelected) elements.armorPanelActionsSelected.hidden = false;
+}
+
+function sortContainersByRarity(containers) {
+    return [...containers].sort((a, b) => {
+        const diff = getRaritySortIndex(a.rarity) - getRaritySortIndex(b.rarity);
+        if (diff !== 0) return diff;
+        const slotsDiff = (b.slots || 0) - (a.slots || 0);
+        if (slotsDiff !== 0) return slotsDiff;
+        return getLocalizedName(a).localeCompare(getLocalizedName(b), undefined, { sensitivity: 'base' });
+    });
+}
+
+function hasFilledArtifacts() {
+    return state.artifacts.some(artifact => artifact !== null);
+}
+
+function updateClearArtifactsButton() {
+    if (!elements.clearArtifactsBtn) return;
+    const visible = state.selectedContainer && hasFilledArtifacts();
+    elements.clearArtifactsBtn.style.display = visible ? 'flex' : 'none';
+}
+
+function setContainerBarRarity(rarity) {
+    RARITY_ORDER.forEach(r => {
+        elements.containerPickerBtn.classList.remove(`container-bar__select--rarity-${r}`);
+        elements.containerPickerName.classList.remove(`rarity--${r}`);
+    });
+
+    if (!state.selectedContainer) return;
+
+    const rarityClass = rarity || 'none';
+    elements.containerPickerBtn.classList.add(`container-bar__select--rarity-${rarityClass}`);
+    elements.containerPickerName.classList.add(`rarity--${rarityClass}`);
+}
+
+function renderArmorPreview() {
+    if (!elements.armorPreview) return;
+
+    const shieldSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+
+    if (!state.selectedArmor) {
+        elements.armorPreview.innerHTML = `<img class="armor-panel__img" src="${ARMOR_EMPTY_IMAGE}" alt=""><div class="armor-panel__fallback">${shieldSvg}</div>`;
+        const img = elements.armorPreview.querySelector('img');
+        const fallback = elements.armorPreview.querySelector('.armor-panel__fallback');
+        if (img && fallback) {
+            fallback.hidden = true;
+            img.onerror = () => { img.remove(); fallback.hidden = false; };
+        }
+        return;
+    }
+
+    const armor = state.selectedArmor;
+    const imagePath = getArmorImagePath(armor);
+
+    if (imagePath) {
+        elements.armorPreview.innerHTML = `<img class="armor-panel__img" src="${imagePath}" alt="${getLocalizedName(armor)}"><div class="armor-panel__fallback">${shieldSvg}</div>`;
+        const img = elements.armorPreview.querySelector('img');
+        const fallback = elements.armorPreview.querySelector('.armor-panel__fallback');
+        if (img && fallback) {
+            fallback.hidden = true;
+            img.onerror = () => { img.remove(); fallback.hidden = false; };
+        }
+    } else {
+        elements.armorPreview.innerHTML = `<div class="armor-panel__fallback">${shieldSvg}</div>`;
+    }
+}
+
+function renderContainerBar() {
+    if (!elements.containerPickerPreview || !elements.containerPickerName) return;
+
+    if (!state.selectedContainer) {
+        elements.containerPickerPreview.innerHTML = `<span class="container-bar__icon container-bar__icon--empty">${CONTAINER_BAR_DEFAULT_ICON}</span>`;
+        elements.containerPickerName.textContent = t('calc.selectContainer');
+        elements.containerPickerName.classList.remove('has-value');
+        elements.containerPickerBtn.classList.remove('container-bar__select--incompat');
+        setContainerBarRarity(null);
+        if (elements.containerPickerHint) {
+            elements.containerPickerHint.hidden = true;
+            elements.containerPickerHint.textContent = '';
+        }
+        updateClearArtifactsButton();
+        return;
+    }
+
+    const container = state.selectedContainer;
+    const incompat = !isContainerAvailable(container) && state.selectedArmor;
+
+    elements.containerPickerPreview.innerHTML = renderContainerBarPreviewContent(container);
+    bindContainerBarPreviewFallbacks();
+    elements.containerPickerName.textContent = getLocalizedName(container);
+    elements.containerPickerName.classList.add('has-value');
+    setContainerBarRarity(container.rarity);
+    elements.containerPickerBtn.classList.toggle('container-bar__select--incompat', incompat);
+
+    if (elements.containerPickerHint) {
+        if (incompat) {
+            elements.containerPickerHint.textContent = t('calc.containerIncompatible');
+            elements.containerPickerHint.hidden = false;
+        } else {
+            elements.containerPickerHint.hidden = true;
+            elements.containerPickerHint.textContent = '';
+        }
+    }
+
+    updateClearArtifactsButton();
+}
+
+function buildContainerDetailSection(title, statEntries) {
+    if (!statEntries.length) return '';
+    const rows = statEntries.map(([key, value]) => buildCompactStatRow(key, value, 0, { compact: true })).join('');
+    return `<div class="container-detail__section"><div class="container-detail__section-title">${title}</div><div class="container-detail__stats">${rows}</div></div>`;
+}
+
+function partitionArmorStats(stats = {}) {
+    const bullet = [];
+    const regular = [];
+    const extra = [];
+    const regularSet = new Set(ARMOR_REGULAR_STAT_KEYS);
+    const extraSet = new Set(ARMOR_EXTRA_STAT_KEYS);
+
+    Object.entries(stats).forEach(([key, value]) => {
+        if (key === 'bulletResistance') bullet.push([key, value]);
+        else if (regularSet.has(key)) regular.push([key, value]);
+        else if (extraSet.has(key)) extra.push([key, value]);
+        else extra.push([key, value]);
+    });
+
+    const byOrder = (order) => (a, b) => order.indexOf(a[0]) - order.indexOf(b[0]);
+    regular.sort(byOrder(ARMOR_REGULAR_STAT_KEYS));
+    extra.sort(byOrder(ARMOR_EXTRA_STAT_KEYS));
+
+    return { bullet, regular, extra };
+}
+
+function buildArmorDetailSection(title, statEntries) {
+    if (!statEntries.length) return '';
+    const rows = statEntries.map(([key, value]) => buildCompactStatRow(key, value, 0, { compact: true })).join('');
+    return `<div class="armor-detail__section"><div class="armor-detail__section-title">${title}</div><div class="armor-detail__stats-group">${rows}</div></div>`;
+}
+
+function buildArmorDetailStatsHtml(stats = {}) {
+    const { bullet, regular, extra } = partitionArmorStats(stats);
+    const parts = [];
+
+    bullet.forEach(([key, value]) => {
+        parts.push(buildCompactStatRow(key, value, 0, { compact: true, highlight: 'bullet' }));
+    });
+
+    if (regular.length) {
+        const rows = regular.map(([key, value]) => buildCompactStatRow(key, value, 0, { compact: true })).join('');
+        parts.push(`<div class="armor-detail__stats-group">${rows}</div>`);
+    }
+
+    parts.push(buildArmorDetailSection(t('calc.armorModal.extraStats'), extra));
+
+    return parts.filter(Boolean).join('');
+}
+
+function buildCompactStatRow(statKey, value, enhancementBonus = 0, options = {}) {
+    const totalValue = value + enhancementBonus;
+    const { displayValue, colorClass } = formatStatValue(statKey, totalValue);
+    let bonusHtml = '';
+    if (enhancementBonus !== 0) {
+        const bonusStr = enhancementBonus > 0 ? `+${formatNumber(enhancementBonus)}` : formatNumber(enhancementBonus);
+        bonusHtml = `<span class="stat-enhancement-bonus">(${bonusStr})</span>`;
+    }
+    const iconHtml = options.compact
+        ? ''
+        : `<span class="calc-stat-row__icon">${getStatIcon(statKey)}</span>`;
+    const highlightClass = options.highlight === 'bullet' ? ' calc-stat-row--bullet' : '';
+    return `<div class="calc-stat-row${options.compact ? ' calc-stat-row--compact' : ''}${highlightClass}"><div class="calc-stat-row__left">${iconHtml}<span class="calc-stat-row__name">${getStatName(statKey)}</span></div><span class="calc-stat-row__value ${colorClass}">${displayValue}${getStatUnit(statKey)}${bonusHtml}</span></div>`;
+}
+
 function initElements() {
     elements = {
         armorSelect: document.getElementById('armorSelect'),
-        armorInfo: document.getElementById('armorInfo'),
+        armorPreview: document.getElementById('armorPreview'),
+        armorPreviewBtn: document.getElementById('armorPreviewBtn'),
+        armorPanel: document.getElementById('armorPanel'),
+        armorPanelName: document.getElementById('armorPanelName'),
+        armorPanelActionsEmpty: document.getElementById('armorPanelActionsEmpty'),
+        armorPanelActionsSelected: document.getElementById('armorPanelActionsSelected'),
+        armorPickerBtn: document.getElementById('armorPickerBtn'),
+        armorReplaceBtn: document.getElementById('armorReplaceBtn'),
+        armorClearBtn: document.getElementById('armorClearBtn'),
+        armorModal: document.getElementById('armorModal'),
+        armorModalClose: document.getElementById('armorModalClose'),
+        armorModalSearch: document.getElementById('armorModalSearch'),
+        armorSearchClear: document.getElementById('armorSearchClear'),
+        armorModalList: document.getElementById('armorModalList'),
+        armorModalDetail: document.getElementById('armorModalDetail'),
         containerSelect: document.getElementById('containerSelect'),
-        containerInfo: document.getElementById('containerInfo'),
+        containerPickerBtn: document.getElementById('containerPickerBtn'),
+        containerPickerPreview: document.getElementById('containerPickerPreview'),
+        containerPickerName: document.getElementById('containerPickerName'),
+        containerPickerHint: document.getElementById('containerPickerHint'),
+        clearArtifactsBtn: document.getElementById('clearArtifactsBtn'),
+        clearArtifactsConfirm: document.getElementById('clearArtifactsConfirm'),
+        clearArtifactsCancel: document.getElementById('clearArtifactsCancel'),
+        clearArtifactsConfirmBtn: document.getElementById('clearArtifactsConfirmBtn'),
         artifactSlots: document.getElementById('artifactSlots'),
         artifactCounter: document.getElementById('artifactCounter'),
-        resetBtn: document.getElementById('resetBtn'),
         modal: document.getElementById('artifactModal'),
         modalClose: document.getElementById('modalClose'),
-        modalSlotInfo: document.getElementById('modalSlotInfo'),
         artifactSearch: document.getElementById('artifactSearch'),
         searchClear: document.getElementById('searchClear'),
         artifactList: document.getElementById('artifactList'),
-        artifactCount: document.getElementById('artifactCount'),
-        categoryTabs: document.querySelectorAll('.category-tab'),
+        artifactModalDetail: document.getElementById('artifactModalDetail'),
         scrollTop: document.getElementById('scrollTop'),
         warningsContainer: document.getElementById('warningsContainer'),
-        priorityStats: document.getElementById('priorityStats'),
         enhancementBlock: document.getElementById('enhancementBlock'),
         enhancementSlider: document.getElementById('enhancementSlider'),
         enhancementValue: document.getElementById('enhancementValue'),
-        enhancementBonus: document.getElementById('enhancementBonus'),
-        armorDropdown: document.getElementById('armorDropdown'),
-        armorDropdownMenu: document.getElementById('armorDropdownMenu'),
-        armorDropdownList: document.getElementById('armorDropdownList'),
-        armorSearchInput: document.getElementById('armorSearchInput'),
-        armorClearWrapper: document.getElementById('armorClearWrapper'),
-        armorClearBtn: document.getElementById('armorClearBtn'),
-        containerDropdown: document.getElementById('containerDropdown'),
-        containerDropdownMenu: document.getElementById('containerDropdownMenu'),
-        containerDropdownList: document.getElementById('containerDropdownList'),
-        containerSearchInput: document.getElementById('containerSearchInput'),
-        containerClearWrapper: document.getElementById('containerClearWrapper'),
-        containerClearBtn: document.getElementById('containerClearBtn')
+        enhancementDecBtn: document.getElementById('enhancementDecBtn'),
+        enhancementIncBtn: document.getElementById('enhancementIncBtn'),
+        enhancementMaxBtn: document.getElementById('enhancementMaxBtn'),
+        enhancementControls: document.getElementById('enhancementControls'),
+        containerModal: document.getElementById('containerModal'),
+        containerModalClose: document.getElementById('containerModalClose'),
+        containerModalSearch: document.getElementById('containerModalSearch'),
+        containerSearchClear: document.getElementById('containerSearchClear'),
+        containerModalList: document.getElementById('containerModalList'),
+        containerModalDetail: document.getElementById('containerModalDetail'),
+        artifactDetailPanel: document.getElementById('artifactDetailPanel'),
+        artifactCopyHint: document.getElementById('artifactCopyHint'),
     };
+
+    elements.statValueElements = {};
+    document.querySelectorAll('[data-stat]').forEach(el => {
+        elements.statValueElements[el.dataset.stat] = el;
+    });
+    elements.heroStatElements = {};
+    document.querySelectorAll('[data-hero-stat]').forEach(el => {
+        elements.heroStatElements[el.dataset.heroStat] = el;
+    });
 }
 
 
@@ -129,53 +495,53 @@ function loadStateFromStorage() {
 
 function restoreState() {
     const saved = loadStateFromStorage();
-    if (!saved) return;
 
-    if (saved.armorId) {
-        const armor = ARMORS.find(a => a.id === saved.armorId);
-        if (armor) {
-            state.selectedArmor = armor;
-            state.enhancementLevel = saved.enhancementLevel || 0;
-            const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-            valueElement.textContent = getLocalizedName(armor);
-            valueElement.classList.add('has-value');
-            elements.armorSelect.value = saved.armorId;
-            if (armor.enhancement) {
-                showEnhancementBlock();
-                elements.enhancementSlider.value = state.enhancementLevel;
-                updateEnhancementDisplay();
+    if (saved) {
+        if (saved.armorId) {
+            const armor = ARMORS.find(a => a.id === saved.armorId);
+            if (armor) {
+                state.selectedArmor = armor;
+                state.enhancementLevel = saved.enhancementLevel || 0;
+                elements.armorSelect.value = saved.armorId;
+                if (armor.enhancement) {
+                    showEnhancementBlock();
+                    updateEnhancementDisplay();
+                }
+                updateArmorBar();
+                renderArmorPreview();
             }
-            renderArmorInfo();
+        }
+
+        if (saved.containerId) {
+            const container = CONTAINERS.find(c => c.id === saved.containerId);
+            if (container && isContainerAvailable(container)) {
+                state.selectedContainer = container;
+                state.artifacts = new Array(container.slots).fill(null);
+                elements.containerSelect.value = saved.containerId;
+                if (saved.artifactIds && Array.isArray(saved.artifactIds)) {
+                    saved.artifactIds.forEach((artifactId, index) => {
+                        if (artifactId && index < container.slots) {
+                            const artifact = ARTIFACTS.find(a => a.id === artifactId);
+                            if (artifact) state.artifacts[index] = artifact;
+                        }
+                    });
+                }
+            }
         }
     }
 
     updateContainerOptions();
+    ensureDefaultContainer();
 
-    if (saved.containerId) {
-        const container = CONTAINERS.find(c => c.id === saved.containerId);
-        if (container && isContainerAvailable(container)) {
-            state.selectedContainer = container;
-            state.artifacts = new Array(container.slots).fill(null);
-            const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-            valueElement.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
-            valueElement.classList.add('has-value');
-            elements.containerSelect.value = saved.containerId;
-            if (saved.artifactIds && Array.isArray(saved.artifactIds)) {
-                saved.artifactIds.forEach((artifactId, index) => {
-                    if (artifactId && index < container.slots) {
-                        const artifact = ARTIFACTS.find(a => a.id === artifactId);
-                        if (artifact) state.artifacts[index] = artifact;
-                    }
-                });
-            }
-            renderContainerInfo();
-            renderArtifactSlots();
-        }
-    }
-
-    renderArmorDropdownList();
-    renderContainerDropdownList();
+    updateArmorBar();
+    renderArmorPreview();
+    renderContainerBar();
+    renderArtifactSlots();
     updateStats();
+
+    if (!saved?.containerId && state.selectedContainer) {
+        saveStateToStorage();
+    }
 }
 
 
@@ -205,51 +571,42 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollEffects();
     initLangDropdownClose();
     injectStatFilterStyles();
-    initArmorDropdown();
-    initContainerDropdown();
+    initArmorPicker();
+    initContainerPicker();
     initContainerSelect();
     initEventListeners();
+    initCalcMobileCarousel();
 
     if (window.i18n && typeof window.i18n.onReady === 'function') {
-        window.i18n.onReady(() => {
-            restoreState();
-            updateStats();
-        });
+        window.i18n.onReady(restoreState);
     } else {
         restoreState();
-        updateStats();
     }
 });
 
 
 document.addEventListener('languageChanged', () => {
-    if (state.selectedArmor) {
-        const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-        armorValueElement.textContent = getLocalizedName(state.selectedArmor);
-    } else {
-        const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-        armorValueElement.textContent = t('calc.selectArmor');
-    }
-
-    if (state.selectedContainer) {
-        const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-        containerValueElement.textContent = `${getLocalizedName(state.selectedContainer)} (${getSlotsText(state.selectedContainer.slots)})`;
-    } else {
-        const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-        containerValueElement.textContent = t('calc.selectContainer');
-    }
-
+    updateArmorBar();
     initContainerSelect();
-    renderArmorDropdownList();
-    renderContainerDropdownList();
-    renderArmorInfo();
-    renderContainerInfo();
+    renderArmorPreview();
+    renderContainerBar();
     renderArtifactSlots();
-    renderEnhancementBonuses();
     updateStats();
+
+    if (elements.armorModal?.classList.contains('active')) {
+        renderArmorModalList();
+        renderArmorModalDetail(state.armorModalPreviewId, true);
+    }
+
+    if (elements.containerModal?.classList.contains('active')) {
+        renderContainerModalList(elements.containerModalSearch?.value.toLowerCase().trim() || '');
+        renderContainerModalDetail(state.containerModalPreviewId, true);
+    }
 
     if (elements.modal.classList.contains('active')) {
         recreateStatFilters();
+        applyFilters();
+        renderArtifactModalDetail(state.artifactModalPreviewId, true);
     }
 });
 
@@ -316,90 +673,292 @@ function injectStatFilterStyles() {
     const style = document.createElement('style');
     style.id = 'stat-filter-styles';
     style.textContent = `
-.filters-toggle{display:none;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--color-text-muted);font-family:var(--font-main);font-size:13px;cursor:pointer;transition:all 0.2s ease;margin-bottom:0}
-.filters-toggle:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15)}
-.filters-toggle.active{background:rgba(196,163,90,0.1);border-color:rgba(196,163,90,0.3);color:var(--color-accent)}
-.filters-toggle__left{display:flex;align-items:center;gap:8px}
-.filters-toggle__icon{display:flex;align-items:center;justify-content:center}
-.filters-toggle__icon svg{width:16px;height:16px}
-.filters-toggle__text{font-weight:500}
-.filters-toggle__badge{display:none;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;background:var(--color-accent);color:#000;font-size:11px;font-weight:700;border-radius:10px}
-.filters-toggle__badge.visible{display:flex}
-.filters-toggle__arrow{display:flex;align-items:center;transition:transform 0.2s ease}
-.filters-toggle__arrow svg{width:18px;height:18px}
-.filters-toggle.active .filters-toggle__arrow{transform:rotate(180deg)}
-.stat-filters-wrapper{overflow:hidden;transition:max-height 0.3s ease,opacity 0.2s ease}
-.stat-filters-wrapper.collapsed{max-height:0!important;opacity:0}
-.stat-filters{display:flex;gap:12px;flex-wrap:wrap;padding-top:12px}
-.stat-filter{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
-.stat-filter__label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.5px}
-.stat-filter__label svg{width:14px;height:14px}
-.stat-filter--positive .stat-filter__label{color:#4ade80}
-.stat-filter--negative .stat-filter__label{color:#f87171}
-.stat-filter__select{padding:10px 32px 10px 12px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--color-text);font-family:var(--font-main);font-size:13px;cursor:pointer;transition:all 0.2s ease;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888899' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
-.stat-filter__select:hover{border-color:rgba(255,255,255,0.2);background-color:rgba(0,0,0,0.5)}
-.stat-filter__select:focus{outline:none;border-color:var(--color-accent)}
-.stat-filter--positive .stat-filter__select:focus{border-color:#4ade80}
-.stat-filter--negative .stat-filter__select:focus{border-color:#f87171}
-.stat-filter__select option{background:#1a1a24;color:var(--color-text);padding:8px}
-.stat-filters__reset{display:flex;align-items:flex-end;padding-bottom:2px}
-.stat-filters__reset-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--color-text-muted);font-family:var(--font-main);font-size:12px;cursor:pointer;transition:all 0.2s ease;white-space:nowrap}
-.stat-filters__reset-btn:hover{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:#f87171}
-.stat-filters__reset-btn svg{width:14px;height:14px}
-.stat-filters__reset-btn:disabled{opacity:0.3;cursor:not-allowed}
-.stat-filters__reset-btn:disabled:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);color:var(--color-text-muted)}
 .calculator-error{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 20px 80px;text-align:center}
 .calculator-error__icon{width:48px;height:48px;color:var(--color-text-muted);margin-bottom:16px}
 .calculator-error__text{font-size:18px;color:var(--color-text-muted);margin-bottom:24px}
 .calculator-error__btn{color:var(--color-accent);background:none;border:1px solid var(--color-accent);padding:12px 28px;border-radius:10px;cursor:pointer;font-size:14px;font-family:var(--font-main);transition:var(--transition)}
 .calculator-error__btn:hover{background:rgba(196,163,90,0.15)}
 @media(max-width:768px){
-.filters-toggle{display:flex}
 .modal__toolbar{padding:10px 14px;gap:10px}
 .modal__search-box{padding:0 12px}
 .modal__search-box input{padding:10px 8px;font-size:14px}
-.modal__categories{gap:4px;padding-bottom:2px}
-.category-tab{padding:6px 10px;font-size:12px;border-radius:8px}
-.category-tab__label{font-size:11px}
-.category-tab__dot{width:8px;height:8px}
-.category-tab__icon svg{width:14px;height:14px}
-.modal__results-info{padding:8px 14px}
-.results-count{font-size:12px}
-.stat-filters{flex-direction:column;gap:10px;padding-top:10px}
-.stat-filter{min-width:100%;gap:4px}
-.stat-filter__label{font-size:10px}
-.stat-filter__select{padding:8px 28px 8px 10px;font-size:12px}
-.stat-filters__reset{width:100%}
-.stat-filters__reset-btn{width:100%;justify-content:center;padding:8px 12px;font-size:11px}
 .modal__header{padding:12px 14px}
 .modal__title{font-size:16px}
 .modal__close{width:36px;height:36px}
 .modal__body{padding:12px}
-.artifacts-grid{gap:10px}
-.artifact-card{padding:12px}
-.artifact-card__image-wrapper{width:52px;height:52px}
-.artifact-card__image{width:40px;height:40px}
-.artifact-card__name{font-size:14px}
-.artifact-card__tier{height:20px;min-width:24px;font-size:11px}
-.artifact-stat-row{font-size:12px;padding:2px 0}
+.artifacts-grid{gap:8px}
+.artifact-card{padding:8px 6px}
+.artifact-card__image{width:36px;height:36px}
+.artifact-card__img{width:36px;height:36px}
+.artifact-card__name{font-size:11px}
+.artifact-card__tier{font-size:10px}
 }
 @media(max-width:480px){
 .modal__toolbar{padding:8px 12px;gap:8px}
 .modal__search-box input{padding:8px 6px;font-size:13px}
-.category-tab{padding:5px 8px}
-.category-tab__label{display:none}
-.category-tab__dot,.category-tab__icon{margin:0}
-.category-tab[data-category="all"] .category-tab__label{display:inline}
 .modal__body{padding:10px}
-.artifact-card__top{gap:10px}
-.artifact-card__image-wrapper{width:48px;height:48px}
-.artifact-card__image{width:36px;height:36px}
+.artifact-card__image{width:32px;height:32px}
+.artifact-card__img{width:32px;height:32px}
 }`;
     document.head.appendChild(style);
 }
 
+function getStatFilterTagMaxLength(selectedCount) {
+    if (selectedCount <= 1) return 14;
+    if (selectedCount === 2) return 9;
+    if (selectedCount <= 4) return 6;
+    return 4;
+}
+
+function truncateStatFilterName(name, maxLength = 12) {
+    if (!name || name.length <= maxLength) return name;
+    return `${name.slice(0, maxLength - 1)}…`;
+}
+
+function updateStatFilterInputPlaceholder(combobox, filterKey) {
+    const input = combobox?.querySelector('.stat-filter-combobox__input');
+    if (!input) return;
+
+    const placeholderKey = combobox.dataset.placeholderKey;
+    input.placeholder = state.filters[filterKey].length ? '' : (placeholderKey ? t(placeholderKey) : '');
+}
+
+function renderStatFilterTags(combobox, filterKey, variant) {
+    const tagsEl = combobox.querySelector('.stat-filter-combobox__tags');
+    if (!tagsEl) return;
+
+    const selectedCount = state.filters[filterKey].length;
+    const maxLength = getStatFilterTagMaxLength(selectedCount);
+
+    tagsEl.innerHTML = state.filters[filterKey].map(statKey => {
+        const fullName = getStatName(statKey);
+        const shortName = truncateStatFilterName(fullName, maxLength);
+        return `<span class="stat-filter-tag stat-filter-tag--${variant}" title="${fullName}"><span class="stat-filter-tag__label">${shortName}</span><button type="button" class="stat-filter-tag__remove" data-stat="${statKey}" aria-label="${t('calc.filter.remove')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>`;
+    }).join('');
+
+    updateStatFilterInputPlaceholder(combobox, filterKey);
+}
+
+function getFilteredStatOptions(statsMap, selectedEffects, query) {
+    const q = query.toLowerCase().trim();
+    return statsMap.filter(([statKey]) => {
+        if (selectedEffects.includes(statKey)) return false;
+        if (!q) return true;
+        const nameRu = STAT_NAMES[statKey] || '';
+        const nameEn = STAT_NAMES_EN[statKey] || '';
+        return nameRu.toLowerCase().includes(q) || nameEn.toLowerCase().includes(q) || statKey.toLowerCase().includes(q);
+    });
+}
+
+function renderStatFilterComboboxList(combobox, statsMap, filterKey, query) {
+    const list = combobox.querySelector('.stat-filter-combobox__list');
+    if (!list) return;
+
+    const available = getFilteredStatOptions(statsMap, state.filters[filterKey], query);
+    if (!available.length) {
+        list.innerHTML = `<div class="stat-filter-combobox__empty">${query ? t('calc.modal.noResults') : t('calc.filter.allSelected')}</div>`;
+        return;
+    }
+
+    list.innerHTML = available.map(([statKey, count]) => `<button type="button" class="stat-filter-combobox__option" data-value="${statKey}"><span class="stat-filter-combobox__option-name">${getStatName(statKey)}</span><span class="stat-filter-combobox__option-count">${count}</span></button>`).join('');
+}
+
+function openStatFilterCombobox(combobox) {
+    closeStatFilterComboboxes(combobox);
+    combobox.classList.add('open');
+}
+
+function closeStatFilterComboboxes(except) {
+    document.querySelectorAll('#statFiltersContainer .stat-filter-combobox.open').forEach(combobox => {
+        if (combobox !== except) combobox.classList.remove('open');
+    });
+}
+
+function toggleStatFilterComboboxMenu(combobox, statsMap, filterKey, input) {
+    if (combobox.classList.contains('open')) {
+        combobox.classList.remove('open');
+        input.blur();
+        return;
+    }
+    openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+}
+
+function openStatFilterComboboxMenu(combobox, statsMap, filterKey, input) {
+    openStatFilterCombobox(combobox);
+    renderStatFilterComboboxList(combobox, statsMap, filterKey, input.value);
+}
+
+function handleStatFilterOutsideClick(e) {
+    if (!e.target.closest('.stat-filter-combobox')) closeStatFilterComboboxes();
+}
+
+function addStatFilterFromCombobox(filterKey, combobox, variant, statKey) {
+    if (!statKey || state.filters[filterKey].includes(statKey)) return;
+
+    state.filters[filterKey].push(statKey);
+    renderStatFilterTags(combobox, filterKey, variant);
+    updateFiltersBadge();
+    updateStatFilterClearButtons();
+    applyFilters();
+}
+
+function removeStatFilterFromCombobox(filterKey, combobox, variant, statKey) {
+    state.filters[filterKey] = state.filters[filterKey].filter(key => key !== statKey);
+    renderStatFilterTags(combobox, filterKey, variant);
+    updateFiltersBadge();
+    updateStatFilterClearButtons();
+    applyFilters();
+}
+
+function clearStatFilterGroup(filterKey, combobox, variant, statsMap) {
+    state.filters[filterKey] = [];
+    renderStatFilterTags(combobox, filterKey, variant);
+
+    const input = combobox.querySelector('.stat-filter-combobox__input');
+    if (input) input.value = '';
+
+    renderStatFilterComboboxList(combobox, statsMap, filterKey, '');
+    combobox.classList.remove('open');
+    updateFiltersBadge();
+    updateStatFilterClearButtons();
+    applyFilters();
+}
+
+function resetStatFilterComboboxes() {
+    const configs = [
+        { comboboxId: 'positiveEffectCombobox', filterKey: 'positiveEffects', variant: 'positive', statsMap: statFilterOptions.positive },
+        { comboboxId: 'negativeEffectCombobox', filterKey: 'negativeEffects', variant: 'negative', statsMap: statFilterOptions.negative }
+    ];
+
+    configs.forEach(({ comboboxId, filterKey, variant, statsMap }) => {
+        const combobox = document.getElementById(comboboxId);
+        if (!combobox) return;
+
+        renderStatFilterTags(combobox, filterKey, variant);
+        const input = combobox.querySelector('.stat-filter-combobox__input');
+        if (input) input.value = '';
+        updateStatFilterInputPlaceholder(combobox, filterKey);
+        renderStatFilterComboboxList(combobox, statsMap, filterKey, '');
+        combobox.classList.remove('open');
+    });
+
+    updateStatFilterClearButtons();
+}
+
+function initStatFilterCombobox({ comboboxId, inputId, filterKey, variant, statsMap }) {
+    const combobox = document.getElementById(comboboxId);
+    const input = document.getElementById(inputId);
+    if (!combobox || !input) return;
+
+    renderStatFilterTags(combobox, filterKey, variant);
+    updateStatFilterClearButtons();
+
+    const clearBtn = combobox.querySelector('.stat-filter-combobox__clear');
+    clearBtn?.addEventListener('mousedown', (e) => e.preventDefault());
+    clearBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        clearStatFilterGroup(filterKey, combobox, variant, statsMap);
+    });
+
+    combobox.querySelector('.stat-filter-combobox__field').addEventListener('mousedown', (e) => {
+        if (e.target.closest('.stat-filter-tag__remove')) return;
+        if (e.target.closest('.stat-filter-combobox__arrow')) return;
+        e.preventDefault();
+        input.focus();
+        openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+    });
+
+    const arrow = combobox.querySelector('.stat-filter-combobox__arrow');
+    let arrowTouchHandled = false;
+
+    const handleArrowToggle = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        input.blur();
+        toggleStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+    };
+
+    arrow?.addEventListener('touchend', (e) => {
+        arrowTouchHandled = true;
+        handleArrowToggle(e);
+        setTimeout(() => {
+            arrowTouchHandled = false;
+        }, 400);
+    }, { passive: false });
+
+    arrow?.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    arrow?.addEventListener('click', (e) => {
+        if (arrowTouchHandled) return;
+        handleArrowToggle(e);
+    });
+
+    input.addEventListener('focus', () => {
+        openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+    });
+
+    input.addEventListener('input', () => {
+        openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+    });
+
+    combobox.querySelector('.stat-filter-combobox__list').addEventListener('mousedown', (e) => {
+        e.preventDefault();
+    });
+
+    combobox.querySelector('.stat-filter-combobox__list').addEventListener('click', (e) => {
+        const option = e.target.closest('.stat-filter-combobox__option');
+        if (!option) return;
+
+        addStatFilterFromCombobox(filterKey, combobox, variant, option.dataset.value);
+        input.value = '';
+        openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+        input.focus();
+    });
+
+    combobox.querySelector('.stat-filter-combobox__tags').addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.stat-filter-tag__remove');
+        if (!removeBtn) return;
+
+        removeStatFilterFromCombobox(filterKey, combobox, variant, removeBtn.dataset.stat);
+        openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+        input.focus();
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            combobox.classList.remove('open');
+            input.blur();
+            return;
+        }
+
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const first = combobox.querySelector('.stat-filter-combobox__option');
+            if (first) {
+                addStatFilterFromCombobox(filterKey, combobox, variant, first.dataset.value);
+                input.value = '';
+                openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+            }
+            return;
+        }
+
+        if (e.key === 'Backspace' && !input.value && state.filters[filterKey].length) {
+            const last = state.filters[filterKey][state.filters[filterKey].length - 1];
+            removeStatFilterFromCombobox(filterKey, combobox, variant, last);
+            openStatFilterComboboxMenu(combobox, statsMap, filterKey, input);
+        }
+    });
+}
+
+function createStatFilterComboboxMarkup(comboboxId, variant, inputId, placeholderKey) {
+    return `<div class="stat-filter-combobox stat-filter-combobox--${variant}" id="${comboboxId}" data-variant="${variant}" data-placeholder-key="${placeholderKey}"><div class="stat-filter-combobox__row"><div class="stat-filter-combobox__field"><div class="stat-filter-combobox__tags"></div><input type="text" class="stat-filter-combobox__input" id="${inputId}" placeholder="${t(placeholderKey)}" autocomplete="off" spellcheck="false"><span class="stat-filter-combobox__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span></div><button type="button" class="stat-filter-combobox__clear" aria-label="${t('calc.filter.clearType')}" disabled hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div><div class="stat-filter-combobox__menu"><div class="stat-filter-combobox__list"></div></div></div>`;
+}
+
 function createStatFilters() {
-    const toolbar = document.querySelector('.modal__toolbar');
+    const toolbar = document.querySelector('#artifactModal .modal__toolbar');
     if (!toolbar || document.getElementById('statFiltersContainer')) return;
 
     const positiveStats = new Map();
@@ -414,20 +973,14 @@ function createStatFilters() {
 
     const sortedPositive = [...positiveStats.entries()].sort((a, b) => b[1] - a[1]);
     const sortedNegative = [...negativeStats.entries()].sort((a, b) => b[1] - a[1]);
-
-    const createOptions = (statsMap) => {
-        let options = `<option value="">${t('calc.filter.any')}</option>`;
-        statsMap.forEach(([statKey, count]) => {
-            options += `<option value="${statKey}">${getStatName(statKey)} (${count})</option>`;
-        });
-        return options;
-    };
+    statFilterOptions.positive = sortedPositive;
+    statFilterOptions.negative = sortedNegative;
 
     const toggleBtn = document.createElement('button');
     toggleBtn.id = 'filtersToggle';
     toggleBtn.className = 'filters-toggle';
     toggleBtn.type = 'button';
-    toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></span><span class="filters-toggle__text">${t('calc.filter.byProperties')}</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
+    toggleBtn.innerHTML = `<div class="filters-toggle__left"><span class="filters-toggle__text">${t('calc.filter.byProperties')}</span><span class="filters-toggle__badge" id="filtersBadge">0</span></div><span class="filters-toggle__arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>`;
 
     const wrapper = document.createElement('div');
     wrapper.id = 'statFiltersWrapper';
@@ -436,7 +989,7 @@ function createStatFilters() {
     const container = document.createElement('div');
     container.id = 'statFiltersContainer';
     container.className = 'stat-filters';
-    container.innerHTML = `<div class="stat-filter stat-filter--positive"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>${t('calc.filter.positive')}</label><select class="stat-filter__select" id="positiveEffectFilter">${createOptions(sortedPositive)}</select></div><div class="stat-filter stat-filter--negative"><label class="stat-filter__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/></svg>${t('calc.filter.negative')}</label><select class="stat-filter__select" id="negativeEffectFilter">${createOptions(sortedNegative)}</select></div><div class="stat-filters__reset"><button class="stat-filters__reset-btn" id="resetFiltersBtn" type="button" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>${t('calc.filter.resetAll')}</button></div>`;
+    container.innerHTML = `<div class="stat-filter stat-filter--positive">${createStatFilterComboboxMarkup('positiveEffectCombobox', 'positive', 'positiveEffectInput', 'calc.filter.selectPositive')}</div><div class="stat-filter stat-filter--negative">${createStatFilterComboboxMarkup('negativeEffectCombobox', 'negative', 'negativeEffectInput', 'calc.filter.selectNegative')}</div>`;
 
     wrapper.appendChild(container);
     toolbar.appendChild(toggleBtn);
@@ -444,21 +997,27 @@ function createStatFilters() {
 
     toggleBtn.addEventListener('click', toggleFiltersPanel);
 
-    document.getElementById('positiveEffectFilter').addEventListener('change', (e) => {
-        state.filters.positiveEffect = e.target.value;
-        updateFiltersBadge();
-        updateResetButtonState();
-        applyFilters();
+    initStatFilterCombobox({
+        comboboxId: 'positiveEffectCombobox',
+        inputId: 'positiveEffectInput',
+        filterKey: 'positiveEffects',
+        variant: 'positive',
+        statsMap: sortedPositive
+    });
+    initStatFilterCombobox({
+        comboboxId: 'negativeEffectCombobox',
+        inputId: 'negativeEffectInput',
+        filterKey: 'negativeEffects',
+        variant: 'negative',
+        statsMap: sortedNegative
     });
 
-    document.getElementById('negativeEffectFilter').addEventListener('change', (e) => {
-        state.filters.negativeEffect = e.target.value;
-        updateFiltersBadge();
-        updateResetButtonState();
-        applyFilters();
-    });
+    if (!createStatFilters.outsideClickBound) {
+        document.addEventListener('click', handleStatFilterOutsideClick);
+        createStatFilters.outsideClickBound = true;
+    }
 
-    document.getElementById('resetFiltersBtn').addEventListener('click', resetAllFilters);
+    updateStatFilterClearButtons();
 }
 
 function toggleFiltersPanel() {
@@ -469,44 +1028,44 @@ function toggleFiltersPanel() {
     state.filtersExpanded = !state.filtersExpanded;
     toggle.classList.toggle('active', state.filtersExpanded);
     wrapper.classList.toggle('collapsed', !state.filtersExpanded);
-    wrapper.style.maxHeight = state.filtersExpanded ? wrapper.scrollHeight + 'px' : '0';
+
+    const syncAfterTransition = (event) => {
+        if (event.propertyName !== 'grid-template-rows') return;
+        wrapper.removeEventListener('transitionend', syncAfterTransition);
+        scheduleArtifactModalGridSync();
+    };
+
+    wrapper.removeEventListener('transitionend', syncAfterTransition);
+    if (state.filtersExpanded) {
+        wrapper.addEventListener('transitionend', syncAfterTransition);
+    } else {
+        scheduleArtifactModalGridSync();
+    }
 }
 
 function updateFiltersBadge() {
     const badge = document.getElementById('filtersBadge');
     if (!badge) return;
-    let count = 0;
-    if (state.filters.positiveEffect) count++;
-    if (state.filters.negativeEffect) count++;
+    let count = state.filters.positiveEffects.length + state.filters.negativeEffects.length;
     badge.textContent = count;
     badge.classList.toggle('visible', count > 0);
 }
 
-function updateResetButtonState() {
-    const resetBtn = document.getElementById('resetFiltersBtn');
-    if (!resetBtn) return;
-    const hasActiveFilters = state.filters.search !== '' || state.filters.category !== 'all' || state.filters.positiveEffect !== '' || state.filters.negativeEffect !== '';
-    resetBtn.disabled = !hasActiveFilters;
-}
+function updateStatFilterClearButtons() {
+    const configs = [
+        { comboboxId: 'positiveEffectCombobox', filterKey: 'positiveEffects' },
+        { comboboxId: 'negativeEffectCombobox', filterKey: 'negativeEffects' }
+    ];
 
-function resetAllFilters() {
-    state.filters.search = '';
-    state.filters.category = 'all';
-    state.filters.positiveEffect = '';
-    state.filters.negativeEffect = '';
+    configs.forEach(({ comboboxId, filterKey }) => {
+        const combobox = document.getElementById(comboboxId);
+        const clearBtn = combobox?.querySelector('.stat-filter-combobox__clear');
+        if (!clearBtn) return;
 
-    elements.artifactSearch.value = '';
-    if (elements.searchClear) elements.searchClear.style.display = 'none';
-    elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
-
-    const positiveSelect = document.getElementById('positiveEffectFilter');
-    const negativeSelect = document.getElementById('negativeEffectFilter');
-    if (positiveSelect) positiveSelect.value = '';
-    if (negativeSelect) negativeSelect.value = '';
-
-    updateFiltersBadge();
-    updateResetButtonState();
-    applyFilters();
+        const hasFilters = state.filters[filterKey].length > 0;
+        clearBtn.disabled = !hasFilters;
+        clearBtn.hidden = !hasFilters;
+    });
 }
 
 function isPositiveEffect(statKey, value) {
@@ -520,135 +1079,407 @@ function isNegativeEffect(statKey, value) {
 }
 
 
-function initArmorDropdown() {
-    renderArmorDropdownList();
-    elements.armorDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleArmorDropdown);
-    if (elements.armorSearchInput) elements.armorSearchInput.addEventListener('input', handleArmorSearch);
-    elements.armorDropdownList.addEventListener('click', handleArmorListClick);
-    if (elements.armorClearBtn) elements.armorClearBtn.addEventListener('click', clearArmorSelection);
-    document.addEventListener('click', (e) => { if (!elements.armorDropdown.contains(e.target)) closeArmorDropdown(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && elements.armorDropdown.classList.contains('open')) closeArmorDropdown(); });
-}
-
-function toggleArmorDropdown() {
-    elements.armorDropdown.classList.toggle('open');
-    if (elements.armorDropdown.classList.contains('open') && elements.armorSearchInput) elements.armorSearchInput.focus();
-}
-
-function closeArmorDropdown() { elements.armorDropdown.classList.remove('open'); }
-
-function handleArmorSearch(e) { renderArmorDropdownList(e.target.value.toLowerCase().trim()); }
-
-function handleArmorListClick(e) {
-    const item = e.target.closest('.custom-dropdown__item');
-    if (item?.dataset.armorId) selectArmorFromDropdown(item.dataset.armorId);
-}
-
-function renderArmorDropdownList(searchQuery = '') {
-    const groupedArmors = {};
-    ARMORS.forEach(armor => {
-        if (searchQuery) {
-            const nameMatch = armor.name.toLowerCase().includes(searchQuery) ||
-                              (armor.nameEn && armor.nameEn.toLowerCase().includes(searchQuery));
-            if (!nameMatch) return;
-        }
-        const rarityKey = armor.rarity || 'none';
-        if (!groupedArmors[rarityKey]) groupedArmors[rarityKey] = [];
-        groupedArmors[rarityKey].push(armor);
+function initArmorPicker() {
+    updateArmorBar();
+    elements.armorPickerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openArmorModal();
     });
+    elements.armorPreviewBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openArmorModal();
+    });
+    elements.armorReplaceBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openArmorModal();
+    });
+    elements.enhancementBlock?.addEventListener('click', (e) => e.stopPropagation());
+    elements.armorModalClose.addEventListener('click', closeArmorModal);
+    elements.armorModal.querySelector('.modal__backdrop').addEventListener('click', closeArmorModal);
+    elements.armorModal.querySelector('.armor-modal__layout')?.addEventListener('click', handleArmorModalClick);
+    if (elements.armorClearBtn) {
+        elements.armorClearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearArmorSelection();
+        });
+    }
+    if (elements.armorModalSearch) {
+        elements.armorModalSearch.addEventListener('input', handleArmorModalSearch);
+    }
+    if (elements.armorSearchClear) {
+        elements.armorSearchClear.addEventListener('click', () => {
+            elements.armorModalSearch.value = '';
+            elements.armorSearchClear.style.display = 'none';
+            renderArmorModalList();
+            elements.armorModalSearch.focus();
+        });
+    }
+}
 
-    if (elements.armorClearWrapper) elements.armorClearWrapper.style.display = state.selectedArmor ? 'block' : 'none';
+function openArmorModal() {
+    state.armorModalPreviewId = state.selectedArmor?.id || null;
+    elements.armorModal.classList.add('active');
+    if (elements.armorModalSearch) {
+        elements.armorModalSearch.value = '';
+        if (elements.armorSearchClear) elements.armorSearchClear.style.display = 'none';
+    }
+    renderArmorModalList();
+    renderArmorModalDetail(state.armorModalPreviewId);
+    const isMobile = isPickerMobileLayout();
+    if (!isMobile && elements.armorModalSearch) elements.armorModalSearch.focus();
+    schedulePickerGridSync(elements.armorModalList);
+    document.body.style.overflow = 'hidden';
+}
 
-    if (Object.keys(groupedArmors).length === 0) {
-        elements.armorDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.armorNotFound')}</span></div>`;
+function closeArmorModal() {
+    elements.armorModal.classList.remove('active');
+    resetPickerGridRows(elements.armorModalList);
+    lastArmorDetailId = null;
+    if (!elements.containerModal.classList.contains('active') &&
+        !elements.modal.classList.contains('active') &&
+        !elements.clearArtifactsConfirm.classList.contains('active')) {
+        document.body.style.overflow = '';
+    }
+}
+
+function handleArmorModalSearch(e) {
+    const query = e.target.value.toLowerCase().trim();
+    if (elements.armorSearchClear) {
+        elements.armorSearchClear.style.display = query ? 'flex' : 'none';
+    }
+    clearTimeout(armorModalSearchTimer);
+    armorModalSearchTimer = setTimeout(() => renderArmorModalList(query), 150);
+}
+
+function updateArmorModalCardStates() {
+    if (!elements.armorModalList) return;
+    elements.armorModalList.querySelectorAll('.armor-card').forEach(card => {
+        const id = card.dataset.armorId;
+        card.classList.toggle('armor-card--preview', id === state.armorModalPreviewId);
+        card.classList.toggle('armor-card--equipped', id === state.selectedArmor?.id);
+    });
+}
+
+function handleArmorModalClick(e) {
+    const selectBtn = e.target.closest('.armor-detail__select');
+    if (selectBtn) {
+        confirmArmorSelection();
         return;
     }
 
-    let html = '';
-    RARITY_ORDER.forEach(rarity => {
-        const armors = groupedArmors[rarity];
-        if (!armors?.length) return;
-        html += `<div class="custom-dropdown__group custom-dropdown__group--${rarity}"><div class="custom-dropdown__group-title">${getRarityName(rarity)} (${armors.length})</div>`;
-        armors.forEach(armor => {
-            const isSelected = state.selectedArmor?.id === armor.id;
-            const bulletRes = armor.stats.bulletResistance || 0;
-            const rarityClass = armor.rarity || 'none';
-            html += `<div class="custom-dropdown__item custom-dropdown__item--${rarityClass} ${isSelected ? 'selected' : ''}" data-armor-id="${armor.id}"><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(armor)}</div><div class="custom-dropdown__item-meta"><span class="custom-dropdown__item-type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</span>${bulletRes > 0 ? `<span class="custom-dropdown__item-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${bulletRes}</span>` : ''}</div></div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(armor)}</span></div>`;
-        });
-        html += '</div>';
-    });
-    elements.armorDropdownList.innerHTML = html;
+    const card = e.target.closest('.armor-card');
+    if (card?.dataset.armorId) {
+        const nextId = card.dataset.armorId;
+        if (nextId === state.armorModalPreviewId) return;
+        state.armorModalPreviewId = nextId;
+        updateArmorModalCardStates();
+        renderArmorModalDetail(state.armorModalPreviewId);
+    }
 }
 
-function selectArmorFromDropdown(armorId) {
+function getArmorModalSearchQuery() {
+    return elements.armorModalSearch?.value.toLowerCase().trim() || '';
+}
+
+function renderArmorModalList(searchQuery = getArmorModalSearchQuery()) {
+    let armors = ARMORS.filter(armor => {
+        if (searchQuery) {
+            const nameMatch = armor.name.toLowerCase().includes(searchQuery) ||
+                              (armor.nameEn && armor.nameEn.toLowerCase().includes(searchQuery));
+            if (!nameMatch) return false;
+        }
+        return true;
+    });
+    armors = sortArmorsByRarity(armors);
+
+    if (armors.length === 0) {
+        elements.armorModalList.innerHTML = `<div class="armors-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.armorNotFound')}</span></div>`;
+        return;
+    }
+
+    const html = armors.map(armor => {
+        const isPreview = state.armorModalPreviewId === armor.id;
+        const isSelected = state.selectedArmor?.id === armor.id;
+        const rarityClass = armor.rarity || 'none';
+        return `<button class="armor-card armor-card--${rarityClass} ${isPreview ? 'armor-card--preview' : ''} ${isSelected ? 'armor-card--equipped' : ''}" type="button" data-armor-id="${armor.id}"><div class="armor-card__image">${getArmorCardIcon(armor)}</div><div class="armor-card__name">${getLocalizedName(armor)}</div></button>`;
+    }).join('');
+
+    elements.armorModalList.innerHTML = html;
+    bindArmorCardFallbacks(elements.armorModalList);
+    if (elements.armorModal?.classList.contains('active')) {
+        schedulePickerGridSync(elements.armorModalList);
+    }
+}
+
+function renderArmorModalDetail(armorId, force = false) {
+    if (!elements.armorModalDetail) return;
+
+    if (!armorId) {
+        lastArmorDetailId = null;
+        elements.armorModalDetail.innerHTML = `<div class="armor-detail__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>${t('calc.armorModal.selectHint')}</span></div>`;
+        return;
+    }
+
+    if (!force && armorId === lastArmorDetailId) return;
+
+    const armor = ARMORS.find(a => a.id === armorId);
+    if (!armor) return;
+
+    lastArmorDetailId = armorId;
+
+    const rarityClass = armor.rarity || 'none';
+    const imagePath = getArmorImagePath(armor);
+    const imageHtml = imagePath
+        ? `<img class="armor-detail__img" src="${imagePath}" alt="${getLocalizedName(armor)}">`
+        : `<span class="armor-detail__icon">${ARMOR_DEFAULT_ICON}</span>`;
+    const statsHtml = buildArmorDetailStatsHtml(armor.stats);
+    const isEquipped = state.selectedArmor?.id === armor.id;
+
+    const typeHtml = armor.type ? `<div class="armor-detail__type">${getArmorTypeName(armor.type)}</div>` : '';
+    elements.armorModalDetail.innerHTML = `<div class="armor-detail__head"><div class="armor-detail__preview">${imageHtml}</div><div class="armor-detail__meta"><div class="armor-detail__name rarity--${rarityClass}">${getLocalizedName(armor)}</div>${typeHtml}</div></div><button class="armor-detail__select ${isEquipped ? 'armor-detail__select--equipped' : ''}" type="button">${isEquipped ? t('calc.armorModal.equipped') : t('calc.armorModal.select')}</button><div class="armor-detail__stats">${statsHtml}</div>`;
+
+    const img = elements.armorModalDetail.querySelector('.armor-detail__img');
+    if (img) {
+        img.onerror = () => {
+            img.replaceWith(Object.assign(document.createElement('span'), {
+                className: 'armor-detail__icon',
+                innerHTML: ARMOR_DEFAULT_ICON
+            }));
+        };
+    }
+}
+
+function confirmArmorSelection() {
+    if (!state.armorModalPreviewId) return;
+    if (state.selectedArmor?.id === state.armorModalPreviewId) {
+        closeArmorModal();
+        return;
+    }
+    selectArmor(state.armorModalPreviewId);
+    closeArmorModal();
+}
+
+function selectArmor(armorId) {
     state.previousStats = calculateTotalStats();
     const armor = ARMORS.find(a => a.id === armorId);
     if (!armor) return;
 
+    const isSameArmor = state.selectedArmor?.id === armorId;
     state.selectedArmor = armor;
-    state.enhancementLevel = 0;
+    if (!isSameArmor) state.enhancementLevel = 0;
 
-    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = getLocalizedName(armor);
-    valueElement.classList.add('has-value');
     elements.armorSelect.value = armorId;
-
-    closeArmorDropdown();
-    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
-
     armor.enhancement ? showEnhancementBlock() : hideEnhancementBlock();
-    renderArmorInfo();
+    if (armor.enhancement) updateEnhancementDisplay();
+    updateArmorBar();
+    renderArmorPreview();
     updateContainerOptions();
     updateStats();
-    renderArmorDropdownList();
     saveStateToStorage();
+    if (elements.armorModal?.classList.contains('active')) {
+        updateArmorModalCardStates();
+    }
 }
 
 function clearArmorSelection() {
     state.previousStats = calculateTotalStats();
     state.selectedArmor = null;
     state.enhancementLevel = 0;
+    state.armorModalPreviewId = null;
 
-    const valueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = t('calc.selectArmor');
-    valueElement.classList.remove('has-value');
     elements.armorSelect.value = '';
-
-    closeArmorDropdown();
-    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
+    if (elements.armorModalSearch) elements.armorModalSearch.value = '';
 
     hideEnhancementBlock();
-    renderArmorInfo();
+    updateArmorBar();
+    renderArmorPreview();
     updateContainerOptions();
     updateStats();
-    renderArmorDropdownList();
+    if (elements.armorModal?.classList.contains('active')) {
+        renderArmorModalList();
+        renderArmorModalDetail(null, true);
+    }
     saveStateToStorage();
 }
 
 
-function initContainerDropdown() {
-    renderContainerDropdownList();
-    elements.containerDropdown.querySelector('.custom-dropdown__trigger').addEventListener('click', toggleContainerDropdown);
-    if (elements.containerSearchInput) elements.containerSearchInput.addEventListener('input', handleContainerSearch);
-    elements.containerDropdownList.addEventListener('click', handleContainerListClick);
-    if (elements.containerClearBtn) elements.containerClearBtn.addEventListener('click', clearContainerSelection);
-    document.addEventListener('click', (e) => { if (!elements.containerDropdown.contains(e.target)) closeContainerDropdown(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && elements.containerDropdown.classList.contains('open')) closeContainerDropdown(); });
+function initContainerPicker() {
+    renderContainerBar();
+    elements.containerPickerBtn.addEventListener('click', openContainerModal);
+    elements.containerModalClose.addEventListener('click', closeContainerModal);
+    elements.containerModal.querySelector('.modal__backdrop').addEventListener('click', closeContainerModal);
+    elements.containerModal.querySelector('.container-modal__layout')?.addEventListener('click', handleContainerModalClick);
+    elements.containerModal.addEventListener('input', (e) => {
+        if (e.target.id === 'containerModalSearch') handleContainerModalSearch();
+    });
+    if (elements.containerSearchClear) {
+        elements.containerSearchClear.addEventListener('click', () => {
+            elements.containerModalSearch.value = '';
+            elements.containerSearchClear.style.display = 'none';
+            renderContainerModalList('');
+            elements.containerModalSearch.focus();
+        });
+    }
+    if (elements.clearArtifactsBtn) {
+        elements.clearArtifactsBtn.addEventListener('click', openClearArtifactsConfirm);
+    }
+    if (elements.clearArtifactsCancel) {
+        elements.clearArtifactsCancel.addEventListener('click', closeClearArtifactsConfirm);
+    }
+    if (elements.clearArtifactsConfirmBtn) {
+        elements.clearArtifactsConfirmBtn.addEventListener('click', confirmClearArtifacts);
+    }
+    if (elements.clearArtifactsConfirm) {
+        elements.clearArtifactsConfirm.querySelector('.confirm-dialog__backdrop').addEventListener('click', closeClearArtifactsConfirm);
+    }
 }
 
-function toggleContainerDropdown() {
-    elements.containerDropdown.classList.toggle('open');
-    if (elements.containerDropdown.classList.contains('open') && elements.containerSearchInput) elements.containerSearchInput.focus();
+function openClearArtifactsConfirm() {
+    if (!state.selectedContainer || !hasFilledArtifacts()) return;
+    elements.clearArtifactsConfirm.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-function closeContainerDropdown() { elements.containerDropdown.classList.remove('open'); }
+function closeClearArtifactsConfirm() {
+    elements.clearArtifactsConfirm.classList.remove('active');
+    if (!elements.containerModal.classList.contains('active') &&
+        !elements.armorModal.classList.contains('active') &&
+        !elements.modal.classList.contains('active')) {
+        document.body.style.overflow = '';
+    }
+}
 
-function handleContainerSearch(e) { renderContainerDropdownList(e.target.value.toLowerCase().trim()); }
+function confirmClearArtifacts() {
+    if (!state.selectedContainer) {
+        closeClearArtifactsConfirm();
+        return;
+    }
 
-function handleContainerListClick(e) {
-    const item = e.target.closest('.custom-dropdown__item');
-    if (item && !item.classList.contains('custom-dropdown__item--disabled') && item.dataset.containerId) {
-        selectContainerFromDropdown(item.dataset.containerId);
+    state.previousStats = calculateTotalStats();
+    exitArtifactCopyMode();
+    state.artifacts = new Array(state.selectedContainer.slots).fill(null);
+    closeClearArtifactsConfirm();
+    renderArtifactSlots();
+    renderContainerBar();
+    updateStats();
+    saveStateToStorage();
+}
+
+function openContainerModal() {
+    state.containerModalPreviewId = state.selectedContainer?.id || null;
+    elements.containerModal.classList.add('active');
+    if (elements.containerModalSearch) {
+        elements.containerModalSearch.value = '';
+        if (elements.containerSearchClear) elements.containerSearchClear.style.display = 'none';
+    }
+    renderContainerModalList();
+    renderContainerModalDetail(state.containerModalPreviewId);
+    const isMobile = isPickerMobileLayout();
+    if (!isMobile && elements.containerModalSearch) elements.containerModalSearch.focus();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeContainerModal() {
+    elements.containerModal.classList.remove('active');
+    lastContainerDetailId = null;
+    if (!elements.armorModal.classList.contains('active') &&
+        !elements.modal.classList.contains('active') &&
+        !elements.clearArtifactsConfirm.classList.contains('active')) {
+        document.body.style.overflow = '';
+    }
+}
+
+function handleContainerModalSearch() {
+    const query = elements.containerModalSearch?.value.toLowerCase().trim() || '';
+    if (elements.containerSearchClear) {
+        elements.containerSearchClear.style.display = query ? 'flex' : 'none';
+    }
+    renderContainerModalList(query);
+}
+
+function handleContainerModalClick(e) {
+    const selectBtn = e.target.closest('.container-detail__select');
+    if (selectBtn) {
+        if (!selectBtn.disabled) confirmContainerSelection();
+        return;
+    }
+
+    const card = e.target.closest('.container-card');
+    if (card?.dataset.containerId) {
+        const nextId = card.dataset.containerId;
+        if (nextId === state.containerModalPreviewId) return;
+        state.containerModalPreviewId = nextId;
+        updateContainerModalCardStates();
+        renderContainerModalDetail(state.containerModalPreviewId);
+    }
+}
+
+function updateContainerModalCardStates() {
+    if (!elements.containerModalList) return;
+    elements.containerModalList.querySelectorAll('.container-card').forEach(card => {
+        const id = card.dataset.containerId;
+        card.classList.toggle('container-card--preview', id === state.containerModalPreviewId);
+        card.classList.toggle('container-card--selected', id === state.selectedContainer?.id);
+    });
+}
+
+function confirmContainerSelection() {
+    if (!state.containerModalPreviewId) return;
+    const container = CONTAINERS.find(c => c.id === state.containerModalPreviewId);
+    if (!container || !isContainerAvailable(container)) return;
+    if (state.selectedContainer?.id === state.containerModalPreviewId) {
+        closeContainerModal();
+        return;
+    }
+    selectContainer(state.containerModalPreviewId);
+}
+
+function renderContainerModalDetail(containerId, force = false) {
+    if (!elements.containerModalDetail) return;
+
+    if (!containerId) {
+        lastContainerDetailId = null;
+        elements.containerModalDetail.innerHTML = `<div class="container-detail__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>${t('calc.containerModal.selectHint')}</span></div>`;
+        return;
+    }
+
+    if (!force && containerId === lastContainerDetailId) return;
+
+    const container = CONTAINERS.find(c => c.id === containerId);
+    if (!container) return;
+
+    lastContainerDetailId = containerId;
+
+    const rarityClass = container.rarity || 'none';
+    const imagePath = getContainerImagePath(container);
+    const typeIcon = CONTAINER_TYPE_ICONS[container.type] || CONTAINER_TYPE_ICONS.standard;
+    const imageHtml = imagePath
+        ? `<img class="container-detail__img" src="${imagePath}" alt="${getLocalizedName(container)}"><span class="container-detail__icon-fallback" hidden>${typeIcon}</span>`
+        : `<span class="container-detail__icon">${typeIcon}</span>`;
+
+    const shieldingEntries = Object.entries(container.shielding || {}).filter(([, value]) => value !== 0);
+    const statEntries = Object.entries(container.stats || {}).filter(([, value]) => value !== 0);
+    const shieldingHtml = buildContainerDetailSection(t('calc.shieldingTitle'), shieldingEntries);
+    const statsHtml = buildContainerDetailSection(t('calc.containerModal.properties'), statEntries);
+    const noEffectsHtml = !shieldingEntries.length && !statEntries.length
+        ? `<div class="container-detail__empty">${t('calc.noShieldingFull')}</div>`
+        : '';
+
+    const isEquipped = state.selectedContainer?.id === container.id;
+    const isAvailable = isContainerAvailable(container);
+    const incompatNote = !isAvailable
+        ? `<div class="container-detail__incompat">${t('calc.containerIncompatible')}</div>`
+        : '';
+
+    elements.containerModalDetail.innerHTML = `<div class="container-detail__head"><div class="container-detail__preview">${imageHtml}</div><div class="container-detail__meta"><div class="container-detail__name rarity--${rarityClass}">${getLocalizedName(container)}</div><div class="container-detail__type">${getContainerTypeName(container.type)} · ${getSlotsText(container.slots)}</div></div></div>${incompatNote}<div class="container-detail__body">${shieldingHtml}${statsHtml}${noEffectsHtml}</div><button class="container-detail__select ${isEquipped ? 'container-detail__select--equipped' : ''}" type="button" ${!isAvailable ? 'disabled' : ''}>${isEquipped ? t('calc.containerModal.equipped') : t('calc.containerModal.select')}</button>`;
+
+    const img = elements.containerModalDetail.querySelector('.container-detail__img');
+    if (img) {
+        img.onerror = () => {
+            img.hidden = true;
+            const fallback = img.parentElement?.querySelector('.container-detail__icon-fallback');
+            if (fallback) fallback.hidden = false;
+        };
     }
 }
 
@@ -666,86 +1497,77 @@ function isContainerAvailable(container) {
     return state.selectedArmor.containerTypes.includes(container.type);
 }
 
-function renderContainerDropdownList(searchQuery = '') {
-    const groupedContainers = {};
-    CONTAINERS.forEach(container => {
-        if (searchQuery) {
-            const nameMatch = container.name.toLowerCase().includes(searchQuery) ||
-                              (container.nameEn && container.nameEn.toLowerCase().includes(searchQuery));
-            if (!nameMatch) return;
-        }
-        if (!groupedContainers[container.type]) groupedContainers[container.type] = [];
-        groupedContainers[container.type].push(container);
+function renderContainerModalList(searchQuery = '') {
+    let containers = CONTAINERS.filter(container => {
+        if (!searchQuery) return true;
+        const nameMatch = container.name.toLowerCase().includes(searchQuery) ||
+                          (container.nameEn && container.nameEn.toLowerCase().includes(searchQuery));
+        return nameMatch;
     });
+    containers = sortContainersByRarity(containers);
 
-    if (elements.containerClearWrapper) elements.containerClearWrapper.style.display = state.selectedContainer ? 'block' : 'none';
-
-    if (Object.keys(groupedContainers).length === 0) {
-        elements.containerDropdownList.innerHTML = `<div class="custom-dropdown__empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.containerNotFound')}</span></div>`;
+    if (containers.length === 0) {
+        elements.containerModalList.innerHTML = `<div class="containers-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg><span>${t('calc.containerNotFound')}</span></div>`;
+        renderContainerModalDetail(null, true);
         return;
     }
 
-    let html = '';
-    CONTAINER_TYPE_ORDER.forEach(type => {
-        const containers = groupedContainers[type];
-        if (!containers?.length) return;
-        html += `<div class="custom-dropdown__group custom-dropdown__group--${type}"><div class="custom-dropdown__group-title">${getContainerTypeName(type)} (${containers.length})</div>`;
-        containers.forEach(container => {
-            const isSelected = state.selectedContainer?.id === container.id;
-            const isAvailable = isContainerAvailable(container);
-            const totalShielding = Object.values(container.shielding || {}).reduce((sum, val) => sum + Math.abs(val), 0);
-            html += `<div class="custom-dropdown__item custom-dropdown__item--${type} custom-dropdown__item--with-icon ${isSelected ? 'selected' : ''} ${!isAvailable ? 'custom-dropdown__item--disabled' : ''}" data-container-id="${container.id}"><div class="custom-dropdown__item-icon">${CONTAINER_TYPE_ICONS[type] || CONTAINER_TYPE_ICONS.standard}</div><div class="custom-dropdown__item-info"><div class="custom-dropdown__item-name">${getLocalizedName(container)}</div><div class="custom-dropdown__item-meta custom-dropdown__item-meta--extended"><span class="custom-dropdown__item-type-badge">${getLocalizedType(container)}</span>${totalShielding > 0 ? `<span class="custom-dropdown__item-shielding"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${t('calc.shielding')}</span>` : `<span class="custom-dropdown__item-shielding custom-dropdown__item-shielding--none">${t('calc.noShielding')}</span>`}</div></div><div class="custom-dropdown__item-slots"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>${container.slots}</div><span class="custom-dropdown__item-rarity">${getLocalizedRarity(container)}</span></div>`;
-        });
-        html += '</div>';
-    });
-    elements.containerDropdownList.innerHTML = html;
+    const html = containers.map(container => {
+        const isPreview = state.containerModalPreviewId === container.id;
+        const isSelected = state.selectedContainer?.id === container.id;
+        const isAvailable = isContainerAvailable(container);
+        const rarityClass = container.rarity || 'none';
+        const incompatBadge = !isAvailable ? `<div class="container-card__incompat" title="${t('calc.containerIncompatible')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>` : '';
+
+        return `<button class="container-card container-card--${rarityClass} ${isPreview ? 'container-card--preview' : ''} ${isSelected ? 'container-card--selected' : ''} ${!isAvailable ? 'container-card--incompatible' : ''}" type="button" data-container-id="${container.id}"><div class="container-card__image">${getContainerDropdownIcon(container)}${incompatBadge}</div><div class="container-card__name">${getLocalizedName(container)}</div>${renderContainerSlotDots(container.slots)}</button>`;
+    }).join('');
+
+    elements.containerModalList.innerHTML = html;
+    bindContainerIconFallbacks(elements.containerModalList);
 }
 
-function selectContainerFromDropdown(containerId) {
-    state.previousStats = calculateTotalStats();
-    const container = CONTAINERS.find(c => c.id === containerId);
-    if (!container) return;
+function getDefaultContainer() {
+    const preferred = CONTAINERS.find(c => c.id === DEFAULT_CONTAINER_ID);
+    if (preferred && isContainerAvailable(preferred)) return preferred;
+    const available = getAvailableContainers();
+    if (available.length > 0) return available[0];
+    return preferred || CONTAINERS[0] || null;
+}
 
-    const previousArtifacts = [...state.artifacts];
+function ensureDefaultContainer() {
+    if (state.selectedContainer && isContainerAvailable(state.selectedContainer)) return;
+    const container = getDefaultContainer();
+    if (container) setSelectedContainer(container, { preserveArtifacts: false, save: false });
+}
+
+function setSelectedContainer(container, { preserveArtifacts = false, closeModal = false, save = true } = {}) {
+    if (!container || !isContainerAvailable(container)) return false;
+
+    state.previousStats = calculateTotalStats();
+    const previousArtifacts = preserveArtifacts ? [...state.artifacts] : [];
     state.selectedContainer = container;
     state.artifacts = new Array(container.slots).fill(null);
     for (let i = 0; i < Math.min(previousArtifacts.length, container.slots); i++) {
         state.artifacts[i] = previousArtifacts[i];
     }
 
-    const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = `${getLocalizedName(container)} (${getSlotsText(container.slots)})`;
-    valueElement.classList.add('has-value');
-    elements.containerSelect.value = containerId;
+    elements.containerSelect.value = container.id;
+    if (closeModal) closeContainerModal();
 
-    closeContainerDropdown();
-    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
-
-    renderContainerInfo();
+    renderContainerBar();
     renderArtifactSlots();
     updateStats();
-    renderContainerDropdownList();
-    saveStateToStorage();
+    if (elements.containerModal?.classList.contains('active')) {
+        renderContainerModalList(elements.containerModalSearch?.value.toLowerCase().trim() || '');
+        renderContainerModalDetail(state.containerModalPreviewId, true);
+    }
+    if (save) saveStateToStorage();
+    return true;
 }
 
-function clearContainerSelection() {
-    state.previousStats = calculateTotalStats();
-    state.selectedContainer = null;
-    state.artifacts = [];
-
-    const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    valueElement.textContent = t('calc.selectContainer');
-    valueElement.classList.remove('has-value');
-    elements.containerSelect.value = '';
-
-    closeContainerDropdown();
-    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
-
-    renderContainerInfo();
-    renderArtifactSlots();
-    updateStats();
-    renderContainerDropdownList();
-    saveStateToStorage();
+function selectContainer(containerId) {
+    const container = CONTAINERS.find(c => c.id === containerId);
+    setSelectedContainer(container, { preserveArtifacts: true, closeModal: true });
 }
 
 function initContainerSelect() {
@@ -762,7 +1584,6 @@ function initContainerSelect() {
 
 function initEventListeners() {
     elements.containerSelect.addEventListener('change', handleContainerChange);
-    elements.resetBtn.addEventListener('click', resetBuild);
     elements.modalClose.addEventListener('click', closeModal);
     elements.modal.querySelector('.modal__backdrop').addEventListener('click', closeModal);
     elements.artifactSearch.addEventListener('input', handleSearchChange);
@@ -773,128 +1594,189 @@ function initEventListeners() {
         elements.enhancementSlider.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
     }
 
-    elements.categoryTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            elements.categoryTabs.forEach(t => t.classList.remove('category-tab--active'));
-            tab.classList.add('category-tab--active');
-            state.filters.category = tab.dataset.category;
-            updateResetButtonState();
-            applyFilters();
-        });
-    });
+    elements.enhancementDecBtn?.addEventListener('click', () => setEnhancementLevel(state.enhancementLevel - 1));
+    elements.enhancementIncBtn?.addEventListener('click', () => setEnhancementLevel(state.enhancementLevel + 1));
+    elements.enhancementMaxBtn?.addEventListener('click', () => setEnhancementLevel(getEnhancementQuickLevel()));
+    elements.enhancementControls?.addEventListener('wheel', handleEnhancementWheel, { passive: false });
+    elements.enhancementValue?.addEventListener('change', handleEnhancementInput);
+    elements.enhancementValue?.addEventListener('keydown', handleEnhancementKeydown);
+    elements.enhancementValue?.addEventListener('blur', handleEnhancementInputBlur);
+    elements.enhancementValue?.addEventListener('focus', (e) => e.target.select());
 
     if (elements.searchClear) {
         elements.searchClear.addEventListener('click', () => {
             elements.artifactSearch.value = '';
             state.filters.search = '';
             elements.searchClear.style.display = 'none';
-            updateResetButtonState();
+            updateStatFilterClearButtons();
             applyFilters();
             elements.artifactSearch.focus();
         });
     }
 
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && elements.modal.classList.contains('active')) closeModal();
+        if (e.key !== 'Escape') return;
+        if (elements.clearArtifactsConfirm.classList.contains('active')) closeClearArtifactsConfirm();
+        else if (state.artifactCopyMode) exitArtifactCopyMode();
+        else if (elements.armorModal.classList.contains('active')) closeArmorModal();
+        else if (elements.containerModal.classList.contains('active')) closeContainerModal();
+        else if (elements.modal.classList.contains('active')) closeModal();
     });
 
     // Определяем, поддерживает ли устройство тач
 const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-if (isTouchDevice) {
-    // На тач-устройствах используем touchend для мгновенной реакции без ожидания hover
-    let touchStartTarget = null;
-    let touchMoved = false;
+initArtifactSlotListeners(isTouchDevice);
 
-    elements.artifactSlots.addEventListener('touchstart', (e) => {
-        touchStartTarget = e.target;
-        touchMoved = false;
-    }, { passive: true });
+    elements.artifactList.addEventListener('click', handleArtifactModalClick);
+    if (elements.artifactModalDetail) {
+        elements.artifactModalDetail.addEventListener('click', handleArtifactModalClick);
+    }
 
-    elements.artifactSlots.addEventListener('touchmove', () => {
-        touchMoved = true;
-    }, { passive: true });
-
-    elements.artifactSlots.addEventListener('touchend', (e) => {
-        // Если палец двигался — это скролл, не обрабатываем
-        if (touchMoved) return;
-
-        const target = e.target;
-
-        // Обработка кнопки удаления
-        const removeBtn = target.closest('.artifact-slot__remove');
-        if (removeBtn) {
-            e.preventDefault();
-            const slot = removeBtn.closest('.artifact-slot');
-            if (slot) removeArtifact(parseInt(slot.dataset.index));
-            return;
+    window.addEventListener('resize', () => {
+        syncArtifactSlotSortableHandle();
+        if (elements.modal?.classList.contains('active')) {
+            schedulePickerGridSync(elements.artifactList);
         }
-
-        // Обработка заполненного слота
-        const filledSlot = target.closest('.artifact-slot:not(.artifact-slot--empty)');
-        if (filledSlot) {
-            e.preventDefault();
-            openArtifactModal(parseInt(filledSlot.dataset.index));
-            return;
-        }
-
-        // Обработка пустого слота
-        const emptySlot = target.closest('.artifact-slot--empty');
-        if (emptySlot) {
-            e.preventDefault();
-            openArtifactModal(parseInt(emptySlot.dataset.index));
+        if (elements.armorModal?.classList.contains('active')) {
+            schedulePickerGridSync(elements.armorModalList);
         }
     });
+}
 
-    elements.artifactSlots.addEventListener('click', (e) => {
-            const slot = e.target.closest('.artifact-slot');
-            if (slot) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        });
-    } else {
-        elements.artifactSlots.addEventListener('click', (e) => {
-            const removeBtn = e.target.closest('.artifact-slot__remove');
-            if (removeBtn) {
-                e.stopPropagation();
-                const slot = removeBtn.closest('.artifact-slot');
-                if (slot) removeArtifact(parseInt(slot.dataset.index));
-                return;
-            }
+function initCalcMobileCarousel() {
+    const track = document.getElementById('calcCarouselTrack');
+    const nav = document.getElementById('calcCarouselNav');
+    if (!track || !nav) return;
 
-            const filledSlot = e.target.closest('.artifact-slot:not(.artifact-slot--empty)');
-            if (filledSlot) {
-                openArtifactModal(parseInt(filledSlot.dataset.index));
-                return;
-            }
+    const tabs = nav.querySelectorAll('[data-slide]');
+    const mobileQuery = window.matchMedia('(max-width: 768px)');
+    let activeIndex = 0;
+    let scrollRaf = null;
+    let swipeOriginIndex = null;
 
-            const emptySlot = e.target.closest('.artifact-slot--empty');
-            if (emptySlot) {
-                openArtifactModal(parseInt(emptySlot.dataset.index));
-            }
+    function isActive() {
+        return mobileQuery.matches;
+    }
+
+    function getSlideWidth() {
+        return track.clientWidth;
+    }
+
+    function getClampedSlideIndex(fromIndex, rawIndex) {
+        const minIndex = Math.max(0, fromIndex - 1);
+        const maxIndex = Math.min(tabs.length - 1, fromIndex + 1);
+        return Math.max(minIndex, Math.min(rawIndex, maxIndex));
+    }
+
+    function getRawSlideIndex() {
+        const width = getSlideWidth();
+        if (width <= 0) return activeIndex;
+        return Math.round(track.scrollLeft / width);
+    }
+
+    function setActiveSlide(index) {
+        const clamped = Math.max(0, Math.min(index, tabs.length - 1));
+        activeIndex = clamped;
+        tabs.forEach((tab, i) => {
+            const isCurrent = i === clamped;
+            tab.classList.toggle('is-active', isCurrent);
+            tab.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
         });
     }
 
-    elements.artifactList.addEventListener('click', (e) => {
-        const card = e.target.closest('.artifact-card');
-        if (card && card.dataset.artifactId) {
-            selectArtifact(card.dataset.artifactId);
-        }
+    function scrollToSlide(index, behavior = 'smooth') {
+        if (!isActive()) return;
+        const width = getSlideWidth();
+        if (width <= 0) return;
+        const clamped = Math.max(0, Math.min(index, tabs.length - 1));
+        track.scrollTo({ left: width * clamped, behavior });
+        setActiveSlide(clamped);
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            scrollToSlide(parseInt(tab.dataset.slide, 10));
+        });
     });
+
+    track.addEventListener('scroll', () => {
+        if (!isActive()) return;
+        if (scrollRaf) cancelAnimationFrame(scrollRaf);
+        scrollRaf = requestAnimationFrame(() => {
+            let index = getRawSlideIndex();
+            if (swipeOriginIndex !== null) {
+                index = getClampedSlideIndex(swipeOriginIndex, index);
+            }
+            setActiveSlide(index);
+        });
+    }, { passive: true });
+
+    function finalizeSwipeScroll() {
+        if (!isActive()) return;
+        const origin = swipeOriginIndex;
+        swipeOriginIndex = null;
+        if (origin === null) return;
+
+        const width = getSlideWidth();
+        if (width <= 0) return;
+
+        const targetIndex = getClampedSlideIndex(origin, getRawSlideIndex());
+        if (Math.abs(track.scrollLeft - width * targetIndex) > 1) {
+            scrollToSlide(targetIndex);
+        } else {
+            setActiveSlide(targetIndex);
+        }
+    }
+
+    track.addEventListener('touchstart', () => {
+        if (!isActive()) return;
+        swipeOriginIndex = activeIndex;
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
+        if (!isActive() || swipeOriginIndex === null) return;
+        if ('onscrollend' in track) return;
+        requestAnimationFrame(() => requestAnimationFrame(finalizeSwipeScroll));
+    }, { passive: true });
+
+    track.addEventListener('touchcancel', () => {
+        swipeOriginIndex = null;
+    }, { passive: true });
+
+    if ('onscrollend' in track) {
+        track.addEventListener('scrollend', () => {
+            if (swipeOriginIndex !== null) finalizeSwipeScroll();
+        }, { passive: true });
+    }
+
+    const handleLayoutChange = () => {
+        if (isActive()) {
+            scrollToSlide(activeIndex, 'auto');
+        } else {
+            track.scrollLeft = 0;
+            setActiveSlide(0);
+        }
+    };
+
+    if (typeof mobileQuery.addEventListener === 'function') {
+        mobileQuery.addEventListener('change', handleLayoutChange);
+    } else if (typeof mobileQuery.addListener === 'function') {
+        mobileQuery.addListener(handleLayoutChange);
+    }
+
+    window.addEventListener('resize', handleLayoutChange);
 }
 
 function handleSearchChange(e) {
     state.filters.search = e.target.value.trim();
     if (elements.searchClear) elements.searchClear.style.display = state.filters.search ? 'flex' : 'none';
-    updateResetButtonState();
+    updateStatFilterClearButtons();
     applyFilters();
 }
 
 function applyFilters() {
     let filtered = [...ARTIFACTS];
-
-    if (state.filters.category !== 'all') filtered = filtered.filter(a => a.category === state.filters.category);
 
     if (state.filters.search) {
         const searchLower = state.filters.search.toLowerCase();
@@ -911,21 +1793,90 @@ function applyFilters() {
         });
     }
 
-    if (state.filters.positiveEffect) {
-        filtered = filtered.filter(a => {
-            const value = a.stats[state.filters.positiveEffect];
-            return value !== undefined && isPositiveEffect(state.filters.positiveEffect, value);
-        });
+    if (state.filters.positiveEffects.length) {
+        filtered = filtered.filter(a => state.filters.positiveEffects.every(statKey => {
+            const value = a.stats[statKey];
+            return value !== undefined && isPositiveEffect(statKey, value);
+        }));
     }
 
-    if (state.filters.negativeEffect) {
-        filtered = filtered.filter(a => {
-            const value = a.stats[state.filters.negativeEffect];
-            return value !== undefined && isNegativeEffect(state.filters.negativeEffect, value);
-        });
+    if (state.filters.negativeEffects.length) {
+        filtered = filtered.filter(a => state.filters.negativeEffects.every(statKey => {
+            const value = a.stats[statKey];
+            return value !== undefined && isNegativeEffect(statKey, value);
+        }));
     }
 
     renderArtifactList(filtered);
+
+    if (state.artifactModalPreviewId && !filtered.some(a => a.id === state.artifactModalPreviewId)) {
+        state.artifactModalPreviewId = null;
+        renderArtifactModalDetail(null, true);
+    } else {
+        updateArtifactModalCardStates();
+    }
+}
+
+function handleArtifactModalClick(e) {
+    const selectBtn = e.target.closest('.artifact-modal-detail__select');
+    if (selectBtn) {
+        confirmArtifactSelection();
+        return;
+    }
+
+    const card = e.target.closest('.artifact-card');
+    if (card?.dataset.artifactId) {
+        const nextId = card.dataset.artifactId;
+        if (nextId === state.artifactModalPreviewId) return;
+        state.artifactModalPreviewId = nextId;
+        updateArtifactModalCardStates();
+        renderArtifactModalDetail(state.artifactModalPreviewId);
+    }
+}
+
+function updateArtifactModalCardStates() {
+    if (!elements.artifactList) return;
+    elements.artifactList.querySelectorAll('.artifact-card').forEach(card => {
+        const id = card.dataset.artifactId;
+        card.classList.toggle('artifact-card--preview', id === state.artifactModalPreviewId);
+        const isEquipped = state.currentSlotIndex !== null && state.artifacts[state.currentSlotIndex]?.id === id;
+        card.classList.toggle('artifact-card--equipped', isEquipped);
+    });
+}
+
+function confirmArtifactSelection() {
+    if (!state.artifactModalPreviewId) return;
+    const currentInSlot = state.currentSlotIndex !== null
+        ? state.artifacts[state.currentSlotIndex]?.id
+        : null;
+    if (currentInSlot === state.artifactModalPreviewId) {
+        closeModal();
+        return;
+    }
+    selectArtifact(state.artifactModalPreviewId);
+}
+
+function renderArtifactModalDetail(artifactId, force = false) {
+    if (!elements.artifactModalDetail) return;
+
+    if (!artifactId) {
+        lastArtifactDetailId = null;
+        elements.artifactModalDetail.innerHTML = `<div class="artifact-modal-detail__placeholder"><span>${t('calc.artifactModal.selectHint')}</span></div>`;
+        return;
+    }
+
+    if (!force && artifactId === lastArtifactDetailId) return;
+
+    const artifact = ARTIFACTS.find(a => a.id === artifactId);
+    if (!artifact) return;
+
+    lastArtifactDetailId = artifactId;
+
+    const imageSrc = getArtifactImagePath(artifact);
+    const tierDisplay = getArtifactTierDisplay(artifact.tier);
+    const isEquipped = state.currentSlotIndex !== null && state.artifacts[state.currentSlotIndex]?.id === artifact.id;
+
+    elements.artifactModalDetail.innerHTML = `<div class="artifact-detail artifact-detail--${artifact.category}"><div class="artifact-detail__head"><div class="artifact-detail__preview"><img src="${imageSrc}" alt="${getLocalizedName(artifact)}" onerror="this.style.display='none'"></div><div class="artifact-detail__meta"><div class="artifact-detail__name">${getLocalizedName(artifact)}</div><span class="artifact-modal-detail__tier">${tierDisplay}</span></div></div><button class="artifact-modal-detail__select ${isEquipped ? 'artifact-modal-detail__select--equipped' : ''}" type="button">${isEquipped ? t('calc.artifactModal.equipped') : t('calc.artifactModal.select')}</button><div class="artifact-detail__stats">${renderArtifactSlotStats(artifact)}</div></div>`;
 }
 
 
@@ -945,28 +1896,85 @@ function updateContainerOptions() {
     if (currentStillAvailable && state.selectedContainer) {
         elements.containerSelect.value = currentContainerId;
     } else if (state.selectedContainer) {
-        state.selectedContainer = null;
-        state.artifacts = [];
-        const valueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-        valueElement.textContent = t('calc.selectContainer');
-        valueElement.classList.remove('has-value');
-        renderContainerInfo();
-        renderArtifactSlots();
-        saveStateToStorage();
+        setSelectedContainer(getDefaultContainer(), { preserveArtifacts: true });
     }
 
-    renderContainerDropdownList();
+    if (elements.containerModal?.classList.contains('active')) {
+        renderContainerModalList(elements.containerModalSearch?.value.toLowerCase().trim() || '');
+        renderContainerModalDetail(state.containerModalPreviewId, true);
+    }
     elements.containerSelect.disabled = false;
 }
 
 
+const ENHANCEMENT_QUICK_LEVEL = 15;
+
+function getEnhancementQuickLevel() {
+    const maxLevel = state.selectedArmor?.enhancement?.maxLevel;
+    if (!maxLevel) return ENHANCEMENT_QUICK_LEVEL;
+    return Math.min(ENHANCEMENT_QUICK_LEVEL, maxLevel);
+}
+
 function handleEnhancementChange(e) {
-    state.previousStats = calculateTotalStats();
-    state.enhancementLevel = parseInt(e.target.value);
+    setEnhancementLevel(parseInt(e.target.value, 10));
+}
+
+function setEnhancementLevel(level) {
+    if (!state.selectedArmor?.enhancement) return;
+    const maxLevel = state.selectedArmor.enhancement.maxLevel;
+    const nextLevel = Math.max(0, Math.min(maxLevel, level));
+
+    if (nextLevel !== state.enhancementLevel) {
+        state.previousStats = calculateTotalStats();
+        state.enhancementLevel = nextLevel;
+        renderArmorPreview();
+        updateStats();
+        saveStateToStorage();
+    }
+
     updateEnhancementDisplay();
-    renderArmorInfo();
-    updateStats();
-    saveStateToStorage();
+}
+
+function handleEnhancementWheel(e) {
+    if (!state.selectedArmor?.enhancement) return;
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 1 : -1;
+    setEnhancementLevel(state.enhancementLevel + delta);
+}
+
+function handleEnhancementInput(e) {
+    const raw = e.target.value.trim();
+    if (raw === '') return;
+    const parsed = parseInt(raw, 10);
+    if (Number.isNaN(parsed)) {
+        updateEnhancementDisplay();
+        return;
+    }
+    setEnhancementLevel(parsed);
+}
+
+function handleEnhancementInputBlur() {
+    if (!elements.enhancementValue) return;
+    if (elements.enhancementValue.value.trim() === '') {
+        updateEnhancementDisplay();
+        return;
+    }
+    handleEnhancementInput({ target: elements.enhancementValue });
+}
+
+function handleEnhancementKeydown(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        elements.enhancementValue?.blur();
+        return;
+    }
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setEnhancementLevel(state.enhancementLevel + 1);
+    } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setEnhancementLevel(state.enhancementLevel - 1);
+    }
 }
 
 function showEnhancementBlock() {
@@ -974,7 +1982,7 @@ function showEnhancementBlock() {
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
     elements.enhancementSlider.max = maxLevel;
     elements.enhancementSlider.value = state.enhancementLevel;
-    elements.enhancementBlock.style.display = 'block';
+    elements.enhancementBlock.style.display = 'flex';
     elements.enhancementBlock.classList.add('visible');
     updateEnhancementDisplay();
 }
@@ -990,64 +1998,27 @@ function updateEnhancementDisplay() {
     const level = state.enhancementLevel;
     const maxLevel = state.selectedArmor.enhancement.maxLevel;
 
-    elements.enhancementValue.textContent = level;
-    elements.enhancementSlider.style.setProperty('--slider-progress', `${(level / maxLevel) * 100}%`);
+    elements.enhancementValue.value = level;
+    elements.enhancementValue.min = 0;
+    elements.enhancementValue.max = maxLevel;
+    elements.enhancementSlider.value = level;
+    elements.enhancementSlider.max = maxLevel;
     elements.enhancementBlock.setAttribute('data-level', level);
 
-    elements.enhancementBlock.classList.remove('enhancement-block--high', 'enhancement-block--max');
-    if (level >= 10 && level < maxLevel) elements.enhancementBlock.classList.add('enhancement-block--high');
-    else if (level === maxLevel) elements.enhancementBlock.classList.add('enhancement-block--max');
-
-    renderEnhancementBonuses();
+    if (elements.enhancementDecBtn) elements.enhancementDecBtn.disabled = level <= 0;
+    if (elements.enhancementIncBtn) elements.enhancementIncBtn.disabled = level >= maxLevel;
 }
-
-function renderEnhancementBonuses() {
-    if (!elements.enhancementBonus || !state.selectedArmor?.enhancement) return;
-    const level = state.enhancementLevel;
-    const bonuses = state.selectedArmor.enhancement.bonuses;
-
-    if (level === 0) {
-        elements.enhancementBonus.innerHTML = `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
-        return;
-    }
-
-    let html = '';
-    Object.entries(bonuses).forEach(([statKey, values]) => {
-        const bonusValue = values[level] || 0;
-        if (bonusValue !== 0) {
-            const displayValue = bonusValue > 0 ? `+${formatNumber(bonusValue)}` : formatNumber(bonusValue);
-            html += `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${getStatName(statKey)}</span><span class="enhancement-bonus-item__value">${displayValue}${getStatUnit(statKey)}</span></div>`;
-        }
-    });
-    elements.enhancementBonus.innerHTML = html || `<div class="enhancement-bonus-item"><span class="enhancement-bonus-item__name">${t('calc.noBonuses')}</span></div>`;
-}
-
 
 function handleContainerChange(e) {
     const containerId = e.target.value;
     state.previousStats = calculateTotalStats();
 
     if (!containerId) {
-        state.selectedContainer = null;
-        state.artifacts = [];
-        renderContainerInfo();
-        renderArtifactSlots();
-        updateStats();
-        saveStateToStorage();
+        ensureDefaultContainer();
         return;
     }
 
-    const previousArtifacts = [...state.artifacts];
-    state.selectedContainer = CONTAINERS.find(c => c.id === containerId);
-    state.artifacts = new Array(state.selectedContainer.slots).fill(null);
-    for (let i = 0; i < Math.min(previousArtifacts.length, state.selectedContainer.slots); i++) {
-        state.artifacts[i] = previousArtifacts[i];
-    }
-
-    renderContainerInfo();
-    renderArtifactSlots();
-    updateStats();
-    saveStateToStorage();
+    setSelectedContainer(CONTAINERS.find(c => c.id === containerId), { preserveArtifacts: true });
 }
 
 function resetBuild() {
@@ -1056,181 +2027,508 @@ function resetBuild() {
     state.selectedContainer = null;
     state.artifacts = [];
     state.enhancementLevel = 0;
+    state.selectedArtifactSlotIndex = null;
+    exitArtifactCopyMode();
 
-    const armorValueElement = elements.armorDropdown.querySelector('.custom-dropdown__value');
-    armorValueElement.textContent = t('calc.selectArmor');
-    armorValueElement.classList.remove('has-value');
-    if (elements.armorSearchInput) elements.armorSearchInput.value = '';
-    renderArmorDropdownList();
-
-    const containerValueElement = elements.containerDropdown.querySelector('.custom-dropdown__value');
-    containerValueElement.textContent = t('calc.selectContainer');
-    containerValueElement.classList.remove('has-value');
-    if (elements.containerSearchInput) elements.containerSearchInput.value = '';
-    renderContainerDropdownList();
+    updateArmorBar();
+    if (elements.armorModalSearch) elements.armorModalSearch.value = '';
+    if (elements.containerModalSearch) elements.containerModalSearch.value = '';
 
     elements.armorSelect.value = '';
-    elements.containerSelect.value = '';
 
     hideEnhancementBlock();
     updateContainerOptions();
-    renderArmorInfo();
-    renderContainerInfo();
-    renderArtifactSlots();
+    ensureDefaultContainer();
+    renderArmorPreview();
+    if (elements.armorModal?.classList.contains('active')) {
+        renderArmorModalList();
+    }
+    if (elements.containerModal?.classList.contains('active')) {
+        renderContainerModalList();
+        renderContainerModalDetail(state.containerModalPreviewId, true);
+    }
     updateStats();
 
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+    saveStateToStorage();
 }
 
 
-function renderArmorInfo() {
-    if (!state.selectedArmor) {
-        elements.armorInfo.innerHTML = `<div class="armor-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>${t('calc.selectArmorHint')}</span></div>`;
-        return;
-    }
-
-    const armor = state.selectedArmor;
-    const enhancementBonuses = getEnhancementBonuses();
-
-    const statsHtml = Object.entries(armor.stats).map(([key, baseValue]) => {
-        const enhancementBonus = enhancementBonuses[key] || 0;
-        const totalValue = baseValue + enhancementBonus;
-        const { displayValue, colorClass } = formatStatValue(key, totalValue);
-        let enhancementHtml = '';
-        if (enhancementBonus !== 0) {
-            const bonusStr = enhancementBonus > 0 ? `+${formatNumber(enhancementBonus)}` : formatNumber(enhancementBonus);
-            enhancementHtml = `<span class="stat-enhancement-bonus">(${bonusStr})</span>`;
+function renderArtifactSlotStats(artifact) {
+    return Object.entries(artifact.stats).map(([key, value]) => {
+        const isInverted = INVERTED_STATS.includes(key);
+        let displayValue, valueClass;
+        if (value > 0) {
+            displayValue = `+${formatNumber(value)}${getStatUnit(key)}`;
+            valueClass = isInverted ? 'artifact-detail__stat-value--neg' : 'artifact-detail__stat-value--pos';
+        } else if (value < 0) {
+            displayValue = `${formatNumber(value)}${getStatUnit(key)}`;
+            valueClass = isInverted ? 'artifact-detail__stat-value--pos' : 'artifact-detail__stat-value--neg';
+        } else {
+            displayValue = `0${getStatUnit(key)}`;
+            valueClass = '';
         }
-        return `<div class="armor-details__stat"><span class="armor-details__stat-name">${getStatName(key)}</span><span class="armor-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)} ${enhancementHtml}</span></div>`;
+        return `<div class="artifact-detail__stat"><span class="artifact-detail__stat-name">${getStatName(key)}</span><span class="artifact-detail__stat-value ${valueClass}">${displayValue}</span></div>`;
     }).join('');
-
-    const rarityClass = armor.rarity || 'none';
-    elements.armorInfo.innerHTML = `<div class="armor-details"><div class="armor-details__header"><span class="armor-details__name">${getLocalizedName(armor)}</span><span class="armor-details__rarity rarity--${rarityClass}">${getLocalizedRarity(armor)}</span></div><div class="armor-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>${getArmorTypeName(armor.type)}</div><div class="armor-details__stats">${statsHtml}</div></div>`;
 }
 
-function renderContainerInfo() {
-    if (!state.selectedContainer) {
-        elements.containerInfo.innerHTML = `<div class="container-info__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
+function syncSelectedArtifactSlot() {
+    const idx = state.selectedArtifactSlotIndex;
+    if (idx !== null && state.artifacts[idx]) return;
+
+    const firstFilled = state.artifacts.findIndex(a => a !== null);
+    state.selectedArtifactSlotIndex = firstFilled === -1 ? null : firstFilled;
+}
+
+function renderArtifactSlotGrip() {
+    return `<span class="artifact-slot-card__grip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg></span>`;
+}
+
+function renderArtifactSlotActions(index) {
+    const copyActive = state.artifactCopyMode && state.selectedArtifactSlotIndex === index;
+    const copyActiveClass = copyActive ? ' artifact-slot-card__action--active' : '';
+
+    return `<div class="artifact-slot-card__actions"><button class="artifact-slot-card__action artifact-slot-card__action--delete" type="button" data-slot-action="delete" title="${t('calc.artifactActions.delete')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button><button class="artifact-slot-card__action artifact-slot-card__action--copy${copyActiveClass}" type="button" data-slot-action="copy" title="${t('calc.artifactActions.copy')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button><button class="artifact-slot-card__action artifact-slot-card__action--replace" type="button" data-slot-action="replace" title="${t('calc.artifactActions.replace')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M21 21v-5h-5"/></svg></button></div>`;
+}
+
+function getArtifactSlotSortableHandle() {
+    return isPickerMobileLayout() ? '.artifact-slot-card__grip' : null;
+}
+
+function initArtifactSlotListeners(isTouchDevice) {
+    elements.artifactSlots.addEventListener('click', (e) => {
+        if (artifactSlotDragJustFinished) return;
+
+        const actionBtn = e.target.closest('[data-slot-action]');
+        if (actionBtn) {
+            e.stopPropagation();
+            const slot = actionBtn.closest('.artifact-slot-card');
+            if (!slot) return;
+            handleArtifactSlotAction(actionBtn.dataset.slotAction, parseInt(slot.dataset.index, 10));
+            return;
+        }
+
+        if (isPickerMobileLayout() && e.target.closest('.artifact-slot-card__grip')) {
+            return;
+        }
+
+        const slotCard = e.target.closest('.artifact-slot-card');
+        if (!slotCard) return;
+
+        if (isTouchDevice) e.preventDefault();
+
+        handleArtifactSlotClick(
+            parseInt(slotCard.dataset.index, 10),
+            slotCard.classList.contains('artifact-slot-card--empty')
+        );
+    });
+}
+
+function clearArtifactDragFocus() {
+    window.getSelection()?.removeAllRanges();
+    if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+    }
+}
+
+function initArtifactSlotsSortable() {
+    const grid = elements.artifactSlots?.querySelector('.artifact-slots__grid');
+
+    if (artifactSlotsSortable) {
+        artifactSlotsSortable.destroy();
+        artifactSlotsSortable = null;
+    }
+
+    if (!grid || typeof Sortable === 'undefined') return;
+
+    const useGripHandle = Boolean(getArtifactSlotSortableHandle());
+
+    artifactSlotsSortable = new Sortable(grid, {
+        animation: 200,
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        forceFallback: true,
+        fallbackClass: 'sortable-drag',
+        fallbackOnBody: true,
+        fallbackTolerance: 5,
+        handle: getArtifactSlotSortableHandle(),
+        delay: useGripHandle ? 180 : 0,
+        delayOnTouchOnly: true,
+        draggable: '.artifact-slot-card',
+        filter: '[data-slot-action]',
+        preventOnFilter: true,
+        disabled: state.artifactCopyMode,
+        onStart() {
+            exitArtifactCopyMode();
+            clearArtifactDragFocus();
+        },
+        onEnd(evt) {
+            clearArtifactDragFocus();
+            if (evt.oldIndex !== evt.newIndex) {
+                artifactSlotDragJustFinished = true;
+                setTimeout(() => {
+                    artifactSlotDragJustFinished = false;
+                }, 120);
+                reorderArtifactSlot(evt.oldIndex, evt.newIndex);
+            }
+        },
+    });
+}
+
+function syncArtifactSlotSortableHandle() {
+    if (!artifactSlotsSortable) return;
+    const handle = getArtifactSlotSortableHandle();
+    artifactSlotsSortable.option('handle', handle);
+    artifactSlotsSortable.option('delay', handle ? 180 : 0);
+}
+
+function setArtifactSlotsSortableDisabled(disabled) {
+    if (artifactSlotsSortable) {
+        artifactSlotsSortable.option('disabled', disabled);
+    }
+}
+
+function handleArtifactSlotAction(action, index) {
+    if (action === 'delete') {
+        removeArtifact(index);
         return;
     }
 
-    const container = state.selectedContainer;
-    const statsHtml = Object.entries(container.stats).map(([key, value]) => {
-        const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
-    }).join('');
+    if (state.selectedArtifactSlotIndex !== index) {
+        selectArtifactSlot(index);
+    }
 
-    const shieldingHtml = Object.entries(container.shielding).map(([key, value]) => {
-        const { displayValue, colorClass } = formatStatValue(key, value);
-        return `<div class="container-details__stat"><span class="container-details__stat-name">${getStatName(key)}</span><span class="container-details__stat-value ${colorClass}">${displayValue}${getStatUnit(key)}</span></div>`;
-    }).join('') || `<span class="container-details__stat-name">${t('calc.noShieldingFull')}</span>`;
+    if (action === 'copy') {
+        toggleArtifactCopyMode();
+        return;
+    }
 
-    elements.containerInfo.innerHTML = `<div class="container-details"><div class="container-details__header"><span class="container-details__name">${getLocalizedName(container)}</span><span class="container-details__rarity rarity--${container.rarity}">${getLocalizedRarity(container)}</span></div><div class="container-details__type"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>${getLocalizedType(container)} • ${getSlotsText(container.slots)}</div>${Object.keys(container.stats).length > 0 ? `<div class="container-details__stats">${statsHtml}</div>` : ''}<div class="container-details__shielding"><div class="container-details__shielding-title">${t('calc.shieldingTitle')}:</div>${shieldingHtml}</div></div>`;
+    if (action === 'replace') {
+        exitArtifactCopyMode();
+        openArtifactModal(index);
+    }
+}
+
+function reorderArtifactSlot(fromIndex, toIndex) {
+    if (fromIndex === toIndex) return;
+    if (fromIndex < 0 || toIndex < 0) return;
+    if (fromIndex >= state.artifacts.length || toIndex >= state.artifacts.length) return;
+
+    state.previousStats = calculateTotalStats();
+
+    const items = [...state.artifacts];
+    const [moved] = items.splice(fromIndex, 1);
+    items.splice(toIndex, 0, moved);
+    state.artifacts = items;
+
+    if (state.selectedArtifactSlotIndex === fromIndex) {
+        state.selectedArtifactSlotIndex = toIndex;
+    } else if (fromIndex < state.selectedArtifactSlotIndex && toIndex >= state.selectedArtifactSlotIndex) {
+        state.selectedArtifactSlotIndex--;
+    } else if (fromIndex > state.selectedArtifactSlotIndex && toIndex <= state.selectedArtifactSlotIndex) {
+        state.selectedArtifactSlotIndex++;
+    }
+
+    renderArtifactSlots();
+    updateStats();
+    saveStateToStorage();
+}
+
+function selectArtifactSlot(index) {
+    if (index < 0 || index >= state.artifacts.length || !state.artifacts[index]) return;
+    state.selectedArtifactSlotIndex = index;
+    renderArtifactDetailPanel();
+    updateArtifactSlotSelectionHighlight();
+    updateArtifactActions();
+}
+
+function updateArtifactActions() {
+    const index = state.selectedArtifactSlotIndex;
+    const hasSelection = index !== null && state.artifacts[index];
+
+    if (elements.artifactCopyHint) {
+        elements.artifactCopyHint.hidden = !(state.artifactCopyMode && hasSelection);
+        if (!elements.artifactCopyHint.hidden) {
+            elements.artifactCopyHint.textContent = t('calc.artifactActions.copyHint');
+        }
+    }
+}
+
+function toggleArtifactCopyMode() {
+    const index = state.selectedArtifactSlotIndex;
+    if (index === null || !state.artifacts[index]) return;
+
+    state.artifactCopyMode = !state.artifactCopyMode;
+    setArtifactSlotsSortableDisabled(state.artifactCopyMode);
+    updateArtifactActions();
+    updateArtifactSlotSelectionHighlight();
+}
+
+function exitArtifactCopyMode() {
+    if (!state.artifactCopyMode) return;
+    state.artifactCopyMode = false;
+    setArtifactSlotsSortableDisabled(false);
+    updateArtifactActions();
+    updateArtifactSlotSelectionHighlight();
+}
+
+function handleArtifactSlotClick(index, isEmpty) {
+    if (state.artifactCopyMode && state.selectedArtifactSlotIndex !== null && state.artifacts[state.selectedArtifactSlotIndex]) {
+        if (index !== state.selectedArtifactSlotIndex) {
+            copyArtifactToSlot(index);
+        }
+        return;
+    }
+
+    if (isEmpty) {
+        openArtifactModal(index);
+        return;
+    }
+
+    selectArtifactSlot(index);
+}
+
+function copyArtifactToSlot(targetIndex) {
+    const sourceIndex = state.selectedArtifactSlotIndex;
+    if (sourceIndex === null || !state.artifacts[sourceIndex]) return;
+    if (targetIndex < 0 || targetIndex >= state.artifacts.length) return;
+    if (targetIndex === sourceIndex) return;
+
+    state.previousStats = calculateTotalStats();
+    state.artifacts[targetIndex] = state.artifacts[sourceIndex];
+    state.selectedArtifactSlotIndex = targetIndex;
+    renderArtifactSlots();
+    updateStats();
+    saveStateToStorage();
+}
+
+function updateArtifactSlotSelectionHighlight() {
+    if (!elements.artifactSlots) return;
+    const sourceIndex = state.artifactCopyMode ? state.selectedArtifactSlotIndex : null;
+    elements.artifactSlots.querySelectorAll('.artifact-slot-card').forEach(card => {
+        const idx = parseInt(card.dataset.index, 10);
+        const isSelected = idx === state.selectedArtifactSlotIndex;
+        const hasArtifact = Boolean(state.artifacts[idx]);
+
+        card.classList.toggle('artifact-slot-card--selected', isSelected);
+        card.classList.toggle('artifact-slot-card--copy-source', sourceIndex !== null && idx === sourceIndex);
+        card.classList.toggle('artifact-slot-card--copy-target', sourceIndex !== null && idx !== sourceIndex);
+
+        const actions = card.querySelector('.artifact-slot-card__actions');
+        if (actions) {
+            actions.hidden = !hasArtifact;
+            const copyBtn = actions.querySelector('[data-slot-action="copy"]');
+            if (copyBtn) {
+                copyBtn.classList.toggle(
+                    'artifact-slot-card__action--active',
+                    state.artifactCopyMode && idx === state.selectedArtifactSlotIndex
+                );
+                copyBtn.title = t('calc.artifactActions.copy');
+            }
+            const deleteBtn = actions.querySelector('[data-slot-action="delete"]');
+            if (deleteBtn) deleteBtn.title = t('calc.artifactActions.delete');
+            const replaceBtn = actions.querySelector('[data-slot-action="replace"]');
+            if (replaceBtn) replaceBtn.title = t('calc.artifactActions.replace');
+        }
+    });
+}
+
+function renderArtifactDetailPanel() {
+    if (!elements.artifactDetailPanel) return;
+
+    if (!state.selectedContainer) {
+        elements.artifactDetailPanel.innerHTML = `<div class="artifact-detail__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
+        return;
+    }
+
+    const index = state.selectedArtifactSlotIndex;
+    const artifact = index !== null ? state.artifacts[index] : null;
+
+    if (!artifact) {
+        elements.artifactDetailPanel.innerHTML = `<div class="artifact-detail__placeholder"><span>${t('calc.artifactDetail.selectHint')}</span></div>`;
+        return;
+    }
+
+    const imageSrc = getArtifactImagePath(artifact);
+    const tierDisplay = getArtifactTierDisplay(artifact.tier);
+    elements.artifactDetailPanel.innerHTML = `<div class="artifact-detail artifact-detail--${artifact.category}"><div class="artifact-detail__head"><div class="artifact-detail__preview"><img src="${imageSrc}" alt="${getLocalizedName(artifact)}" onerror="this.style.display='none'"></div><div class="artifact-detail__meta"><div class="artifact-detail__name">${getLocalizedName(artifact)}</div><span class="artifact-detail__tier">${tierDisplay}</span></div></div><div class="artifact-detail__stats">${renderArtifactSlotStats(artifact)}</div></div>`;
 }
 
 function renderArtifactSlots() {
     if (!state.selectedContainer) {
-        elements.artifactSlots.innerHTML = `<div class="artifact-slots__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
+        elements.artifactSlots.innerHTML = `<div class="artifact-slots__placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg><span>${t('calc.selectContainerHint')}</span></div>`;
         elements.artifactCounter.textContent = '0/0';
+        state.selectedArtifactSlotIndex = null;
+        exitArtifactCopyMode();
+        initArtifactSlotsSortable();
+        renderArtifactDetailPanel();
+        updateClearArtifactsButton();
+        updateArtifactActions();
         return;
     }
 
     const filledSlots = state.artifacts.filter(a => a !== null).length;
     elements.artifactCounter.textContent = `${filledSlots}/${state.selectedContainer.slots}`;
+    updateClearArtifactsButton();
+    syncSelectedArtifactSlot();
 
     const slotsHtml = state.artifacts.map((artifact, index) => {
+        const isSelected = state.selectedArtifactSlotIndex === index;
+        const isCopySource = state.artifactCopyMode && isSelected;
+        const isCopyTarget = state.artifactCopyMode && state.selectedArtifactSlotIndex !== null && index !== state.selectedArtifactSlotIndex;
+        const copyClasses = `${isCopySource ? ' artifact-slot-card--copy-source' : ''}${isCopyTarget ? ' artifact-slot-card--copy-target' : ''}`;
         if (artifact) {
-            const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
-            return `<div class="artifact-slot" data-index="${index}"><div class="artifact-slot__icon"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-slot__info"><div class="artifact-slot__name">${getLocalizedName(artifact)}</div><div class="artifact-slot__category">${getCategoryName(artifact.category)} • ${tierDisplay}</div></div><button class="artifact-slot__remove" data-action="remove" title="${t('calc.removeArtifact')}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button></div>`;
+            const imageSrc = getArtifactImagePath(artifact);
+            return `<div class="artifact-slot-card artifact-slot-card--${artifact.category}${isSelected ? ' artifact-slot-card--selected' : ''}${copyClasses}" data-index="${index}"><div class="artifact-slot-card__main"><button class="artifact-slot-card__select" type="button">${renderArtifactSlotGrip()}<div class="artifact-slot-card__preview artifact-slot-card__preview--filled"><img src="${imageSrc}" alt="${getLocalizedName(artifact)}" draggable="false" onerror="this.style.display='none'"></div><div class="artifact-slot-card__info"><div class="artifact-slot-card__name">${getLocalizedName(artifact)}</div></div></button>${renderArtifactSlotActions(index)}</div></div>`;
         }
-        return `<div class="artifact-slot artifact-slot--empty" data-index="${index}"><div class="artifact-slot__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></div><div class="artifact-slot__info"><span class="artifact-slot__empty-text">${t('calc.slot.clickToAdd')}</span></div></div>`;
+        return `<div class="artifact-slot-card artifact-slot-card--empty${copyClasses}" data-index="${index}"><div class="artifact-slot-card__main"><button class="artifact-slot-card__select" type="button">${renderArtifactSlotGrip()}<div class="artifact-slot-card__preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg></div><div class="artifact-slot-card__info"><div class="artifact-slot-card__hint">${t('calc.slot.clickToAdd')}</div></div></button></div></div>`;
     }).join('');
 
     elements.artifactSlots.innerHTML = `<div class="artifact-slots__grid">${slotsHtml}</div>`;
-}
-
-function updateArtifactCount(count) {
-    if (elements.artifactCount) elements.artifactCount.textContent = count;
+    initArtifactSlotsSortable();
+    renderArtifactDetailPanel();
+    updateArtifactActions();
 }
 
 function renderArtifactList(artifacts) {
     if (!artifacts) artifacts = ARTIFACTS;
-    updateArtifactCount(artifacts.length);
 
     if (artifacts.length === 0) {
         elements.artifactList.innerHTML = `<div class="artifacts-empty"><div class="artifacts-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><div class="artifacts-empty__title">${t('calc.modal.noResults')}</div><div class="artifacts-empty__text">${t('calc.modal.tryOtherFilters')}</div></div>`;
+        if (state.artifactModalPreviewId) {
+            state.artifactModalPreviewId = null;
+            renderArtifactModalDetail(null, true);
+        }
+        if (elements.modal?.classList.contains('active')) {
+            scheduleArtifactModalGridSync();
+        }
         return;
     }
 
     const listHtml = artifacts.map(artifact => {
-        const tierClass = artifact.tier === 'unique' ? 'unique' : artifact.tier;
-        const tierDisplay = artifact.tier === 'unique' ? '★' : `T${artifact.tier}`;
-        const priceDisplay = artifact.price ? formatPrice(artifact.price) : (getLocalizedField(artifact, 'priceText') || '—');
+        const isPreview = state.artifactModalPreviewId === artifact.id;
+        const isEquipped = state.currentSlotIndex !== null && state.artifacts[state.currentSlotIndex]?.id === artifact.id;
 
-        const statsHtml = Object.entries(artifact.stats).map(([key, value]) => {
-            const isInverted = INVERTED_STATS.includes(key);
-            let displayValue, valueClass;
-            if (value > 0) {
-                displayValue = `+${formatNumber(value)}${getStatUnit(key)}`;
-                valueClass = isInverted ? 'artifact-stat-row__value--negative' : 'artifact-stat-row__value--positive';
-            } else {
-                displayValue = `${formatNumber(value)}${getStatUnit(key)}`;
-                valueClass = isInverted ? 'artifact-stat-row__value--positive' : 'artifact-stat-row__value--negative';
-            }
-            return `<div class="artifact-stat-row"><span class="artifact-stat-row__name">${getStatName(key)}</span><span class="artifact-stat-row__value ${valueClass}">${displayValue}</span></div>`;
-        }).join('');
-
-        return `<div class="artifact-card artifact-card--${artifact.category}" data-artifact-id="${artifact.id}"><div class="artifact-card__top"><div class="artifact-card__image-wrapper"><img src="../Table/${artifact.imageFolder}/${artifact.image}" alt="${getLocalizedName(artifact)}" class="artifact-card__image" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__info"><div class="artifact-card__name">${getLocalizedName(artifact)}</div><div class="artifact-card__meta"><span class="artifact-card__tier artifact-card__tier--${tierClass}">${tierDisplay}</span><span class="artifact-card__category">${getCategoryName(artifact.category)}</span><span class="artifact-card__price">${priceDisplay}</span></div></div></div><div class="artifact-card__divider"></div><div class="artifact-card__stats">${statsHtml}</div></div>`;
+        return `<button class="artifact-card artifact-card--${artifact.category} ${isPreview ? 'artifact-card--preview' : ''} ${isEquipped ? 'artifact-card--equipped' : ''}" type="button" data-artifact-id="${artifact.id}"><div class="artifact-card__image"><img src="${getArtifactImagePath(artifact)}" alt="${getLocalizedName(artifact)}" class="artifact-card__img" onerror="this.src='../images/placeholder.png'"></div><div class="artifact-card__name">${getLocalizedName(artifact)}</div></button>`;
     }).join('');
 
     elements.artifactList.innerHTML = listHtml;
+    if (elements.modal?.classList.contains('active')) {
+        scheduleArtifactModalGridSync();
+    }
 }
 
 
+function isPickerMobileLayout() {
+    return window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+}
+
+function schedulePickerGridSync(grid) {
+    if (!grid) return;
+    clearTimeout(pickerGridLayoutTimer);
+    pickerGridLayoutTimer = setTimeout(() => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => syncPickerGridRows(grid));
+        });
+    }, 0);
+}
+
+function scheduleArtifactModalGridSync() {
+    schedulePickerGridSync(elements.artifactList);
+}
+
+function resetPickerGridRows(grid) {
+    if (!grid) return;
+    grid.style.height = '';
+    grid.style.maxHeight = '';
+}
+
+function resetArtifactModalGridRows() {
+    resetPickerGridRows(elements.artifactList);
+}
+
+function getPickerGridRowStride(grid) {
+    const card = grid.querySelector('.armor-card, .artifact-card');
+    if (card) {
+        return Math.round(card.getBoundingClientRect().height + PICKER_GRID_GAP);
+    }
+    return grid.classList.contains('artifacts-grid') ? ARTIFACT_GRID_ROW_STRIDE : 106 + PICKER_GRID_GAP;
+}
+
+function syncPickerGridRows(grid) {
+    const layout = grid?.closest('.armor-modal__layout, .artifact-modal__layout');
+    const modal = grid?.closest('.modal');
+    if (!grid || !layout || !modal?.classList.contains('active')) return;
+
+    if (isPickerMobileLayout()) {
+        resetPickerGridRows(grid);
+        return;
+    }
+
+    const layoutHeight = layout.clientHeight;
+    if (layoutHeight <= 0) return;
+
+    const rowStride = getPickerGridRowStride(grid);
+    const visibleRows = Math.max(1, Math.floor((layoutHeight + PICKER_GRID_GAP) / rowStride));
+    const alignedHeight = visibleRows * rowStride - PICKER_GRID_GAP;
+
+    grid.style.height = `${alignedHeight}px`;
+    grid.style.maxHeight = `${alignedHeight}px`;
+}
+
+function syncArtifactModalGridRows() {
+    syncPickerGridRows(elements.artifactList);
+}
+
 function openArtifactModal(slotIndex) {
     state.currentSlotIndex = slotIndex;
+    const currentArtifact = state.artifacts[slotIndex];
+    state.artifactModalPreviewId = currentArtifact?.id || null;
     elements.modal.classList.add('active');
-    if (elements.modalSlotInfo) elements.modalSlotInfo.textContent = `${t('calc.modal.slot')} #${slotIndex + 1}`;
-
     state.filters.search = '';
-    state.filters.category = 'all';
-    state.filters.positiveEffect = '';
-    state.filters.negativeEffect = '';
+    state.filters.positiveEffects = [];
+    state.filters.negativeEffects = [];
     state.filtersExpanded = false;
 
     elements.artifactSearch.value = '';
-    elements.categoryTabs.forEach(tab => tab.classList.toggle('category-tab--active', tab.dataset.category === 'all'));
     if (elements.searchClear) elements.searchClear.style.display = 'none';
 
     recreateStatFilters();
 
-    const positiveSelect = document.getElementById('positiveEffectFilter');
-    const negativeSelect = document.getElementById('negativeEffectFilter');
     const filtersToggle = document.getElementById('filtersToggle');
     const filtersWrapper = document.getElementById('statFiltersWrapper');
 
-    if (positiveSelect) positiveSelect.value = '';
-    if (negativeSelect) negativeSelect.value = '';
+    closeStatFilterComboboxes();
     if (filtersToggle) filtersToggle.classList.remove('active');
     if (filtersWrapper) {
         filtersWrapper.classList.add('collapsed');
-        filtersWrapper.style.maxHeight = '0';
     }
 
     updateFiltersBadge();
-    updateResetButtonState();
-    renderArtifactList(ARTIFACTS);
+    updateStatFilterClearButtons();
+    applyFilters();
+    renderArtifactModalDetail(state.artifactModalPreviewId, true);
 
-    const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+    const isMobile = isPickerMobileLayout();
     if (!isMobile) elements.artifactSearch.focus();
 
+    scheduleArtifactModalGridSync();
     document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
+    closeStatFilterComboboxes();
     elements.modal.classList.remove('active');
+    resetArtifactModalGridRows();
     state.currentSlotIndex = null;
-    document.body.style.overflow = '';
+    state.artifactModalPreviewId = null;
+    lastArtifactDetailId = null;
+    if (!elements.containerModal.classList.contains('active') &&
+        !elements.armorModal.classList.contains('active') &&
+        !elements.clearArtifactsConfirm.classList.contains('active')) {
+        document.body.style.overflow = '';
+    }
 }
 
 function selectArtifact(artifactId) {
@@ -1238,6 +2536,8 @@ function selectArtifact(artifactId) {
     if (artifact && state.currentSlotIndex !== null) {
         state.previousStats = calculateTotalStats();
         state.artifacts[state.currentSlotIndex] = artifact;
+        state.selectedArtifactSlotIndex = state.currentSlotIndex;
+        exitArtifactCopyMode();
         renderArtifactSlots();
         updateStats();
         closeModal();
@@ -1248,6 +2548,9 @@ function selectArtifact(artifactId) {
 function removeArtifact(index) {
     state.previousStats = calculateTotalStats();
     state.artifacts[index] = null;
+    if (state.selectedArtifactSlotIndex === index) {
+        exitArtifactCopyMode();
+    }
     renderArtifactSlots();
     updateStats();
     saveStateToStorage();
@@ -1256,15 +2559,15 @@ function removeArtifact(index) {
 
 function updateStats() {
     const totalStats = calculateTotalStats();
-    updatePriorityStats(totalStats, state.previousStats);
+    updateHeroStats(totalStats, state.previousStats);
 
     Object.entries(totalStats).forEach(([key, value]) => {
-        const element = document.querySelector(`[data-stat="${key}"]`);
+        const element = elements.statValueElements[key];
         if (element) {
             const prevValue = state.previousStats ? state.previousStats[key] : value;
             const { displayValue, colorClass } = formatStatValueWithChange(key, value, prevValue);
             element.textContent = displayValue + getStatUnit(key);
-            element.className = 'stat-row__value ' + colorClass;
+            element.className = 'stats-panel__value' + (colorClass ? ' stats-panel__value--' + (colorClass.includes('positive') ? 'positive' : 'negative') : '');
         }
     });
 
@@ -1273,23 +2576,20 @@ function updateStats() {
     state.previousStats = totalStats;
 }
 
-function updatePriorityStats(currentStats, previousStats) {
-    PRIORITY_STATS.forEach(statKey => {
-        const element = document.querySelector(`[data-priority-stat="${statKey}"]`);
-        const cardElement = element?.closest('.priority-stat');
-        if (!element || !cardElement) return;
+function updateHeroStats(currentStats, previousStats) {
+    HERO_STATS.forEach(statKey => {
+        const element = elements.heroStatElements[statKey];
+        if (!element) return;
 
         const value = currentStats[statKey] || 0;
         const prevValue = previousStats ? (previousStats[statKey] || 0) : value;
-        const { displayValue, colorClass, isDangerous, isGood } = formatPriorityStatValue(statKey, value, prevValue);
+        const { displayValue, colorClass } = formatStatValueWithChange(statKey, value, prevValue);
 
         element.textContent = displayValue + getStatUnit(statKey);
-        element.className = 'priority-stat__value';
-        if (colorClass) element.classList.add(colorClass);
-
-        cardElement.classList.remove('priority-stat--danger', 'priority-stat--good');
-        if (isDangerous) cardElement.classList.add('priority-stat--danger');
-        else if (isGood) cardElement.classList.add('priority-stat--good');
+        element.className = 'hero-stat__value hero-stat__value--sm';
+        if (colorClass) {
+            element.classList.add(colorClass.includes('positive') ? 'hero-stat__value--positive' : 'hero-stat__value--negative');
+        }
     });
 }
 
@@ -1314,17 +2614,18 @@ function formatPriorityStatValue(statKey, value, prevValue) {
 
 function formatStatValueWithChange(statKey, currentValue, previousValue) {
     const isInverted = INVERTED_STATS.includes(statKey);
-    const diff = currentValue - previousValue;
     let displayValue = '', colorClass = '';
 
     if (currentValue === 0) displayValue = '0';
     else if (currentValue > 0) displayValue = `+${formatNumber(currentValue)}`;
     else displayValue = formatNumber(currentValue);
 
-    if (diff !== 0) {
-        colorClass = isInverted ? (diff > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (diff > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
-    } else if (currentValue !== 0) {
-        colorClass = isInverted ? (currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive') : (currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative');
+    if (currentValue !== 0) {
+        if (isInverted) {
+            colorClass = currentValue > 0 ? 'stat-row__value--negative' : 'stat-row__value--positive';
+        } else {
+            colorClass = currentValue > 0 ? 'stat-row__value--positive' : 'stat-row__value--negative';
+        }
     }
 
     return { displayValue, colorClass };
@@ -1332,37 +2633,31 @@ function formatStatValueWithChange(statKey, currentValue, previousValue) {
 
 function updateWarnings(totalStats) {
     const warningsHtml = [];
+
     Object.entries(WARNING_STATS).forEach(([statKey, config]) => {
         let value = totalStats[statKey] || 0;
-        let isDangerous = config.inverted ? value < config.threshold : value > config.threshold;
-        if (config.inverted) value = Math.abs(value);
+        const isDangerous = config.inverted ? value < config.threshold : value > config.threshold;
 
         if (isDangerous) {
+            const displayValue = config.inverted ? Math.abs(value) : value;
+            const sign = config.inverted ? '-' : '+';
             const title = t(config.titleKey);
             const unit = t(config.unitKey);
-            warningsHtml.push(`<div class="warning-item warning-item--${config.color}"><div class="warning-item__icon">${getWarningIcon(statKey)}</div><div class="warning-item__content"><span class="warning-item__title">${t('calc.warning.attention')}: ${title}!</span><span class="warning-item__value">${config.inverted ? '-' : '+'}${formatNumber(value)} ${unit}</span></div></div>`);
+            warningsHtml.push(`<div class="warning-banner warning-banner--${statKey}"><span class="warning-banner__icon">${getWarningIcon(statKey)}</span><div class="warning-banner__content"><span class="warning-banner__text">${title}</span><span class="warning-banner__value">(${sign}${formatNumber(displayValue)} ${unit})</span></div></div>`);
         }
     });
 
-    let warningsContainer = document.getElementById('warningsContainer');
-    if (!warningsContainer) {
-        const bulletResistance = document.querySelector('.bullet-resistance');
-        warningsContainer = document.createElement('div');
-        warningsContainer.id = 'warningsContainer';
-        bulletResistance.parentNode.insertBefore(warningsContainer, bulletResistance.nextSibling);
+    if (elements.warningsContainer) {
+        elements.warningsContainer.innerHTML = warningsHtml.join('');
     }
-    warningsContainer.innerHTML = warningsHtml.join('');
 }
 
 function getWarningIcon(statKey) {
-    const icons = {
-        radiation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-        cold: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><path d="M12 2l4 4M12 2l-4 4"/><path d="M12 22l4-4M12 22l-4-4"/><path d="M2 12l4 4M2 12l4-4"/><path d="M22 12l-4 4M22 12l-4-4"/></svg>',
-        bleeding: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>',
-        regeneration: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
-        saturation: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>'
-    };
-    return icons[statKey] || icons.radiation;
+    if (WARNING_ICON_FILES[statKey]) {
+        return '<span class="warning-banner__icon-mask" aria-hidden="true"></span>';
+    }
+
+    return WARNING_ICON_INLINE[statKey] || '<span class="warning-banner__icon-mask" aria-hidden="true"></span>';
 }
 
 function updateEffectiveBulletResistance(bulletResistance) {
@@ -1382,9 +2677,9 @@ function updateEffectiveBulletResistance(bulletResistance) {
     const barPercent = Math.max(0, Math.min(clampedPercent, 100));
     barElement.style.width = `${barPercent}%`;
 
-    if (clampedPercent >= 65) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--high';
-    else if (clampedPercent >= 45) barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--medium';
-    else barElement.className = 'bullet-resistance__bar-fill bullet-resistance__bar-fill--low';
+    if (clampedPercent >= 65) barElement.className = 'hero-stat__bar-fill hero-stat__bar-fill--high';
+    else if (clampedPercent >= 45) barElement.className = 'hero-stat__bar-fill hero-stat__bar-fill--medium';
+    else barElement.className = 'hero-stat__bar-fill hero-stat__bar-fill--low';
 }
 
 function formatStatValue(statKey, value) {
