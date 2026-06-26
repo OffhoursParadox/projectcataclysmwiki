@@ -166,7 +166,7 @@ function buildTierBadge(tier) {
 function buildArtifactRow(artifact) {
     const lang = getCurrentLang();
     const tierHtml = buildTierBadge(artifact.tier);
-    const imgPath = `${artifact.imageFolder}/${artifact.image}`;
+    const imgPath = getArtifactImagePath(artifact);
 
     const nameRu = artifact.name;
     const nameEn = artifact.nameEn || '';

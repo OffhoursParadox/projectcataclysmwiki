@@ -284,6 +284,9 @@ function createSimplePopup(type, markerData, typeName) {
     const desc = translateDescription(cleanDesc, type);
     const descStripped = desc.replace(/<br\s*\/?>/gi, '').trim();
 
+    // Check if description is just a duplicate of the type name
+    const isDescDuplicate = descStripped.toLowerCase() === typeName.toLowerCase();
+
     const levelLabel = markerData.level === 'underground'
         ? `<span style="color:#a78bfa;font-size:11px;font-weight:600;margin-left:8px;">${isEnglish() ? '⛏ Underground' : '⛏ Подземелье'}</span>`
         : '';
@@ -291,7 +294,7 @@ function createSimplePopup(type, markerData, typeName) {
     let html = `<div class="marker-popup marker-popup--simple">`;
     html += `<div class="marker-popup__title">${escapeHtml(typeName)}${levelLabel}</div>`;
 
-    if (markerData.image || descStripped) {
+    if (markerData.image || (descStripped && !isDescDuplicate)) {
         html += `<div class="marker-popup__body">`;
 
         if (markerData.image) {
@@ -301,7 +304,7 @@ function createSimplePopup(type, markerData, typeName) {
             </div>`;
         }
 
-        if (descStripped) {
+        if (descStripped && !isDescDuplicate) {
             html += `<div class="marker-popup__desc">${desc}</div>`;
         }
 
@@ -695,19 +698,90 @@ function updateLevelSwitcherText() {
 
 // ==================== FILTERS ====================
 
+const FILTERS_VERSION = '2';
+
 function initFilters() {
+    const DEFAULT_FILTER_STATE = {
+        // astrolite — hidden
+        catalyst: false,
+        wormhole: false,
+        // containers — only science and safe visible
+        ammo: false,
+        supply: false,
+        tools: false,
+        barrels: false,
+        science: true,
+        stash: false,
+        wooden_crate: false,
+        safe: true,
+        stash_hidden: false,
+        // mutants — all visible
+        blind_dog: true,
+        pseudodog: true,
+        psy_dog: true,
+        flesh: true,
+        boar: true,
+        rat: true,
+        snork: true,
+        zombie: true,
+        bloodsucker: true,
+        bloodsucker_strong: true,
+        chimera: true,
+        controller: true,
+        // npc — all visible
+        zombified: true,
+        zombified_cluster: true,
+        bandits: true,
+        bandit_camp: true,
+        military: true,
+        monolith_outpost: true,
+        monolith: true,
+        mercenary: true,
+        stalkers: true,
+        freedom: true,
+        duty: true,
+        duty_freedom_spawn: true,
+        sinner: true,
+        boss_foxtrot: true,
+        boss_prince: true,
+        boss_invincible: true,
+        boss_illusionist: true,
+        boss_pharaoh: true,
+        boss_sumrak: true,
+        boss_iskatel: true,
+        boss_king: true,
+        boss_kastet: true,
+        // locations — all visible
+        base_orden: true,
+        base_legion: true,
+        base_duty: true,
+        base_freedom: true,
+        base_spawn: true,
+        base_nospawn: true,
+        base_hostile: true
+    };
+
+    const savedVersion = localStorage.getItem('mapFiltersVersion');
     const saved = JSON.parse(localStorage.getItem('mapFilters') || '{}');
+    const useDefaults = savedVersion !== FILTERS_VERSION || Object.keys(saved).length === 0;
+
+    if (useDefaults) {
+        localStorage.setItem('mapFiltersVersion', FILTERS_VERSION);
+        localStorage.setItem('mapFilters', JSON.stringify(DEFAULT_FILTER_STATE));
+    }
 
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
         const filter = checkbox.dataset.filter;
 
-        if (saved[filter] !== undefined) {
-            checkbox.checked = saved[filter];
-            if (!saved[filter]) {
-                activeFilters.delete(filter);
-                if (markerLayers[filter]) {
-                    map.removeLayer(markerLayers[filter][currentLevel]);
-                }
+        const state = useDefaults
+            ? (DEFAULT_FILTER_STATE[filter] !== undefined ? DEFAULT_FILTER_STATE[filter] : false)
+            : (saved[filter] !== undefined ? saved[filter] : (DEFAULT_FILTER_STATE[filter] !== undefined ? DEFAULT_FILTER_STATE[filter] : false));
+
+        checkbox.checked = state;
+        if (!state) {
+            activeFilters.delete(filter);
+            if (markerLayers[filter]) {
+                map.removeLayer(markerLayers[filter][currentLevel]);
             }
         }
 
@@ -792,6 +866,9 @@ function updateMarkerCounts() {
 function initSidebar() {
     const sidebar = document.getElementById('sidebar');
     const toggle = document.getElementById('sidebarToggle');
+    const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarCloseMobile = document.getElementById('sidebarCloseMobile');
 
     if (!sidebar || !toggle) return;
 
@@ -802,9 +879,24 @@ function initSidebar() {
         sidebar.classList.add('collapsed');
     }
 
+    // Function to open sidebar on mobile
+    const openMobileSidebar = () => {
+        sidebar.classList.add('open');
+        sidebarOverlay?.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    };
+
+    // Function to close sidebar on mobile
+    const closeMobileSidebar = () => {
+        sidebar.classList.remove('open');
+        sidebarOverlay?.classList.remove('visible');
+        document.body.style.overflow = '';
+    };
+
+    // Desktop toggle button
     toggle.addEventListener('click', () => {
         if (isMobile()) {
-            sidebar.classList.toggle('open');
+            openMobileSidebar();
         } else {
             sidebar.classList.toggle('collapsed');
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
@@ -812,29 +904,116 @@ function initSidebar() {
         setTimeout(() => map.invalidateSize(), 300);
     });
 
+    // Mobile filter FAB button
+    mobileFilterBtn?.addEventListener('click', () => {
+        openMobileSidebar();
+        updateMobileFilterBadge();
+    });
+
+    // Mobile close button
+    sidebarCloseMobile?.addEventListener('click', () => {
+        closeMobileSidebar();
+        setTimeout(() => map.invalidateSize(), 300);
+    });
+
+    // Overlay click to close
+    sidebarOverlay?.addEventListener('click', () => {
+        closeMobileSidebar();
+        setTimeout(() => map.invalidateSize(), 300);
+    });
+
+    // Close sidebar when clicking on map
     document.getElementById('map')?.addEventListener('click', () => {
         if (isMobile() && sidebar.classList.contains('open')) {
-            sidebar.classList.remove('open');
+            closeMobileSidebar();
             setTimeout(() => map.invalidateSize(), 300);
         }
     });
 
+    // Handle resize
     window.addEventListener('resize', () => {
         if (isMobile()) {
             sidebar.classList.remove('collapsed');
         } else {
             sidebar.classList.remove('open');
+            sidebarOverlay?.classList.remove('visible');
+            document.body.style.overflow = '';
         }
     });
 
+    // Reset filters button
     document.getElementById('resetFilters')?.addEventListener('click', () => {
         document.querySelectorAll('.filter-checkbox').forEach(cb => {
             cb.checked = true;
             toggleFilter(cb.dataset.filter, true);
         });
         saveFiltersState();
+        updateMobileFilterBadge();
     });
+
+    // Update badge when filters change
+    document.querySelectorAll('.filter-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+            updateMobileFilterBadge();
+        });
+    });
+
+    // Initial badge update
+    updateMobileFilterBadge();
 }
+
+// Update mobile filter badge with active filters count
+function updateMobileFilterBadge() {
+    const badge = document.getElementById('mobileFilterBadge');
+    if (!badge) return;
+
+    const checkboxes = document.querySelectorAll('.filter-checkbox');
+    let activeCount = 0;
+    checkboxes.forEach(cb => {
+        if (cb.checked) activeCount++;
+    });
+
+    badge.textContent = activeCount;
+    badge.style.display = activeCount > 0 ? 'flex' : 'none';
+}
+
+// Swipe to close sidebar on mobile
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
+    sidebar.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    sidebar.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeThreshold = 100;
+        const diffX = touchStartX - touchEndX;
+        const diffY = Math.abs(touchStartY - touchEndY);
+
+        // Only trigger if horizontal swipe is dominant and exceeds threshold
+        if (diffX > swipeThreshold && diffY < Math.abs(diffX) * 0.5) {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay')?.classList.remove('visible');
+                document.body.style.overflow = '';
+                setTimeout(() => map.invalidateSize(), 300);
+            }
+        }
+    }
+});
 
 function initControls() {
     document.getElementById('zoomIn')?.addEventListener('click', () => map.zoomIn());
