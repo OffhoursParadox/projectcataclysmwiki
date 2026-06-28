@@ -1,6 +1,23 @@
 [
     {
         "date": {
+            "ru": "28 июня 2026",
+            "en": "June 28, 2026"
+        },
+        "version": "1.13.1",
+        "items": [
+            {
+                "ru": "Оптимизирована главная страница сайта на мобильных устройствах",
+                "en": "Main page optimized for mobile devices"
+            },
+            {
+                "ru": "Исправлено некорректное отображение ТТК калькулятора на мобильных устройствах",
+                "en": "Fixed incorrect display of the TTK calculator on mobile devices"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "26 июня 2026",
             "en": "June 26, 2026"
         },
