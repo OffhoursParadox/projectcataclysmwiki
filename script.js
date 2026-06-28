@@ -1,27 +1,24 @@
 'use strict';
 
+const RF_MOBILE_LAZY_QUERY = '(max-width: 768px)';
+
 document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
 
     if (window.i18n && typeof window.i18n.onReady === 'function') {
-        window.i18n.onReady(() => {
-            initRfFrequencies();
-            initRfCopy();
-        });
+        window.i18n.onReady(scheduleRfInit);
     } else {
         document.addEventListener('languageChanged', () => {
             if (!document.querySelector('.rf-item')) {
-                initRfFrequencies();
-                initRfCopy();
+                scheduleRfInit();
             }
         }, { once: true });
 
         setTimeout(() => {
             if (!document.querySelector('.rf-item')) {
-                initRfFrequencies();
-                initRfCopy();
+                scheduleRfInit();
             }
         }, 500);
     }
@@ -29,6 +26,46 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUpdates();
     initPageAnimations();
 });
+
+function shouldLazyLoadRfBlock() {
+    return window.matchMedia(RF_MOBILE_LAZY_QUERY).matches;
+}
+
+function scheduleRfInit() {
+    const run = () => {
+        initRfFrequencies();
+        initRfCopy();
+    };
+
+    if (!shouldLazyLoadRfBlock()) {
+        run();
+        return;
+    }
+
+    const block = document.querySelector('.rf-receiver-block');
+    if (!block) {
+        run();
+        return;
+    }
+
+    block.classList.add('rf-receiver-block--deferred');
+
+    if (!('IntersectionObserver' in window)) {
+        block.classList.remove('rf-receiver-block--deferred');
+        run();
+        return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+
+        block.classList.remove('rf-receiver-block--deferred');
+        run();
+        observer.disconnect();
+    }, { rootMargin: '180px 0px', threshold: 0 });
+
+    observer.observe(block);
+}
 
 function initPageAnimations() {
     document.querySelectorAll('.quick-card').forEach((card, index) => {

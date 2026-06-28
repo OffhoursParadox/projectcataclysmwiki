@@ -357,10 +357,6 @@
     transform: translateX(4px);
 }
 
-.quick-card:not(.quick-card--disabled):hover .quick-card__action svg {
-    transform: translate(3px, -3px);
-}
-
 .quick-card--encyclopedia {
     --card-accent: #b08030;
     --card-accent-rgb: 176, 128, 48;
@@ -515,12 +511,6 @@
     letter-spacing: 1.6px;
     text-transform: uppercase;
     transition: transform 0.35s var(--ease-out-expo), color 0.35s var(--ease-out-expo), border-color 0.35s var(--ease-out-expo), background 0.35s var(--ease-out-expo);
-}
-
-.quick-card__action svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.35s var(--ease-out-expo);
 }
 
 .quick-card__badge {
@@ -2072,6 +2062,90 @@
     .content-section .container {
         gap: var(--space-md);
     }
+
+    .rf-receiver-block {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 1400px;
+        contain: layout style;
+        opacity: 1;
+        transform: none;
+        animation: none;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+    }
+
+    .rf-receiver-block::before,
+    .rf-receiver-block::after {
+        display: none;
+    }
+
+    .rf-receiver-block__sweep {
+        display: none;
+    }
+
+    .rf-receiver-block__device-panel,
+    .rf-receiver-block__frequencies-panel,
+    .rf-receiver-block__guide-stack {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .rf-receiver-block__device-image {
+        filter: none;
+    }
+
+    .rf-receiver-block__device-frame::before {
+        display: none;
+    }
+
+    .rf-guide-card,
+    .rf-npc-card,
+    .rf-item {
+        opacity: 1;
+        transform: none;
+        animation: none;
+        box-shadow: none;
+        transition:
+            border-color var(--t-fast) var(--ease-out-expo),
+            background var(--t-fast) var(--ease-out-expo);
+    }
+
+    .rf-guide-card::before,
+    .rf-npc-card::before {
+        display: none;
+    }
+
+    .rf-guide-card__media::before,
+    .rf-npc-card__media-overlay {
+        display: none;
+    }
+
+    .rf-guide-card__media img {
+        filter: none;
+        transform: none;
+    }
+
+    .rf-item__signal span {
+        animation: none;
+        box-shadow: none;
+        opacity: 0.68;
+    }
+
+    .rf-item__signal span:nth-child(1) {
+        transform: scaleY(0.72);
+    }
+
+    .rf-item__signal span:nth-child(2) {
+        transform: scaleY(0.88);
+    }
+
+    .rf-item__signal span:nth-child(3) {
+        transform: scaleY(1);
+    }
+
+    .rf-receiver-block--deferred .rf-receiver-block__frequencies-panel .rf-receiver-block__grid:empty {
+        min-height: 120px;
+    }
 }
 
 @media (max-width: 520px) {
@@ -2301,6 +2375,15 @@
 
     .rf-item:active {
         transform: scale(0.985);
+    }
+
+    .rf-receiver-block__sweep {
+        display: none;
+    }
+
+    .rf-item__signal span {
+        animation: none;
+        box-shadow: none;
     }
 }
 
