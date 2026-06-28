@@ -3849,10 +3849,11 @@ button.target-card {
         gap: 0;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
+        scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        overscroll-behavior-x: contain;
+        overscroll-behavior: contain;
+        touch-action: pan-x;
     }
 
     .ttk-layout::-webkit-scrollbar { display: none; }
@@ -3860,7 +3861,8 @@ button.target-card {
     .ttk-col {
         flex: 0 0 100%;
         min-width: 100%;
-        height: 100%;
+        min-height: 0;
+        align-self: stretch;
         max-height: none;
         scroll-snap-align: start;
         scroll-snap-stop: always;
@@ -3870,6 +3872,35 @@ button.target-card {
         -webkit-overflow-scrolling: touch;
         padding: 0 var(--space-md);
         box-sizing: border-box;
+        touch-action: pan-x pan-y;
+    }
+
+    .ttk-col .calc-card,
+    .ttk-col .calc-card__body,
+    .ttk-col .weapon-list-panel,
+    .ttk-col .weapon-list-panel__body,
+    .ttk-col .weapon-list,
+    .ttk-col .weapon-row,
+    .ttk-col .weapon-row__main,
+    .ttk-col .weapon-row__ammo,
+    .ttk-col .target-list-panel,
+    .ttk-col .target-list-panel__body,
+    .ttk-col .target-list,
+    .ttk-col .target-card,
+    .ttk-col .chart-panel,
+    .ttk-col .chart-panel__body,
+    .ttk-col .chart-results,
+    .ttk-col .chart-results__layout,
+    .ttk-col .chart-results__graph,
+    .ttk-col .damage-chart__container,
+    .ttk-col .weapon-preview-panel,
+    .ttk-col .comparison-table {
+        touch-action: inherit;
+    }
+
+    .ttk-col .weapon-list-panel,
+    .ttk-col .target-list-panel {
+        overflow: visible;
     }
 
     .ttk-col:has(.weapon-row__ammo-dropdown.open),
@@ -3981,7 +4012,8 @@ button.target-card {
 
     .calc-card__body.weapon-list-panel__body {
         max-height: none;
-        overflow-y: visible;
+        overflow: visible;
+        overscroll-behavior: visible;
     }
 
     .target-list-panel__body {

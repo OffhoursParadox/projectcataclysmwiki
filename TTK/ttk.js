@@ -746,6 +746,7 @@ function initTtkMobileCarousel() {
     const mobileQuery = window.matchMedia('(max-width: 768px)');
     let activeIndex = 0;
     let scrollRaf = null;
+    let swipeOriginIndex = null;
 
     function isActive() {
         return mobileQuery.matches;
@@ -753,6 +754,18 @@ function initTtkMobileCarousel() {
 
     function getSlideWidth() {
         return track.clientWidth;
+    }
+
+    function getClampedSlideIndex(fromIndex, rawIndex) {
+        const minIndex = Math.max(0, fromIndex - 1);
+        const maxIndex = Math.min(tabs.length - 1, fromIndex + 1);
+        return Math.max(minIndex, Math.min(rawIndex, maxIndex));
+    }
+
+    function getRawSlideIndex() {
+        const width = getSlideWidth();
+        if (width <= 0) return activeIndex;
+        return Math.round(track.scrollLeft / width);
     }
 
     function setActiveSlide(index) {
@@ -786,10 +799,51 @@ function initTtkMobileCarousel() {
         scrollRaf = requestAnimationFrame(() => {
             const width = getSlideWidth();
             if (width <= 0) return;
-            const index = Math.round(track.scrollLeft / width);
+            let index = getRawSlideIndex();
+            if (swipeOriginIndex !== null) {
+                index = getClampedSlideIndex(swipeOriginIndex, index);
+            }
             setActiveSlide(index);
         });
     }, { passive: true });
+
+    function finalizeSwipeScroll() {
+        if (!isActive()) return;
+        const origin = swipeOriginIndex;
+        swipeOriginIndex = null;
+        if (origin === null) return;
+
+        const width = getSlideWidth();
+        if (width <= 0) return;
+
+        const targetIndex = getClampedSlideIndex(origin, getRawSlideIndex());
+        if (Math.abs(track.scrollLeft - width * targetIndex) > 1) {
+            scrollToSlide(targetIndex);
+        } else {
+            setActiveSlide(targetIndex);
+        }
+    }
+
+    track.addEventListener('touchstart', () => {
+        if (!isActive()) return;
+        swipeOriginIndex = activeIndex;
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => {
+        if (!isActive() || swipeOriginIndex === null) return;
+        if ('onscrollend' in track) return;
+        requestAnimationFrame(() => requestAnimationFrame(finalizeSwipeScroll));
+    }, { passive: true });
+
+    track.addEventListener('touchcancel', () => {
+        swipeOriginIndex = null;
+    }, { passive: true });
+
+    if ('onscrollend' in track) {
+        track.addEventListener('scrollend', () => {
+            if (swipeOriginIndex !== null) finalizeSwipeScroll();
+        }, { passive: true });
+    }
 
     const handleLayoutChange = () => {
         if (isActive()) {
