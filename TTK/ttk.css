@@ -3839,15 +3839,27 @@ button.target-card {
         flex-direction: column;
         gap: var(--space-sm);
         --ttk-carousel-nav-h: 44px;
+        --ttk-carousel-slide-h: calc(
+            100dvh
+            - var(--header-h)
+            - var(--space-sm)
+            - var(--ttk-carousel-nav-h)
+            - var(--space-sm)
+            - var(--space-md)
+            - env(safe-area-inset-bottom, 0px)
+        );
     }
 
     .ttk-layout {
         flex: 1 1 auto;
         min-height: 0;
+        max-height: var(--ttk-carousel-slide-h);
         display: flex;
         flex-direction: row;
+        align-items: stretch;
         gap: 0;
         overflow-x: auto;
+        overflow-y: hidden;
         scroll-snap-type: x mandatory;
         scroll-behavior: auto;
         -webkit-overflow-scrolling: touch;
@@ -3862,8 +3874,7 @@ button.target-card {
         flex: 0 0 100%;
         min-width: 100%;
         min-height: 0;
-        align-self: stretch;
-        max-height: none;
+        max-height: var(--ttk-carousel-slide-h);
         scroll-snap-align: start;
         scroll-snap-stop: always;
         overflow-y: auto;
@@ -3910,6 +3921,16 @@ button.target-card {
 
     .ttk-col--preview,
     .ttk-col--results { position: static; }
+
+    .ttk-col--preview .weapon-preview-panel {
+        overflow: visible;
+        height: auto;
+    }
+
+    .ttk-col--preview .weapon-preview-panel .stats-panel__body {
+        max-height: none;
+        overflow: visible;
+    }
 
     .ttk-carousel__nav {
         display: flex;
