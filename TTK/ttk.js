@@ -72,6 +72,7 @@ const state = {
     activeSlot: 0,
     visibleSlots: 0,
     weaponPickerSlot: null,
+    ammoPickerSlot: null,
     pendingNewSlot: false,
     pickerClickedWeaponId: null,
     pickerPreviewWeaponId: null,
@@ -133,6 +134,10 @@ const elements = {
     targetEditName: document.getElementById('targetEditName'),
     targetEditHp: document.getElementById('targetEditHp'),
     targetEditBulletResistance: document.getElementById('targetEditBulletResistance'),
+    ammoPicker: document.getElementById('ammoPicker'),
+    ammoPickerBackdrop: document.getElementById('ammoPickerBackdrop'),
+    ammoPickerClose: document.getElementById('ammoPickerClose'),
+    ammoPickerList: document.getElementById('ammoPickerList'),
     damageChart: document.getElementById('damageChart'),
     damageCanvas: document.getElementById('damageCanvas'),
     chartLegend: document.getElementById('chartLegend'),
@@ -304,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLangDropdownClose();
     initWeaponGrid();
     initTargetGrid();
+    initAmmoPicker();
     initWeaponPicker();
     initChartInteractivity();
     initTtkModeToggle();
@@ -840,6 +846,74 @@ function getFireModeLabel(mode) {
     return mode.toUpperCase();
 }
 
+function renderAmmoPickerList(slotIndex) {
+    if (!elements.ammoPickerList) return;
+
+    const slot = state.slots[slotIndex];
+    const weapon = slot?.weapon;
+    if (!weapon) {
+        elements.ammoPickerList.innerHTML = `<div class="ammo-picker__empty">${t('ttk.selectWeaponFirst', 'Сначала выберите оружие...')}</div>`;
+        return;
+    }
+
+    const ammoOptions = getAmmoForWeapon(weapon);
+    const currentAmmo = slot.ammo;
+
+    if (!ammoOptions.length) {
+        elements.ammoPickerList.innerHTML = `<div class="ammo-picker__empty">${t('ttk.selectAmmo', 'Выберите патроны...')}</div>`;
+        return;
+    }
+
+    elements.ammoPickerList.innerHTML = `
+        <div class="ammo-dropdown-list ammo-picker__list">
+            ${ammoOptions.map(ammo => renderAmmoDropdownItem(ammo, ammo.id === currentAmmo?.id)).join('')}
+        </div>`;
+}
+
+function openAmmoPicker(slotIndex) {
+    if (!elements.ammoPicker || !state.slots[slotIndex]?.weapon) return;
+
+    closeWeaponPicker();
+    closeAmmoDropdowns(null, true);
+    state.ammoPickerSlot = slotIndex;
+    renderAmmoPickerList(slotIndex);
+
+    elements.ammoPicker.classList.add('open');
+    elements.ammoPicker.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('ammo-picker-open');
+}
+
+function closeAmmoPicker() {
+    if (!elements.ammoPicker) return;
+
+    state.ammoPickerSlot = null;
+    elements.ammoPicker.classList.remove('open');
+    elements.ammoPicker.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('ammo-picker-open');
+}
+
+function initAmmoPicker() {
+    if (!elements.ammoPicker) return;
+
+    elements.ammoPickerBackdrop?.addEventListener('click', closeAmmoPicker);
+    elements.ammoPickerClose?.addEventListener('click', closeAmmoPicker);
+
+    elements.ammoPicker?.addEventListener('click', (e) => {
+        const ammoItem = e.target.closest('.ammo-dropdown-item[data-ammo-id]');
+        if (!ammoItem) return;
+
+        const slotIndex = state.ammoPickerSlot;
+        if (slotIndex === null || slotIndex === undefined) return;
+
+        selectAmmoForSlot(slotIndex, ammoItem.dataset.ammoId);
+        closeAmmoPicker();
+    });
+
+    elements.ammoPicker?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAmmoPicker();
+    });
+}
+
 function initWeaponGrid() {
     if (!elements.weaponGrid) return;
 
@@ -855,6 +929,9 @@ function initWeaponGrid() {
     window.addEventListener('scroll', repositionOpenAmmoDropdowns, { passive: true, capture: true });
 
     document.addEventListener('click', (e) => {
+        const modalAmmoItem = e.target.closest('.ammo-picker .ammo-dropdown-item[data-ammo-id]');
+        if (modalAmmoItem) return;
+
         const ammoItem = e.target.closest('.custom-dropdown__menu--ammo .ammo-dropdown-item[data-ammo-id]');
         if (ammoItem) {
             e.stopPropagation();
@@ -883,6 +960,15 @@ function initWeaponGrid() {
         if (ammoTrigger) {
             e.stopPropagation();
             const dropdown = ammoTrigger.closest('.weapon-row__ammo-dropdown');
+            const slotIndex = parseInt(dropdown?.dataset.slot, 10);
+
+            if (isMobilePicker()) {
+                if (!Number.isNaN(slotIndex) && !ammoTrigger.disabled) {
+                    openAmmoPicker(slotIndex);
+                }
+                return;
+            }
+
             const willOpen = !dropdown.classList.contains('open');
             closeAmmoDropdowns(willOpen ? dropdown : null);
             if (willOpen) {
@@ -980,6 +1066,7 @@ function resolveSlotIndexForNewWeapon() {
 }
 
 function showWeaponPicker() {
+    closeAmmoPicker();
     elements.weaponPicker.classList.add('open');
     elements.weaponPicker.setAttribute('aria-hidden', 'false');
     document.body.classList.add('weapon-picker-open');
@@ -1023,6 +1110,7 @@ function renderWeaponGrid() {
     if (!elements.weaponGrid) return;
 
     closeAmmoDropdowns(null, true);
+    closeAmmoPicker();
 
     let html = '';
 

@@ -1786,6 +1786,122 @@ body.weapon-picker-open {
     overflow: hidden;
 }
 
+body.ammo-picker-open {
+    overflow: hidden;
+}
+
+/* ── Ammo picker modal (mobile) ── */
+.ammo-picker {
+    position: fixed;
+    inset: 0;
+    z-index: 2200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.ammo-picker.open {
+    opacity: 1;
+    visibility: visible;
+    overscroll-behavior: contain;
+}
+
+.ammo-picker__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+.ammo-picker__dialog {
+    position: relative;
+    width: 100%;
+    max-height: min(72dvh, 560px);
+    display: flex;
+    flex-direction: column;
+    background: rgba(14, 12, 10, 0.98);
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+}
+
+.ammo-picker__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border);
+    background: rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+}
+
+.ammo-picker__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.ammo-picker__close {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--r-sm);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.ammo-picker__close svg {
+    width: 16px;
+    height: 16px;
+}
+
+.ammo-picker__close:hover {
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.ammo-picker__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+}
+
+.ammo-picker__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ammo-picker__list .ammo-dropdown-item {
+    width: 100%;
+}
+
+.ammo-picker__empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-muted);
+}
+
 /* ── Dropdowns ── */
 .custom-dropdown { position: relative; width: 100%; z-index: 10; }
 .custom-dropdown.open { z-index: 1000; }
@@ -3863,12 +3979,11 @@ button.target-card {
     .target-card--add {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        min-height: 108px;
+        gap: 8px;
+        justify-content: flex-start;
     }
 
-    .target-card--add::before,
-    .target-card--add .target-card__stat--spacer {
+    .target-card--add::before {
         display: none;
     }
 
@@ -3876,15 +3991,24 @@ button.target-card {
         grid-row: auto;
         grid-column: auto;
         place-self: auto;
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .target-card--add .target-card__identity {
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .target-card--add .target-card__name {
-        text-align: center;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .target-card--add .target-card__stat--spacer {
+        display: flex;
+    }
+
+    .weapon-row__ammo-dropdown .custom-dropdown__menu {
+        display: none !important;
     }
 
     .weapon-picker { padding: 0; align-items: stretch; }
