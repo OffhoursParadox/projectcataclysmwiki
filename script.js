@@ -1,6 +1,6 @@
 'use strict';
 
-const RF_MOBILE_LAZY_QUERY = '(max-width: 768px)';
+const MOBILE_PERF_QUERY = '(max-width: 768px)';
 
 document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
@@ -27,50 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageAnimations();
 });
 
-function shouldLazyLoadRfBlock() {
-    return window.matchMedia(RF_MOBILE_LAZY_QUERY).matches;
-}
-
 function scheduleRfInit() {
-    const run = () => {
-        initRfFrequencies();
-        initRfCopy();
-    };
-
-    if (!shouldLazyLoadRfBlock()) {
-        run();
-        return;
-    }
-
-    const block = document.querySelector('.rf-receiver-block');
-    if (!block) {
-        run();
-        return;
-    }
-
-    block.classList.add('rf-receiver-block--deferred');
-
-    if (!('IntersectionObserver' in window)) {
-        block.classList.remove('rf-receiver-block--deferred');
-        run();
-        return;
-    }
-
-    const observer = new IntersectionObserver(entries => {
-        if (!entries.some(entry => entry.isIntersecting)) return;
-
-        block.classList.remove('rf-receiver-block--deferred');
-        run();
-        observer.disconnect();
-    }, { rootMargin: '180px 0px', threshold: 0 });
-
-    observer.observe(block);
+    initRfFrequencies();
+    initRfCopy();
 }
 
 function initPageAnimations() {
-    document.querySelectorAll('.quick-card').forEach((card, index) => {
-        card.style.setProperty('--quick-delay', `${120 + index * 75}ms`);
-    });
+    const isMobile = window.matchMedia(MOBILE_PERF_QUERY).matches;
+
+    if (!isMobile) {
+        document.querySelectorAll('.quick-card').forEach((card, index) => {
+            card.style.setProperty('--quick-delay', `${120 + index * 75}ms`);
+        });
+    }
+
+    if (isMobile) {
+        return;
+    }
+
     document.querySelectorAll('.rf-item').forEach((item, index) => {
         item.style.setProperty('--rf-delay', `${index * 42}ms`);
     });
@@ -388,7 +362,9 @@ function renderUpdates(updates, container) {
     }).join('');
 
     container.querySelectorAll('.update-entry').forEach((entry, index) => {
-        entry.style.setProperty('--update-delay', `${Math.min(index * 75, 450)}ms`);
+        if (!window.matchMedia(MOBILE_PERF_QUERY).matches) {
+            entry.style.setProperty('--update-delay', `${Math.min(index * 75, 450)}ms`);
+        }
     });
 }
 
