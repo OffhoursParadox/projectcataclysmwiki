@@ -466,15 +466,20 @@ function getAmmoDropdownMenu(dropdown) {
 function portalAmmoDropdownMenu(dropdown) {
     const menu = dropdown.querySelector('.custom-dropdown__menu');
     const panel = dropdown.closest('.weapon-list-panel');
-    if (!menu || !panel || dropdown._portaledMenu) return menu;
+    const portalRoot = isMobilePicker() ? document.body : panel;
+    if (!menu || !portalRoot || dropdown._portaledMenu) return menu;
 
     dropdown._menuPortal = {
         parent: menu.parentElement,
-        next: menu.nextSibling
+        next: menu.nextSibling,
+        useFixed: isMobilePicker()
     };
     dropdown._portaledMenu = menu;
     menu.classList.add('weapon-row__ammo-menu--portaled');
-    panel.appendChild(menu);
+    if (isMobilePicker()) {
+        menu.classList.add('weapon-row__ammo-menu--fixed');
+    }
+    portalRoot.appendChild(menu);
     return menu;
 }
 
@@ -495,13 +500,21 @@ function restoreAmmoDropdownMenu(dropdown) {
     } else {
         parent.appendChild(menu);
     }
-    menu.classList.remove('weapon-row__ammo-menu--portaled', 'is-open', 'is-closing', 'weapon-row__ammo-dropdown--flip', 'weapon-row__ammo-dropdown--align-right');
+    menu.classList.remove(
+        'weapon-row__ammo-menu--portaled',
+        'weapon-row__ammo-menu--fixed',
+        'is-open',
+        'is-closing',
+        'weapon-row__ammo-dropdown--flip',
+        'weapon-row__ammo-dropdown--align-right'
+    );
     delete dropdown._portaledMenu;
     delete dropdown._menuPortal;
 }
 
 function clearAmmoDropdownMenuPosition(menu) {
     if (!menu) return;
+    menu.style.position = '';
     menu.style.top = '';
     menu.style.left = '';
     menu.style.right = '';
@@ -569,11 +582,43 @@ function adjustAmmoDropdownPosition(dropdown) {
     const menu = getAmmoDropdownMenu(dropdown);
     const trigger = dropdown.querySelector('.custom-dropdown__trigger');
     const positionRoot = dropdown.closest('.weapon-list-panel');
-    if (!menu || !trigger || !positionRoot) return;
+    if (!menu || !trigger) return;
 
     const triggerRect = trigger.getBoundingClientRect();
+    const useFixed = Boolean(dropdown._menuPortal?.useFixed || menu.classList.contains('weapon-row__ammo-menu--fixed'));
+    const minWidth = useFixed ? Math.min(triggerRect.width, 220) : 272;
+    const width = Math.min(Math.max(triggerRect.width, minWidth), window.innerWidth - 16);
+
+    if (useFixed) {
+        let left = triggerRect.left;
+        if (left + width > window.innerWidth - 8) {
+            dropdown.classList.add('weapon-row__ammo-dropdown--align-right');
+            left = triggerRect.right - width;
+        }
+        left = Math.max(8, left);
+
+        menu.style.position = 'fixed';
+        menu.style.width = `${width}px`;
+        menu.style.maxWidth = `${window.innerWidth - 16}px`;
+        menu.style.left = `${left}px`;
+        menu.style.top = `${triggerRect.bottom + 2}px`;
+        menu.style.right = 'auto';
+        menu.style.bottom = 'auto';
+
+        const menuHeight = menu.scrollHeight;
+        if (triggerRect.bottom + menuHeight > window.innerHeight - 8 && triggerRect.top > menuHeight + 8) {
+            dropdown.classList.add('weapon-row__ammo-dropdown--flip');
+            menu.style.top = `${Math.max(8, triggerRect.top - menuHeight - 2)}px`;
+        }
+
+        menu.classList.toggle('weapon-row__ammo-dropdown--flip', dropdown.classList.contains('weapon-row__ammo-dropdown--flip'));
+        menu.classList.toggle('weapon-row__ammo-dropdown--align-right', dropdown.classList.contains('weapon-row__ammo-dropdown--align-right'));
+        return;
+    }
+
+    if (!positionRoot) return;
+
     const rootRect = positionRoot.getBoundingClientRect();
-    const width = Math.min(Math.max(triggerRect.width, 272), window.innerWidth - 16);
     let left = triggerRect.left - rootRect.left;
     let top = triggerRect.bottom - rootRect.top + 2;
 
@@ -582,6 +627,7 @@ function adjustAmmoDropdownPosition(dropdown) {
         left = triggerRect.right - rootRect.left - width;
     }
 
+    menu.style.position = 'absolute';
     menu.style.width = `${width}px`;
     menu.style.maxWidth = `${window.innerWidth - 16}px`;
     menu.style.left = `${Math.max(0, left)}px`;
@@ -801,7 +847,12 @@ function initWeaponGrid() {
     if (weaponListBody) {
         weaponListBody.addEventListener('scroll', repositionOpenAmmoDropdowns, { passive: true });
     }
+    const ttkInputsCol = document.querySelector('.ttk-col--inputs');
+    if (ttkInputsCol) {
+        ttkInputsCol.addEventListener('scroll', repositionOpenAmmoDropdowns, { passive: true });
+    }
     window.addEventListener('resize', repositionOpenAmmoDropdowns, { passive: true });
+    window.addEventListener('scroll', repositionOpenAmmoDropdowns, { passive: true, capture: true });
 
     document.addEventListener('click', (e) => {
         const ammoItem = e.target.closest('.custom-dropdown__menu--ammo .ammo-dropdown-item[data-ammo-id]');
