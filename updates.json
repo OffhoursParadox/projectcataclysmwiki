@@ -1,10 +1,22 @@
 [
     {
         "date": {
-            "ru": "28 июня 2026",
-            "en": "June 28, 2026"
+            "ru": "29 июня 2026",
+            "en": "June 29, 2026"
         },
-        "version": "1.13.1",
+        "version": "1.13.2",
+        "items": [
+            {
+                "ru": "Оптимизирована интерактивная карта: улучшена производительность при перемещении, зуме и в полноэкранном режиме",
+                "en": "Interactive map optimized: improved performance when panning, zooming, and in fullscreen mode"
+            },
+            {
+                "ru": "Маркеры на карте теперь отображаются только в видимой области — снижена нагрузка на браузер без потери функционала",
+                "en": "Map markers now render only in the visible area — reduced browser load without losing functionality"
+            }
+        ]
+    },
+    {
         "items": [
             {
                 "ru": "Оптимизирована главная страница сайта на мобильных устройствах",
