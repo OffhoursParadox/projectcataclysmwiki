@@ -307,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
+    initNavCalculatorsDropdown();
     initWeaponGrid();
     initTargetGrid();
     initAmmoPicker();

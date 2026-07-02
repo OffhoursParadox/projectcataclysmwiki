@@ -523,6 +523,7 @@ function openLightbox(src) {
 document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initLangDropdownClose();
+    initNavCalculatorsDropdown();
     initMap();
     initMarkers();
     initFilters();
