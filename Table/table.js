@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
+    initNavCalculatorsDropdown();
     initCategoryNav();
     renderAllArtifactTables();
 });

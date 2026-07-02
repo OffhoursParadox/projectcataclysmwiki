@@ -59,18 +59,38 @@
                     </svg>
                     <span data-i18n="nav.items">Предметы</span>
                 </a>
-                <a href="../Calculator/calculator.html" class="nav-link">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                    <span data-i18n="nav.calculator">Калькулятор</span>
-                </a>
-                <a href="../TTK/ttk.html" class="nav-link">
-                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    <span data-i18n="nav.ttk">ТТК</span>
-                </a>
+                <div class="nav-dropdown" id="navCalculators">
+                    <button type="button" class="nav-link nav-dropdown__trigger" id="navCalculatorsBtn" aria-expanded="false" aria-haspopup="true">
+                        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        <span data-i18n="nav.calculators">Калькуляторы</span>
+                        <svg class="nav-dropdown__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="nav-dropdown__menu" id="navCalculatorsMenu" role="menu">
+                        <a href="../Calculator/calculator.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <span data-i18n="nav.calculatorFull">Калькулятор сборок</span>
+                        </a>
+                        <a href="../TTK/ttk.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4M12 16v4M4 12h4M16 12h4"/>
+                            </svg>
+                            <span data-i18n="nav.ttkFull">Калькулятор ТТК</span>
+                        </a>
+                        <a href="../Barter/barter.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                            <span data-i18n="nav.barterFull">Калькулятор бартера</span>
+                        </a>
+                    </div>
+                </div>
             </nav>
 
             <div class="lang-switcher" id="langSwitcher">
@@ -140,7 +160,8 @@
             </a>
             <a href="../TTK/ttk.html" class="mobile-menu__link">
                 <svg class="mobile-menu__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4M12 16v4M4 12h4M16 12h4"/>
                 </svg>
                 <span class="mobile-menu__text" data-i18n="nav.ttkFull">Калькулятор ТТК</span>
                 <svg class="mobile-menu__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,7 +174,7 @@
                 </svg>
                 <span class="mobile-menu__text" data-i18n="nav.guidesFull">Руководства и гайды</span>
             </a>
-            <a href="#" class="mobile-menu__link mobile-menu__link--disabled">
+            <a href="../Barter/barter.html" class="mobile-menu__link">
                 <svg class="mobile-menu__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                 </svg>
