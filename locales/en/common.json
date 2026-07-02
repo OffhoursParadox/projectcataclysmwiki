@@ -4,6 +4,7 @@
   "nav.items": "Items",
   "nav.artifacts": "Artifacts",
   "nav.calculator": "Calculator",
+  "nav.calculators": "Calculators",
   "nav.ttk": "TTK",
   "nav.menuTitle": "Navigation",
   "nav.mapFull": "Interactive Map",
@@ -17,5 +18,6 @@
   "nav.buildsCalculator": "Build Calculator",
   "nav.ttkCalculator": "TTK Calculator",
   "footer.copy": "© 2026 Project Cataclysm Wiki. Official site.",
-  "footer.official": "Official website."
+  "footer.official": "Official website.",
+  "common.close": "Close"
 }

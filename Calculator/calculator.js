@@ -570,6 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
+    initNavCalculatorsDropdown();
     injectStatFilterStyles();
     initArmorPicker();
     initContainerPicker();

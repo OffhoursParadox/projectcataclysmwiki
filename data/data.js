@@ -272,6 +272,124 @@ const CONTAINERS = [
     }
 ];
 
+// ============== BACKPACKS ==============
+// Изображения: images/items/Backpacks/<id>.png (PNG/WebP), путь формируется автоматически по id
+const BACKPACKS = [
+    {
+        id: 'veshmeshok',
+        name: 'Вещмешок', nameEn: 'Duffel Bag',
+        rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common',
+        stats: { maxWeight: 15.00 }
+    },
+    {
+        id: 'palomnik',
+        name: 'Рюкзак «Паломник»', nameEn: 'Backpack "Pilgrim"',
+        rarity: 'uncommon', rarityName: 'Необычное', rarityNameEn: 'Uncommon',
+        stats: { maxWeight: 25.00 }
+    },
+    {
+        id: 'backpack_kolobok',
+        name: 'Рюкзак «Колобок»', nameEn: 'Backpack "Kolobok"',
+        rarity: 'uncommon', rarityName: 'Необычное', rarityNameEn: 'Uncommon',
+        stats: { maxWeight: 30.00 }
+    },
+    {
+        id: 'purga',
+        name: 'Рюкзак «Пурга»', nameEn: 'Backpack "Purga"',
+        rarity: 'collection', rarityName: 'Коллекционное', rarityNameEn: 'Collection',
+        stats: { maxWeight: 35.00 }
+    },
+    {
+        id: 'studen',
+        name: '«Студень»', nameEn: '"Studen"',
+        rarity: 'collection', rarityName: 'Коллекционное', rarityNameEn: 'Collection',
+        stats: { maxWeight: 20.00 }
+    },
+    {
+        id: 'purga_2m',
+        name: 'Рюкзак «Пурга 2М»', nameEn: 'Backpack "Purga 2M"',
+        rarity: 'rare', rarityName: 'Раритетное', rarityNameEn: 'Rare',
+        stats: { maxWeight: 45.00 }
+    }
+];
+
+// ============== DEVICES ==============
+// Изображения: images/items/Devices/<id>.png (PNG/WebP), путь формируется автоматически по id
+const DEVICES = [
+    {
+        id: 'homemade_detector',
+        name: 'Самодельный детектор',
+        nameEn: 'Homemade Detector',
+        type: 'artifact_detector',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        rarityNameEn: 'Common'
+    },
+    {
+        id: 'sova_b1',
+        name: '«Сова-Б1»',
+        nameEn: '"Sova-B1"',
+        type: 'nvg',
+        rarity: 'common',
+        rarityName: 'Распространённое',
+        rarityNameEn: 'Common'
+    },
+    {
+        id: 'orion_k2',
+        name: '«Орион-К2»',
+        nameEn: '"Orion-K2"',
+        type: 'nvg',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        rarityNameEn: 'Uncommon'
+    },
+    {
+        id: 'otklik',
+        name: '«Отклик»',
+        nameEn: '"Otklik"',
+        type: 'artifact_detector',
+        rarity: 'uncommon',
+        rarityName: 'Необычное',
+        rarityNameEn: 'Uncommon'
+    },
+    {
+        id: 'medved',
+        name: '«Медведь»',
+        nameEn: '"Medved"',
+        type: 'artifact_detector',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        rarityNameEn: 'Collection'
+    },
+    {
+        id: 'foton',
+        name: '«Фотон»',
+        nameEn: '"Photon"',
+        type: 'nvg',
+        rarity: 'collection',
+        rarityName: 'Коллекционное',
+        rarityNameEn: 'Collection'
+    },
+    {
+        id: 'rf_receiver_a',
+        name: 'RF-ресивер (А)',
+        nameEn: 'RF-receiver (A)',
+        type: 'stash_finder',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        rarityNameEn: 'Rare'
+    },
+    {
+        id: 'white_night',
+        name: '«Белая Ночь»',
+        nameEn: '"White Night"',
+        type: 'nvg',
+        rarity: 'rare',
+        rarityName: 'Раритетное',
+        rarityNameEn: 'Rare'
+    }
+];
+
 // ============== ARMORS ==============
 // Изображения: images/items/Armors/<id>.png (PNG/WebP), путь формируется автоматически по id
 const ARMORS = [
@@ -577,6 +695,16 @@ const ARMORS = [
     },
     // COMBINED
     {
+        id: 'kurtka',
+        name: 'Куртка', nameEn: 'Jacket',
+        image: 'leather_jacket.png',
+        imageFolder: 'Armors',
+        type: 'Комбинированные', typeEn: 'Combined',
+        containerTypes: ['all'],
+        stats: { radiationProtection: 20, bioProtection: 20, heatResistance: 14, chemResistance: 14, electroResistance: 14, impactResistance: 12, tearProtection: 16, bulletResistance: 24, maxWeight: 5.00 },
+        enhancement: ENHANCEMENT_PRESETS.combined
+    },
+    {
         id: 'chn1',
         name: 'Бронежилет ЧН-1', nameEn: 'Body Armor CHN-1',
         rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common',
@@ -866,6 +994,52 @@ const WEAPON_CATEGORIES = {
 
 // ============== HELPER FUNCTIONS ==============
 const ITEMS_IMAGES_DIR = 'images/items/';
+const MATERIALS_IMAGES_DIR = 'images/materials/';
+
+function getWikiAssetBasePath() {
+    if (typeof document === 'undefined') {
+        return '../';
+    }
+
+    const dataScript = document.querySelector('script[src*="data/data.js"]');
+    if (dataScript) {
+        const srcAttr = dataScript.getAttribute('src');
+        const scriptUrl = dataScript.src || (srcAttr ? new URL(srcAttr, document.baseURI).href : '');
+        if (scriptUrl) {
+            return new URL('../', scriptUrl).href;
+        }
+    }
+
+    const segments = decodeURIComponent(window.location.pathname || '')
+        .split('/')
+        .filter(Boolean);
+    const nestedPages = ['map', 'table', 'calculator', 'ttk', 'barter'];
+    const isNestedPage = nestedPages.some(page => segments.some(segment => {
+        const normalized = segment.toLowerCase();
+        return normalized === page || normalized === `${page}.html`;
+    }));
+
+    return new URL(isNestedPage ? '../' : './', document.baseURI).href;
+}
+
+function resolveWikiAssetUrl(relativePath, basePath) {
+    if (typeof document === 'undefined') {
+        const base = basePath ?? '../';
+        return `${base}${relativePath}`;
+    }
+
+    const base = basePath != null
+        ? new URL(basePath, document.baseURI).href
+        : getWikiAssetBasePath();
+
+    return new URL(relativePath, base).href;
+}
+
+function getMaterialImagePath(materialId, imageFile, basePath = '../') {
+    if (!materialId) return null;
+    const file = imageFile || `${materialId}.png`;
+    return resolveWikiAssetUrl(`${MATERIALS_IMAGES_DIR}${file}`, basePath);
+}
 
 function getItemImagePath(imageFolder, image, basePath = '../') {
     return `${basePath}${ITEMS_IMAGES_DIR}${imageFolder}/${image}`;
@@ -884,6 +1058,26 @@ function getArtifactImagePath(artifact, basePath = '../') {
 function getContainerImagePath(container, basePath = '../') {
     if (container?.image && container?.imageFolder) {
         return getItemImagePath(container.imageFolder, container.image, basePath);
+    }
+    return null;
+}
+
+function getBackpackImagePath(backpack, basePath = '../') {
+    if (backpack?.image && backpack?.imageFolder) {
+        return getItemImagePath(backpack.imageFolder, backpack.image, basePath);
+    }
+    if (backpack?.id) {
+        return `${basePath}${ITEMS_IMAGES_DIR}Backpacks/${backpack.id}.png`;
+    }
+    return null;
+}
+
+function getDeviceImagePath(device, basePath = '../') {
+    if (device?.image && device?.imageFolder) {
+        return getItemImagePath(device.imageFolder, device.image, basePath);
+    }
+    if (device?.id) {
+        return `${basePath}${ITEMS_IMAGES_DIR}Devices/${device.id}.png`;
     }
     return null;
 }
@@ -987,6 +1181,7 @@ const WEAPONS = [
     { id: 'usas12', image: 'usas12.png', imageFolder: 'Weapons', name: 'Daewoo USAS-12', nameEn: 'Daewoo USAS-12', category: 'shotgun', rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique', damage: 75, rpm: 360, headshotMult: 1.25, effectiveRange: 73.0, fireModes: ['auto', 'single'], ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'], stats: { verticalRecoil: 5.11, horizontalRecoil: 3.59, hipSpread: 1.15, adsSpread: 1.15 } },
     { id: 'spas12', image: 'spas12.png', imageFolder: 'Weapons', name: 'Franchi SPAS-12', nameEn: 'Franchi SPAS-12', category: 'shotgun', rarity: 'unique', rarityName: 'Уникальное', rarityNameEn: 'Unique', damage: 90, rpm: 300, headshotMult: 1.25, effectiveRange: 76.0, fireModes: ['auto'], ammoTypes: ['12x70_shot', '12x70_buckshot', '12x76_dart', '12x76_slug'], stats: { verticalRecoil: 6.55, horizontalRecoil: 3.10, hipSpread: 0.98, adsSpread: 0.98 } },
     // SMG
+    { id: 'kiparis', image: 'kiparis.png', imageFolder: 'Weapons', name: 'Кипарис', nameEn: 'Kiparis', category: 'smg', damage: 21, rpm: 750, headshotMult: 1.25, effectiveRange: 20.0, fireModes: ['auto', 'single'], ammoTypes: ['9x18_p', '9x18_bjt', '9x18_pp'], stats: { verticalRecoil: 1.20, horizontalRecoil: 0.55, hipSpread: 0.43, adsSpread: 0.43 } },
     { id: 'skorpion_vz61', image: 'skorpion_vz61.png', imageFolder: 'Weapons', name: 'Skorpion vz.61', nameEn: 'Skorpion vz.61', category: 'smg', damage: 22, rpm: 800, headshotMult: 1.25, effectiveRange: 22.5, fireModes: ['auto', 'single'], ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'], stats: { verticalRecoil: 1.27, horizontalRecoil: 0.60, hipSpread: 0.42, adsSpread: 0.42 } },
     { id: 'pp2000', image: 'pp2000.png', imageFolder: 'Weapons', name: 'ПП-2000', nameEn: 'PP-2000', category: 'smg', rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common', damage: 25, rpm: 725, headshotMult: 1.25, effectiveRange: 55.0, fireModes: ['auto', 'single'], ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'], stats: { verticalRecoil: 0.54, horizontalRecoil: 0.31, hipSpread: 0.40, adsSpread: 0.40 } },
     { id: 'mp5a3', image: 'mp5a3.png', imageFolder: 'Weapons', name: 'HK MP5A3', nameEn: 'HK MP5A3', category: 'smg', rarity: 'common', rarityName: 'Распространённое', rarityNameEn: 'Common', damage: 23, rpm: 800, headshotMult: 1.25, effectiveRange: 56.0, fireModes: ['auto', 'single'], ammoTypes: ['9x19_ps', '9x19_pp', '9x19_dum'], stats: { verticalRecoil: 1.33, horizontalRecoil: 0.42, hipSpread: 0.44, adsSpread: 0.44 } },
