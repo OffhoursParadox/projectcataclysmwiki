@@ -17,6 +17,7 @@ function initBurgerMenu() {
 
         const langDropdown = document.getElementById('langDropdown');
         if (langDropdown) langDropdown.classList.remove('active');
+        closeNavCalculatorsDropdown();
     });
 
     mobileMenu.querySelectorAll('.mobile-menu__link').forEach(link => {
@@ -119,6 +120,11 @@ function initLangDropdownClose() {
             langDropdown.classList.remove('active');
             if (langButton) langButton.setAttribute('aria-expanded', 'false');
         }
+
+        const navCalculators = document.getElementById('navCalculators');
+        if (navCalculators && !navCalculators.contains(event.target)) {
+            closeNavCalculatorsDropdown();
+        }
     });
 
     document.addEventListener('keydown', (event) => {
@@ -134,8 +140,55 @@ function initLangDropdownClose() {
                 langButton.setAttribute('aria-expanded', 'false');
                 langButton.focus();
             }
+            return;
+        }
+
+        const navCalculators = document.getElementById('navCalculators');
+        const navTrigger = navCalculators ? navCalculators.querySelector('.nav-dropdown__trigger') : null;
+
+        if (navCalculators && navCalculators.classList.contains('active')) {
+            closeNavCalculatorsDropdown();
+            if (navTrigger) navTrigger.focus();
         }
     });
+}
+
+function initNavCalculatorsDropdown() {
+    const dropdown = document.getElementById('navCalculators');
+    if (!dropdown || dropdown.dataset.bound === 'true') return;
+
+    const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+    if (!trigger) return;
+
+    dropdown.dataset.bound = 'true';
+
+    trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        const isActive = dropdown.classList.toggle('active');
+        trigger.setAttribute('aria-expanded', String(isActive));
+
+        if (isActive) {
+            const langDropdown = document.getElementById('langDropdown');
+            const langButton = document.querySelector('.lang-switcher__btn');
+
+            if (langDropdown) langDropdown.classList.remove('active');
+            if (langButton) langButton.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    dropdown.querySelectorAll('.nav-dropdown__item').forEach(link => {
+        link.addEventListener('click', () => closeNavCalculatorsDropdown());
+    });
+}
+
+function closeNavCalculatorsDropdown() {
+    const dropdown = document.getElementById('navCalculators');
+    if (!dropdown) return;
+
+    const trigger = dropdown.querySelector('.nav-dropdown__trigger');
+    dropdown.classList.remove('active');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
 function initLanguageState() {

@@ -1,6 +1,23 @@
 [
     {
         "date": {
+            "ru": "3 июля 2026",
+            "en": "July 3, 2026"
+        },
+        "version": "1.14.0",
+        "items": [
+            {
+                "ru": "На сайт добавлен калькулятор бартера: древо обменов, расчёт материалов, цепочек крафта и уровня персонажа",
+                "en": "Barter calculator added to the site: exchange tree, material calculation, craft chains, and character level requirements"
+            },
+            {
+                "ru": "Обновлена шапка сайта в связи с расширением списка калькуляторов",
+                "en": "Site header updated to accommodate the expanded calculator menu"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "30 июня 2026",
             "en": "June 30, 2026"
         },

@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBurgerMenu();
     initScrollEffects();
     initLangDropdownClose();
+    initNavCalculatorsDropdown();
 
     if (window.i18n && typeof window.i18n.onReady === 'function') {
         window.i18n.onReady(scheduleRfInit);

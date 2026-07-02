@@ -383,8 +383,13 @@
 }
 
 .quick-card--barter {
-    --card-accent: #8a7040;
-    --card-accent-rgb: 138, 112, 64;
+    --card-accent: #a88048;
+    --card-accent-rgb: 168, 128, 72;
+}
+
+.quick-card--barter .quick-card__image {
+    opacity: 0.82;
+    filter: saturate(1.04) contrast(1.05) brightness(0.76);
 }
 
 .quick-card--disabled {
@@ -537,7 +542,14 @@
     height: 5px;
     border-radius: 50%;
     background: currentColor;
-    box-shadow: 0 0 10px currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation: badgePulse 2.4s ease-in-out infinite;
+}
+
+.quick-card__badge--beta {
+    color: rgba(147, 197, 253, 0.95);
+    background: rgba(37, 99, 235, 0.18);
+    border-color: rgba(96, 165, 250, 0.28);
 }
 
 @keyframes quickCardIn {
