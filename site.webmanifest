@@ -1,0 +1,19 @@
+{
+  "name": "Project Cataclysm Wiki",
+  "short_name": "PC Wiki",
+  "icons": [
+    {
+      "src": "https://offhoursparadox.github.io/projectcataclysmwiki/favicon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "https://offhoursparadox.github.io/projectcataclysmwiki/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0a0a0b",
+  "background_color": "#0a0a0b",
+  "display": "standalone"
+}
