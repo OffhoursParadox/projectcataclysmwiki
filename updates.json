@@ -1,6 +1,35 @@
 [
     {
         "date": {
+            "ru": "5 июля 2026",
+            "en": "July 5, 2026"
+        },
+        "version": "1.15.0",
+        "items": [
+            {
+                "ru": "Обновлены характеристики оружия, брони и артефактов",
+                "en": "Updated weapon, armor, and artifact stats"
+            },
+            {
+                "ru": "Занесены новые типы патронов",
+                "en": "New ammo types added"
+            },
+            {
+                "ru": "В ТТК калькуляторе доработана механика выбора манекенов",
+                "en": "TTK calculator: improved dummy selection mechanics"
+            },
+            {
+                "ru": "Проведена оптимизация ТТК калькулятора",
+                "en": "TTK calculator performance optimized"
+            },
+            {
+                "ru": "Обновлены ветки в калькуляторе бартера",
+                "en": "Barter calculator branches updated"
+            }
+        ]
+    },
+    {
+        "date": {
             "ru": "3 июля 2026",
             "en": "July 3, 2026"
         },

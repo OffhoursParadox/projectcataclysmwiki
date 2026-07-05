@@ -12,28 +12,11 @@ const DEFAULT_MAGAZINE_BY_CATEGORY = {
     special: 10
 };
 
-const DEFAULT_RELOAD_BY_CATEGORY = {
-    pistol: 1.8,
-    smg: 2.0,
-    assault: 2.4,
-    sniper: 3.2,
-    shotgun: 2.8,
-    machinegun: 5.0,
-    special: 2.5
-};
-
 function getDefaultMagazineSize(weapon) {
     if (!weapon) return 30;
     if (weapon.magazine) return weapon.magazine;
     if (weapon.stats?.magazine) return weapon.stats.magazine;
     return DEFAULT_MAGAZINE_BY_CATEGORY[weapon.category] ?? 30;
-}
-
-function getDefaultReloadTime(weapon) {
-    if (!weapon) return 0;
-    if (weapon.reloadTime) return weapon.reloadTime;
-    if (weapon.stats?.reloadTime) return weapon.stats.reloadTime;
-    return DEFAULT_RELOAD_BY_CATEGORY[weapon.category] ?? 2.5;
 }
 
 const MAX_SLOTS = 20;
@@ -95,6 +78,13 @@ function getSlotColor(index) {
 }
 
 const SLOT_COLORS = Array.from({ length: MAX_SLOTS }, (_, i) => getSlotColor(i));
+
+const CHART_PROFILE_POINTS = 80;
+let damageProfilesCache = null;
+let chartUpdateRaf = null;
+let chartHoverRaf = null;
+let chartHoverEvent = null;
+let weaponSearchRaf = null;
 
 const RARITY_ORDER = {
     'legendary': 6,
@@ -335,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         syncActiveSlotUI();
         calculateResults();
-        updateChart();
+        scheduleChartUpdate();
         updateComparisonTable();
     });
 });
@@ -734,7 +724,7 @@ function initTtkModeToggle() {
             b.classList.remove('ttk-mode-toggle__btn--active');
         });
         btn.classList.add('ttk-mode-toggle__btn--active');
-        updateChart();
+        scheduleChartUpdate();
     });
 }
 
@@ -882,6 +872,160 @@ function isSlotOnChart(index) {
     return index < state.visibleSlots && slot.weapon && slot.visible !== false;
 }
 
+function invalidateDamageProfiles() {
+    damageProfilesCache = null;
+}
+
+function getDamageProfilesCacheKey() {
+    const parts = [state.targetArmor, state.targetHP];
+    for (let i = 0; i < state.visibleSlots; i++) {
+        const slot = state.slots[i];
+        if (!isSlotOnChart(i)) continue;
+        parts.push(`${i}:${slot.weapon.id}:${slot.ammo?.id || ''}`);
+    }
+    return parts.join('|');
+}
+
+function getProfileDamageArray(profile, mode) {
+    if (mode === 'head') return profile.head;
+    if (mode === 'limb') return profile.limb;
+    return profile.body;
+}
+
+function getProfileDamage(profile, distance, mode = 'body') {
+    const damages = getProfileDamageArray(profile, mode);
+    if (distance <= 0) return damages[0];
+    const idx = distance / profile.step;
+    if (idx >= damages.length - 1) return damages[damages.length - 1];
+    const i0 = Math.floor(idx);
+    const t = idx - i0;
+    return damages[i0] * (1 - t) + damages[i0 + 1] * t;
+}
+
+function getProfileTtk(profile, distance, mode = 'body') {
+    const damage = getProfileDamage(profile, distance, mode);
+    if (!Number.isFinite(damage) || damage <= 0) return Infinity;
+    const ttk = calculateTTK(damage, profile.rpm, state.targetHP);
+    return Number.isFinite(ttk) ? ttk : Infinity;
+}
+
+function buildSlotDamageProfile(slotIndex, chartMaxRange) {
+    const slot = state.slots[slotIndex];
+    const weapon = slot.weapon;
+    const ammo = slot.ammo;
+    const ctx = prepareShotContext(weapon, ammo, state.targetArmor);
+    const step = chartMaxRange / CHART_PROFILE_POINTS;
+    const body = new Float64Array(CHART_PROFILE_POINTS + 1);
+    const head = new Float64Array(CHART_PROFILE_POINTS + 1);
+    const limb = new Float64Array(CHART_PROFILE_POINTS + 1);
+
+    for (let i = 0; i <= CHART_PROFILE_POINTS; i++) {
+        const shot = computeShotDamageFromContext(ctx, step * i);
+        body[i] = shot.totalBodyDamage;
+        head[i] = shot.headshotTotalDamage;
+        limb[i] = shot.totalLimbDamage;
+    }
+
+    return {
+        slotIndex,
+        weapon,
+        ammo,
+        rpm: weapon.rpm,
+        effectiveRange: ctx.effectiveRange,
+        maxRange: chartMaxRange,
+        step,
+        body,
+        head,
+        limb
+    };
+}
+
+function buildDamageProfiles() {
+    const key = getDamageProfilesCacheKey();
+    if (damageProfilesCache?.key === key) return damageProfilesCache;
+
+    let maxRange = 100;
+    const profiles = new Map();
+
+    for (let i = 0; i < state.visibleSlots; i++) {
+        if (!isSlotOnChart(i)) continue;
+        const { weapon, ammo } = state.slots[i];
+        maxRange = Math.max(maxRange, getWeaponMaxRange(weapon, ammo));
+    }
+
+    for (let i = 0; i < state.visibleSlots; i++) {
+        if (!isSlotOnChart(i)) continue;
+        profiles.set(i, buildSlotDamageProfile(i, maxRange));
+    }
+
+    damageProfilesCache = { key, maxRange, profiles };
+    return damageProfilesCache;
+}
+
+function scheduleChartUpdate() {
+    if (chartUpdateRaf) return;
+    chartUpdateRaf = requestAnimationFrame(() => {
+        chartUpdateRaf = null;
+        updateChart();
+    });
+}
+
+function updateWeaponRowActiveState(prevIndex, nextIndex) {
+    if (!elements.weaponGrid || prevIndex === nextIndex) return;
+    if (prevIndex >= 0) {
+        elements.weaponGrid.querySelector(`.weapon-row[data-slot="${prevIndex}"]`)
+            ?.classList.remove('weapon-row--active');
+    }
+    elements.weaponGrid.querySelector(`.weapon-row[data-slot="${nextIndex}"]`)
+        ?.classList.add('weapon-row--active');
+}
+
+function updateWeaponRowAmmoUI(slotIndex) {
+    closeAmmoDropdowns(null, true);
+    document.querySelectorAll('.weapon-row__ammo-menu--portaled').forEach(menu => menu.remove());
+
+    const slot = state.slots[slotIndex];
+    if (!slot?.weapon || !elements.weaponGrid) {
+        renderWeaponGrid();
+        return;
+    }
+
+    const row = elements.weaponGrid.querySelector(`.weapon-row[data-slot="${slotIndex}"]`);
+    if (!row) {
+        renderWeaponGrid();
+        return;
+    }
+
+    const ammoSection = row.querySelector('.weapon-row__ammo');
+    if (!ammoSection) {
+        renderWeaponGrid();
+        return;
+    }
+
+    ammoSection.innerHTML = renderWeaponRowAmmoDropdown(
+        slotIndex,
+        getAmmoForWeapon(slot.weapon),
+        slot.ammo
+    );
+}
+
+function updateTargetCardActiveState(prevIndex, nextIndex) {
+    if (!elements.targetGrid || prevIndex === nextIndex) return;
+    if (prevIndex >= 0) {
+        elements.targetGrid.querySelector(`.target-card[data-target="${prevIndex}"]`)
+            ?.classList.remove('target-card--active');
+    }
+    const nextCard = elements.targetGrid.querySelector(`.target-card[data-target="${nextIndex}"]`);
+    if (nextCard) {
+        nextCard.classList.add('target-card--active');
+        nextCard.setAttribute('aria-pressed', 'true');
+    }
+    if (prevIndex >= 0) {
+        elements.targetGrid.querySelector(`.target-card[data-target="${prevIndex}"]`)
+            ?.setAttribute('aria-pressed', 'false');
+    }
+}
+
 function getCategoryIcon(category) {
     const icons = {
         assault: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h3l2-7 4 14 2-7h7"/></svg>',
@@ -995,7 +1139,6 @@ function initWeaponGrid() {
             if (!Number.isNaN(slotIndex)) {
                 selectAmmoForSlot(slotIndex, ammoItem.dataset.ammoId);
             }
-            closeAmmoDropdowns();
             return;
         }
 
@@ -1215,8 +1358,9 @@ function renderWeaponRow(index) {
 }
 
 function selectSlot(index) {
+    const prevIndex = state.activeSlot;
     state.activeSlot = index;
-    renderWeaponGrid();
+    updateWeaponRowActiveState(prevIndex, index);
     syncActiveSlotUI();
 }
 
@@ -1236,8 +1380,9 @@ function duplicateSlot(index) {
         visible: source.visible !== false
     };
     selectSlot(targetIndex);
-    calculateResults();
-    updateChart();
+    renderWeaponGrid();
+    invalidateDamageProfiles();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
@@ -1245,8 +1390,10 @@ function toggleSlotVisibility(index) {
     const slot = state.slots[index];
     if (!slot.weapon) return;
     slot.visible = slot.visible === false;
-    renderWeaponGrid();
-    updateChart();
+    elements.weaponGrid?.querySelector(`.weapon-row[data-slot="${index}"]`)
+        ?.classList.toggle('weapon-row--dimmed', slot.visible === false);
+    invalidateDamageProfiles();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
@@ -1264,14 +1411,17 @@ function removeSlot(index) {
         state.activeSlot = Math.max(0, state.visibleSlots - 1);
     }
     selectSlot(state.activeSlot);
-    calculateResults();
-    updateChart();
+    renderWeaponGrid();
+    invalidateDamageProfiles();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
 function syncActiveSlotUI() {
     renderWeaponPreview();
-    renderWeaponDropdownList();
+    if (elements.weaponPicker?.classList.contains('open')) {
+        renderWeaponDropdownList(elements.weaponSearchInput?.value.toLowerCase().trim() || '');
+    }
     calculateResults();
 }
 
@@ -1325,12 +1475,13 @@ function selectAmmoForSlot(slotIndex, ammoId) {
     const ammo = getAmmoById(ammoId);
     if (!ammo) return;
     state.slots[slotIndex].ammo = ammo;
-    renderWeaponGrid();
+    invalidateDamageProfiles();
+    updateWeaponRowAmmoUI(slotIndex);
     if (slotIndex === state.activeSlot) {
         renderWeaponPreview();
     }
     calculateResults();
-    updateChart();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
@@ -1364,7 +1515,11 @@ function handleWeaponSearch(e) {
             clearPickerPreview();
         }
     }
-    renderWeaponDropdownList(query);
+    if (weaponSearchRaf) cancelAnimationFrame(weaponSearchRaf);
+    weaponSearchRaf = requestAnimationFrame(() => {
+        weaponSearchRaf = null;
+        renderWeaponDropdownList(query);
+    });
 }
 
 function handleWeaponListClick(e) {
@@ -1470,11 +1625,6 @@ function buildWeaponPickerStatsHtml(weapon) {
         rows.push({ label: t('ttk.stat.range', 'Дальность'), value: `${weapon.effectiveRange} м` });
     }
     rows.push({ label: t('ttk.stat.magazine', 'Магазин'), value: getDefaultMagazineSize(weapon) });
-    const reloadTime = getDefaultReloadTime(weapon);
-    rows.push({
-        label: t('ttk.stat.reloadTime', 'Перезарядка'),
-        value: `${reloadTime.toFixed(1)} ${t('ttk.sec', 'сек')}`
-    });
     if (weapon.fireModes?.length) {
         rows.push({
             label: t('ttk.fireMode', 'Режим стрельбы'),
@@ -1627,9 +1777,11 @@ function selectWeaponFromDropdown(weaponId) {
     closeWeaponPicker();
     if (elements.weaponSearchInput) elements.weaponSearchInput.value = '';
 
-    selectSlot(slotIndex);
-    calculateResults();
-    updateChart();
+    state.activeSlot = slotIndex;
+    renderWeaponGrid();
+    syncActiveSlotUI();
+    invalidateDamageProfiles();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
@@ -1737,10 +1889,13 @@ function renderTargetCard(index) {
     const target = state.targets[index];
     if (!target) return '';
 
+    const isActive = state.activeTarget === index;
+    const activeClass = isActive ? ' target-card--active' : '';
     const bulletResistance = getTargetBulletResistance(target);
+    const hp = getTargetHP(target);
 
     return `
-        <article class="target-card" data-target="${index}">
+        <article class="target-card${activeClass}" data-target="${index}" role="button" tabindex="0" aria-pressed="${isActive ? 'true' : 'false'}" aria-label="${getTargetDisplayName(target, index)}">
             <div class="target-card__header">
                 <div class="target-card__identity">
                     <div class="target-card__icon" aria-hidden="true">${TARGET_ICON_HELMET}</div>
@@ -1758,9 +1913,15 @@ function renderTargetCard(index) {
                     </button>
                 </div>
             </div>
-            <div class="target-card__stat">
-                <span class="target-card__stat-label">${t('ttk.bulletResistance', 'Пулестойкость')}:</span>
-                <span class="target-card__stat-value">${formatTargetStat(bulletResistance)}</span>
+            <div class="target-card__stats">
+                <div class="target-card__stat">
+                    <span class="target-card__stat-label">${t('ttk.targetHP', 'HP цели')}:</span>
+                    <span class="target-card__stat-value">${formatTargetStat(hp, 0)}</span>
+                </div>
+                <div class="target-card__stat">
+                    <span class="target-card__stat-label">${t('ttk.bulletResistance', 'Пулестойкость')}:</span>
+                    <span class="target-card__stat-value">${formatTargetStat(bulletResistance)}</span>
+                </div>
             </div>
         </article>`;
 }
@@ -1775,26 +1936,55 @@ function renderTargetGrid() {
 
     html += `
         <button type="button" class="target-card target-card--add" data-action="add-dummy" aria-label="${t('ttk.addDummy', 'Добавить манекен')}">
-            <div class="target-card__header">
-                <div class="target-card__identity">
-                    <div class="target-card__icon" aria-hidden="true"><span class="target-card__add-plus">+</span></div>
-                    <span class="target-card__name">${t('ttk.addDummy', 'Добавить манекен')}</span>
-                </div>
-            </div>
-            <div class="target-card__stat target-card__stat--spacer" aria-hidden="true">
-                <span class="target-card__stat-label">${t('ttk.bulletResistance', 'Пулестойкость')}:</span>
-                <span class="target-card__stat-value">0.00</span>
-            </div>
+            <span class="target-card__add-content">
+                <span class="target-card__icon" aria-hidden="true"><span class="target-card__add-plus">+</span></span>
+                <span class="target-card__name">${t('ttk.addDummy', 'Добавить манекен')}</span>
+            </span>
+            <span class="target-card__sizer" aria-hidden="true">
+                <span class="target-card__header">
+                    <span class="target-card__identity">
+                        <span class="target-card__icon"></span>
+                        <span class="target-card__name">${t('ttk.addDummy', 'Добавить манекен')}</span>
+                    </span>
+                    <span class="target-card__actions">
+                        <span class="target-card__action-spacer"></span>
+                        <span class="target-card__action-spacer"></span>
+                        <span class="target-card__action-spacer"></span>
+                    </span>
+                </span>
+                <span class="target-card__stats">
+                    <span class="target-card__stat">
+                        <span class="target-card__stat-label">${t('ttk.targetHP', 'HP цели')}:</span>
+                        <span class="target-card__stat-value">0</span>
+                    </span>
+                    <span class="target-card__stat">
+                        <span class="target-card__stat-label">${t('ttk.bulletResistance', 'Пулестойкость')}:</span>
+                        <span class="target-card__stat-value">0.00</span>
+                    </span>
+                </span>
+            </span>
         </button>`;
 
     elements.targetGrid.innerHTML = html;
 }
 
-function applyTargetChange() {
+function selectTarget(index) {
+    if (index < 0 || index >= state.visibleTargets) return;
+    if (state.activeTarget === index) return;
+
+    const prevIndex = state.activeTarget;
+    state.activeTarget = index;
+    updateTargetCardActiveState(prevIndex, index);
+    applyTargetChange({ renderTargets: false });
+}
+
+function applyTargetChange(options = {}) {
+    const { renderTargets = true } = options;
+    invalidateDamageProfiles();
     syncActiveTargetGlobals();
-    renderTargetGrid();
+    if (renderTargets) renderTargetGrid();
     calculateResults();
-    updateChart();
+    scheduleChartUpdate();
     updateComparisonTable();
 }
 
@@ -1892,25 +2082,42 @@ function initTargetGrid() {
             return;
         }
 
-        const actionBtn = e.target.closest('.target-card__action[data-action]');
         const card = e.target.closest('.target-card[data-target]');
-        if (!card || !actionBtn) return;
+        if (!card) return;
 
         const index = parseInt(card.dataset.target, 10);
         if (Number.isNaN(index)) return;
 
-        const action = actionBtn.dataset.action;
-        if (action === 'edit') {
-            openTargetEditModal(index);
+        const actionBtn = e.target.closest('.target-card__action[data-action]');
+        if (actionBtn) {
+            e.stopPropagation();
+            const action = actionBtn.dataset.action;
+            if (action === 'edit') {
+                openTargetEditModal(index);
+                return;
+            }
+            if (action === 'duplicate') {
+                duplicateTarget(index);
+                return;
+            }
+            if (action === 'delete') {
+                deleteTarget(index);
+            }
             return;
         }
-        if (action === 'duplicate') {
-            duplicateTarget(index);
-            return;
-        }
-        if (action === 'delete') {
-            deleteTarget(index);
-        }
+
+        selectTarget(index);
+    });
+
+    elements.targetGrid.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+
+        const card = e.target.closest('.target-card[data-target]');
+        if (!card || e.target.closest('.target-card__action')) return;
+
+        e.preventDefault();
+        const index = parseInt(card.dataset.target, 10);
+        if (!Number.isNaN(index)) selectTarget(index);
     });
 
     elements.targetEditBackdrop?.addEventListener('click', closeTargetEditModal);
@@ -1958,7 +2165,7 @@ function getWeaponMaxRange(weapon, ammo) {
     return isShotgun ? effectiveRange * 3.5 : effectiveRange * 2;
 }
 
-function computeShotDamage(weapon, ammo, distance, targetArmor) {
+function prepareShotContext(weapon, ammo, targetArmor) {
     let damageMod = 1.0;
     let pellets = 1;
     let ap = weapon.stats?.armorPenetration || 0;
@@ -1979,26 +2186,47 @@ function computeShotDamage(weapon, ammo, distance, targetArmor) {
     const customFalloff = weapon.damageFalloff;
     const falloffEnd = customFalloff?.end ?? effectiveRange;
     const maxRange = getWeaponMaxRange(weapon, ammo);
+    const protection = calculateArmorProtection(targetArmor);
+    const effectiveProtection = Math.max(0, protection - ap);
+    const armorMultiplier = 1 - effectiveProtection / 100;
 
-    // Эффективное число попадающих дробин на дистанции
-    let hittingPellets = pellets;
-    let pelletDamageScale = 1.0; // дополнительное ослабление каждой дробины
+    return {
+        damagePerPellet,
+        pellets,
+        isShotgun,
+        customFalloff,
+        falloffStart: customFalloff?.start ?? effectiveRange,
+        falloffEnd,
+        minScale: customFalloff?.minScale ?? 0.4,
+        effectiveRange,
+        maxRange,
+        armorMultiplier,
+        headshotMult: weapon.headshotMult,
+        protection,
+        effectiveProtection
+    };
+}
+
+function computeShotDamageFromContext(ctx, distance) {
+    const {
+        damagePerPellet, pellets, isShotgun, customFalloff,
+        falloffStart, falloffEnd, minScale, effectiveRange, maxRange,
+        armorMultiplier, headshotMult, protection, effectiveProtection
+    } = ctx;
 
     if (distance > maxRange && !customFalloff) {
         return {
             damagePerPellet, pellets, hittingPellets: 0,
             totalBodyDamage: 0, totalLimbDamage: 0,
             headshotPelletDamage: 0, headshotTotalDamage: 0, headshotDamage: 0,
-            protection: calculateArmorProtection(targetArmor),
-            effectiveProtection: Math.max(0, calculateArmorProtection(targetArmor) - ap),
-            effectiveRange, maxRange
+            protection, effectiveProtection, effectiveRange, maxRange
         };
     }
 
-    if (customFalloff) {
-        const falloffStart = customFalloff.start ?? effectiveRange;
-        const minScale = customFalloff.minScale ?? 0.4;
+    let hittingPellets = pellets;
+    let pelletDamageScale = 1.0;
 
+    if (customFalloff) {
         if (distance > falloffStart) {
             if (distance >= falloffEnd) {
                 pelletDamageScale = minScale;
@@ -2013,34 +2241,21 @@ function computeShotDamage(weapon, ammo, distance, targetArmor) {
         const falloffPercent = Math.min(falloffDistance / maxFalloffDistance, 1.0);
 
         if (isShotgun) {
-            // Количество попадающих дробин уменьшается
             hittingPellets = Math.max(1, Math.round(pellets * (1 - falloffPercent * 0.7)));
-            // Урон каждой дробины тоже падает
             pelletDamageScale = 1 - falloffPercent * 0.5;
         } else {
-            // Обычное оружие — урон падает линейно
             pelletDamageScale = 1 - falloffPercent * 0.7;
         }
     }
 
     const actualPelletDamage = damagePerPellet * pelletDamageScale;
-
-    // Защита
-    const protection = calculateArmorProtection(targetArmor);
-    const effectiveProtection = Math.max(0, protection - ap);
-    const armorMultiplier = 1 - effectiveProtection / 100;
-
-    // Урон в тело: все попадающие дробины
     const totalBodyDamage = actualPelletDamage * hittingPellets * armorMultiplier;
     const totalLimbDamage = totalBodyDamage * LIMB_DAMAGE_MULT;
-
-    // Урон в голову: для дробовиков только 1 дробина попадает в голову
-    const headshotPelletDamage = actualPelletDamage * weapon.headshotMult * armorMultiplier;
-    // Остальные дробины попадают в тело (если есть)
+    const headshotPelletDamage = actualPelletDamage * headshotMult * armorMultiplier;
     const remainingBodyPellets = Math.max(0, hittingPellets - 1);
     const headshotTotalDamage = isShotgun
         ? headshotPelletDamage + (actualPelletDamage * remainingBodyPellets * armorMultiplier)
-        : actualPelletDamage * weapon.headshotMult * armorMultiplier;
+        : actualPelletDamage * headshotMult * armorMultiplier;
 
     return {
         damagePerPellet,
@@ -2061,6 +2276,10 @@ function computeShotDamage(weapon, ammo, distance, targetArmor) {
     };
 }
 
+function computeShotDamage(weapon, ammo, distance, targetArmor) {
+    return computeShotDamageFromContext(prepareShotContext(weapon, ammo, targetArmor), distance);
+}
+
 function calculateSlotDPS(slotIndex) {
     const slotData = state.slots[slotIndex];
 
@@ -2078,7 +2297,6 @@ function calculateSlotDPS(slotIndex) {
     const rpm = weapon.rpm;
 
     const shot = computeShotDamage(weapon, ammo, state.targetDistance, state.targetArmor);
-    const shotAtZero = computeShotDamage(weapon, ammo, 0, state.targetArmor);
 
     // DPS
     const dpsBody = calculateDPS(shot.totalBodyDamage, rpm);
@@ -2179,24 +2397,27 @@ function getChartModeClass(mode) {
 }
 
 function calculateTTKAtDistance(slotIndex, distance, mode = 'body') {
+    const cache = damageProfilesCache || buildDamageProfiles();
+    const profile = cache.profiles.get(slotIndex);
+    if (profile) return getProfileTtk(profile, distance, mode);
+
     const slotData = state.slots[slotIndex];
-    if (!slotData.weapon) return Infinity;
+    if (!slotData?.weapon) return Infinity;
 
-    const weapon = slotData.weapon;
-    const ammo = slotData.ammo;
-    const rpm = weapon.rpm;
-
-    const shot = computeShotDamage(weapon, ammo, distance, state.targetArmor);
+    const shot = computeShotDamage(slotData.weapon, slotData.ammo, distance, state.targetArmor);
     const damagePerShot = getShotDamageByMode(shot, mode);
-
     if (!Number.isFinite(damagePerShot) || damagePerShot <= 0) return Infinity;
-    const ttk = calculateTTK(damagePerShot, rpm, state.targetHP);
+    const ttk = calculateTTK(damagePerShot, slotData.weapon.rpm, state.targetHP);
     return Number.isFinite(ttk) ? ttk : Infinity;
 }
 
 function calculateDamageAtDistance(slotIndex, distance, mode = 'body') {
+    const cache = damageProfilesCache || buildDamageProfiles();
+    const profile = cache.profiles.get(slotIndex);
+    if (profile) return getProfileDamage(profile, distance, mode);
+
     const slotData = state.slots[slotIndex];
-    if (!slotData.weapon) return 0;
+    if (!slotData?.weapon) return 0;
 
     const shot = computeShotDamage(slotData.weapon, slotData.ammo, distance, state.targetArmor);
     return getShotDamageByMode(shot, mode);
@@ -2212,13 +2433,16 @@ function drawChartFillSegment(ctx, segment, bottomY) {
     ctx.closePath();
 }
 
-function sampleChartCurveSegments(slotIndex, maxRange, chartWidth, chartHeight, height, padding, maxTTK, chartMode, points = 100) {
+function buildChartSegmentsFromProfile(profile, mode, maxRange, chartWidth, chartHeight, height, padding, maxTTK) {
+    const damages = getProfileDamageArray(profile, mode);
     const segments = [];
     let segment = [];
 
-    for (let i = 0; i <= points; i++) {
-        const distance = (maxRange / points) * i;
-        const ttk = calculateTTKAtDistance(slotIndex, distance, chartMode);
+    for (let i = 0; i < damages.length; i++) {
+        const distance = profile.step * i;
+        const dmg = damages[i];
+        const ttk = dmg > 0 ? calculateTTK(dmg, profile.rpm, state.targetHP) : Infinity;
+
         if (!Number.isFinite(ttk) || ttk === Infinity || ttk > maxTTK) {
             if (segment.length >= 2) segments.push(segment);
             segment = [];
@@ -2293,25 +2517,19 @@ function updateChart() {
 
     ctx.clearRect(0, 0, width, height);
 
-    let maxRange = 100;
+    const profileCache = buildDamageProfiles();
+    const maxRange = profileCache.maxRange;
+    const chartMode = state.ttkMode;
     let maxTTK = 0;
 
-    const chartMode = state.ttkMode;
-
-    for (let i = 0; i < state.visibleSlots; i++) {
-        if (!isSlotOnChart(i)) continue;
-        const weapon = state.slots[i].weapon;
-        const ammo = state.slots[i].ammo;
-        maxRange = Math.max(maxRange, getWeaponMaxRange(weapon, ammo));
-    }
-
-    const ttkSamples = 100;
-    for (let i = 0; i < state.visibleSlots; i++) {
-        if (!isSlotOnChart(i)) continue;
-        for (let j = 0; j <= ttkSamples; j++) {
-            const distance = (maxRange / ttkSamples) * j;
-            const ttk = calculateTTKAtDistance(i, distance, chartMode);
-            if (Number.isFinite(ttk)) maxTTK = Math.max(maxTTK, ttk);
+    for (const profile of profileCache.profiles.values()) {
+        const damages = getProfileDamageArray(profile, chartMode);
+        for (let i = 0; i < damages.length; i++) {
+            const dmg = damages[i];
+            if (dmg > 0) {
+                const ttk = calculateTTK(dmg, profile.rpm, state.targetHP);
+                if (Number.isFinite(ttk)) maxTTK = Math.max(maxTTK, ttk);
+            }
         }
     }
 
@@ -2397,26 +2615,18 @@ function updateChart() {
 
     const legendItems = [];
 
-    for (let slotIndex = 0; slotIndex < state.visibleSlots; slotIndex++) {
-        if (!isSlotOnChart(slotIndex)) continue;
-        const slotData = state.slots[slotIndex];
-
-        const weapon = slotData.weapon;
-        const ammo = slotData.ammo;
+    for (const [slotIndex, profile] of profileCache.profiles) {
+        const weapon = profile.weapon;
         const color = SLOT_COLORS[slotIndex];
-
-        let effectiveRange = weapon.effectiveRange;
-        if (ammo?.stats?.rangeModifier) {
-            effectiveRange = effectiveRange * (1 + ammo.stats.rangeModifier / 100);
-        }
+        const effectiveRange = profile.effectiveRange;
 
         ctx.strokeStyle = color;
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        const curveSegments = sampleChartCurveSegments(
-            slotIndex, maxRange, chartWidth, chartHeight, height, padding, maxTTK, chartMode
+        const curveSegments = buildChartSegmentsFromProfile(
+            profile, chartMode, maxRange, chartWidth, chartHeight, height, padding, maxTTK
         );
 
         ctx.beginPath();
@@ -2558,107 +2768,126 @@ function hexToRgba(color, alpha) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+let lastChartTooltipKey = '';
+
+function handleChartMouseMove(e, graphContainer) {
+    const hasWeapons = state.slots.some((slot, i) => isSlotOnChart(i));
+    if (!hasWeapons) {
+        hideCursorLine();
+        hideCrosshairLabel();
+        return;
+    }
+
+    const rect = elements.damageCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    const padding = {
+        left: parseFloat(elements.damageCanvas.dataset.paddingLeft) || 52,
+        right: parseFloat(elements.damageCanvas.dataset.paddingRight) || 16,
+        top: parseFloat(elements.damageCanvas.dataset.paddingTop) || 28,
+        bottom: parseFloat(elements.damageCanvas.dataset.paddingBottom) || 44
+    };
+
+    const chartWidth = rect.width - padding.left - padding.right;
+
+    if (x < padding.left || x > rect.width - padding.right) {
+        elements.chartTooltip.style.opacity = '0';
+        lastChartTooltipKey = '';
+        hideCursorLine();
+        hideCrosshairLabel();
+        return;
+    }
+
+    const maxRange = parseFloat(elements.damageCanvas.dataset.maxRange) || 100;
+    const chartMode = state.ttkMode;
+    const distance = ((x - padding.left) / chartWidth) * maxRange;
+    const roundedDistance = Math.round(distance);
+    const meterUnit = isEnglish() ? 'm' : 'м';
+
+    updateCursorLine(x, padding);
+    updateCrosshairLabel(x, roundedDistance, meterUnit);
+
+    const tooltipKey = `${chartMode}|${roundedDistance}`;
+    if (tooltipKey === lastChartTooltipKey) {
+        elements.chartTooltip.style.opacity = '1';
+        positionTooltip(e.clientX, e.clientY, graphContainer);
+        return;
+    }
+    lastChartTooltipKey = tooltipKey;
+
+    const profileCache = damageProfilesCache || buildDamageProfiles();
+    const tooltipItems = [];
+
+    for (const [slotIndex, profile] of profileCache.profiles) {
+        const ttk = getProfileTtk(profile, distance, chartMode);
+        const damageAtDist = getProfileDamage(profile, distance, chartMode);
+        const shotsNeeded = damageAtDist > 0 ? Math.ceil(state.targetHP / damageAtDist) : Infinity;
+
+        tooltipItems.push({
+            name: getLocalizedName(profile.weapon),
+            color: SLOT_COLORS[slotIndex],
+            ttk,
+            shots: shotsNeeded
+        });
+    }
+
+    tooltipItems.sort((a, b) => {
+        if (a.ttk === Infinity) return 1;
+        if (b.ttk === Infinity) return -1;
+        return a.ttk - b.ttk;
+    });
+
+    const secUnit = t('ttk.sec', 'сек');
+    const shotsUnit = t('ttk.shots', 'выстр.');
+    const modeLabel = getTtkModeLabel(chartMode, true);
+    const tooltipHeaderClass = chartMode === 'head'
+        ? 'chart-tooltip__header--head'
+        : (chartMode === 'limb' ? 'chart-tooltip__header--limb' : '');
+
+    let tooltipContent = `
+        <div class="chart-tooltip__header ${tooltipHeaderClass}">
+            <span class="chart-tooltip__distance">${roundedDistance} ${meterUnit}</span>
+            <span class="chart-tooltip__label">${modeLabel}</span>
+        </div>
+        <div class="chart-tooltip__divider"></div>`;
+
+    tooltipItems.forEach((item, index) => {
+        const ttkText = formatChartTtk(item.ttk, secUnit);
+        const shotsText = item.shots === Infinity ? '∞' : item.shots;
+        const isBest = index === 0 && item.ttk !== Infinity;
+
+        tooltipContent += `
+            <div class="chart-tooltip__item ${isBest ? 'chart-tooltip__item--best' : ''}">
+                <span class="chart-tooltip__color" style="background: ${item.color}"></span>
+                <span class="chart-tooltip__name">${item.name}</span>
+                <div class="chart-tooltip__values">
+                    <span class="chart-tooltip__ttk">${ttkText} ${secUnit}</span>
+                    <span class="chart-tooltip__shots">${shotsText} ${shotsUnit}</span>
+                </div>
+            </div>`;
+    });
+
+    elements.chartTooltip.innerHTML = tooltipContent;
+    elements.chartTooltip.style.opacity = '1';
+    positionTooltip(e.clientX, e.clientY, graphContainer);
+}
+
 function initChartInteractivity() {
     if (!elements.damageCanvas) return;
 
     const graphContainer = elements.damageCanvas.closest('.chart-results__graph');
 
     elements.damageCanvas.addEventListener('mousemove', (e) => {
-        const hasWeapons = state.slots.some((slot, i) => isSlotOnChart(i));
-        if (!hasWeapons) {
-            hideCursorLine();
-            hideCrosshairLabel();
-            return;
-        }
-
-        const rect = elements.damageCanvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-
-        const padding = {
-            left: parseFloat(elements.damageCanvas.dataset.paddingLeft) || 52,
-            right: parseFloat(elements.damageCanvas.dataset.paddingRight) || 16,
-            top: parseFloat(elements.damageCanvas.dataset.paddingTop) || 28,
-            bottom: parseFloat(elements.damageCanvas.dataset.paddingBottom) || 44
-        };
-
-        const chartWidth = rect.width - padding.left - padding.right;
-
-        if (x < padding.left || x > rect.width - padding.right) {
-            elements.chartTooltip.style.opacity = '0';
-            hideCursorLine();
-            hideCrosshairLabel();
-            return;
-        }
-
-        const maxRange = parseFloat(elements.damageCanvas.dataset.maxRange) || 100;
-        const chartMode = state.ttkMode;
-        const distance = ((x - padding.left) / chartWidth) * maxRange;
-        const meterUnit = isEnglish() ? 'm' : 'м';
-
-        updateCursorLine(x, padding);
-        updateCrosshairLabel(x, Math.round(distance), meterUnit);
-
-        let tooltipItems = [];
-
-        for (let i = 0; i < state.visibleSlots; i++) {
-            if (!isSlotOnChart(i)) continue;
-            const slotData = state.slots[i];
-
-            const ttk = calculateTTKAtDistance(i, distance, chartMode);
-            const damageAtDist = calculateDamageAtDistance(i, distance, chartMode);
-            const shotsNeeded = damageAtDist > 0 ? Math.ceil(state.targetHP / damageAtDist) : Infinity;
-
-            tooltipItems.push({
-                name: getLocalizedName(slotData.weapon),
-                color: SLOT_COLORS[i],
-                ttk: ttk,
-                shots: shotsNeeded
-            });
-        }
-
-        tooltipItems.sort((a, b) => {
-            if (a.ttk === Infinity) return 1;
-            if (b.ttk === Infinity) return -1;
-            return a.ttk - b.ttk;
+        chartHoverEvent = e;
+        if (chartHoverRaf) return;
+        chartHoverRaf = requestAnimationFrame(() => {
+            chartHoverRaf = null;
+            if (chartHoverEvent) handleChartMouseMove(chartHoverEvent, graphContainer);
         });
-
-        const secUnit = t('ttk.sec', 'сек');
-        const shotsUnit = t('ttk.shots', 'выстр.');
-        const modeLabel = getTtkModeLabel(chartMode, true);
-        const tooltipHeaderClass = chartMode === 'head'
-            ? 'chart-tooltip__header--head'
-            : (chartMode === 'limb' ? 'chart-tooltip__header--limb' : '');
-
-        let tooltipContent = `
-            <div class="chart-tooltip__header ${tooltipHeaderClass}">
-                <span class="chart-tooltip__distance">${Math.round(distance)} ${meterUnit}</span>
-                <span class="chart-tooltip__label">${modeLabel}</span>
-            </div>
-            <div class="chart-tooltip__divider"></div>`;
-
-        tooltipItems.forEach((item, index) => {
-            const ttkText = formatChartTtk(item.ttk, secUnit);
-            const shotsText = item.shots === Infinity ? '∞' : item.shots;
-            const isBest = index === 0 && item.ttk !== Infinity;
-
-            tooltipContent += `
-                <div class="chart-tooltip__item ${isBest ? 'chart-tooltip__item--best' : ''}">
-                    <span class="chart-tooltip__color" style="background: ${item.color}"></span>
-                    <span class="chart-tooltip__name">${item.name}</span>
-                    <div class="chart-tooltip__values">
-                        <span class="chart-tooltip__ttk">${ttkText} ${secUnit}</span>
-                        <span class="chart-tooltip__shots">${shotsText} ${shotsUnit}</span>
-                    </div>
-                </div>`;
-        });
-
-        elements.chartTooltip.innerHTML = tooltipContent;
-        elements.chartTooltip.style.opacity = '1';
-
-        positionTooltip(e.clientX, e.clientY, graphContainer);
     });
 
     elements.damageCanvas.addEventListener('mouseleave', () => {
+        lastChartTooltipKey = '';
         elements.chartTooltip.style.opacity = '0';
         hideCursorLine();
         hideCrosshairLabel();
@@ -2680,7 +2909,7 @@ function initChartInteractivity() {
         state.targetDistance = distance;
 
         calculateResults();
-        updateChart();
+        scheduleChartUpdate();
         updateComparisonTable();
     });
 }

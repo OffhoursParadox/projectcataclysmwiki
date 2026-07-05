@@ -37,6 +37,7 @@
   "cards.build": "Build setup",
   "cards.compare": "Compare weapons",
   "cards.openMap": "Open map",
+  "cards.openGuides": "Open guides",
   "rf.title": "RF Receiver Frequencies",
   "rf.titleCyrillic": "receiver",
   "rf.subtitle": "Special detector designed for finding stashes.",
