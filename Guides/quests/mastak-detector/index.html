@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://offhoursparadox.github.io/projectcataclysmwiki/Guides/quests/mastak-detector/">
+    <title>Задание Мастака: RF-ресивер — Project Cataclysm Wiki</title>
+    <meta name="description" content="Пошаговое прохождение квеста у техника Мастака на Свалке: как получить RF-ресивер и начать охоту за тайниками.">
+    <meta property="og:title" content="Задание Мастака: RF-ресивер — Project Cataclysm Wiki">
+    <meta property="og:description" content="Пошаговое прохождение квеста у техника Мастака на Свалке.">
+    <meta property="og:type" content="article">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0a0a0b">
+    <link rel="icon" href="https://offhoursparadox.github.io/projectcataclysmwiki/favicon-48x48.png" type="image/png" sizes="48x48">
+    <link rel="icon" href="https://offhoursparadox.github.io/projectcataclysmwiki/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="https://offhoursparadox.github.io/projectcataclysmwiki/apple-touch-icon.png" sizes="180x180">
+    <link rel="manifest" href="https://offhoursparadox.github.io/projectcataclysmwiki/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Roboto:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared.css">
+    <link rel="stylesheet" href="../../guide.css">
+</head>
+<body data-i18n-page="guides">
+    <header class="header" id="mainHeader">
+        <div class="header__container">
+            <a href="../../../index.html" class="header__logo">
+                <div class="logo-mark">
+                    <svg class="logo-mark__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2L3 10v16l15 8 15-8V10L18 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                        <path d="M18 6L7 12v12l11 6 11-6V12L18 6z" stroke="currentColor" stroke-width="1" opacity="0.4" fill="none"/>
+                        <circle cx="18" cy="18" r="3" fill="currentColor" opacity="0.8"/>
+                        <line x1="18" y1="2" x2="18" y2="15" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="18" y1="21" x2="18" y2="34" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="3" y1="10" x2="15" y2="18" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+                        <line x1="21" y1="18" x2="33" y2="10" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-text__cataclysm">CATACLYSM</span>
+                    <span class="logo-text__wiki">WIKI</span>
+                </div>
+            </a>
+
+            <nav class="header__nav">
+                <a href="../../../Map/map.html" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <span data-i18n="nav.map">Карта</span>
+                </a>
+                <a href="../../../Table/table.html" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span data-i18n="nav.items">Предметы</span>
+                </a>
+                <a href="../../guides.html" class="nav-link nav-link--current">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <span data-i18n="nav.guides">Гайды</span>
+                </a>
+                <div class="nav-dropdown" id="navCalculators">
+                    <button type="button" class="nav-link nav-dropdown__trigger" id="navCalculatorsBtn" aria-expanded="false" aria-haspopup="true">
+                        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        <span data-i18n="nav.calculators">Калькуляторы</span>
+                        <svg class="nav-dropdown__chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="nav-dropdown__menu" id="navCalculatorsMenu" role="menu">
+                        <a href="../../../Calculator/calculator.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <span data-i18n="nav.calculatorFull">Калькулятор сборок</span>
+                        </a>
+                        <a href="../../../TTK/ttk.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4M12 16v4M4 12h4M16 12h4"/>
+                            </svg>
+                            <span data-i18n="nav.ttkFull">Калькулятор ТТК</span>
+                        </a>
+                        <a href="../../../Barter/barter.html" class="nav-dropdown__item" role="menuitem">
+                            <svg class="nav-dropdown__item-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                            <span data-i18n="nav.barterFull">Калькулятор бартера</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="lang-switcher" id="langSwitcher">
+                <button class="lang-switcher__btn" id="langSwitcherBtn" aria-expanded="false" aria-label="Выбор языка">
+                    <svg class="lang-switcher__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                    </svg>
+                    <span class="lang-switcher__current" id="currentLang">RU</span>
+                </button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-dropdown__item active" data-lang="ru">
+                        <span class="lang-dropdown__flag">🇷🇺</span>
+                        <span class="lang-dropdown__text">Русский</span>
+                        <svg class="lang-dropdown__check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </button>
+                    <button class="lang-dropdown__item" data-lang="en">
+                        <span class="lang-dropdown__flag">🇬🇧</span>
+                        <span class="lang-dropdown__text">English</span>
+                        <svg class="lang-dropdown__check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button class="header__burger" id="burger" aria-label="Меню" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="guide-article">
+        <div class="container">
+            <nav class="guide-breadcrumb" aria-label="Навигация">
+                <a href="../../guides.html" data-i18n="guides.page.breadcrumb">Гайды</a>
+                <span class="guide-breadcrumb__sep">/</span>
+                <a href="../../guides.html?category=quests" data-i18n="guides.cat.quests">Квесты</a>
+                <span class="guide-breadcrumb__sep">/</span>
+                <span class="guide-breadcrumb__current" data-i18n="guides.content.mastak-detector.title">Задание Мастака: RF-ресивер</span>
+            </nav>
+
+            <header class="guide-hero guide-hero--quest">
+                <span class="guide-hero__sweep" aria-hidden="true"></span>
+                <figure class="guide-hero__visual">
+                    <img src="../../../images/npc/mastak.jpg" alt="" loading="eager" decoding="async">
+                    <span class="guide-hero__visual-overlay" aria-hidden="true"></span>
+                    <span class="guide-hero__visual-glow" aria-hidden="true"></span>
+                </figure>
+                <div class="guide-hero__inner">
+                    <div class="guide-hero__copy">
+                        <h1 class="guide-hero__title" data-i18n="guides.content.mastak-detector.title">Задание Мастака: RF-ресивер</h1>
+                        <p class="guide-hero__subtitle" data-i18n="guides.content.mastak-detector.subtitle">Короткое задание у техника на Свалке — первый шаг к поиску схронов по радиосигналу.</p>
+                        <div class="guide-hero__tags">
+                            <span class="guide-hero__type guide-hero__type--quest" data-i18n="guides.page.typeQuest">Квестовый гайд</span>
+                            <span class="guide-hero__location" data-i18n="guides.loc.junkyard">Свалка</span>
+                        </div>
+                    </div>
+                </div>
+                <aside class="guide-hero__rewards" aria-label="Награда за квест">
+                    <div class="guide-hero__rewards-head">
+                        <span class="guide-hero__rewards-label" data-i18n="guides.page.quest.reward">Награда</span>
+                    </div>
+                    <ul class="guide-hero__rewards-list">
+                        <li class="guide-hero__reward" tabindex="0">
+                            <div class="guide-hero__reward-icon">
+                                <img src="../../../images/devices/rf-receiver.png" alt="" loading="eager" decoding="async">
+                                <span class="guide-hero__reward-qty">×1</span>
+                            </div>
+                            <span class="guide-hero__reward-tooltip" role="tooltip" data-i18n="guides.content.mastak-detector.reward.item">RF-ресивер</span>
+                        </li>
+                    </ul>
+                </aside>
+            </header>
+
+            <div class="guide-shell">
+                <aside class="guide-aside">
+                    <div class="guide-panel">
+                        <div class="guide-panel__head">
+                            <span class="guide-panel__label" data-i18n="guides.page.quest.stages">Этапы квеста</span>
+                        </div>
+                        <div class="guide-panel__body">
+                            <nav class="guide-nav-list" id="guideNav" aria-label="Этапы">
+                                <a href="#intro" class="active">
+                                    <span class="guide-nav-list__num">00</span>
+                                    <span data-i18n="guides.content.mastak-detector.nav.intro">Введение</span>
+                                </a>
+                                <a href="#step-1">
+                                    <span class="guide-nav-list__num">01</span>
+                                    <span data-i18n="guides.content.mastak-detector.step1.title">Найти Мастака</span>
+                                </a>
+                                <a href="#step-2">
+                                    <span class="guide-nav-list__num">02</span>
+                                    <span data-i18n="guides.content.mastak-detector.step2.title">Принять задание</span>
+                                </a>
+                                <a href="#step-3">
+                                    <span class="guide-nav-list__num">03</span>
+                                    <span data-i18n="guides.content.mastak-detector.step3.title">Получить ресивер</span>
+                                </a>
+                                <a href="#reward">
+                                    <span class="guide-nav-list__num">★</span>
+                                    <span data-i18n="guides.page.quest.reward">Награда</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div class="guide-panel">
+                        <div class="guide-panel__head">
+                            <span class="guide-panel__label" data-i18n="guides.page.quest.prerequisites">Требования</span>
+                        </div>
+                        <div class="guide-panel__body">
+                            <ul class="guide-prereq-list">
+                                <li data-i18n="guides.content.mastak-detector.prereq1">Доступ к локации «Свалка»</li>
+                                <li data-i18n="guides.content.mastak-detector.prereq2">Свободный слот в инвентаре</li>
+                            </ul>
+                        </div>
+                    </div>
+                </aside>
+
+                <div class="guide-main">
+                    <section class="guide-section" id="intro">
+                        <div class="guide-section__head">
+                            <h2 class="guide-section__title" data-i18n="guides.content.mastak-detector.nav.intro">Введение</h2>
+                        </div>
+                        <div class="guide-prose">
+                            <p data-i18n="guides.content.mastak-detector.intro.p1">Техник Мастак на Свалке выдаёт короткое вводное задание. После его принятия вы сразу получаете RF-ресивер — специальный детектор для поиска схронов по радиочастоте.</p>
+                            <p data-i18n="guides.content.mastak-detector.intro.p2">Этот гайд показывает структуру квестовых страниц: обязательные этапы, скриншоты из папки гайда и блок финальной награды внизу.</p>
+                        </div>
+                    </section>
+
+                    <section class="guide-section" id="steps">
+                        <div class="guide-section__head">
+                            <h2 class="guide-section__title" data-i18n="guides.page.quest.stages">Этапы квеста</h2>
+                            <span class="guide-section__badge">3</span>
+                        </div>
+
+                        <div class="guide-steps">
+                            <article class="guide-step" id="step-1">
+                                <div class="guide-step__head">
+                                    <span class="guide-step__num">01</span>
+                                    <h3 class="guide-step__title" data-i18n="guides.content.mastak-detector.step1.title">Найти Мастака</h3>
+                                </div>
+                                <div class="guide-step__text">
+                                    <p data-i18n="guides.content.mastak-detector.step1.text">Отправьтесь на Свалку и найдите техника Мастака. Его лагерь расположен недалеко от основных троп — координаты указаны в карточке ниже.</p>
+                                    <div class="guide-step__note" data-i18n="guides.content.mastak-detector.step1.note">Координаты: -399&nbsp;&nbsp;67&nbsp;&nbsp;-3146</div>
+                                </div>
+                                <div class="guide-step__media">
+                                    <img src="../../../images/npc/mastak.jpg" alt="" loading="lazy" decoding="async">
+                                </div>
+                            </article>
+
+                            <article class="guide-step" id="step-2">
+                                <div class="guide-step__head">
+                                    <span class="guide-step__num">02</span>
+                                    <h3 class="guide-step__title" data-i18n="guides.content.mastak-detector.step2.title">Принять задание</h3>
+                                </div>
+                                <div class="guide-step__text">
+                                    <p data-i18n="guides.content.mastak-detector.step2.text">Поговорите с Мастаком и примите короткое задание из диалога. Оно не требует дальних переходов — достаточно подтвердить готовность помочь технику.</p>
+                                </div>
+                                <div class="guide-step__media">
+                                    <img src="images/quest-dialog.jpg" alt="" loading="lazy" decoding="async" onerror="this.src='../../../images/devices/rf-guide-1.jpg'">
+                                </div>
+                            </article>
+
+                            <article class="guide-step" id="step-3">
+                                <div class="guide-step__head">
+                                    <span class="guide-step__num">03</span>
+                                    <h3 class="guide-step__title" data-i18n="guides.content.mastak-detector.step3.title">Получить ресивер</h3>
+                                </div>
+                                <div class="guide-step__text">
+                                    <p data-i18n="guides.content.mastak-detector.step3.text">После принятия квеста Мастак сразу передаёт RF-ресивер. Поместите устройство в слот детектора — дальнейшую работу с частотами разберём в отдельном руководстве.</p>
+                                </div>
+                                <div class="guide-step__media">
+                                    <img src="../../../images/devices/rf-receiver.png" alt="" loading="lazy" decoding="async">
+                                </div>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="guide-section guide-reward" id="reward">
+                        <div class="guide-section__head">
+                            <h2 class="guide-section__title" data-i18n="guides.page.quest.reward">Награда за квест</h2>
+                        </div>
+
+                        <div class="guide-reward-grid">
+                            <div class="guide-reward-item">
+                                <div class="guide-reward-item__icon">
+                                    <img src="../../../images/devices/rf-receiver.png" alt="" loading="lazy" decoding="async">
+                                </div>
+                                <span class="guide-reward-item__name" data-i18n="guides.content.mastak-detector.reward.item">RF-ресивер</span>
+                                <span class="guide-reward-item__qty">×1</span>
+                            </div>
+                        </div>
+
+                        <p class="guide-reward-summary" data-i18n="guides.content.mastak-detector.reward.summary">Устройство позволяет искать схроны по радиочастоте. Полный разбор механики — в руководстве «RF-ресивер: поиск схронов».</p>
+                    </section>
+
+                    <nav class="guide-footer-nav">
+                        <a href="../../guides.html" class="guide-back-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            <span data-i18n="guides.page.backToList">К списку гайдов</span>
+                        </a>
+                        <a href="../../handbooks/rf-receiver/" class="guide-back-link">
+                            <span data-i18n="guides.content.mastak-detector.related">Руководство по RF-ресиверу</span>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__copy">© 2026 Project Cataclysm Wiki. <span data-i18n="footer.official">Официальный сайт.</span></div>
+            </div>
+        </div>
+    </footer>
+
+    <button class="scroll-top" id="scrollTop" aria-label="Вверх">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+    </button>
+
+    <script src="../../../i18n.js"></script>
+    <script src="../../../shared.js"></script>
+    <script src="../../guide.js"></script>
+</body>
+</html>

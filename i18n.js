@@ -131,7 +131,7 @@ class I18n {
       }
     }
 
-    const nestedPages = ['map', 'table', 'calculator', 'ttk', 'barter'];
+    const nestedPages = ['map', 'table', 'calculator', 'ttk', 'barter', 'guides'];
     const isNestedPage = nestedPages.some(page => this._pathHasPageSegment(page));
     const relativeBase = isNestedPage ? '../locales/' : 'locales/';
 
@@ -185,6 +185,8 @@ class I18n {
       namespaces.push('ttk');
     } else if (page === 'barter' || this._pathHasPageSegment('barter')) {
       namespaces.push('barter');
+    } else if (page === 'guides' || this._pathHasPageSegment('guides')) {
+      namespaces.push('guides');
     } else {
       namespaces.push('home');
     }

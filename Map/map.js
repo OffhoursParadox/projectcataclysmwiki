@@ -62,7 +62,9 @@ const MARKER_ICONS = {
     boss_sumrak: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_iskatel: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
     boss_king: L.icon({ iconUrl: 'images/NPC/icons/boss_mutant.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
-    boss_kastet: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] })
+    boss_kastet: L.icon({ iconUrl: 'images/NPC/icons/boss.png', iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10] }),
+    // Placeholder — replace markers/quest.png with the final quest icon
+    quest: L.icon({ iconUrl: 'markers/quest.png', iconSize: [24, 24], iconAnchor: [12, 12], popupAnchor: [0, -12] })
 };
 
 const ASTROLITE_TYPES = ['catalyst', 'wormhole'];
@@ -70,6 +72,7 @@ const CONTAINER_TYPES = ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash
 const MUTANT_TYPES = ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'];
 const NPC_TYPES = ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel', 'boss_king', 'boss_kastet'];
 const LOCATION_TYPES = ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile'];
+const QUEST_TYPES = ['quest'];
 
 const RUSSIAN_MUTANT_NAMES = {
     'Слепые собаки': 'blind_dog',
@@ -174,7 +177,8 @@ const DESC_TRANSLATIONS = {
     'Король и Свита': 'King and Retinue',
     'Босс: Король и Свита': 'Boss: King and Retinue',
     'Банда Кастета': 'Kastet\'s Gang',
-    'Босс: Банда Кастета': 'Boss: Kastet\'s Gang'
+    'Босс: Банда Кастета': 'Boss: Kastet\'s Gang',
+    'Застрявший в пространстве': 'Stuck in Space'
 };
 
 let map;
@@ -275,8 +279,14 @@ const INFO_LABELS = {
 };
 
 function createMarkerPopup(type, markerData) {
-    const typeName = getMarkerTypeName(type);
     const ext = markerData.extended;
+    let typeName = getMarkerTypeName(type);
+
+    if (ext?.title) {
+        typeName = typeof ext.title === 'object'
+            ? (isEnglish() ? ext.title.en : ext.title.ru)
+            : ext.title;
+    }
 
     if (ext) {
         return createExtendedPopup(type, markerData, typeName, ext);
@@ -330,12 +340,13 @@ function createExtendedPopup(type, markerData, typeName, ext) {
     const descLabel = en ? 'Description' : 'Описание';
     const rewardsLabel = en ? 'Rewards' : 'Награды';
     const { coords } = extractCoords(markerData.desc);
+    const isQuest = QUEST_TYPES.includes(type);
 
     const levelLabel = markerData.level === 'underground'
         ? `<span style="color:#a78bfa;font-size:11px;font-weight:600;margin-left:8px;">${en ? '⛏ Underground' : '⛏ Подземелье'}</span>`
         : '';
 
-    let html = `<div class="marker-popup">`;
+    let html = `<div class="marker-popup${isQuest ? ' marker-popup--quest' : ''}">`;
     html += `<div class="marker-popup__title">${escapeHtml(typeName)}${levelLabel}</div>`;
     html += `<div class="marker-popup__body">`;
 
@@ -457,6 +468,20 @@ function createExtendedPopup(type, markerData, typeName, ext) {
         html += `</div></div>`;
     }
 
+    if (ext.guide) {
+        const guideLabel = en ? 'Open guide' : 'Открыть гайд';
+        html += `<a class="marker-popup__guide" href="${escapeHtml(ext.guide)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span>${escapeHtml(guideLabel)}</span>
+        </a>`;
+    }
+
     html += `</div>`;
 
     if (coords) {
@@ -532,6 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLevelSwitcher();
     updateMarkerCounts();
     scheduleMarkerUpdate(true);
+    focusMarkerFromUrl();
 });
 
 document.addEventListener('languageChanged', () => {
@@ -648,9 +674,21 @@ function scheduleMarkerUpdate(immediate = false) {
 
 function createMarkerFromEntry(entry) {
     const { type, markerData, latLng } = entry;
-    const popupOptions = markerData.extended
-        ? { maxWidth: 560, minWidth: 360, className: 'extended-popup' }
-        : { maxWidth: 320 };
+    const isQuest = QUEST_TYPES.includes(type);
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    let popupOptions;
+
+    if (markerData.extended && isQuest) {
+        popupOptions = {
+            maxWidth: isMobile ? Math.min(310, window.innerWidth - 36) : 340,
+            minWidth: isMobile ? 0 : 280,
+            className: 'extended-popup extended-popup--quest'
+        };
+    } else if (markerData.extended) {
+        popupOptions = { maxWidth: 560, minWidth: 360, className: 'extended-popup' };
+    } else {
+        popupOptions = { maxWidth: 320 };
+    }
 
     const marker = L.marker(latLng, { icon: MARKER_ICONS[type] });
     marker.markerType = type;
@@ -722,6 +760,64 @@ function refreshMarkersPopups() {
             });
         });
     });
+}
+
+function findMarkerEntryById(id) {
+    if (!id) return null;
+
+    for (const type of Object.keys(markerRegistry)) {
+        for (const level of ['surface', 'underground']) {
+            const entry = markerRegistry[type]?.[level]?.find(e => e.markerData?.id === id);
+            if (entry) return { entry, type, level };
+        }
+    }
+    return null;
+}
+
+function ensureFilterEnabled(type) {
+    if (activeFilters.has(type)) return;
+
+    const checkbox = document.querySelector(`.filter-checkbox[data-filter="${type}"]`);
+    if (checkbox) {
+        checkbox.checked = true;
+        toggleFilter(type, true);
+        saveFiltersState();
+    } else {
+        activeFilters.add(type);
+        if (markerLayers[type] && !map.hasLayer(markerLayers[type][currentLevel])) {
+            markerLayers[type][currentLevel].addTo(map);
+        }
+    }
+}
+
+function openFocusedMarker(entry, type, level) {
+    if (!entry.marker) {
+        const marker = createMarkerFromEntry(entry);
+        markerLayers[type][level].addLayer(marker);
+    }
+    entry.marker.openPopup();
+}
+
+function focusMarkerFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const questId = params.get('quest') || (params.get('marker') === 'quest' ? params.get('id') : null);
+    const markerId = questId || params.get('id');
+    if (!markerId) return;
+
+    const found = findMarkerEntryById(markerId);
+    if (!found) return;
+
+    const { entry, type, level } = found;
+    ensureFilterEnabled(type);
+
+    if (level !== currentLevel) {
+        switchLevel(level, false);
+    }
+
+    const zoom = Math.max(map.getZoom(), 7);
+    map.setView(entry.latLng, zoom, { animate: false });
+    scheduleMarkerUpdate(true);
+    requestAnimationFrame(() => openFocusedMarker(entry, type, level));
 }
 
 // ==================== LEVEL SWITCHER ====================
@@ -807,7 +903,7 @@ function updateLevelSwitcherText() {
 
 // ==================== FILTERS ====================
 
-const FILTERS_VERSION = '2';
+const FILTERS_VERSION = '3';
 
 function initFilters() {
     const DEFAULT_FILTER_STATE = {
@@ -867,7 +963,9 @@ function initFilters() {
         base_freedom: true,
         base_spawn: true,
         base_nospawn: true,
-        base_hostile: true
+        base_hostile: true,
+        // quests — visible
+        quest: true
     };
 
     const savedVersion = localStorage.getItem('mapFiltersVersion');

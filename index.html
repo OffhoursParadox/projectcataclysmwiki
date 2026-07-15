@@ -64,6 +64,12 @@
                     </svg>
                     <span data-i18n="nav.items">Предметы</span>
                 </a>
+                <a href="Guides/guides.html" class="nav-link">
+                    <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    <span data-i18n="nav.guides">Гайды</span>
+                </a>
                 <div class="nav-dropdown" id="navCalculators">
                     <button type="button" class="nav-link nav-dropdown__trigger" id="navCalculatorsBtn" aria-expanded="false" aria-haspopup="true">
                         <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,11 +179,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                 </svg>
             </a>
-            <a href="#" class="mobile-menu__link mobile-menu__link--disabled">
+            <a href="Guides/guides.html" class="mobile-menu__link">
                 <svg class="mobile-menu__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                 </svg>
                 <span class="mobile-menu__text" data-i18n="nav.guidesFull">Руководства и гайды</span>
+                <svg class="mobile-menu__arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
             </a>
             <a href="Barter/barter.html" class="mobile-menu__link">
                 <svg class="mobile-menu__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -332,15 +341,17 @@
                         </span>
                     </a>
 
-                    <a href="#" class="quick-card quick-card--guides quick-card--disabled" aria-disabled="true" tabindex="-1" style="--quick-delay:495ms;">
+                    <a href="Guides/guides.html" class="quick-card quick-card--guides" style="--quick-delay:495ms;">
                         <img src="images/previews/guides.jpg" alt="" class="quick-card__image" loading="lazy" decoding="async" fetchpriority="low" aria-hidden="true">
                         <span class="quick-card__atmosphere"></span>
                         <span class="quick-card__grain"></span>
                         <span class="quick-card__content">
-                            <span class="quick-card__label" data-i18n="cards.guides.label">Опыт выживших</span>
+                            <span class="quick-card__label" data-i18n="cards.guides.label">Сталкерский справочник</span>
                             <span class="quick-card__title" data-i18n="cards.guides.title">Руководства и гайды</span>
-                            <span class="quick-card__desc" data-i18n="cards.guides.desc">Прохождение квестов, тактики боя и советы, которые спасут твою жизнь.</span>
-                            <span class="quick-card__badge" data-i18n="cards.inDevelopment">В разработке</span>
+                            <span class="quick-card__desc" data-i18n="cards.guides.desc">Пошаговые гайды по квестам, секреты игрового мира и детальные разборы механик от опытных игроков.</span>
+                            <span class="quick-card__action">
+                                <span data-i18n="cards.openGuides">Открыть гайды</span>
+                            </span>
                         </span>
                     </a>
                 </div>

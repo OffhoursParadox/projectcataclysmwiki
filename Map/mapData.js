@@ -15,6 +15,13 @@ function convertCoords(oldY, oldX) {
     return [newY, newX];
 }
 
+// Игровые X/Z → координаты карты (калибровка по точкам с известными coords)
+function fromGameCoords(gameX, gameZ) {
+    const oldX = 3328 + gameX / 2;
+    const oldY = 767.5 - gameZ / 2;
+    return convertCoords(oldY, oldX);
+}
+
 // ============================================================
 // ИЗОБРАЖЕНИЯ НАГРАД (лут)
 // Материалы бартера — общая папка images/materials/ (см. getMaterialImagePath в data.js)
@@ -100,6 +107,7 @@ const REWARD_ICONS = {
     thorn: { icon: 'images/rewards/thorn.png', name: { ru: 'Колючка', en: 'Thorn' } },
     solder: { icon: 'images/rewards/solder.png', name: { ru: 'Припой', en: 'Solder' } },
     kevlar_tape: { icon: 'images/rewards/kevlar_tape.png', name: { ru: 'Кевларовая лента', en: 'Kevlar Tape' } },
+    medusa: { icon: '../images/items/Artifacts/medusa.png', name: { ru: 'Медуза', en: 'Medusa' } },
 };
 
 // ============================================================
@@ -5212,6 +5220,32 @@ const MARKERS_DATA = {
             }
         },
     ],
+
+    // ==================== КВЕСТЫ ====================
+    quest: [
+        {
+            id: 'stuck-in-space',
+            coords: fromGameCoords(-62, -459),
+            desc: "Застрявший в пространстве<br>Координаты: -62, 83, -459",
+            extended: {
+                title: {
+                    ru: "Застрявший в пространстве",
+                    en: "Stuck in Space"
+                },
+                image: "../Guides/quests/stuck-in-space/images/preview.jpg",
+                description: {
+                    ru: "Цепочка пространственных пузырей на Росстани. Старт квеста — у первого пузыря.",
+                    en: "A chain of spatial bubbles on Rosstan. The quest starts at the first bubble."
+                },
+                guide: '../Guides/quests/stuck-in-space/',
+                rewards: [
+                    { key: 'medusa', count: 1 },
+                    { key: 'medkit', count: 4 },
+                    { key: 'tourist_breakfast', count: 6 }
+                ]
+            }
+        },
+    ],
 };
 
 // ============================================================
@@ -5222,5 +5256,6 @@ const FILTER_CATEGORIES = {
     containers: ['ammo', 'supply', 'tools', 'barrels', 'science', 'stash', 'wooden_crate', 'safe', 'stash_hidden'],
     mutants: ['blind_dog', 'pseudodog', 'psy_dog', 'flesh', 'boar', 'rat', 'snork', 'zombie', 'bloodsucker', 'bloodsucker_strong', 'chimera', 'controller'],
     npc: ['zombified', 'zombified_cluster', 'bandits', 'bandit_camp', 'military', 'monolith_outpost', 'monolith', 'mercenary', 'stalkers', 'freedom', 'duty', 'duty_freedom_spawn', 'sinner', 'boss_foxtrot', 'boss_prince', 'boss_invincible', 'boss_illusionist', 'boss_pharaoh', 'boss_sumrak', 'boss_iskatel', 'boss_king', 'boss_kastet'],
-    locations: ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile']
+    locations: ['base_orden', 'base_legion', 'base_duty', 'base_freedom', 'base_spawn', 'base_nospawn', 'base_hostile'],
+    quests: ['quest']
 };
