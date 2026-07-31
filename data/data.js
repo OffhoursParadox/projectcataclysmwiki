@@ -963,7 +963,7 @@ const ARTIFACTS = [
     { id: 'mothers_beads', name: 'Мамины бусы', nameEn: "Mother's Beads", category: 'thermal', tier: 2, image: 'mothers_beads.png', imageFolder: 'Artifacts', price: 13600, stats: { bleeding: -1.25, radiation: -1.00, heatResistance: -10 } },
     { id: 'eye', name: 'Глаз', nameEn: 'Eye', category: 'thermal', tier: 2, image: 'eye.png', imageFolder: 'Artifacts', price: 19350, stats: { thermalProtection: 30, bleeding: -4.75, heatResistance: 20, radiation: 1.00 } },
     { id: 'flame', name: 'Пламя', nameEn: 'Flame', category: 'thermal', tier: 3, image: 'flame.png', imageFolder: 'Artifacts', price: 32000, stats: { frostProtection: 40, thermalProtection: 80, bleeding: -7.50, radiation: 3.00 } },
-    { id: 'fire_loop', name: 'Огненная петля', nameEn: 'Fire Loop', category: 'thermal', tier: 3, image: 'fire_loop.png', imageFolder: 'Artifacts', price: 36000, stats: { regeneration: 3.50, bleeding: 2.00 } },
+    { id: 'fire_loop', name: 'Огненная петля', nameEn: 'Fire Loop', category: 'thermal', tier: 3, image: 'fire_loop.png', imageFolder: 'Artifacts', price: 36000, stats: { regeneration: 3.50, bleeding: 2.50, maxStamina: -10.00, saturation: -1.25 } },
     { id: 'dragon_eye', name: 'Глаз дракона', nameEn: "Dragon's Eye", category: 'thermal', tier: 3, image: 'dragon_eye.png', imageFolder: 'Artifacts', price: 44000, stats: { staminaRegen: 3.00, bleeding: -1.50, maxWeight: 22.00, regeneration: -0.55 } },
     // UNIQUE
     { id: 'generator', name: 'Генератор', nameEn: 'Generator', category: 'unique', tier: 3, image: 'generator.png', imageFolder: 'Artifacts', price: null, priceText: 'Нельзя продать', priceTextEn: 'Cannot sell', stats: { staminaRegen: 3.00, maxStamina: 30.00, moveSpeed: 4.00 } },
